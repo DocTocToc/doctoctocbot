@@ -81,7 +81,7 @@ except IndexError:
 
 #timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
 
-#timeline = filter(lambda status: str(status.author.id) in userIdWhiteList, timeline)
+timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
 oklist = list(oklist)
 oklist.reverse()
 

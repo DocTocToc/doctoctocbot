@@ -5,6 +5,10 @@ import os, configparser, tweepy, inspect, hashlib
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
+# friends file
+friendsfile = os.path.join(path, "friends")                                            
+print "friends file:", friendsfile
+
 # read config
 config = configparser.SafeConfigParser()
 config.read(os.path.join(path, "config"))
@@ -19,7 +23,14 @@ print "number of rt: ", num
 
 # whitelisted users and words
 # eg: ["medecinelibre", "freemedsoft"]
-userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
+#userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
+with open(friendsfile, 'r') as f:
+    userIdWhiteList = [line.rstrip('\n') for line in f]
+
+print "Number of friends:", len(userIdWhiteList)
+for userId in userIdWhiteList:
+    print userId
+
 wordBlacklist = ["RT", u"♺"]
 
 # build savepoint path + file
@@ -45,33 +56,40 @@ except IOError:
 timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang=tweetLanguage).items(num)
 
 # put everything into a list to be able to sort/filter
-timeline = []
-for status in timelineIterator:
-    user = status.user
-    screen_name = user.screen_name
-    print screen_name
-    if screen_name in userWhitelist:
-        timeline.append(status)
+
+oklist = []
+
+for tweet in timelineIterator:
+    user = tweet.user
+    screenname = user.screen_name
+    userid = user.id
+    print "userid: ", userid
+    print "screen name: ", screenname
+    useridstring = str(userid)
+    if useridstring in userIdWhiteList:
+        print useridstring, screenname, "is in the whitelist"
+        oklist.append(tweet)
 
 try:
-    last_tweet_id = timeline[0].id
+    last_tweet_id = oklist[0].id
 except IndexError:
     last_tweet_id = savepoint
 
 # filter @replies/blacklisted words & users out and reverse timeline
 # remove all tweets with an @mention
-#timeline = filter(lambda status: status.text[0] == "@", timeline)
+# oklist = filter(lambda status: status.text[0] == "@", oklist)
 
 #timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
-#timeline = filter(lambda status: status.author.screen_name in userWhitelist, timeline)
-timeline = list(timeline)
-timeline.reverse()
+
+#timeline = filter(lambda status: str(status.author.id) in userIdWhiteList, timeline)
+oklist = list(oklist)
+oklist.reverse()
 
 tw_counter = 0
 err_counter = 0
 
 # iterate the timeline and retweet
-for status in timeline:
+for status in oklist:
     try:
         print("(%(date)s) %(name)s: %(message)s\n" % \
               {"date": status.created_at,

@@ -18,7 +18,8 @@ num = int(config.get("settings","number_of_rt"))
 print "number of rt: ", num
 
 # whitelisted users and words
-userWhitelist = ["medecinelibre", "freemedsoft"]
+# eg: ["medecinelibre", "freemedsoft"]
+userWhitelist = [ ]
 wordBlacklist = ["RT", u"♺"]
 
 # build savepoint path + file
@@ -59,7 +60,7 @@ except IndexError:
 #timeline = filter(lambda status: status.text[0] == "@", timeline)
 
 #timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
-timeline = filter(lambda status: status.author.screen_name in userWhitelist, timeline)
+#timeline = filter(lambda status: status.author.screen_name in userWhitelist, timeline)
 timeline = list(timeline)
 timeline.reverse()
 

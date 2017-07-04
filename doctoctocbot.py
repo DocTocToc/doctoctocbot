@@ -19,7 +19,7 @@ print "number of rt: ", num
 
 # whitelisted users and words
 # eg: ["medecinelibre", "freemedsoft"]
-userWhitelist = [ ]
+userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
 wordBlacklist = ["RT", u"♺"]
 
 # build savepoint path + file
@@ -47,8 +47,11 @@ timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang
 # put everything into a list to be able to sort/filter
 timeline = []
 for status in timelineIterator:
-    timeline.append(status)
-
+    user = status.user
+    screen_name = user.screen_name
+    print screen_name
+    if screen_name in userWhitelist:
+        timeline.append(status)
 
 try:
     last_tweet_id = timeline[0].id
@@ -75,7 +78,7 @@ for status in timeline:
                "name": status.author.screen_name.encode('utf-8'),
                "message": status.text.encode('utf-8')})
 
-        api.retweet(status.id)
+        #api.retweet(status.id)
         tw_counter += 1
     except tweepy.error.TweepError as e:
         # just in case tweet got deleted in the meantime or already retweeted

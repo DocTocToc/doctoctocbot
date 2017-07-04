@@ -33,9 +33,9 @@ def limit_handled(cursor):
         except tweepy.RateLimitError:
             time.sleep(15 * 60)
 
-for friend in limit_handled(tweepy.Cursor(api.friends).items()):
-    print friend.id
-    friends.append(friend.id) 
+for friend_id in api.friends_ids(881706502939185152):
+    print friend_id
+    friends.append(friend_id) 
 
 with open(file, mode='wt') as f:
     for s in friends:

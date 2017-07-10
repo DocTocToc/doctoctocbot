@@ -2,6 +2,8 @@
 A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent of "Knock, knock!" in French, but is not used to introduce a joke).
 \#DocTocToc is used by French speaking doctors and other healthcare professionals to help each other with clinical cases or administrative chores.
 
+Contributions to the code are welcome. Data mining, NLP hackers, I need you!
+
 ## DocTocTocBot rules
 
 1. I retweet tweets containing the hashtag #doctoctoc sent by MDs
@@ -14,7 +16,7 @@ A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent o
 * Can we automatically classify the type of request (clinical case, administrative tip, other kind of help)?
 * Can we automatically classify the medical category of the request? (Dermatology, cardiology, psychiatry, social problems)
 * What classifications should we user? (ICPC, ICD)
-* Should we user another hashtag for clinical quizzes (when the requester already knows the answer)?
+* Should we use another hashtag for clinical quizzes (when the requester already knows the answer) such as \#DocQuiz ?
 
 ## Wiki, documentation, links
 

@@ -16,11 +16,17 @@ A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent o
 * What classifications should we user? (ICPC, ICD)
 * Should we user another hashtag for clinical quizzes (when the requester already knows the answer)?
 
+## Wiki, documentation, links
+
 Read more about technical issues, code: [wiki](https://github.com/jeromecc/doctoctocbot/wiki)
 
 [Présentation du robot en français](https://medecinelibre.com/doctoctoc-bot)
 
 DocTocTocBot is maintained by [@medecinelibre](https://twitter.com/medecinelibre)
+
+
+### Future
+The bot will be adapted to [Mastodon](https://mastodon.social) soon.
 
 Python Retweet Bot
 ==================

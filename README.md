@@ -1,5 +1,26 @@
 # doctoctocbot
-A Twitter bot to enhance the hashtag #doctoctoc used by French doctors to help each other with clinical cases or administrative chores.
+A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent of "Knock, knock!" in French, but is not used to introduce a joke).
+\#DocTocToc is used by French speaking doctors and other healthcare professionals to help each other with clinical cases or administrative chores.
+
+## DocTocTocBot rules
+
+1. I retweet tweets containing the hashtag #doctoctoc sent by MDs
+2. Twitter users who do not want to be retweeted can block me
+
+## Challenges
+
+* How to tell MDs from non-MDs on Twitter?
+* How to enhance the dialogue with other healthcare professionals (pharmacists, midwives, ...)?
+* Can we automatically classify the type of request (clinical case, administrative tip, other kind of help)?
+* Can we automatically classify the medical category of the request? (Dermatology, cardiology, psychiatry, social problems)
+* What classifications should we user? (ICPC, ICD)
+* Should we user another hashtag for clinical quizzes (when the requester already knows the answer)?
+
+Read more about technical issues, code: [wiki](https://github.com/jeromecc/doctoctocbot/wiki)
+
+[Présentation du robot en français](https://medecinelibre.com/doctoctoc-bot)
+
+DocTocTocBot is maintained by [@medecinelibre](https://twitter.com/medecinelibre)
 
 Python Retweet Bot
 ==================

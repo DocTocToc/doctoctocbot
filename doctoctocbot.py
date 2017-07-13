@@ -5,9 +5,8 @@ import os, configparser, tweepy, inspect, hashlib
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-# friends file
-friendsfile = os.path.join(path, "friends")                                            
-print "friends file:", friendsfile
+# docs file containing a list of MD id
+docsfile = os.path.join(path, "docs")
 
 # read config
 config = configparser.SafeConfigParser()
@@ -24,12 +23,10 @@ print "number of rt: ", num
 # whitelisted users and words
 # eg: ["medecinelibre", "freemedsoft"]
 #userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
-with open(friendsfile, 'r') as f:
+with open(docsfile, 'r') as f:
     userIdWhiteList = [line.rstrip('\n') for line in f]
 
 print "Number of friends:", len(userIdWhiteList)
-for userId in userIdWhiteList:
-    print userId
 
 wordBlacklist = ["RT", u"♺"]
 

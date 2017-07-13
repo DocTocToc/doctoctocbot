@@ -5,9 +5,11 @@
 
 import os, configparser, tweepy, inspect, pickle, time
 
+botid = 881706502939185152
+slug = "docs"
+
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-file = os.path.join(path, "friends")
-print "friends file:", file
+file = os.path.join(path, "docs")
 
 # read config
 config = configparser.SafeConfigParser()
@@ -19,24 +21,19 @@ tweetLanguage = config.get("settings", "tweet_language")
 # create bot
 auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
 auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
-friends = [ ]
+docs = [ ]
 
 # In this example, the handler is time.sleep(15 * 60),
 # but you can of course handle it in any way you want.
 
-def limit_handled(cursor):
-    while True:
-        try:
-            yield cursor.next()
-        except tweepy.RateLimitError:
-            time.sleep(15 * 60)
+members = tweepy.Cursor(api.list_members, owner_id=botid, slug='docs').items()
+ids = [user.id for user in members]
 
-for friend_id in api.friends_ids(881706502939185152):
-    print friend_id
-    friends.append(friend_id) 
+for id in ids:
+    docs.append(id)
 
 with open(file, mode='wt') as f:
-    for s in friends:
-            f.write(str(s) + '\n')
+    for id in ids:
+            f.write(str(id) + '\n')

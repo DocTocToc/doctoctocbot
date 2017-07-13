@@ -62,9 +62,10 @@ for tweet in timelineIterator:
     userid = user.id
     print "userid: ", userid
     print "screen name: ", screenname
+    print "retweet: ", bool(tweet.retweeted_status)
+    print "text: ", tweet.text
     useridstring = str(userid)
-    if useridstring in userIdWhiteList:
-        print useridstring, screenname, "is in the whitelist"
+    if ((useridstring in userIdWhiteList) and (not bool(tweet.retweeted_status))):
         oklist.append(tweet)
 
 try:
@@ -79,7 +80,6 @@ except IndexError:
 #timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
 
 timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
-timeline = filter(lambda status: not status.retweeted, oklist)
 oklist = list(oklist)
 oklist.reverse()
 
@@ -92,7 +92,8 @@ for status in oklist:
         print("(%(date)s) %(name)s: %(message)s\n" % \
               {"date": status.created_at,
                "name": status.author.screen_name.encode('utf-8'),
-               "message": status.text.encode('utf-8')})
+               "message": status.text.encode('utf-8'),
+               "retweeted": bool(status.retweeted_status)})
 
         #api.retweet(status.id)
         tw_counter += 1

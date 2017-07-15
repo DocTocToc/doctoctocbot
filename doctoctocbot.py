@@ -55,6 +55,7 @@ timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang
 # put everything into a list to be able to sort/filter
 
 oklist = []
+isRetweet = False
 
 for tweet in timelineIterator:
     user = tweet.user
@@ -62,10 +63,12 @@ for tweet in timelineIterator:
     userid = user.id
     print "userid: ", userid
     print "screen name: ", screenname
-    print "retweet: ", bool(tweet.retweeted_status)
+    if hasattr(tweet, 'retweeted_status'):
+        print "retweet: ", bool(tweet.retweeted_status)
+        isRetweet = True
     print "text: ", tweet.text
     useridstring = str(userid)
-    if ((useridstring in userIdWhiteList) and (not bool(tweet.retweeted_status))):
+    if ((useridstring in userIdWhiteList) and (not isRetweet)):
         oklist.append(tweet)
 
 try:
@@ -93,7 +96,7 @@ for status in oklist:
               {"date": status.created_at,
                "name": status.author.screen_name.encode('utf-8'),
                "message": status.text.encode('utf-8'),
-               "retweeted": bool(status.retweeted_status)})
+               "retweeted": isRetweet})
 
         #api.retweet(status.id)
         tw_counter += 1

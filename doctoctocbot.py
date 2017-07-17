@@ -26,9 +26,8 @@ print "number of rt: ", num
 with open(docsfile, 'r') as f:
     userIdWhiteList = [line.rstrip('\n') for line in f]
 
-print "Number of friends:", len(userIdWhiteList)
+print "Number of users in white list:", len(userIdWhiteList)
 
-wordBlacklist = ["RT", u"♺"]
 
 # build savepoint path + file
 hashedHashtag = hashlib.md5(hashtag.encode('ascii')).hexdigest()
@@ -58,18 +57,27 @@ oklist = []
 isRetweet = False
 
 for tweet in timelineIterator:
+    isRetweet = False
     user = tweet.user
     screenname = user.screen_name
     userid = user.id
-    print "userid: ", userid
-    print "screen name: ", screenname
-    if hasattr(tweet, 'retweeted_status'):
-        print "retweet: ", bool(tweet.retweeted_status)
-        isRetweet = True
-    print "text: ", tweet.text
     useridstring = str(userid)
+    print "userid: ", userid
+    print "useridstring: ", useridstring
+    print "screen name: ", screenname
+    print "useridstring in whitelist? ", (useridstring in userIdWhiteList)
+    if hasattr(tweet, 'retweeted_status'):
+        isRetweet = True
+        print "retweet: ", isRetweet
+    print "text: ", tweet.text
+    print "(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList)
+    print "not isRetweet:", not isRetweet
     if ((useridstring in userIdWhiteList) and (not isRetweet)):
         oklist.append(tweet)
+        print "User in whitelist AND status not a RT: OK for RT \n\n"
+    else:
+        print "not ok for RT \n\n"
+
 
 try:
     last_tweet_id = oklist[0].id
@@ -82,7 +90,7 @@ except IndexError:
 
 #timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
 
-timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
+#timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
 oklist = list(oklist)
 oklist.reverse()
 

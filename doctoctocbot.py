@@ -69,7 +69,7 @@ for tweet in timelineIterator:
     if hasattr(tweet, 'retweeted_status'):
         isRetweet = True
         print "retweet: ", isRetweet
-    print "text: ", tweet.text
+    print "text: ", tweet.text.encode('utf-8')
     print "(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList)
     print "not isRetweet:", not isRetweet
     if ((useridstring in userIdWhiteList) and (not isRetweet)):

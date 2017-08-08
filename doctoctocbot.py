@@ -10,19 +10,18 @@ License: Mozilla Public License, see 'LICENSE' for details.
 
 import configparser
 import hashlib
-import inspect
-import os
+from pathlib import Path
 import tweepy
 
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+path = Path(__file__).resolve().parent
 
 # docs file containing a list of MD id
-docsfile = os.path.join(path, "docs")
+docsfile = path.joinpath("docs")
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = config.get("settings", "search_query")
@@ -44,8 +43,8 @@ print "Number of users in white list:", len(userIdWhiteList)
 # build savepoint path + file
 hashedHashtag = hashlib.md5(hashtag.encode('ascii')).hexdigest()
 last_id_filename = "last_id_hashtag_%s" % hashedHashtag
-rt_bot_path = os.path.dirname(os.path.abspath(__file__))
-last_id_file = os.path.join(rt_bot_path, last_id_filename)
+rt_bot_path = Path(__file__).resolve().parent
+last_id_file = rt_bot_path.joinpath(last_id_filename)
 
 # create bot
 auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))

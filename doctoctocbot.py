@@ -8,7 +8,12 @@ Author: Jérome Pinguet.
 License: Mozilla Public License, see 'LICENSE' for details.
 """
 
-import os, configparser, tweepy, inspect, hashlib
+import configparser
+import hashlib
+import inspect
+import os
+import tweepy
+
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 

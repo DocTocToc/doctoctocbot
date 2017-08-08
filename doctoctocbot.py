@@ -8,7 +8,7 @@ Author: Jérome Pinguet.
 License: Mozilla Public License, see 'LICENSE' for details.
 """
 
-import configparser
+from configparser import ConfigParser
 import hashlib
 from pathlib import Path
 import tweepy
@@ -20,15 +20,15 @@ path = Path(__file__).resolve().parent
 docsfile = path.joinpath("docs")
 
 # read config
-config = configparser.SafeConfigParser()
-config.read(path.joinpath("config"))
+configuration = ConfigParser()
+configuration.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)
-hashtag = config.get("settings", "search_query")
-tweetLanguage = config.get("settings", "tweet_language")
+hashtag = configuration.get("settings", "search_query")
+tweetLanguage = configuration.get("settings", "tweet_language")
 
 # Number retweets per time
-num = int(config.get("settings", "number_of_rt"))
+num = configuration.getint("settings", "number_of_rt")
 print "number of rt: ", num
 
 # whitelisted users and words
@@ -47,8 +47,14 @@ rt_bot_path = Path(__file__).resolve().parent
 last_id_file = rt_bot_path.joinpath(last_id_filename)
 
 # create bot
-auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
-auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
+auth = tweepy.OAuthHandler(
+    configuration.get("twitter", "consumer_key"),
+    configuration.get("twitter", "consumer_secret")
+    )
+auth.set_access_token(
+    configuration.get("twitter", "access_token"),
+    configuration.get("twitter", "access_token_secret")
+    )
 api = tweepy.API(auth)
 
 # retrieve last savepoint if available

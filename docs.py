@@ -12,7 +12,7 @@ Author: Jérome Pinguet.
 License: Mozilla Public License, see 'LICENSE' for details.
 """
 
-import configparser
+from configparser import ConfigParser
 from pathlib import Path
 import tweepy
 
@@ -24,7 +24,7 @@ path = Path(__file__).resolve().parent
 file = path.joinpath("docs")
 
 # read config
-config = configparser.SafeConfigParser()
+config = ConfigParser()
 config.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)

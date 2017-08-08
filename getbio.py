@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import configparser
+from configparser import ConfigParser
 import io
 from pathlib import Path
 import tweepy
@@ -18,7 +18,7 @@ biofile = path.joinpath("bio")
 print "bio file:", biofile
 
 # read config
-config = configparser.SafeConfigParser()
+config = ConfigParser()
 config.read(path.joinpath("config"))
 
 # tweet language (empty = all languages)

@@ -4,7 +4,7 @@
 # add friends (whitelist) to privat Twitter list "docs"
 # bot user_id=881706502939185152
 
-import configparser
+from configparser import ConfigParser
 from Pathlib import Path
 import tweepy
 
@@ -17,7 +17,7 @@ file = path.joinpath("friends")
 print "friends file:", file
 
 # read config
-config = configparser.SafeConfigParser()
+config = ConfigParser()
 config.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)

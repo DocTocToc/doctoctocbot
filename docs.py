@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# make a list of the bot's friends (whitelist)
+u"""
+Bot to enhance french healthcare professionals exchanges on Twitter.
 
+Tweets are only retweeted if the user wants to use the service of
+DocTocTocBot. List of DocTocTocBot subscribers is persist as a Twitter list
+(private) of the bot account.
+
+Author: Jérome Pinguet.
+License: Mozilla Public License, see 'LICENSE' for details.
+"""
 import os, configparser, tweepy, inspect, pickle, time
 
 botid = 881706502939185152

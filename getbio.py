@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, configparser, tweepy, inspect, codecs, io
+import configparser
+import inspect
+import io
+import os
+import tweepy
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 # friends file
-friendsfile = os.path.join(path, "friends")                                            
+friendsfile = os.path.join(path, "friends")
 print "friends file:", friendsfile
 
 # bio file
-biofile = os.path.join(path, "bio")                                            
-print "bio file:", biofile 
+biofile = os.path.join(path, "bio")
+print "bio file:", biofile
 
 # read config
 config = configparser.SafeConfigParser()

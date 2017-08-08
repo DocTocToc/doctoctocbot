@@ -1,6 +1,4 @@
 import re
-import string
-import codecs
 import io
 
 frequency = {}

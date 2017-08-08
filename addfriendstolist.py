@@ -3,7 +3,12 @@
 
 # add friends (whitelist) to privat Twitter list "docs"
 # bot user_id=881706502939185152
-import os, configparser, tweepy, inspect, pickle, time
+
+import configparser
+import inspect
+import os
+import tweepy
+
 
 slug = "docs"
 bot_id = 881706502939185152

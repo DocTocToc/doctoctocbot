@@ -11,7 +11,12 @@ DocTocTocBot. List of DocTocTocBot subscribers is persist as a Twitter list
 Author: Jérome Pinguet.
 License: Mozilla Public License, see 'LICENSE' for details.
 """
-import os, configparser, tweepy, inspect, pickle, time
+
+import configparser
+import inspect
+import os
+import tweepy
+
 
 botid = 881706502939185152
 slug = "docs"

@@ -4,6 +4,17 @@
 u"""
 Bot to enhance french healthcare professionals exchanges on Twitter.
 
+An increasing number of french healthcare professionals are using the hashtag
+#DocTocToc on Twitter to request help — mostly on clinical cases — to the
+twitosphere. The purpose of DocTocTocBot is to centralize all this requests
+onto one account — the bot's account — thus permitting a wider spread of
+requests and maybe more answers.
+Centralization is achieved by retweeting requests. Request are identify as
+tweets containing the hashtag #DocTocToc, and are retweeted only if the author
+has subscribed to the service of DocTocTocBot. Subscription request is made by
+following the bot's account. Subscription request are analyzed and only
+request of valid healthcare professionals are accepted.
+
 Author: Jérome Pinguet.
 License: Mozilla Public License, see 'LICENSE' for details.
 """

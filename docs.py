@@ -13,20 +13,19 @@ License: Mozilla Public License, see 'LICENSE' for details.
 """
 
 import configparser
-import inspect
-import os
+from pathlib import Path
 import tweepy
 
 
 botid = 881706502939185152
 slug = "docs"
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-file = os.path.join(path, "docs")
+path = Path(__file__).resolve().parent
+file = path.joinpath("docs")
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

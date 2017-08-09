@@ -2,24 +2,24 @@
 # -*- coding: utf-8 -*-
 
 import configparser
-import inspect
 import io
-import os
+from pathlib import Path
 import tweepy
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+path = Path(__file__).resolve().parent
 
 # friends file
-friendsfile = os.path.join(path, "friends")
+friendsfile = path.joinpath("friends")
 print "friends file:", friendsfile
 
 # bio file
-biofile = os.path.join(path, "bio")
+biofile = path.joinpath("bio")
 print "bio file:", biofile
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(path.joinpath("config"))
 
 # tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

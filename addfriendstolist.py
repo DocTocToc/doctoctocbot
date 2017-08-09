@@ -5,21 +5,20 @@
 # bot user_id=881706502939185152
 
 import configparser
-import inspect
-import os
+from Pathlib import Path
 import tweepy
 
 
 slug = "docs"
 bot_id = 881706502939185152
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-file = os.path.join(path, "friends")
+path = Path(__file__).resolve().parent
+file = path.joinpath("friends")
 print "friends file:", file
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(path.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

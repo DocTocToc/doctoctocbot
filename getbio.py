@@ -20,7 +20,7 @@ print "bio file:", biofile
 
 # read config
 config = ConfigParser()
-config.read(ROOT_PATH.joinpath("config"))
+config.read(str(ROOT_PATH.joinpath("config")))
 
 # tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

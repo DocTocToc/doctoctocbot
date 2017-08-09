@@ -27,7 +27,7 @@ file = ROOT_PATH.joinpath("docs")
 
 # read config
 config = ConfigParser()
-config.read(ROOT_PATH.joinpath("config"))
+config.read(str(ROOT_PATH.joinpath("config")))
 
 # your hashtag or search query and tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

@@ -6,7 +6,7 @@
 import os, configparser, tweepy, inspect, pickle, time
 
 slug = "docs"
-bot_id=881706502939185152
+bot_id = 881706502939185152
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 file = os.path.join(path, "friends")
@@ -20,8 +20,14 @@ config.read(os.path.join(path, "config"))
 tweetLanguage = config.get("settings", "tweet_language")
 
 # create bot
-auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
-auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
+auth = tweepy.OAuthHandler(
+    config.get("twitter", "consumer_key"),
+    config.get("twitter", "consumer_secret")
+    )
+auth.set_access_token(
+    config.get("twitter", "access_token"),
+    config.get("twitter", "access_token_secret")
+    )
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
 with open(file, mode='r') as f:
@@ -34,4 +40,4 @@ for list in lists:
 
 for friend in friends:
     api.add_list_member(owner_id=bot_id, slug=slug, user_id=int(friend))
-    print "The user {} was added to list {}.".format(friend,slug)
+    print "The user {} was added to list {}.".format(friend, slug)

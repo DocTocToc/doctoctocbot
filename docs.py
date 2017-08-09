@@ -27,11 +27,17 @@ config.read(os.path.join(path, "config"))
 tweetLanguage = config.get("settings", "tweet_language")
 
 # create bot
-auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
-auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
+auth = tweepy.OAuthHandler(
+    config.get("twitter", "consumer_key"),
+    config.get("twitter", "consumer_secret")
+    )
+auth.set_access_token(
+    config.get("twitter", "access_token"),
+    config.get("twitter", "access_token_secret")
+    )
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-docs = [ ]
+docs = []
 
 # In this example, the handler is time.sleep(15 * 60),
 # but you can of course handle it in any way you want.

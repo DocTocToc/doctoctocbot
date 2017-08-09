@@ -60,7 +60,11 @@ except IOError:
     print("No savepoint found. Bot is now searching for results")
 
 # search query
-timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang=tweetLanguage).items(num)
+timelineIterator = tweepy.Cursor(
+    api.search,
+    q=hashtag,
+    since_id=savepoint,
+    lang=tweetLanguage).items(num)
 
 # put everything into a list to be able to sort/filter
 
@@ -99,9 +103,11 @@ except IndexError:
 # remove all tweets with an @mention
 # oklist = filter(lambda status: status.text[0] == "@", oklist)
 
-# timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
+# timeline = filter(lambda status: not any(word in status.text.split() for
+# word in wordBlacklist), timeline)
 
-# timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
+# timeline = filter(lambda status: status.author.id_str in userIdWhiteList,
+# oklist)
 oklist = list(oklist)
 oklist.reverse()
 
@@ -125,7 +131,7 @@ for status in oklist:
         # print e
         continue
 
-print("Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter))
+print("Finished. {0} retweets, {1} errors.".format(tw_counter, err_counter))
 
 # write last retweeted tweet id to file
 with open(last_id_file, "w") as file:

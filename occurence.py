@@ -9,7 +9,7 @@ with io.open('bio', encoding='utf-8', mode='r') as f:
 match_pattern = re.findall(r'\b[a-z]{3,15}\b', text_string)
 
 for word in match_pattern:
-    count = frequency.get(word,0)
+    count = frequency.get(word, 0)
     frequency[word] = count + 1
 
 frequency_list = frequency.keys()

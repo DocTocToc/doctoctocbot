@@ -14,14 +14,15 @@ from pathlib import Path
 import tweepy
 
 
-path = Path(__file__).resolve().parent
+# Determine absolute path to the bot's directory
+ROOT_PATH = Path(__file__).resolve().parent
 
 # docs file containing a list of MD id
-docsfile = path.joinpath("docs")
+docsfile = ROOT_PATH.joinpath("docs")
 
-# read config
+# Load configuration file
 configuration = ConfigParser()
-configuration.read(path.joinpath("config"))
+configuration.read(str(ROOT_PATH.joinpath("config")))
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = configuration.get("settings", "search_query")

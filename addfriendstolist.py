@@ -12,13 +12,15 @@ import tweepy
 slug = "docs"
 bot_id = 881706502939185152
 
-path = Path(__file__).resolve().parent
-file_ = path.joinpath("friends")
+# Determine absolute path to the bot's directory
+ROOT_PATH = Path(__file__).resolve().parent
+
+file_ = ROOT_PATH.joinpath("friends")
 print "friends file:", file_
 
 # read config
 config = ConfigParser()
-config.read(path.joinpath("config"))
+config.read(ROOT_PATH.joinpath("config"))
 
 # your hashtag or search query and tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

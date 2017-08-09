@@ -7,19 +7,20 @@ from pathlib import Path
 import tweepy
 
 
-path = Path(__file__).resolve().parent
+# Determine absolute path to the bot's directory
+ROOT_PATH = Path(__file__).resolve().parent
 
 # friends file
-friendsfile = path.joinpath("friends")
+friendsfile = ROOT_PATH.joinpath("friends")
 print "friends file:", friendsfile
 
 # bio file
-biofile = path.joinpath("bio")
+biofile = ROOT_PATH.joinpath("bio")
 print "bio file:", biofile
 
 # read config
 config = ConfigParser()
-config.read(path.joinpath("config"))
+config.read(ROOT_PATH.joinpath("config"))
 
 # tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")

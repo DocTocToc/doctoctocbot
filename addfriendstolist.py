@@ -16,7 +16,7 @@ bot_id = 881706502939185152
 ROOT_PATH = Path(__file__).resolve().parent
 
 file_ = ROOT_PATH.joinpath("friends")
-print "friends file:", file_
+print("friends file:", file_)
 
 # read config
 config = ConfigParser()
@@ -40,10 +40,10 @@ with open(file_, mode='r') as f:
     friends = [line.rstrip('\n') for line in f]
 
 lists = api.lists_all()
-print "List of the lists \n"
+print("List of the lists \n")
 for list_ in lists:
-    print "list: ", list_.slug, list_.id
+    print("list: ", list_.slug, list_.id)
 
 for friend in friends:
     api.add_list_member(owner_id=bot_id, slug=slug, user_id=int(friend))
-    print "The user {} was added to list {}.".format(friend, slug)
+    print("The user {} was added to list {}.".format(friend, slug))

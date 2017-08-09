@@ -41,7 +41,7 @@ tweetLanguage = configuration.get("settings", "tweet_language")
 
 # Number retweets per time
 num = configuration.getint("settings", "number_of_rt")
-print "number of rt: ", num
+print("number of rt: {0}", num)
 
 # whitelisted users and words
 # eg: ["medecinelibre", "freemedsoft"]
@@ -49,7 +49,7 @@ print "number of rt: ", num
 with open(docsfile, 'r') as f:
     userIdWhiteList = [line.rstrip('\n') for line in f]
 
-print "Number of users in white list:", len(userIdWhiteList)
+print("Number of users in white list: ", len(userIdWhiteList))
 
 
 # build savepoint path + file
@@ -95,21 +95,24 @@ for tweet in timelineIterator:
     screenname = user.screen_name
     userid = user.id
     useridstring = str(userid)
-    print "userid: ", userid
-    print "useridstring: ", useridstring
-    print "screen name: ", screenname
-    print "useridstring in whitelist? ", (useridstring in userIdWhiteList)
+    print("userid: ", userid)
+    print("useridstring: ", useridstring)
+    print("screen name: ", screenname)
+    print("useridstring in whitelist? ", (useridstring in userIdWhiteList))
     if hasattr(tweet, 'retweeted_status'):
         isRetweet = True
-        print "retweet: ", isRetweet
-    print "text: ", tweet.text.encode('utf-8')
-    print "(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList)
-    print "not isRetweet:", not isRetweet
+        print("retweet: ", isRetweet)
+    print("text: ", tweet.text.encode('utf-8'))
+    print(
+        "(useridstring in userIdWhiteList):",
+        (useridstring in userIdWhiteList)
+        )
+    print("not isRetweet:", not isRetweet)
     if ((useridstring in userIdWhiteList) and (not isRetweet)):
         oklist.append(tweet)
-        print "User in whitelist AND status not a RT: OK for RT \n\n"
+        print("User in whitelist AND status not a RT: OK for RT \n\n")
     else:
-        print "not ok for RT \n\n"
+        print("not ok for RT \n\n")
 
 
 try:
@@ -135,11 +138,12 @@ err_counter = 0
 # iterate the timeline and retweet
 for status in oklist:
     try:
-        print("(%(date)s) %(name)s: %(message)s\n" % \
-              {"date": status.created_at,
-               "name": status.author.screen_name.encode('utf-8'),
-               "message": status.text.encode('utf-8'),
-               "retweeted": isRetweet})
+        print("({0}) {1}: {2}\n".format(
+            status.created_at,
+            status.author.screen_name.encode('utf-8'),
+            status.text.encode('utf-8'),
+            isRetweet)
+            )
 
         # api.retweet(status.id)
         tw_counter += 1

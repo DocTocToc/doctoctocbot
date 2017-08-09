@@ -12,11 +12,11 @@ ROOT_PATH = Path(__file__).resolve().parent
 
 # friends file
 friendsfile = ROOT_PATH.joinpath("friends")
-print "friends file:", friendsfile
+print("friends file:", friendsfile)
 
 # bio file
 biofile = ROOT_PATH.joinpath("bio")
-print "bio file:", biofile
+print("bio file:", biofile)
 
 # read config
 config = ConfigParser()
@@ -32,7 +32,7 @@ tweetLanguage = config.get("settings", "tweet_language")
 with open(friendsfile, 'r') as f:
     friends = [line.rstrip('\n') for line in f]
 
-print "Number of friends:", len(friends)
+print("Number of friends:", len(friends))
 
 # create bot
 auth = tweepy.OAuthHandler(
@@ -55,6 +55,6 @@ for chunk in friendschunks:
     for user in users:
         bio += (user.description + "\n")
 
-print bio
+print(bio)
 with io.open(biofile, encoding='utf-8', mode='wt') as f:
     f.write(bio)

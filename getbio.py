@@ -47,8 +47,8 @@ api = tweepy.API(auth)
 
 # API limit to GET users: 100 per call
 bio = ""
-max = 100
-friendschunks = [friends[i:i + max] for i in range(0, len(friends), max)]
+max_ = 100
+friendschunks = [friends[i:i + max_] for i in range(0, len(friends), max_)]
 
 for chunk in friendschunks:
     users = api.lookup_users(user_ids=chunk)

@@ -60,8 +60,8 @@ api = tweepy.API(auth)
 
 # retrieve last savepoint if available
 try:
-    with open(last_id_file, "r") as file:
-        savepoint = file.read()
+    with open(last_id_file, "r") as file_:
+        savepoint = file_.read()
 except IOError:
     savepoint = ""
     print("No savepoint found. Bot is now searching for results")
@@ -141,5 +141,5 @@ for status in oklist:
 print("Finished. {0} retweets, {1} errors.".format(tw_counter, err_counter))
 
 # write last retweeted tweet id to file
-with open(last_id_file, "w") as file:
-    file.write(str(last_tweet_id))
+with open(last_id_file, "w") as file_:
+    file_.write(str(last_tweet_id))

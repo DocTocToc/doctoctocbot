@@ -23,7 +23,7 @@ slug = "docs"
 # Determine absolute path to the bot's directory
 ROOT_PATH = Path(__file__).resolve().parent
 
-file = ROOT_PATH.joinpath("docs")
+file_ = ROOT_PATH.joinpath("docs")
 
 # read config
 config = ConfigParser()
@@ -51,9 +51,9 @@ docs = []
 members = tweepy.Cursor(api.list_members, owner_id=botid, slug='docs').items()
 ids = [user.id for user in members]
 
-for id in ids:
-    docs.append(id)
+for id_ in ids:
+    docs.append(id_)
 
-with open(file, mode='wt') as f:
-    for id in ids:
-            f.write(str(id) + '\n')
+with open(file_, mode='wt') as f:
+    for id_ in ids:
+            f.write(str(id_) + '\n')

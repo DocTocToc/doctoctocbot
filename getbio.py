@@ -1,21 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, configparser, tweepy, inspect, codecs, io
+from configparser import ConfigParser
+import io
+from pathlib import Path
+import tweepy
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+# Determine absolute path to the bot's directory
+ROOT_PATH = Path(__file__).resolve().parent
 
 # friends file
-friendsfile = os.path.join(path, "friends")                                            
-print "friends file:", friendsfile
+friendsfile = ROOT_PATH.joinpath("friends")
+print("friends file:", friendsfile)
 
 # bio file
-biofile = os.path.join(path, "bio")                                            
-print "bio file:", biofile 
+biofile = ROOT_PATH.joinpath("bio")
+print("bio file:", biofile)
 
 # read config
-config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config = ConfigParser()
+config.read(str(ROOT_PATH.joinpath("config")))
 
 # tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")
@@ -23,27 +28,33 @@ tweetLanguage = config.get("settings", "tweet_language")
 
 # whitelisted users and words
 # eg: ["medecinelibre", "freemedsoft"]
-#userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
+# userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
 with open(friendsfile, 'r') as f:
     friends = [line.rstrip('\n') for line in f]
 
-print "Number of friends:", len(friends)
+print("Number of friends:", len(friends))
 
 # create bot
-auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
-auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
+auth = tweepy.OAuthHandler(
+    config.get("twitter", "consumer_key"),
+    config.get("twitter", "consumer_secret")
+    )
+auth.set_access_token(
+    config.get("twitter", "access_token"),
+    config.get("twitter", "access_token_secret")
+    )
 api = tweepy.API(auth)
 
 # API limit to GET users: 100 per call
 bio = ""
-max = 100
-friendschunks = [friends[i:i + max] for i in range(0, len(friends), max)]
+max_ = 100
+friendschunks = [friends[i:i + max_] for i in range(0, len(friends), max_)]
 
 for chunk in friendschunks:
     users = api.lookup_users(user_ids=chunk)
     for user in users:
-        bio+=(user.description + "\n")
+        bio += (user.description + "\n")
 
-print bio
+print(bio)
 with io.open(biofile, encoding='utf-8', mode='wt') as f:
     f.write(bio)

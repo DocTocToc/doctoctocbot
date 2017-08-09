@@ -13,8 +13,8 @@ slug = "docs"
 bot_id = 881706502939185152
 
 path = Path(__file__).resolve().parent
-file = path.joinpath("friends")
-print "friends file:", file
+file_ = path.joinpath("friends")
+print "friends file:", file_
 
 # read config
 config = ConfigParser()
@@ -34,13 +34,13 @@ auth.set_access_token(
     )
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-with open(file, mode='r') as f:
+with open(file_, mode='r') as f:
     friends = [line.rstrip('\n') for line in f]
 
 lists = api.lists_all()
 print "List of the lists \n"
-for list in lists:
-    print "list: ", list.slug, list.id
+for list_ in lists:
+    print "list: ", list_.slug, list_.id
 
 for friend in friends:
     api.add_list_member(owner_id=bot_id, slug=slug, user_id=int(friend))

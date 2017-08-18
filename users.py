@@ -11,6 +11,7 @@ License: Mozilla Public License (2.0), see 'LICENSE' for details.
 from pathlib import Path
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
+from tweepy import Cursor
 from database import Base, Session
 from tools import connect, load_configuration
 
@@ -42,3 +43,13 @@ if __name__ == '__main__':
 
     # Connecting to the database
     session = Session()
+
+    # Downloading users.
+    for user in Cursor(twitter.list_members,
+                       owner_id=configuration.get('GLOBAL', 'ACCOUNT ID'),
+                       slug='docs').items():
+        u = User(identifier=user.id, name=user.name)
+        session.merge(u)
+
+    session.commit()
+    session.close()

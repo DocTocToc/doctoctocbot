@@ -12,7 +12,7 @@ from pathlib import Path
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from database import Base
-from tools import load_configuration
+from tools import connect, load_configuration
 
 
 class User(Base):
@@ -31,3 +31,11 @@ if __name__ == '__main__':
     # Finding the configuration file.
     root = Path(__file__).resolve().parent
     configuration = load_configuration(root.joinpath('configuration.txt'))
+
+    # Authenticating to the Twitter API
+    twitter = connect(
+        app_token=configuration.get('API ACCESS', 'APP TOKEN'),
+        app_secret=configuration.get('API ACCESS', 'APP SECRET'),
+        access_token=configuration.get('API ACCESS', 'ACCESS TOKEN'),
+        access_secret=configuration.get('API ACCESS', 'ACCESS SECRET')
+    )

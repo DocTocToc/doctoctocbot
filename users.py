@@ -19,3 +19,7 @@ class User(Base):
     __tablename__ = 'user'
     identifier = Column(Integer, primary_key=True)
     name = Column(String(length=250), nullable=True, unique=True, index=True)
+
+    def __repr__(self):
+        """Create a unique text representation of the user."""
+        return '<User #{0}: {1}>'.format(self.identifier, self.name)

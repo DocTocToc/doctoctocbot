@@ -11,7 +11,7 @@ License: Mozilla Public License (2.0), see 'LICENSE' for details.
 from pathlib import Path
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
-from database import Base
+from database import Base, Session
 from tools import connect, load_configuration
 
 
@@ -39,3 +39,6 @@ if __name__ == '__main__':
         access_token=configuration.get('API ACCESS', 'ACCESS TOKEN'),
         access_secret=configuration.get('API ACCESS', 'ACCESS SECRET')
     )
+
+    # Connecting to the database
+    session = Session()

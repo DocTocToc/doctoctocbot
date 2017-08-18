@@ -8,9 +8,11 @@ Author: Anatole Hanniet.
 License: Mozilla Public License (2.0), see 'LICENSE' for details.
 """
 
+from pathlib import Path
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from database import Base
+from tools import load_configuration
 
 
 class User(Base):
@@ -23,3 +25,9 @@ class User(Base):
     def __repr__(self):
         """Create a unique text representation of the user."""
         return '<User #{0}: {1}>'.format(self.identifier, self.name)
+
+
+if __name__ == '__main__':
+    # Finding the configuration file.
+    root = Path(__file__).resolve().parent
+    configuration = load_configuration(root.joinpath('configuration.txt'))

@@ -1,0 +1,9 @@
+[GLOBAL]
+ACCOUNT ID: "The bot's account Twitter ID"
+ACCOUNT NAME: "The bot's account Twitter name"
+
+[API ACCESS]
+APP TOKEN: "The Twitter consumer / application token"
+APP SECRET: "The Twitter consumer / application secret"
+ACCESS TOKEN: "The Twitter access token"
+ACCESS SECRET: "The Twitter access secret"

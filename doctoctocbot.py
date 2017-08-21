@@ -13,16 +13,18 @@ import hashlib
 import inspect
 import os
 import tweepy
+from database import Session
+from users import User
 
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-# docs file containing a list of MD id
-docsfile = os.path.join(path, "docs")
-
 # read config
 config = configparser.SafeConfigParser()
 config.read(os.path.join(path, "config"))
+
+# Create a session for interacting with the database
+session = Session()
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = config.get("settings", "search_query")
@@ -32,14 +34,8 @@ tweetLanguage = config.get("settings", "tweet_language")
 num = int(config.get("settings", "number_of_rt"))
 print "number of rt: ", num
 
-# whitelisted users and words
-# eg: ["medecinelibre", "freemedsoft"]
-# userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
-with open(docsfile, 'r') as f:
-    userIdWhiteList = [line.rstrip('\n') for line in f]
-
-print "Number of users in white list:", len(userIdWhiteList)
-
+# Build the list of contributors (users to retweet)
+contributors = session.query(User).all()
 
 # build savepoint path + file
 hashedHashtag = hashlib.md5(hashtag.encode('ascii')).hexdigest()
@@ -73,18 +69,14 @@ for tweet in timelineIterator:
     user = tweet.user
     screenname = user.screen_name
     userid = user.id
-    useridstring = str(userid)
     print "userid: ", userid
-    print "useridstring: ", useridstring
     print "screen name: ", screenname
-    print "useridstring in whitelist? ", (useridstring in userIdWhiteList)
     if hasattr(tweet, 'retweeted_status'):
         isRetweet = True
         print "retweet: ", isRetweet
     print "text: ", tweet.text.encode('utf-8')
-    print "(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList)
     print "not isRetweet:", not isRetweet
-    if ((useridstring in userIdWhiteList) and (not isRetweet)):
+    if all([not isRetweet, userid in (c.identifier for c in contributors)]):
         oklist.append(tweet)
         print "User in whitelist AND status not a RT: OK for RT \n\n"
     else:

@@ -1,4 +1,5 @@
-config
+# Project related
+config.ini
 last_id_hashtag_*
 friends
 bio*
@@ -6,3 +7,25 @@ docs
 
 # Development
 /env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg

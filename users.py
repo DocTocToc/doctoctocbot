@@ -10,7 +10,7 @@ License: Mozilla Public License (2.0), see 'LICENSE' for details.
 
 from pathlib import Path
 from sqlalchemy import Column
-from sqlalchemy import Integer, String
+from sqlalchemy import BigInteger, String
 from tweepy import Cursor
 from database import Base, Session
 from tools import connect, load_configuration
@@ -20,7 +20,7 @@ class User(Base):
     """A user of the service."""
 
     __tablename__ = 'user'
-    identifier = Column(Integer, primary_key=True)
+    identifier = Column(BigInteger, primary_key=True)
     name = Column(String(length=250), nullable=True, unique=True, index=True)
 
     def __repr__(self):

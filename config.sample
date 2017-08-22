@@ -6,6 +6,7 @@ number_of_rt:
 
 # Create your app on http://apps.twitter.com
 [twitter]
+ACCOUNT ID: 
 consumer_key:
 consumer_secret:
 access_token:

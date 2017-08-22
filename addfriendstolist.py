@@ -10,7 +10,7 @@ bot_id=881706502939185152
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 file = os.path.join(path, "friends")
-print "friends file:", file
+print("friends file:", file)
 
 # read config
 config = configparser.SafeConfigParser()
@@ -28,10 +28,10 @@ with open(file, mode='r') as f:
     friends = [line.rstrip('\n') for line in f]
 
 lists = api.lists_all()
-print "List of the lists \n"
+print("List of the lists")
 for list in lists:
-    print "list: ", list.slug, list.id
+    print("list:", list.slug, list.id)
 
 for friend in friends:
     api.add_list_member(owner_id=bot_id, slug=slug, user_id=int(friend))
-    print "The user {} was added to list {}.".format(friend,slug)
+    print("The user {0} was added to list {1}.".format(friend, slug))

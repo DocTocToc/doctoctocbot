@@ -10,6 +10,7 @@ License: Mozilla Public License (2.0), see 'LICENSE' for details.
 
 from configparser import ConfigParser
 from pathlib import Path
+from tweepy import API, OAuthHandler
 
 
 ROOT_PATH = Path(__file__).resolve().parent
@@ -29,3 +30,19 @@ def load_config(source=ROOT_PATH.joinpath('config.ini')):
     config = ConfigParser()
     config.read(str(source))
     return config
+
+
+def connect(source=ROOT_PATH.joinpath('config.ini')):
+    """
+    Connect to the Twitter API.
+
+    Return a 'tweepy.API' object to access the Twitter API.
+    """
+    config = load_config()
+    auth = OAuthHandler(
+        config.get('twitter', 'CONSUMER_KEY'),
+        config.get('twitter', 'CONSUMER_SECRET'))
+    auth.set_access_token(
+        config.get('twitter', 'ACCESS_TOKEN'),
+        config.get('twitter', 'ACCESS_TOKEN_SECRET'))
+    return API(auth)

@@ -10,3 +10,12 @@ consumer_key:
 consumer_secret:
 access_token:
 access_token_secret:
+
+[DATABASE]
+TYPE: mysql
+DRIVER: pymysql
+USER: root
+PASSWORD:
+HOST: localhost
+NAME: test
+URL: %(TYPE)s+%(DRIVER)s://%(USER)s:%(PASSWORD)s@%(HOST)s/%(NAME)s

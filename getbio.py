@@ -6,12 +6,12 @@ import os, configparser, tweepy, inspect, codecs, io
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 # friends file
-friendsfile = os.path.join(path, "friends")                                            
-print "friends file:", friendsfile
+friendsfile = os.path.join(path, "friends")
+print("Friends file:", friendsfile)
 
 # bio file
-biofile = os.path.join(path, "bio")                                            
-print "bio file:", biofile 
+biofile = os.path.join(path, "bio")
+print("Bio file:", biofile)
 
 # read config
 config = configparser.SafeConfigParser()
@@ -27,7 +27,7 @@ tweetLanguage = config.get("settings", "tweet_language")
 with open(friendsfile, 'r') as f:
     friends = [line.rstrip('\n') for line in f]
 
-print "Number of friends:", len(friends)
+print("Number of friends:", len(friends))
 
 # create bot
 auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
@@ -44,6 +44,6 @@ for chunk in friendschunks:
     for user in users:
         bio+=(user.description + "\n")
 
-print bio
+print(bio)
 with io.open(biofile, encoding='utf-8', mode='wt') as f:
     f.write(bio)

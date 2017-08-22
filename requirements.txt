@@ -2,3 +2,4 @@ tweepy==3.5.0
 configparser==3.5.0
 PyMySQL==0.7.11
 SQLAlchemy==1.1.13
+alembic==0.9.5

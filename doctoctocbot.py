@@ -13,12 +13,11 @@ import hashlib
 import inspect
 import os
 import tweepy
+from database import Session
+from users import User
 
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
-# docs file containing a list of MD id
-docsfile = os.path.join(path, "docs")
 
 # read config
 config = configparser.SafeConfigParser()
@@ -32,13 +31,12 @@ tweetLanguage = config.get("settings", "tweet_language")
 num = int(config.get("settings", "number_of_rt"))
 print "number of rt: ", num
 
-# whitelisted users and words
-# eg: ["medecinelibre", "freemedsoft"]
-# userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
-with open(docsfile, 'r') as f:
-    userIdWhiteList = [line.rstrip('\n') for line in f]
+# Create a session to exchange with the database.
+session = Session()
 
-print "Number of users in white list:", len(userIdWhiteList)
+# Retrieve users of the application.
+users = session.query(User).all()
+userIdWhiteList = [str(user.identifier) for user in users]
 
 
 # build savepoint path + file

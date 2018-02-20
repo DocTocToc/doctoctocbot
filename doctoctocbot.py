@@ -1,7 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, configparser, tweepy, inspect, hashlib
+u"""
+Bot to enhance french healthcare professionals exchanges on Twitter.
+
+Author: Jérome Pinguet.
+License: Mozilla Public License, see 'LICENSE' for details.
+"""
+
+import configparser
+import hashlib
+import inspect
+import os
+import tweepy
+
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 config = "configtest"
@@ -22,10 +34,16 @@ hashtag = config.get("settings", "search_query")
 tweetLanguage = config.get("settings", "tweet_language")
 
 # Number retweets per time
+<<<<<<< HEAD
 num = int(config.get("settings","number_of_rt"))
 print("number of rt: ", num)
 
 # whitelisted users
+=======
+num = int(config.get("settings", "number_of_rt"))
+print "number of rt: ", num
+
+>>>>>>> 105855345342ab0a375d9a20b9bfed00a1879c95
 with open(docsfile, 'r') as f:
     userIdWhiteList = [line.rstrip('\n') for line in f]
 
@@ -89,11 +107,19 @@ try:
 except IndexError:
     last_tweet_id = savepoint
 
+<<<<<<< HEAD
 # filter blacklisted words & users out and reverse timeline
 wordBlacklist = set((u"remplacant",u"RT",u"remplaçant"))
 oklist = filter(lambda tweet: not any(word in tweet.text.split() for word in wordBlacklist), oklist)
+=======
+# filter @replies/blacklisted words & users out and reverse timeline
+# remove all tweets with an @mention
+# oklist = filter(lambda status: status.text[0] == "@", oklist)
 
-#timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
+# timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
+>>>>>>> 105855345342ab0a375d9a20b9bfed00a1879c95
+
+# timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
 oklist = list(oklist)
 oklist.reverse()
 
@@ -109,7 +135,11 @@ for status in oklist:
                "message": status.text.encode('utf-8'),
                "retweeted": isRetweet})
 
+<<<<<<< HEAD
         api.retweet(status.id)
+=======
+        # api.retweet(status.id)
+>>>>>>> 105855345342ab0a375d9a20b9bfed00a1879c95
         tw_counter += 1
     except tweepy.error.TweepError as e:
         # just in case tweet got deleted in the meantime or already retweeted

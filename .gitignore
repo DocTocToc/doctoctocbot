@@ -4,3 +4,6 @@ friends
 bio*
 docs
 docstest
+
+# Development
+/env

@@ -4,13 +4,18 @@
 import os, configparser, tweepy, inspect, hashlib
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+config = "configtest"
+#config = "configprod"
 
-# docs file containing a list of MD id
-docsfile = os.path.join(path, "docs")
+configfile = os.path.join(path, config)
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(configfile)
+
+# docs file containing a list of MD id
+docs = config.get("settings", "white_list_file")
+docsfile = os.path.join(path, docs)
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = config.get("settings", "search_query")
@@ -18,15 +23,14 @@ tweetLanguage = config.get("settings", "tweet_language")
 
 # Number retweets per time
 num = int(config.get("settings","number_of_rt"))
-print "number of rt: ", num
+print("number of rt: ", num)
 
-# whitelisted users and words
-# eg: ["medecinelibre", "freemedsoft"]
-#userWhitelist = ["medecinelibre", "freemedsoft", "LibreHealthCare"]
+# whitelisted users
 with open(docsfile, 'r') as f:
     userIdWhiteList = [line.rstrip('\n') for line in f]
 
-print "Number of users in white list:", len(userIdWhiteList)
+print("Number of users in white list:", len(userIdWhiteList))
+
 
 
 # build savepoint path + file
@@ -62,21 +66,22 @@ for tweet in timelineIterator:
     screenname = user.screen_name
     userid = user.id
     useridstring = str(userid)
-    print "userid: ", userid
-    print "useridstring: ", useridstring
-    print "screen name: ", screenname
-    print "useridstring in whitelist? ", (useridstring in userIdWhiteList)
+    status_text = tweet.text.encode('utf-8')
+    print("userid: ", userid)
+    print("useridstring: ", useridstring)
+    print("screen name: ", screenname)
+    print("useridstring in whitelist? ", (useridstring in userIdWhiteList))
     if hasattr(tweet, 'retweeted_status'):
         isRetweet = True
-        print "retweet: ", isRetweet
-    print "text: ", tweet.text.encode('utf-8')
-    print "(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList)
-    print "not isRetweet:", not isRetweet
+        print("retweet: ", isRetweet)
+    print("text: ", tweet.text.encode('utf-8'))
+    print("(useridstring in userIdWhiteList):", (useridstring in userIdWhiteList))
+    print("not isRetweet:", not isRetweet)
     if ((useridstring in userIdWhiteList) and (not isRetweet)):
         oklist.append(tweet)
-        print "User in whitelist AND status not a RT: OK for RT \n\n"
+        print("User in whitelist AND status not a RT: OK for RT \n\n")
     else:
-        print "not ok for RT \n\n"
+        print("not ok for RT \n\n")
 
 
 try:
@@ -84,11 +89,9 @@ try:
 except IndexError:
     last_tweet_id = savepoint
 
-# filter @replies/blacklisted words & users out and reverse timeline
-# remove all tweets with an @mention
-# oklist = filter(lambda status: status.text[0] == "@", oklist)
-
-#timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
+# filter blacklisted words & users out and reverse timeline
+wordBlacklist = set((u"remplacant",u"RT",u"remplaçant"))
+oklist = filter(lambda tweet: not any(word in tweet.text.split() for word in wordBlacklist), oklist)
 
 #timeline = filter(lambda status: status.author.id_str in userIdWhiteList, oklist)
 oklist = list(oklist)
@@ -106,7 +109,7 @@ for status in oklist:
                "message": status.text.encode('utf-8'),
                "retweeted": isRetweet})
 
-        #api.retweet(status.id)
+        api.retweet(status.id)
         tw_counter += 1
     except tweepy.error.TweepError as e:
         # just in case tweet got deleted in the meantime or already retweeted

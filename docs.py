@@ -5,15 +5,23 @@
 
 import os, configparser, tweepy, inspect, pickle, time
 
-botid = 881706502939185152
-slug = "docs"
-
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-file = os.path.join(path, "docs")
+
+config = "configtest"
+#config = "configprod"
+
+configfile = os.path.join(path, config)
 
 # read config
 config = configparser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config.read(configfile)
+
+whitelist = config.get("settings", "white_list_file")
+file = os.path.join(path, whitelist)
+
+slug = config.get("settings", "white_list_slug")
+
+bot_id = config.get("settings", "bot_id")
 
 # your hashtag or search query and tweet language (empty = all languages)
 tweetLanguage = config.get("settings", "tweet_language")
@@ -28,7 +36,7 @@ docs = [ ]
 # In this example, the handler is time.sleep(15 * 60),
 # but you can of course handle it in any way you want.
 
-members = tweepy.Cursor(api.list_members, owner_id=botid, slug='docs').items()
+members = tweepy.Cursor(api.list_members, owner_id=bot_id, slug=slug).items()
 ids = [user.id for user in members]
 
 for id in ids:

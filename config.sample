@@ -3,7 +3,9 @@ search_query:
 # Leave empty for all languages
 tweet_language:
 number_of_rt:
-
+bot_id:
+white_list_slug:
+white_list_file:
 # Create your app on http://apps.twitter.com
 [twitter]
 consumer_key:

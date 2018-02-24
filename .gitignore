@@ -7,3 +7,11 @@ docstest
 
 # Development
 /env
+status_*
+
+# Python
+*.pyc
+
+# loggin
+error.log
+info.log

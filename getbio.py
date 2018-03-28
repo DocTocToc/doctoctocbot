@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, configparser, tweepy, inspect, codecs, io
+import os, configparser, tweepy, inspect, io
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
@@ -36,8 +36,8 @@ api = tweepy.API(auth)
 
 # API limit to GET users: 100 per call
 bio = ""
-max = 100
-friendschunks = [friends[i:i + max] for i in range(0, len(friends), max)]
+maximum = 100
+friendschunks = [friends[i:i + max] for i in range(0, len(friends), maximum)]
 
 for chunk in friendschunks:
     users = api.lookup_users(user_ids=chunk)

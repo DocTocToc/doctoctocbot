@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # add friends (whitelist) to privat Twitter list "docs"
-# bot user_id=881706502939185152
-import os, configparser, tweepy, inspect, pickle, time
+import os, configparser, tweepy, inspect, time
 
 slug = "docs"
 bot_id=881706502939185152
@@ -29,8 +28,8 @@ with open(file, mode='r') as f:
 
 lists = api.lists_all()
 print "List of the lists \n"
-for list in lists:
-    print "list: ", list.slug, list.id
+for l in lists:
+    print "list: ", l.slug, l.id
 
 for friend in friends:
     api.add_list_member(owner_id=bot_id, slug=slug, user_id=int(friend))

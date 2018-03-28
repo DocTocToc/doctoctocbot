@@ -15,3 +15,9 @@ status_*
 # loggin
 error.log
 info.log
+debug.log
+
+# eclipse
+.project
+.pydevproject
+.settings

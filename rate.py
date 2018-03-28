@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import tweepy
-from doctoctocbot import getConfig, getAuth
+from twitter import getAuth
+from cfg import getConfig
 
 def getratelimit():
     "get Twitter API rate limit info"

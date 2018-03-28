@@ -12,20 +12,13 @@ License: Mozilla Public License, see 'LICENSE' for details.
 import hashlib
 import os
 import tweepy
-from cfg import getConfig, whitelist
+from twitter import getAuth
+from cfg import getConfig
 from log import setup_logging
 import logging
 
 setup_logging()
 logger = logging.getLogger(__name__)
-
-
-def getAuth( ):
-    "get Tweepy OAuthHandler authentification object"
-    config = getConfig()
-    auth = tweepy.OAuthHandler(config.get("twitter", "consumer_key"), config.get("twitter", "consumer_secret"))
-    auth.set_access_token(config.get("twitter", "access_token"), config.get("twitter", "access_token_secret"))
-    return auth
 
 
 def okrt( status ):
@@ -40,12 +33,12 @@ def isrt( status ):
 def iswhitelist( status ):
     "is the author of the status whitelisted?"
     logger.debug("user id: %s", status['user']['id'])
-    return status['user']['id'] in whitelist
+    return status['user']['id'] in getWhitelist()
 
 def lenWhitelist():
     "length of whitelist"
-    logger.debug("Number of users in white list: %s", len(cfg.whitelist))
-    return len(whitelist)
+    logger.debug("Number of users in white list: %s", len(getWhitelist))
+    return len(getWhitelist)
 
 def okblacklist( status ):
     "filter blacklisted words"
@@ -53,16 +46,24 @@ def okblacklist( status ):
     logger.debug("Does text contain blacklisted word? %s", any(word in status['text'].split() for word in wordBlacklist))
     return not any(word in status['text'].split() for word in wordBlacklist)
 
-def retweet( id ):
+def retweet( status_id ):
     api = tweepy.API(getAuth())
-    api.retweet(id)
+    api.retweet(status_id)
     return
 
+def getWhitelist():
+    "get user whitelist"
+    whitelistfilename = getConfig()["whitelist"]["file"]
+    with open(whitelistfilename, 'r') as f:
+        whitelist = [int(line.rstrip('\n')) for line in f]
+    logger.debug(whitelist)
+    return whitelist
 
 if __name__ == '__main__':
-
+    
+    config = getConfig()
     # build savepoint path + file
-    hashtag = getConfig().get("settings", "search_query")
+    hashtag = config["settings"]["search_query"]
     hashedHashtag = hashlib.md5(hashtag.encode('ascii')).hexdigest()
     last_id_filename = "last_id_hashtag_%s" % hashedHashtag
     rt_bot_path = os.path.dirname(os.path.abspath(__file__))
@@ -73,19 +74,18 @@ if __name__ == '__main__':
     
     # retrieve last savepoint if available
     try:
-        with open(last_id_file, "r") as file:
-            savepoint = file.read()
+        with open(last_id_file, "r") as f:
+            savepoint = f.read()
     except IOError:
         savepoint = ""
         print("No savepoint found. Bot is now searching for results")
     
     
     # your hashtag or search query and tweet language (empty = all languages)
-    hashtag = getConfig().get("settings", "search_query")
-    tweetLanguage = getConfig().get("settings", "tweet_language")
+    tweetLanguage = config["settings"]["tweet_language"]
     
     # search query
-    timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang=tweetLanguage).items(getConfig().get("settings", "number_of_rt"))
+    timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang=tweetLanguage).items(config["settings"]["number_of_rt"])
     
     # put everything into a list to be able to sort/filter
     
@@ -102,7 +102,7 @@ if __name__ == '__main__':
         logger.debug("userid: %s", userid)
         logger.debug("useridstring: %s", useridstring)
         logger.debug("screen name: %s", screenname)
-        logger.debug("useridstring in whitelist? %s", (useridstring in whitelist))
+        logger.debug("useridstring in whitelist? %s", (useridstring in getWhitelist()))
         if hasattr(tweet, 'retweeted_status'):
             isRetweet = True
             logger.debug("retweet: %s", isRetweet)
@@ -151,5 +151,5 @@ if __name__ == '__main__':
     logger.info("Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter))
     
     # write last retweeted tweet id to file
-    with open(last_id_file, "w") as file:
-        file.write(str(last_tweet_id))
+    with open(last_id_file, "w") as f:
+        f.write(str(last_tweet_id))

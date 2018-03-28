@@ -1,3 +1,3 @@
-tweepy==3.5.0
-configparser==3.5.0
-
+tweepy
+configparser
+logging ; python_version < '3.0'

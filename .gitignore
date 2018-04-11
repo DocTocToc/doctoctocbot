@@ -1,4 +1,7 @@
-config*
+configtest
+configprod
+configtest.json
+configprod.json
 last_id_hashtag_*
 friends
 bio*

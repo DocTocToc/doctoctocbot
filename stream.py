@@ -25,10 +25,12 @@ def printStatus( status ):
 class StdOutListener(StreamListener):
 
     def on_status(self, status):
-            if okrt(status._json):
-                logger.info("retweeting status %s: %s ", status.id, status.text)
-                retweet(status.id)
-            return True
+        logger.debug(status._json)
+        logger.debug("is this status ok for RT? %s" , str(okrt(status._json)))
+        if okrt(status._json):
+            logger.info("retweeting status %s: %s ", status.id, status.text)
+            retweet(status.id)
+        return True
 
     def on_error(self, status_code):
             logger.error(status_code)
@@ -46,4 +48,5 @@ if __name__ == '__main__':
     #This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
     search = []
     search.append(config['settings']['search_query'])
-    stream.filter(track = search)
+    logger.info(search)
+    stream.filter(track = ["#doctoctoctest"])

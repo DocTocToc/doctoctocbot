@@ -20,15 +20,55 @@ import logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
+def whatisthis(s):
+    if isinstance(s, str):
+        print("ordinary string")
+    elif isinstance(s, unicode):
+        print("unicode string")
+    else:
+        print("not a string")
+
+def isreply( status ):
+    "is status in reply to screen name or status or user?"
+    logger.debug("in_reply_to_screen_name? %s" , status['in_reply_to_screen_name'])
+    logger.debug("in_reply_to_status_id_str? %s" , status['in_reply_to_status_id_str'])
+    logger.debug("in_reply_to_user_id_str? %s" , status['in_reply_to_user_id_str'])
+    reply_screen = str(status['in_reply_to_screen_name'])
+    reply_id = str(status['in_reply_to_status_id_str'])
+    reply_user = str(status['in_reply_to_user_id_str'])
+    logger.debug(whatisthis(reply_screen))
+    logger.debug(whatisthis(reply_id))
+    logger.debug(whatisthis(reply_user))
+    isreply = not (reply_screen == "None" and
+               reply_id == "None" and
+               reply_user == "None")
+    log = "is this status a reply? %s" % isreply
+    logger.debug(log)
+    return isreply
 
 def okrt( status ):
     "should we RT this status?"
-    return not isrt(status) and iswhitelist(status) and okblacklist(status) 
+    ok = not isrt(status) and \
+         not isquote(status) and \
+         not isreply(status) and \
+         iswhitelist(status) and \
+         okblacklist(status)
+    logger.debug("is this status ok for RT?")
+    logger.debug(ok)
+    logger.debug(type(ok))
+    return ok
 
 def isrt( status ):
     "is this status a RT?"
-    logger.debug("is this status a retweet? %s" , status['retweeted'])
-    return status['retweeted']
+    isrt = False
+    isrt = "retweeted_status" in status
+    logger.debug("is this status a retweet? %s" , isrt)
+    return isrt
+
+def isquote( status ):
+    " is this a quoted status?"
+    logger.debug("is this status a quoted status? %s" , status['is_quote_status'])
+    return status['is_quote_status']
 
 def iswhitelist( status ):
     "is the author of the status whitelisted?"

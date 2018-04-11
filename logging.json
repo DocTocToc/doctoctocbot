@@ -10,7 +10,7 @@
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "level": "INFO",
+            "level": "ERROR",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
@@ -48,14 +48,14 @@
 
     "loggers": {
         "my_module": {
-            "level": "INFO",
+            "level": "ERROR",
             "handlers": ["console"],
             "propagate": "no"
         }
     },
 
     "root": {
-        "level": "INFO",
+        "level": "ERROR",
         "handlers": ["console", "info_file_handler", "error_file_handler", "debug_file_handler"]
     }
 }

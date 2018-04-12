@@ -94,7 +94,9 @@ def retweet( status_id ):
 def getWhitelist():
     "get user whitelist"
     whitelistfilename = getConfig()["whitelist"]["file"]
-    with open(whitelistfilename, 'r') as f:
+    rt_bot_path = os.path.dirname(os.path.abspath(__file__))
+    wlpath = os.path.join(rt_bot_path, whitelistfilename)
+    with open(wlpath, 'r') as f:
         whitelist = [int(line.rstrip('\n')) for line in f]
     logger.debug(whitelist)
     return whitelist

@@ -16,6 +16,7 @@ from twitter import getAuth
 from cfg import getConfig
 from log import setup_logging
 import logging
+import unidecode
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -48,14 +49,15 @@ def isreply( status ):
 
 def okrt( status ):
     "should we RT this status?"
+    if status['user']['id'] == getConfig()['settings']['bot_id']:
+        logger.debug("self status, no RT")
+        return False
     ok = not isrt(status) and \
          not isquote(status) and \
          not isreply(status) and \
          iswhitelist(status) and \
-         okblacklist(status)
-    logger.debug("is this status ok for RT?")
-    logger.debug(ok)
-    logger.debug(type(ok))
+         not isreplacement(status)
+    logger.debug("is this status ok for RT? %s", ok)
     return ok
 
 def isrt( status ):
@@ -86,6 +88,24 @@ def okblacklist( status ):
     logger.debug("Does text contain blacklisted word? %s", any(word in status['text'].split() for word in wordBlacklist))
     return not any(word in status['text'].split() for word in wordBlacklist)
 
+def isreplacement( status ):
+    "remove status asking for a replacement physician"
+    #remplacementblacklist = frozenset([u"remplacement", u"rempla"])
+    remplacantblacklist = frozenset(["rempla", "remplacant", "remplaçant"])
+    monthlist = frozenset([u"janvier", u"fevrier", u"mars", u"avril", u"mai",
+                          u"juin", u"juillet", u"aout", u"septembre",
+                          u"octobre", u"novembre", u"decembre"])
+    wordlist = frozenset(unidecode.unidecode(status['text']).split())
+    replacement = (bool(wordlist.intersection(monthlist)) and \
+                     bool(wordlist.intersection(remplacantblacklist))) or \
+                    (bool(wordlist.intersection(["du"])) and \
+                     bool(wordlist.intersection(["au"])) and \
+                     bool(wordlist.intersection(remplacantblacklist))) or \
+                    (bool(wordlist.intersection(["cherche"])) and \
+                     bool(wordlist.intersection(remplacantblacklist)))
+    logger.debug("bool(replacement) == %s", bool(replacement))
+    return bool(replacement)
+    
 def retweet( status_id ):
     api = tweepy.API(getAuth())
     api.retweet(status_id)

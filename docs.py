@@ -5,7 +5,7 @@
 
 import os, tweepy, inspect
 from twitter import getAuth
-from cfg import getConfig
+from conf.cfg import getConfig
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 

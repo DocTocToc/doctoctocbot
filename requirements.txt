@@ -2,3 +2,4 @@ tweepy
 configparser
 logging ; python_version < '3.0'
 unidecode
+sqlalchemy

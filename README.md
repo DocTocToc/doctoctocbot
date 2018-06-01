@@ -1,4 +1,5 @@
 # doctoctocbot
+
 A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent of "Knock, knock!" in French, but is not used to introduce a joke).
 \#DocTocToc is used by French speaking doctors and other healthcare professionals to help each other with clinical cases or administrative chores.
 
@@ -6,8 +7,12 @@ Contributions to the code are welcome. Data mining, NLP hackers, I need you!
 
 ## DocTocTocBot rules
 
-1. I retweet tweets containing the hashtag #doctoctoc sent by MDs
-2. Twitter users who do not want to be retweeted can block me
+1. I retweet tweets containing the hashtag #doctoctoc.
+2. I retweet only MDs and midwives.
+3. Twitter users who do not want to be retweeted can DM me (manually processed please be patient) or block me (effective immediately).
+4. I don't retweet retweets.
+5. I don't retweet answers.
+6. I don't retweet "quote tweets".
 
 ## Challenges
 
@@ -22,20 +27,16 @@ Contributions to the code are welcome. Data mining, NLP hackers, I need you!
 
 Read more about technical issues, code: [wiki](https://github.com/jeromecc/doctoctocbot/wiki)
 
-[Présentation du robot en français](https://medecinelibre.com/doctoctoc-bot)
+[Présentation du robot en français](https://freemedsoft.com/fr/bot/doctoctoc/)
 
 DocTocTocBot is maintained by [@medecinelibre](https://twitter.com/medecinelibre)
 
 
-### Future
+## Future
 The bot will be adapted to [Mastodon](https://mastodon.social) soon.
 
-Python Retweet Bot
-==================
+![alt text](https://img.shields.io/badge/python-3.6-green.svg "Python3.6")
 
-![alt text](https://img.shields.io/badge/python-3.5-green.svg "Python3.5")
-
-This script retweets all Tweets containing your search term. To limit Twitter requests a savepoint file marks Tweets found before. It's Twitter API v1.1 ready.
 
 Dependecies:
 -------------
@@ -60,4 +61,7 @@ How to start:
 Compatibility
 -------------
 
-Compatible with Python 3.x ,tested  on Python 3.5.
+Compatible with Python 3.x ,tested on Python 3.6.
+
+## Thanks
+To [@natolh](https://twitter.com/natolh) for his technical advice and pull requests.

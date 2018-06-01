@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import tweepy
-from cfg import getConfig
+from conf.cfg import getConfig
 
 def getAuth( ):
     "get Tweepy OAuthHandler authentication object"

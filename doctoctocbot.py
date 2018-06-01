@@ -13,7 +13,7 @@ import hashlib
 import os
 import tweepy
 from twitter import getAuth
-from cfg import getConfig
+from conf.cfg import getConfig
 from log import setup_logging
 import logging
 import unidecode
@@ -23,11 +23,11 @@ logger = logging.getLogger(__name__)
 
 def whatisthis(s):
     if isinstance(s, str):
-        print("ordinary string")
+        return "ordinary string"
     elif isinstance(s, unicode):
-        print("unicode string")
+        return "unicode string"
     else:
-        print("not a string")
+        return "not a string"
 
 def isreply( status ):
     "is status in reply to screen name or status or user?"

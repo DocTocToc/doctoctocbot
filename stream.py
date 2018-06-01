@@ -3,11 +3,12 @@ from tweepy.streaming import StreamListener
 #from tweepy import OAuthHandler
 from tweepy import Stream
 import json
-from cfg import getConfig
+from conf.cfg import getConfig
 from twitter import getAuth
 from doctoctocbot import okrt, retweet
 from log import setup_logging
 import logging
+from lib.statusdb import addstatus
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -30,6 +31,8 @@ class StdOutListener(StreamListener):
         if okrt(status._json):
             logger.info("retweeting status %s: %s ", status.id, status.text)
             retweet(status.id)
+        dbstatus = addstatus(status._json)
+        dbstatus.addstatus()
         return True
 
     def on_error(self, status_code):

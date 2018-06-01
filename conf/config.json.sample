@@ -14,5 +14,15 @@
      "consumer_secret":"xxx",
      "access_token":"xxx",
      "access_token_secret":"xxx"
-     }
+     },
+"postgresql":{
+    "username":"xxx",
+    "password":"xxx",
+    "host":"127.0.0.1",
+    "port":"5432",
+    "database":"xxx"
+    },
+"images":{
+    "dir":"/home/xxx/images/"
+    }
 }

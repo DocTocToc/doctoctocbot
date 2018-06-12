@@ -1,10 +1,11 @@
 {
 "settings":{
-    "search_query":"#hashtag",
     "tweet_language":"",
     "number_of_rt":20,
     "bot_id":123456789
     },
+"keyword_track_list": ["#doctoctoctest", "#docstoctoctest"],
+"keyword_retweet_list": ["#doctoctoctest"],
 "whitelist":{
      "slugs":["this", "that"],
      "file":"filename"

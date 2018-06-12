@@ -29,6 +29,19 @@ def whatisthis(s):
     else:
         return "not a string"
 
+def has_retweet_hashtag( status ):
+    """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
+    Returns False otherwise.
+    In this function a "keyword" is always a hashtag. We must remove the #
+    (first character) before comparing the string with the text of the hashtag entity.
+    """
+    hashtags = status["entities"]["hashtags"]
+    for hashtag in hashtags:
+        for keyword in getConfig()["keyword_retweet_list"]:
+            if keyword[1:] == hashtag["text"]:
+                return True
+    return False
+
 def isreply( status ):
     "is status in reply to screen name or status or user?"
     logger.debug("in_reply_to_screen_name? %s" , status['in_reply_to_screen_name'])
@@ -37,9 +50,6 @@ def isreply( status ):
     reply_screen = str(status['in_reply_to_screen_name'])
     reply_id = str(status['in_reply_to_status_id_str'])
     reply_user = str(status['in_reply_to_user_id_str'])
-    logger.debug(whatisthis(reply_screen))
-    logger.debug(whatisthis(reply_id))
-    logger.debug(whatisthis(reply_user))
     isreply = not (reply_screen == "None" and
                reply_id == "None" and
                reply_user == "None")
@@ -125,8 +135,10 @@ if __name__ == '__main__':
     
     config = getConfig()
     # build savepoint path + file
-    hashtag = config["settings"]["search_query"]
-    hashedHashtag = hashlib.md5(hashtag.encode('ascii')).hexdigest()
+    keyword_list = config["keyword_retweet_list"]
+    search_string = " OR ".join ( keyword_list )
+    logger.debug("search_string: %s" % (search_string))
+    hashedHashtag = hashlib.md5(search_string.encode('ascii')).hexdigest()
     last_id_filename = "last_id_hashtag_%s" % hashedHashtag
     rt_bot_path = os.path.dirname(os.path.abspath(__file__))
     last_id_file = os.path.join(rt_bot_path, last_id_filename)
@@ -140,14 +152,14 @@ if __name__ == '__main__':
             savepoint = f.read()
     except IOError:
         savepoint = ""
-        print("No savepoint found. Bot is now searching for results")
+        logger.debug("No savepoint found. Bot is now searching for results")
     
     
-    # your hashtag or search query and tweet language (empty = all languages)
+    # Tweet language (empty = all languages)
     tweetLanguage = config["settings"]["tweet_language"]
     
     # search query
-    timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=savepoint, lang=tweetLanguage).items(config["settings"]["number_of_rt"])
+    timelineIterator = tweepy.Cursor(api.search, q=search_string, since_id=savepoint, lang=tweetLanguage).items(config["settings"]["number_of_rt"])
     
     # put everything into a list to be able to sort/filter
     

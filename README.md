@@ -13,6 +13,7 @@ Contributions to the code are welcome. Data mining, NLP hackers, I need you!
 4. I don't retweet retweets.
 5. I don't retweet answers.
 6. I don't retweet "quote tweets".
+7. I exclude a few usecases such as professionals looking for a replacement.
 
 ## Challenges
 
@@ -37,26 +38,34 @@ The bot will be adapted to [Mastodon](https://mastodon.social) soon.
 
 ![alt text](https://img.shields.io/badge/python-3.6-green.svg "Python3.6")
 
+Python version
+--------------
+The bot and its accompanying modules are Written for Python3.6. You might make
+them work with Python 2.7 but we are recommending neither not supporting this
+version.
 
-Dependecies:
+Dependencies:
 -------------
 * Tweepy
-
-```pip install tweepy```
-
-* Or alternatively
+* SQLAlchemy
+* configparser
+* logging (if python_version < '3.0')
+* unidecode
 
 ```pip install -r requirements.txt```
 
 How to start:
 -------------
 
-* Define your hashtag or search query in the config file
-* Define the number of Retweets at a time (This avoids overloading -Limit is 180 RT/ 15 mins)
+* Define your the hashtag(s) you want to retweet and the hashtag(s) you want to trach in the config file.
+* You can track more hashtags than you retweet (for archival purpose)
+* Start the tracking stream: ```python3 stream.py```
+* You can start up the steam automagically with systemd.
+* For the search and retweet module doctoctocbot.py, define the number of retweets at a time (This avoids overloading -Limit is 180 RT/ 15 mins)
 * Add your Twitter app credentials in the config file
 * (Tune some other options if you like)
-* $ python retweet.py
-* Add this call to your crontab(unix)/task scheduler(windows) (or something similar) to retweet all new tweets regularly
+* Search and retweet ```python3 doctoctocbot.py```
+* Add this call to your crontab(unix) (or something similar) to retweet all new tweets regularly
 
 Compatibility
 -------------

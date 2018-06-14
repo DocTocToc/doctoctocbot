@@ -38,7 +38,7 @@ def has_retweet_hashtag( status ):
     hashtags = status["entities"]["hashtags"]
     for hashtag in hashtags:
         for keyword in getConfig()["keyword_retweet_list"]:
-            if keyword[1:] == hashtag["text"]:
+            if keyword[1:].lower() == hashtag["text"].lower():
                 return True
     return False
 

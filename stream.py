@@ -1,6 +1,4 @@
-#Import the necessary methods from tweepy library
 from tweepy.streaming import StreamListener
-#from tweepy import OAuthHandler
 from tweepy import Stream
 import json
 from conf.cfg import getConfig
@@ -35,6 +33,8 @@ class StdOutListener(StreamListener):
                 retweet(status.id)
         dbstatus = addstatus(status._json)
         dbstatus.addstatus()
+        if config['django']:
+            dbstatus.addtweetdj()
         return True
 
     def on_error(self, status_code):

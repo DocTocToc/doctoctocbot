@@ -57,6 +57,10 @@ def isreply( status ):
     logger.debug(log)
     return isreply
 
+def isquestion ( status ):
+    "Does this status text contain a question mark?"
+    return '?' in status['text']
+
 def okrt( status ):
     "should we RT this status?"
     if status['user']['id'] == getConfig()['settings']['bot_id']:
@@ -66,8 +70,12 @@ def okrt( status ):
          not isquote(status) and \
          not isreply(status) and \
          iswhitelist(status) and \
-         not isreplacement(status)
+         not isreplacement(status) and \
+         not status['retweeted'] and \
+         isquestion(status)
     logger.debug("is this status ok for RT? %s", ok)
+    logger.debug("Have I already RTed this? %s", status['retweeted'])
+    print(status['retweeted'])
     return ok
 
 def isrt( status ):
@@ -76,6 +84,7 @@ def isrt( status ):
     isrt = "retweeted_status" in status
     logger.debug("is this status a retweet? %s" , isrt)
     return isrt
+
 
 def isquote( status ):
     " is this a quoted status?"
@@ -137,6 +146,7 @@ if __name__ == '__main__':
     # build savepoint path + file
     keyword_list = config["keyword_retweet_list"]
     search_string = " OR ".join ( keyword_list )
+    search_string = search_string + u" -filter:retweets"
     logger.debug("search_string: %s" % (search_string))
     hashedHashtag = hashlib.md5(search_string.encode('ascii')).hexdigest()
     last_id_filename = "last_id_hashtag_%s" % hashedHashtag
@@ -167,7 +177,9 @@ if __name__ == '__main__':
     isRetweet = False
     
     for tweet in timelineIterator:
-        isRetweet = False
+        status = api.get_status(tweet.id)
+        status_json = status._json
+        logger.debug(" raw_status: %s", status._json)
         user = tweet.user
         screenname = user.screen_name
         userid = user.id
@@ -177,18 +189,16 @@ if __name__ == '__main__':
         logger.debug("useridstring: %s", useridstring)
         logger.debug("screen name: %s", screenname)
         logger.debug("useridstring in whitelist? %s", (useridstring in getWhitelist()))
-        if hasattr(tweet, 'retweeted_status'):
-            isRetweet = True
-            logger.debug("retweet: %s", isRetweet)
         logger.debug("text: %s", tweet.text.encode('utf-8'))
-        logger.debug("useridstring in whitelist: %s", (iswhitelist(tweet._json)))
-        logger.debug("not isRetweet: %s", not isRetweet)
-        if (iswhitelist(tweet._json) and (not isRetweet)):
+        logger.debug("useridstring in whitelist: %s", (iswhitelist(status_json)))
+        logger.debug("isrt: %s", isrt(status_json))
+        logger.debug("status 'retweeted': %s", status_json['retweeted'])
+        logger.debug("is this a question? %s", isquestion(status_json))
+        if okrt(status_json):
             oklist.append(tweet)
-            logger.debug("User in whitelist AND status not a RT: OK for RT")
+            logger.debug(":) OK for RT")
         else:
-            logger.debug("not ok for RT")
-    
+            logger.debug(":( not ok for RT")
     
     try:
         last_tweet_id = oklist[0].id
@@ -211,8 +221,7 @@ if __name__ == '__main__':
             logger.debug("(%(date)s) %(name)s: %(message)s\n" % \
                   {"date": status.created_at,
                    "name": status.author.screen_name.encode('utf-8'),
-                   "message": status.text.encode('utf-8'),
-                   "retweeted": isRetweet})
+                   "message": status.text.encode('utf-8')})
     
             api.retweet(status.id)
             tw_counter += 1

@@ -36,11 +36,12 @@ def has_retweet_hashtag( status ):
     (first character) before comparing the string with the text of the hashtag entity.
     """
     hashtags = status["entities"]["hashtags"]
+    ismatch = False
     for hashtag in hashtags:
         for keyword in getConfig()["keyword_retweet_list"]:
             if keyword[1:].lower() == hashtag["text"].lower():
-                return True
-    return False
+                ismatch = True
+    return ismatch
 
 def isreply( status ):
     "is status in reply to screen name or status or user?"

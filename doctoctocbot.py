@@ -35,6 +35,12 @@ def has_retweet_hashtag( status ):
     In this function a "keyword" is always a hashtag. We must remove the #
     (first character) before comparing the string with the text of the hashtag entity.
     """
+    logger.debug("isinstance(status, list): %s", isinstance(status, list))
+    logger.debug("isinstance(status, dict): %s", isinstance(status, dict))
+    logger.debug("isinstance(status, str): %s", isinstance(status, str))
+    if 'extended_tweet' in status:
+        status = status['extended_tweet']
+    logger.debug("status in has_retweet_hashtag: %s", status)
     hashtags = status["entities"]["hashtags"]
     ismatch = False
     for hashtag in hashtags:
@@ -60,7 +66,10 @@ def isreply( status ):
 
 def isquestion ( status ):
     "Does this status text contain a question mark?"
-    return '?' in status['text']
+    if 'extended_tweet' in status:
+        status = status['extended_tweet']
+    logger.debug("content of status in isquestion: %s", status)
+    return '?' in status['full_text']
 
 def okrt( status ):
     "should we RT this status?"
@@ -104,18 +113,23 @@ def lenWhitelist():
 
 def okblacklist( status ):
     "filter blacklisted words"
+    if 'extended_tweet' in status:
+        status = status['extended_tweet']
     wordBlacklist = set((u"remplacant",u"RT",u"remplaçant"))
-    logger.debug("Does text contain blacklisted word? %s", any(word in status['text'].split() for word in wordBlacklist))
-    return not any(word in status['text'].split() for word in wordBlacklist)
+    logger.debug("Does text contain blacklisted word? %s", any(word in status['full_text'].split() for word in wordBlacklist))
+    return not any(word in status['full_text'].split() for word in wordBlacklist)
 
 def isreplacement( status ):
     "remove status asking for a replacement physician"
+    if 'extended_tweet' in status:
+        status = status['extended_tweet']
+    text = status['full_text']
     #remplacementblacklist = frozenset([u"remplacement", u"rempla"])
     remplacantblacklist = frozenset(["rempla", "remplacant", "remplaçant"])
     monthlist = frozenset([u"janvier", u"fevrier", u"mars", u"avril", u"mai",
                           u"juin", u"juillet", u"aout", u"septembre",
                           u"octobre", u"novembre", u"decembre"])
-    wordlist = frozenset(unidecode.unidecode(status['text']).split())
+    wordlist = frozenset(unidecode.unidecode(text).split())
     replacement = (bool(wordlist.intersection(monthlist)) and \
                      bool(wordlist.intersection(remplacantblacklist))) or \
                     (bool(wordlist.intersection(["du"])) and \
@@ -170,7 +184,7 @@ if __name__ == '__main__':
     tweetLanguage = config["settings"]["tweet_language"]
     
     # search query
-    timelineIterator = tweepy.Cursor(api.search, q=search_string, since_id=savepoint, lang=tweetLanguage).items(config["settings"]["number_of_rt"])
+    timelineIterator = tweepy.Cursor(api.search, q=search_string, since_id=savepoint, lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
     
     # put everything into a list to be able to sort/filter
     
@@ -178,19 +192,19 @@ if __name__ == '__main__':
     isRetweet = False
     
     for tweet in timelineIterator:
-        status = api.get_status(tweet.id)
+        status = api.get_status(tweet.id,  tweet_mode='extended')
         status_json = status._json
         logger.debug(" raw_status: %s", status._json)
         user = tweet.user
         screenname = user.screen_name
         userid = user.id
         useridstring = str(userid)
-        status_text = tweet.text.encode('utf-8')
+        status_text = tweet.full_text.encode('utf-8')
         logger.debug("userid: %s", userid)
         logger.debug("useridstring: %s", useridstring)
         logger.debug("screen name: %s", screenname)
         logger.debug("useridstring in whitelist? %s", (useridstring in getWhitelist()))
-        logger.debug("text: %s", tweet.text.encode('utf-8'))
+        logger.debug("text: %s", tweet.full_text.encode('utf-8'))
         logger.debug("useridstring in whitelist: %s", (iswhitelist(status_json)))
         logger.debug("isrt: %s", isrt(status_json))
         logger.debug("status 'retweeted': %s", status_json['retweeted'])
@@ -208,7 +222,7 @@ if __name__ == '__main__':
     
     # filter blacklisted words & users out and reverse timeline
     wordBlacklist = set((u"remplacant",u"RT",u"remplaçant"))
-    oklist = filter(lambda tweet: not any(word in tweet.text.split() for word in wordBlacklist), oklist)
+    oklist = filter(lambda tweet: not any(word in tweet.full_text.split() for word in wordBlacklist), oklist)
     
     oklist = list(oklist)
     oklist.reverse()
@@ -222,7 +236,7 @@ if __name__ == '__main__':
             logger.debug("(%(date)s) %(name)s: %(message)s\n" % \
                   {"date": status.created_at,
                    "name": status.author.screen_name.encode('utf-8'),
-                   "message": status.text.encode('utf-8')})
+                   "message": status.full_text.encode('utf-8')})
     
             api.retweet(status.id)
             tw_counter += 1

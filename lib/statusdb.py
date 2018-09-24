@@ -11,9 +11,11 @@ if getConfig()['django']:
     sys.path.append('django')
     os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
     django.setup()
-    from mpttest.models import Tweetdj, Treedj
+    from mpttest.models import Tweetdj
+import logging
+logger = logging.getLogger(__name__)
 
-class addstatus:
+class Addstatus:
     def __init__(self, json):
         self.json = json
 
@@ -30,15 +32,23 @@ class addstatus:
 
 
     def addtweetdj(self):
-        status = Tweetdj(statusid = self.id(),
-                        userid = self.userid(),
-                        json = self.json,
-                        datetime = self.datetimetz(),
-                        reply = 0,
-                        like = self.like(),
-                        retweet = self.retweet())
+        """
+        Add status to Django database (table tweetdj).
+        MPTT tree node is added to treedj inside the overridden save method of
+        Tweetdj class, in the Django model.
+        """
+        status = Tweetdj(
+            statusid = self.id(),
+            userid = self.userid(),
+            json = self.json,
+            datetime = self.datetimetz(),
+            reply = 0,
+            like = self.like(),
+            retweet = self.retweet(),
+            parentid = self.parentid()
+            )
         status.save()
-        Treedj.objects.create(statusid = self.id())
+        logger.debug("function addtweetdj added status %s", status)
         return True
 
     def datetime(self):
@@ -94,3 +104,6 @@ class addstatus:
             filepath = getConfig()["images"]["dir"] + filename
             r = requests.get(url, allow_redirects=True)
             open(filepath, 'wb').write(r.content)
+
+    def parentid(self):
+        return self.json["in_reply_to_status_id"]

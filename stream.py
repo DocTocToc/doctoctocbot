@@ -7,7 +7,7 @@ from twitter import getAuth
 from doctoctocbot import okrt, retweet, has_retweet_hashtag
 from log import setup_logging
 import logging
-from lib.statusdb import addstatus
+from lib.statusdb import Addstatus
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class StdOutListener(StreamListener):
         if okrt(status._json):
             logger.info("Retweeting status %s: %s ", status.id, status.full_text)
             retweet(status.id)
-        dbstatus = addstatus(status._json)
+        dbstatus = Addstatus(status._json)
         dbstatus.addstatus()
         if config['django']:
             dbstatus.addtweetdj()

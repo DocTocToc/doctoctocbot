@@ -3,4 +3,6 @@ configparser
 unidecode
 sqlalchemy
 psycopg2
+Django==2.1
 django-mptt
+pytz

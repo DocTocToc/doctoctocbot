@@ -1,0 +1,28 @@
+{
+    "test": true,
+    "production": false,
+    "settings":{
+        "tweet_language":"",
+        "number_of_rt":20,
+        "bot_id": 123456789,
+        "bot_screen_name": "coolbot"
+    },
+    "keyword_track_list": ["#doctoctoctest", "#docstoctoctest"],
+    "keyword_retweet_list": ["#doctoctoctest"],
+    "twitter":{
+        "consumer_key":"xxx",
+        "consumer_secret":"xxx",
+        "access_token":"xxx",
+        "access_token_secret":"xxx"
+    },
+    "postgresql":{
+        "username":"xxx",
+        "password":"xxx",
+        "host":"127.0.0.1",
+        "port":"5432",
+        "database":"xxx"
+    },
+    "images":{
+        "dir":"/home/xxx/images/"
+    }
+}

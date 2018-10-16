@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ view.title }}</h1>
+  <p>Manage your account.</p>
+  <ul>
+  <li>userid: {{ uid }}</li>
+  <li> username: {{ user.get_username }}</li>
+  </ul>
+{% endblock %}

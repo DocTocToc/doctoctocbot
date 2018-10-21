@@ -5,6 +5,16 @@ A Twitter bot to enhance the hashtag #doctoctoc ("Toc, toc!" is the equivalent o
 
 Contributions to the code are welcome. Data mining, NLP hackers, I need you!
 
+## Cloning this repository
+This repository contains a submodule ```src/bot/lib/python-twitter```. It is a modified version of python-twitter that allows sending and retrieving direct messages with the new Twitter API.
+
+For a 1st time clone use
+
+```git clone --recursive https://github.com/DocTocToc/doctoctocbot.git```
+
+If you already cloned the repository, cd into it and
+
+```git submodule update --init --recursive```
 ## DocTocTocBot rules
 
 1. I retweet tweets containing the hashtag #doctoctoc.

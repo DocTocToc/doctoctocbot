@@ -11,6 +11,8 @@ import logging
 
 from bot.conf.cfg import getConfig
 from bot.model.model import Status, session
+from django.db import IntegrityError
+
 """
     import os
     import django
@@ -57,17 +59,19 @@ class Addstatus:
         MPTT tree node is added to treedj inside the overridden save method of
         Tweetdj class, in the Django model.
         """
-        status = Tweetdj(
-            statusid = self.id(),
-            userid = self.userid(),
-            json = self.json,
-            created_at = self.datetimetz(),
-            reply = 0,
-            like = self.like(),
-            retweet = self.retweet(),
-            parentid = self.parentid()
-            )
-        status.save()
+        try:
+            status = Tweetdj.objects.create(
+                statusid = self.id(),
+                userid = self.userid(),
+                json = self.json,
+                created_at = self.datetimetz(),
+                reply = 0,
+                like = self.like(),
+                retweet = self.retweet(),
+                parentid = self.parentid()
+                )
+        except IntegrityError:
+            return False
         logger.debug("function addtweetdj added status %s", status)
         return True
 

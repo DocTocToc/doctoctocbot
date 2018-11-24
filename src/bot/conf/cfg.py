@@ -2,6 +2,7 @@ import os
 import inspect
 import json
 import logging
+from django.conf import settings
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -13,12 +14,12 @@ def getConfig():
     # Without this environment variable, defaults to configtest.json
     BOT_DEBUG=False
     """
-    BOT_ENV = os.environ.get('BOT_ENV', None)
-    
-    if BOT_ENV == 'prod':
-        configfilename = "configprod.json"
-    else:
+    #BOT_ENV = os.environ.get('BOT_ENV', None)
+    logger.debug(f"DEBUG={settings.DEBUG}")
+    if settings.DEBUG is True:
         configfilename = "configtest.json"
+    else:
+        configfilename = "configprod.json"
     
     path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     configfilepath = os.path.join(path, configfilename)
@@ -34,10 +35,10 @@ def getConfig():
         'access_token_secret': 'TWITTER_ACCESS_TOKEN_SECRET',
     }
     
-    if BOT_ENV == 'prod':
-        suffix = '_DOC_PROD'
-    else:
+    if settings.DEBUG is True:
         suffix = '_DOC_TEST'
+    else:
+        suffix = '_DOC_PROD'
     
     for key in secret_dict.keys():
         secret_dict[key] = secret_dict[key] + suffix

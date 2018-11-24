@@ -1,0 +1,16 @@
+tweepy
+configparser
+unidecode
+sqlalchemy
+psycopg2
+Django==2.0.8
+django-mptt
+pytz
+social-auth-app-django
+CleanerVersion==2.1.0
+pillow
+Celery
+redis
+celery[redis]
+python-decouple
+dj-database-url

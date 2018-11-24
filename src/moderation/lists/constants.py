@@ -37,7 +37,7 @@ CATEGORIES_DICT = \
         "id": 971134055688359937,
         "slug": "tudiants-en-m-decine",
         "label_en": "Medical student",
-        "label_fr": "Étudiants en médecine",
+        "label_fr": "Étudiant en médecine",
     },
     "orthoptist": {
         "id": 922201511349964800,

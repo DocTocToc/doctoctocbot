@@ -1,6 +1,28 @@
 {% extends "base.html" %}
-
+ {% load i18n %}
+ 
 {% block content %}
-  <h1>Home sweet home</h1>
-  <p>Hello{% if user.is_authenticated %} {{ user.get_username }}{% endif %}! Welcome to doctoctoc.net, a website developed by <em>Jérôme Pinguet</em>!</p>
+<div class="container-fluid">
+  <h1>{% trans "Home" %}</h1>
+  
+
+  <div class="row">
+    <div class="col-md-6">
+    <p>Hello{% if user.is_authenticated %} {{ user.get_username }}{% endif %}!
+    Welcome to doctoctoc.net, developed by <em>Jérôme Pinguet</em>!</p>
+    <p>🚧 This website is under development. Please check back soon.</p>
+    </div>
+    <div class="col-md-6">
+    <a class="twitter-timeline"
+    data-dnt="true"
+    href="https://twitter.com/doctoctocbot?ref_src=twsrc%5Etfw"
+    data-tweet-limit="5">  
+    Tweets by doctoctocbot
+    </a>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+    </div>
+
+  </div>
+</div>
+
 {% endblock %}

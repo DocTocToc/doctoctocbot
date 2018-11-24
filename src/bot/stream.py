@@ -5,7 +5,7 @@ import json
 from bot.conf.cfg import getConfig
 from bot.twitter import getAuth
 from bot.doctoctocbot import okrt, retweet, isknown
-from bot.log import setup_logging
+from bot.log.log import setup_logging
 import logging
 from bot.lib.statusdb import Addstatus
 from moderation.moderate import addtoqueue
@@ -41,7 +41,7 @@ class StdOutListener(StreamListener):
         dbstatus.addtweetdj()
 
         if not isknown(sjson):
-            addtoqueue(sjson["user"]["id"], sjson["id"])
+            addtoqueue(sjson)
         elif okrt(sjson):
             logger.info("Retweeting status %s: %s ", status.id, status.full_text)
             retweet(status.id)

@@ -19,7 +19,7 @@ import os
 import tweepy
 from bot.twitter import getAuth
 from bot.conf.cfg import getConfig
-from bot.log import setup_logging
+from bot.log.log import setup_logging
 import logging
 import unidecode
 from moderation.models import SocialUser

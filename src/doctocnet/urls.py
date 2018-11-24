@@ -23,9 +23,9 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('conversation/', include('conversation.urls')),
-    path('mpttest/', include('mpttest.urls')),
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
+    path('', include('charts.urls')),
 #    path('user/', include('landing.urls')),
 ]
 
@@ -34,3 +34,5 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

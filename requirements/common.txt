@@ -14,3 +14,4 @@ redis
 celery[redis]
 python-decouple
 dj-database-url
+lxml

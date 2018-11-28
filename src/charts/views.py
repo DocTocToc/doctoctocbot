@@ -20,7 +20,8 @@ def questions_daily_data(request):
     if request.user.is_authenticated:
         user = request.user
         logger.debug(user.username)
-        logger.debug(user.socialuser.user_id)
+        if user.socialuser is not None:
+            logger.debug(user.socialuser.user_id)
     else:
         logger.debug("No authenticated user.")
     
@@ -39,7 +40,7 @@ def questions_daily_data(request):
     series_lst = []
     qs_lst = [qsd0, qsd1, qsd0or1]
     
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.socialuser is not None:
         qs_user_lst = []
         uid = request.user.socialuser.user_id
         for qs in qs_lst:
@@ -127,7 +128,7 @@ def questions_monthly_data(request):
     
     chart = {
         'chart': {'type': 'column'},
-        'title': {'text': 'Number of tweets per month (verified physicians only'},
+        'title': {'text': 'Number of tweets per month (verified physicians only)'},
         'xAxis': {'type': 'datetime'},
         'yAxis': {'title': {'text': 'Number of tweets'}},
         'series': [

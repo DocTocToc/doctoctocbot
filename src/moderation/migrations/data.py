@@ -77,7 +77,7 @@ def create_usercategoryrelationship_instances(apps, schema_editor):
     bot_cat_obj, _ = Category.objects.get_or_create(name='bot')
 
     # 1020794606 @medecinelibre 'moderator'
-    social_user_obj = SocialUser.objects.create(user_id = 1020794606, social_media = soc_med_obj)
+    social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 1020794606, social_media = soc_med_obj)
     moderator = social_user_obj
     user_category_relationship = UserCategoryRelationship(
         social_user = social_user_obj,
@@ -95,16 +95,15 @@ def create_usercategoryrelationship_instances(apps, schema_editor):
 
     # 762321963402596352 @freehealthio 'midwife'
     social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 762321963402596352, social_media = soc_med_obj)
-    user_category_relationship = UserCategoryRelationship(
+    UserCategoryRelationship.objects.get_or_create(
         social_user = social_user_obj,
         category = midwife_cat_obj,
         moderator = moderator
     )
-    user_category_relationship.save()
 
     # 2567917734, @librehealthcare 'patient'
     social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 2567917734, social_media = soc_med_obj)
-    user_category_relationship = UserCategoryRelationship(
+    UserCategoryRelationship.objects.get_or_create(
         social_user = social_user_obj,
         category = patient_cat_obj,
         moderator = moderator
@@ -113,27 +112,24 @@ def create_usercategoryrelationship_instances(apps, schema_editor):
 
     # 2548674752, @cryptomed 'physician' & 'moderator'
     social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 2548674752, social_media = soc_med_obj)
-    user_category_relationship = UserCategoryRelationship(
+    UserCategoryRelationship.objects.get_or_create(
         social_user = social_user_obj,
         category = physician_cat_obj,
         moderator = moderator
     )
-    user_category_relationship.save()
-    user_category_relationship = UserCategoryRelationship(
+    UserCategoryRelationship.objects.get_or_create(
         social_user = social_user_obj,
         category = mod_cat_obj,
         moderator = moderator
     )
-    user_category_relationship.save()
 
     # 966620293707042817, @PharmaTocTocBot 'pharmacist'
     social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 966620293707042817, social_media = soc_med_obj)
-    user_category_relationship = UserCategoryRelationship(
+    UserCategoryRelationship.objects.get_or_create(
         social_user = social_user_obj,
         category = pharmacist_cat_obj,
         moderator = moderator
     )
-    user_category_relationship.save()
                
 class Migration(migrations.Migration):
 

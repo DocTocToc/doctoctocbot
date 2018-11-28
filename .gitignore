@@ -24,3 +24,7 @@ debug.log
 .project
 .pydevproject
 .settings
+
+# Hypothesis testing module dir
+src/.hypothesis
+

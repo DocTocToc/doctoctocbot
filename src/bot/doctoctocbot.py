@@ -45,6 +45,7 @@ def has_retweet_hashtag( status ):
     return ismatch
 
 def isreply( status ):
+    from .bin.traverseroot import retweetroot    
     "is status in reply to screen name or status or user?"
     logger.debug("in_reply_to_screen_name? %s" , status['in_reply_to_screen_name'])
     logger.debug("in_reply_to_status_id_str? %s" , status['in_reply_to_status_id_str'])
@@ -57,6 +58,8 @@ def isreply( status ):
                reply_user == "None")
     log = "is this status a reply? %s" % isreply
     logger.debug(log)
+    if isreply:
+        retweetroot(status['id'])
     return isreply
 
 def isquestion ( status ):

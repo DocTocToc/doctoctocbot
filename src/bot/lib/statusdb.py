@@ -11,7 +11,8 @@ import logging
 
 from bot.conf.cfg import getConfig
 from bot.model.model import Status, session
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
+
 
 """
     import os
@@ -60,16 +61,17 @@ class Addstatus:
         Tweetdj class, in the Django model.
         """
         try:
-            status = Tweetdj.objects.create(
-                statusid = self.id(),
-                userid = self.userid(),
-                json = self.json,
-                created_at = self.datetimetz(),
-                reply = 0,
-                like = self.like(),
-                retweet = self.retweet(),
-                parentid = self.parentid()
-                )
+            with transaction.atomic():
+                status = Tweetdj.objects.create(
+                    statusid = self.id(),
+                    userid = self.userid(),
+                    json = self.json,
+                    created_at = self.datetimetz(),
+                    reply = 0,
+                    like = self.like(),
+                    retweet = self.retweet(),
+                    parentid = self.parentid()
+                    )
         except IntegrityError:
             return False
         logger.debug("function addtweetdj added status %s", status)

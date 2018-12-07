@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def retweetroot(statusid: int):
     """
-    Starting from the status with status id = id, analyze nodes towards root to
+    Starting from the status with statusid, analyze nodes towards root to
     determine if the root status should be retweeted.
     Retweet only if all nodes leading to root have the same author and if they contain a question mark
     """

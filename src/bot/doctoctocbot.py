@@ -23,6 +23,7 @@ from bot.log.log import setup_logging
 import logging
 import unidecode
 from moderation.models import SocialUser
+from .tasks import handle_retweetroot
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -59,7 +60,7 @@ def isreply( status ):
     log = "is this status a reply? %s" % isreply
     logger.debug(log)
     if isreply:
-        retweetroot(status['id'])
+        handle_retweetroot.apply_async(args=(status['id'],))
     return isreply
 
 def isquestion ( status ):

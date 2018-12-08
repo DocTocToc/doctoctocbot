@@ -2,6 +2,7 @@ import logging
 from conversation.models import Tweetdj
 from ..addstatusdj import addstatus
 from ..doctoctocbot import retweet, isquestion
+from .webapi import simple_get
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,11 @@ def retweetroot(statusid: int):
         current_mi = parent_mi
         
     return
+
+def question(statusid):
+    raw_html = simple_get(f'https://twitter.com/statuses/{statusid}')
+    
+    
 
 def getorcreate(statusid: int) -> Tweetdj:    
     # Is status in database? If not, add it.

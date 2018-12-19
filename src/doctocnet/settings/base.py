@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'rest_framework',
     'doctocnet',
     'landing',
     'social_django',
@@ -51,7 +52,7 @@ INSTALLED_APPS = [
     'bot',
     'dm',
     'charts',
-    #'versions_tests',
+    'display',
 ]
 
 MIDDLEWARE = [
@@ -132,8 +133,8 @@ LANGUAGE_CODE = 'en-us'
 from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
-  ('fr', _('French')),
-  ('en', _('English')),
+    ('en', _('English')),
+    ('fr', _('French')),
 ]
 
 
@@ -192,5 +193,26 @@ MEDIA_URL = '/media/'
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600} 
+BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': 3600,
+    'fanout_prefix': True,
+    'fanout_patterns': True} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

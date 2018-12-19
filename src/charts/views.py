@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Count
 from django.db.models.functions import ExtractMonth, ExtractYear
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, TruncYear
 
 from conversation.models import Tweetdj
 from moderation.models import SocialUser
@@ -150,3 +150,65 @@ def questions_monthly_data(request):
             ]
         }
     return JsonResponse(chart)
+
+def questions_yearly_data(request):
+    physicians = SocialUser.objects.physician_users()
+    '''
+    qsm0or1 = Tweetdj.objects \
+        .filter(userid__in=physicians) \
+        .annotate(year = ExtractYear('created_at'), month = ExtractMonth('created_at')) \
+        .values('year', 'month') \
+        .annotate(count=Count('statusid')) \
+        .values('year', 'month', 'count') \
+        .order_by('year', 'month')
+    '''    
+    qsm0or1 = Tweetdj.objects \
+        .filter(userid__in=physicians) \
+        .annotate(date = TruncYear('created_at')) \
+        .values('date') \
+        .annotate(count=Count('statusid')) \
+        .order_by('date')
+        
+    qsm0 = qsm0or1.filter(hashtag0=True)
+    qsm1 = qsm0or1.filter(hashtag1=True)
+    
+    qs_lst = [qsm0, qsm1, qsm0or1]
+    
+    series_lst = []
+    for qs in qs_lst:
+        series = []
+        for data in qs:
+            d = data["date"]
+            timestamp = time.mktime(d.timetuple())*1000
+            count = data["count"]
+            plot = [timestamp, count]
+            series.append(plot)
+        series_lst.append(series)
+    
+    chart = {
+        'chart': {'type': 'column'},
+        'title': {'text': 'Number of tweets per year (verified physicians only)'},
+        'xAxis': {'type': 'datetime'},
+        'yAxis': {'title': {'text': 'Number of tweets'}},
+        'series': [
+                {
+                'name': 'Yearly tweets #DocTocToc',
+                'data': series_lst[0],
+                'color': 'rgba(51, 133, 255)'
+                },
+                                {
+                'name': 'Yearly tweets #DocsTocToc',
+                'data': series_lst[1],
+                'color': 'rgba(255, 77, 77)'
+                },
+                                                {
+                'name': 'Yearly tweets #DocTocToc and/or #DocsTocToc',
+                'data': series_lst[2],
+                'color': 'rgba(105, 105, 105)'
+                }
+            ]
+        }
+    return JsonResponse(chart)
+
+def yearly(request):
+    return render(request, 'yearly.html')

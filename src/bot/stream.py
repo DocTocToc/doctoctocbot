@@ -4,11 +4,9 @@ import tweepy
 import json
 from bot.conf.cfg import getConfig
 from bot.twitter import getAuth
-from bot.doctoctocbot import okrt, retweet, isknown
 from bot.log.log import setup_logging
 import logging
-from bot.lib.statusdb import Addstatus
-from moderation.moderate import addtoqueue
+from .tasks import handle_on_status
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -32,20 +30,7 @@ class StdOutListener(StreamListener):
 
     def on_status(self, status):
         #logger.debug("stream status: %s", status._jsonj)
-        status = tweepy.API(getAuth()).get_status(status.id, tweet_mode='extended')
-        sjson = status._json
-        logger.debug(f'extended status: {sjson["user"]["screen_name"]} {sjson["full_text"]}')
-
-        dbstatus = Addstatus(sjson)
-        dbstatus.addstatus()
-        dbstatus.addtweetdj()
-
-        if not isknown(sjson):
-            addtoqueue(sjson)
-        elif okrt(sjson):
-            logger.info("Retweeting status %s: %s ", status.id, status.full_text)
-            retweet(status.id)
-        
+        handle_on_status.apply_async(args=(status.id,))
         return True
 
     def on_error(self, status_code):

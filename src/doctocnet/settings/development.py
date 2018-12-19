@@ -11,6 +11,16 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+INTERNAL_IPS = ['127.0.0.1']
+
+INSTALLED_APPS += [
+    'debug_toolbar',
+]
+
+MIDDLEWARE += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
 DATABASES = {
     'default': config(
         'DATABASE_URL',
@@ -27,8 +37,8 @@ DATABASES = {
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "doctocnet/static/"),
-        '/var/www/static/',
+        #'/var/www/static/',
         ]
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'doctocnet')
+# STATIC_ROOT = ''
 STATIC_URL = '/static/'

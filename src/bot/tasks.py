@@ -5,3 +5,15 @@ from doctocnet.celery import app
 def handle_retweetroot(statusid: int):
     from .bin.thread import retweetroot
     retweetroot(statusid)
+    
+@app.task(bind=True)
+def handle_question(self, statusid: int):
+    from bot.bin.thread import question
+    ok = question(statusid) 
+    if not ok:
+        self.retry(args=(statusid,), countdown=15, max_retries=20 )
+        
+@app.task
+def handle_on_status(statusid: int):
+    from .onstatus import triage
+    triage(statusid)

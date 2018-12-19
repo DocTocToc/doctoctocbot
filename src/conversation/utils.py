@@ -59,36 +59,31 @@ def hashtag(statusid):
 
     logger = logging.getLogger(__name__)
     
-    logger.debug("hello")
     keyword_lst = getConfig()["keyword_track_list"]
     if not keyword_lst:
         return
-    logger.debug("hello there")
     status_mi = Tweetdj.objects.get(pk=statusid)
     if (status_mi.hashtag0 is not None) and (status_mi.hashtag1 is not None):
         return
     
-    logger.debug("hello down there")
     # remove hashtag character (#)
     for idx, keyword in enumerate(keyword_lst):
         keyword_lst[idx] = keyword[1:]
     #logger.debug(f"keyword_lst: {keyword_lst}")
     jsn = status_mi.json
     key = "hashtags"
+    contains_tag0 = False
+    contains_tag1 = False
     for hashtags in dictextract(key, jsn):
-        logger.debug(hashtags)
         for hashtag in hashtags:
-            logger.debug(hashtag)
-            if not hashtag:
-                continue
-            logger.debug(hashtag["text"])
-            if (hashtag["text"].lower() in keyword_lst):
-                if len(keyword_lst) > 0:
-                    status_mi.hashtag0 = bool(hashtag["text"].lower() == keyword_lst[0])
-                    status_mi.save()
-                if len(keyword_lst) > 1:
-                    status_mi.hashtag1 = bool(hashtag["text"].lower() == keyword_lst[1])
-                    status_mi.save()
+            contains_tag0 = contains_tag0 or bool(hashtag["text"].lower() == keyword_lst[0])
+            if len(keyword_lst) > 1:
+                contains_tag1 =  contains_tag1 or bool(hashtag["text"].lower() == keyword_lst[1])
+    status_mi.hashtag0 = contains_tag0
+    status_mi.hashtag1 = contains_tag1
+    status_mi.save()
+
+
                         
 def allhashtag():
     from .models import Tweetdj
@@ -165,6 +160,3 @@ def updatecount(statusid):
     mi.retweet=count["retweet"]
     mi.like=count["favorite"]
     mi.save()
-    
-    
-    

@@ -28,3 +28,6 @@ debug.log
 # Hypothesis testing module dir
 src/.hypothesis
 
+src/media/twitter/profile/images/mini
+src/media/twitter/profile/images/bigger
+src/media/twitter/profile/images/normal

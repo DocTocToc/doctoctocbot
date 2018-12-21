@@ -52,7 +52,6 @@ def allquotedstatus():
         quotedstatus(status_mi.statusid)    
 
 def hashtag(statusid):
-    import logging
     from bot.conf.cfg import getConfig
     from .models import Tweetdj
     from common.utils import dictextract
@@ -69,7 +68,6 @@ def hashtag(statusid):
     # remove hashtag character (#)
     for idx, keyword in enumerate(keyword_lst):
         keyword_lst[idx] = keyword[1:]
-    #logger.debug(f"keyword_lst: {keyword_lst}")
     jsn = status_mi.json
     key = "hashtags"
     contains_tag0 = False

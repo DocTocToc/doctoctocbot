@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', include('landing.urls')),
     path('', include('users.urls')),
+    path('display/', include('display.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
 
@@ -28,7 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('', include('charts.urls')),
-#    path('user/', include('landing.urls')),
 ]
 
 # Use static() to add url mappings to serve static files during development (only)
@@ -38,3 +38,9 @@ from django.conf.urls.static import static
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

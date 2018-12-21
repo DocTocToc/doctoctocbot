@@ -1,3 +1,4 @@
+import time
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,9 +7,28 @@ from django.utils.translation import gettext as _
 
 from conversation.utils import userhashtagcount
 from bot.conf.cfg import getConfig
+from conversation.tree.tweet_server import get_tweet
+from django.shortcuts import render
+from django.utils.safestring import mark_safe
+import logging
+logger = logging.getLogger(__name__)
 
 def index(request):
     return render(request, 'landing/index.html')
+
+def status(request, statusid):
+    tweet = get_tweet(statusid)
+    logger.debug(f"{tweet.localtime()}")
+    localdatetime: str = time.strftime('%H:%M - %d %b %Y', tweet.localtime())
+    utcdatetime: str = time.strftime('%d %B %Y %H:%M:%S', tweet.utctime())
+
+    logger.debug(f"{localdatetime}")
+    context = {'tweet': tweet,
+               'bodyhtml': mark_safe(tweet.bodyhtml),
+               'avatar_mini': mark_safe(tweet.avatar_mini),
+               'localdatetime': localdatetime,
+               'utcdatetime': utcdatetime}
+    return render(request, 'landing/tweet.html', context)
 
 class UserInfo(LoginRequiredMixin, TemplateView):
     template_name = 'landing/user.html'

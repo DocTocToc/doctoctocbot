@@ -10,8 +10,12 @@ social-auth-app-django
 CleanerVersion==2.1.0
 pillow
 Celery
-redis
+# redis version pinned to avoid https://github.com/celery/celery/issues/5175
+redis==2.10.6
 celery[redis]
 python-decouple
 dj-database-url
 lxml
+beautifulsoup4
+django-redis
+djangorestframework

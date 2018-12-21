@@ -17,13 +17,14 @@ by [Basti](https://github.com/basti2342) License: Mozilla Public License version
 import hashlib
 import os
 import tweepy
+from tweepy.error import TweepError
 from bot.twitter import getAuth
 from bot.conf.cfg import getConfig
 from bot.log.log import setup_logging
 import logging
 import unidecode
 from moderation.models import SocialUser
-from .tasks import handle_retweetroot
+from .tasks import handle_retweetroot, handle_question
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -46,7 +47,6 @@ def has_retweet_hashtag( status ):
     return ismatch
 
 def isreply( status ):
-    from .bin.traverseroot import retweetroot    
     "is status in reply to screen name or status or user?"
     logger.debug("in_reply_to_screen_name? %s" , status['in_reply_to_screen_name'])
     logger.debug("in_reply_to_status_id_str? %s" , status['in_reply_to_status_id_str'])
@@ -59,33 +59,50 @@ def isreply( status ):
                reply_user == "None")
     log = "is this status a reply? %s" % isreply
     logger.debug(log)
-    if isreply:
-        handle_retweetroot.apply_async(args=(status['id'],))
     return isreply
 
 def isquestion ( status ):
     "Does this status text contain a question mark?"
     if 'extended_tweet' in status:
         status = status['extended_tweet']
-    return '?' in status['full_text']
+    isquestion = '?' in status['full_text']
+    return isquestion
 
 def okrt( status ):
-    "should we RT this status?"
+    """
+    Should the bot retweet this doc(s)toctoc question?
+    """
+    return has_retweet_hashtag(status) and isauthorized(status)
+
+def isretweeted(status):
+    return status['retweeted']
+
+def isselfstatus(status):
     if status['user']['id'] == getConfig()['settings']['bot_id']:
         logger.debug("self status, no RT")
         return False
-    ok = not isrt(status) and \
-         not isquote(status) and \
-         not isreply(status) and \
-         isauthorized(status) and \
-         not isreplacement(status) and \
-         not status['retweeted'] and \
-         isquestion(status) and \
-         has_retweet_hashtag(status)
-    logger.debug("is this status ok for RT? %s", ok)
-    logger.debug("Have I already RTed this? %s", status['retweeted'])
-    print(status['retweeted'])
-    return ok
+
+def okrules( status ):
+    """
+    Does this status follow the structural rules?
+    * Not a retweet
+    * Not a quote
+    * Not about replacement
+    * Not already retweeted by the authenticated account (bot)
+    """
+    
+    if isrt(status) or isquote(status) or isreplacement(status) or isretweeted(status) or isselfstatus(status):
+        return False
+
+    if isreply(status):
+        handle_retweetroot.apply_async(args=(status['id'],))
+        return False
+
+    if not isquestion(status):
+        handle_question.apply_async(args=(status['id'],), countdown=10, expires=300) 
+        return False
+
+    return True
 
 def isrt( status ):
     "is this status a RT?"
@@ -107,7 +124,8 @@ def isknown( status ):
     logger.debug("user %s known", user_id)
     return True
 
-def isauthorized( status ):
+def isauthorized(status):
+    logger.debug(f"isauthoized(status): {status['user']['id'] in SocialUser.objects.authorized_users()}")
     return status['user']['id'] in SocialUser.objects.authorized_users()
 
 def okbadlist( status ):
@@ -139,10 +157,14 @@ def isreplacement( status ):
     logger.debug("bool(replacement) == %s", bool(replacement))
     return bool(replacement)
     
-def retweet( status_id ):
+def retweet(status_id) -> bool:
     api = tweepy.API(getAuth())
-    api.retweet(status_id)
-    return
+    try:
+        api.retweet(status_id)
+    except TweepError as e:
+        logger.error(str(e))
+        return False
+    return True
 
 if __name__ == '__main__':
     
@@ -196,8 +218,8 @@ if __name__ == '__main__':
         logger.debug("Is user authorized? %s", isauthorized(status_json))
         logger.debug("isrt: %s", isrt(status_json))
         logger.debug("status 'retweeted': %s", status_json['retweeted'])
-        logger.debug("is this a question? %s", isquestion(status_json))
-        if okrt(status_json):
+        #logger.debug("is this a question? %s", isquestion(status_json))
+        if okrt(status_json) and okrules(status_json):
             oklist.append(tweet)
             logger.debug(":) OK for RT")
         else:

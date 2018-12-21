@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.utils.translation import gettext as _
+
 from conversation.utils import userhashtagcount
 from bot.conf.cfg import getConfig
 
@@ -9,7 +12,7 @@ def index(request):
 
 class UserInfo(LoginRequiredMixin, TemplateView):
     template_name = 'landing/user.html'
-    title = "User info"
+    title = _("User")
 
     def get_context_data(self, *args, **kwargs):
         context = super(UserInfo, self).get_context_data(*args, **kwargs)

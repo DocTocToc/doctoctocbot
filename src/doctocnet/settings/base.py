@@ -157,6 +157,10 @@ AUTH_USER_MODEL = 'users.User'
 
 # social auth
 SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/settings/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/user/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.twitter.TwitterOAuth',

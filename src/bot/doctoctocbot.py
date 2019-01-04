@@ -25,9 +25,18 @@ import logging
 import unidecode
 from moderation.models import SocialUser
 from .tasks import handle_retweetroot, handle_question
+from .twitter import get_api
+from .addstatusdj import addstatus_if_not_exist
 
 setup_logging()
 logger = logging.getLogger(__name__)
+
+def has_greenlight(status):
+        return isauthorized(status) \
+            and not isreplacement(status) \
+            and not isretweeted(status) \
+            and not isselfstatus(status) \
+            and not isquote(status)
 
 def has_retweet_hashtag( status ):
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
@@ -82,16 +91,15 @@ def isselfstatus(status):
         logger.debug("self status, no RT")
         return False
 
-def okrules( status ):
+def is_following_rules(status):
     """
     Does this status follow the structural rules?
-    * Not a retweet
-    * Not a quote
-    * Not about replacement
-    * Not already retweeted by the authenticated account (bot)
+    * Is Not a retweet
+    * Is a question
+    * Is not a reply
     """
     
-    if isrt(status) or isquote(status) or isreplacement(status) or isretweeted(status) or isselfstatus(status):
+    if isrt(status):
         return False
 
     if isreply(status):
@@ -118,14 +126,14 @@ def isquote( status ):
 
 def isknown( status ):
     user_id = status['user']['id']
-    if user_id not in SocialUser.objects.all_users():
+    if user_id not in SocialUser.objects.moderated_users():
         logger.debug("user %s UNKNOWN", user_id)
         return False
     logger.debug("user %s known", user_id)
     return True
 
 def isauthorized(status):
-    logger.debug(f"isauthoized(status): {status['user']['id'] in SocialUser.objects.authorized_users()}")
+    logger.debug(f"isauthorized(status): {status['user']['id'] in SocialUser.objects.authorized_users()}")
     return status['user']['id'] in SocialUser.objects.authorized_users()
 
 def okbadlist( status ):
@@ -166,82 +174,94 @@ def retweet(status_id) -> bool:
         return False
     return True
 
-if __name__ == '__main__':
-    
+
+def get_search_string():
     config = getConfig()
     # build savepoint path + file
     keyword_list = config["keyword_retweet_list"]
     search_string = " OR ".join ( keyword_list )
     search_string = search_string + u" -filter:retweets"
     logger.debug("search_string: %s" % (search_string))
-    hashedHashtag = hashlib.md5(search_string.encode('ascii')).hexdigest()
+    return search_string
+
+def last_id_file():
+    hashedHashtag = hashlib.md5(get_search_string().encode('ascii')).hexdigest()
     last_id_filename = "last_id_hashtag_%s" % hashedHashtag
     rt_bot_path = os.path.dirname(os.path.abspath(__file__))
     last_id_file = os.path.join(rt_bot_path, last_id_filename)
-    
-    # create bot
-    api = tweepy.API(getAuth())
-    
+    return last_id_file 
+
+def save_point():
     # retrieve last savepoint if available
     try:
-        with open(last_id_file, "r") as f:
+        with open(last_id_file(), "r") as f:
             savepoint = f.read()
     except IOError:
         savepoint = ""
         logger.debug("No savepoint found. Bot is now searching for results")
-    
-    
+
+    return savepoint
+
+def timeline_iterator():    
+    #search_string = search_string()
+
     # Tweet language (empty = all languages)
+    config = getConfig()
     tweetLanguage = config["settings"]["tweet_language"]
     
-    # search query
-    timelineIterator = tweepy.Cursor(api.search, q=search_string, since_id=savepoint, lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
-    
-    # put everything into a list to be able to sort/filter
-    
-    oklist = []
-    isRetweet = False
-    
+    api = get_api()    
+    return tweepy.Cursor(api.search, q=get_search_string(), since_id=save_point(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+
+def main():
+    from .onstatus import triage 
+    #oklist = []
+    timelineIterator = timeline_iterator()
+    #api = get_api()
+    current_sid = None
     for tweet in timelineIterator:
-        status = api.get_status(tweet.id,  tweet_mode='extended')
-        status_json = status._json
-        logger.debug(" raw_status: %s", status._json)
-        user = tweet.user
-        screenname = user.screen_name
-        userid = user.id
-        useridstring = str(userid)
-        status_text = tweet.full_text.encode('utf-8')
-        logger.debug("userid: %s", userid)
-        logger.debug("useridstring: %s", useridstring)
-        logger.debug("screen name: %s", screenname)
-        logger.debug("text: %s", tweet.full_text.encode('utf-8'))
-        logger.debug("Is user authorized? %s", isauthorized(status_json))
-        logger.debug("isrt: %s", isrt(status_json))
-        logger.debug("status 'retweeted': %s", status_json['retweeted'])
+        triage(tweet.id)
+        current_sid = tweet.id
+        #addstatus_if_not_exist(tweet.id)
+        #status = api.get_status(tweet.id,  tweet_mode='extended')
+        #status_json = status._json
+        #logger.debug(" raw_status: %s", status._json)
+        #user = tweet.user
+        #screenname = user.screen_name
+        #logger.debug("screen name: %s", screenname)
+        #logger.debug("text: %s", tweet.full_text.encode('utf-8'))
+        #logger.debug("Is user authorized? %s", isauthorized(status_json))
+        #logger.debug("isrt: %s", isrt(status_json))
+        #logger.debug("status 'retweeted': %s", status_json['retweeted'])
         #logger.debug("is this a question? %s", isquestion(status_json))
-        if okrt(status_json) and okrules(status_json):
-            oklist.append(tweet)
-            logger.debug(":) OK for RT")
-        else:
-            logger.debug(":( not ok for RT")
+        #if okrt(status_json) and is_following_rules(status_json):
+        #    oklist.append(tweet)
+        #    logger.debug(":) OK for RT")
+        #else:
+        #    logger.debug(":( not ok for RT")
     
-    try:
-        last_tweet_id = oklist[0].id
-    except IndexError:
-        last_tweet_id = savepoint
+    if current_sid is not None:
+        last_tweet_id = current_sid
+    else:
+        last_tweet_id = save_point()
     
     # filter bad words & users out and reverse timeline
-    wordbadlist = set((u"remplacant",u"RT",u"remplaçant"))
-    oklist = filter(lambda tweet: not any(word in tweet.full_text.split() for word in wordbadlist), oklist)
+    # wordbadlist = set((u"remplacant",u"RT",u"remplaçant"))
+    # oklist = filter(lambda tweet: not any(word in tweet.full_text.split() for word in wordbadlist), oklist)
     
-    oklist = list(oklist)
-    oklist.reverse()
+    #oklist = list(oklist)
+    #oklist.reverse()    
     
+    #retweet_lst(oklist)
+    
+    # write last retweeted tweet id to file
+    with open(last_id_file(), "w") as f:
+        f.write(str(last_tweet_id))
+
+def retweet_lst(lst):
+    api = get_api()
     tw_counter = 0
     err_counter = 0
-    
-    # iterate the timeline and retweet
-    for status in oklist:
+    for status in lst:
         try:
             logger.debug("(%(date)s) %(name)s: %(message)s\n" % \
                   {"date": status.created_at,
@@ -257,7 +277,6 @@ if __name__ == '__main__':
             continue
     
     logger.info("Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter))
-    
-    # write last retweeted tweet id to file
-    with open(last_id_file, "w") as f:
-        f.write(str(last_tweet_id))
+        
+if __name__ == '__main__':
+    main()

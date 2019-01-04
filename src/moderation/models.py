@@ -25,6 +25,21 @@ class AuthorizedManager(models.Manager):
                 );""")
             result = cursor.fetchall()
         return [row[0] for row in result]
+    
+    def moderated_users(self):
+        """
+        Return list of user ids of users who have a category.
+        """
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT user_id
+                FROM moderation_socialuser
+                WHERE id IN
+                (
+                SELECT social_user_id FROM moderation_usercategoryrelationship
+                );""")
+            result = cursor.fetchall()
+        return [row[0] for row in result]
 
 
     def authorized_users(self):
@@ -56,6 +71,23 @@ class AuthorizedManager(models.Manager):
                 (
                 SELECT social_user_id FROM moderation_usercategoryrelationship WHERE category_id IN
                 (SELECT id FROM moderation_category WHERE name = 'moderator')
+                );""")
+            result = cursor.fetchall()
+            logging.debug(result)
+        return [row[0] for row in result]
+    
+    def devs(self):
+        """
+        Return a list of BIGINTs representing devs user_id.
+        """
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT user_id
+                FROM moderation_socialuser
+                WHERE id IN
+                (
+                SELECT social_user_id FROM moderation_usercategoryrelationship WHERE category_id IN
+                (SELECT id FROM moderation_category WHERE name = 'dev')
                 );""")
             result = cursor.fetchall()
             logging.debug(result)

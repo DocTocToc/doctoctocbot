@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'dm',
     'charts',
     'display',
+    'timeline',
 ]
 
 MIDDLEWARE = [

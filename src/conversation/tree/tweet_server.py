@@ -23,6 +23,9 @@ def request_tweets(tweet: Tweet) -> TweetContext:
         return
     return parse_tweets_from_html(raw_html)
 
+def request_context(statusid: int) -> TweetContext:
+    return request_tweets(Tweet(statusid=statusid))
+
 def request_continuation(tweet, continuation) -> TweetContext:
         url = get_url_for_conversation(tweet, continuation);
         raw_html = request_url(url)

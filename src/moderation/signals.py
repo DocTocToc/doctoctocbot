@@ -10,6 +10,7 @@ from dm.api import senddm
 from moderation.models import Queue, Moderation, SocialUser
 from .tasks import handle_create_update_profile
 from .tasks import handle_sendmoderationdm
+from bot.conf.cfg import getConfig
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,17 @@ def create_moderation(sender, instance, created, **kwargs):
     logger.debug(f"inside create_moderation {sender}, {instance}, {created}")
     if created:
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
-        chosenmoderatorid_int = random.choice(SocialUser.objects.moderators())
+        moderatorid_int_lst = []
+        if getConfig()["moderation"]["moderator"]:
+            moderatorid_int_lst.extend(SocialUser.objects.moderators())
+        elif getConfig()["moderation"]["dev"]:
+            logger.debug(f"SocialUser.objects.devs(): {SocialUser.objects.devs()}")
+            moderatorid_int_lst.extend(SocialUser.objects.devs())
+        else:
+            return
+        logger.debug(f"moderatorid_int_lst: {moderatorid_int_lst}")
+        chosenmoderatorid_int = random.choice(moderatorid_int_lst)
+        logger.debug(f"chosenmoderatorid_int: {chosenmoderatorid_int}")
         moderator_mi = SocialUser.objects.get(user_id = chosenmoderatorid_int)
         Moderation.objects.create(moderator = moderator_mi, queue = instance)
         

@@ -11,6 +11,7 @@ import logging
 
 from bot.conf.cfg import getConfig
 from bot.model.model import Status, session
+from sqlalchemy.exc import IntegrityError as AlchemyIntegrityError
 from django.db import IntegrityError, transaction
 
 
@@ -43,12 +44,16 @@ class Addstatus:
         self.json = json
 
     def addstatus(self):
-        status = Status(id = self.id(),
+        try:
+            status = Status(id = self.id(),
                         userid = self.userid(),
                         json = self.json,
                         datetime = self.datetime())
-        session.add(status)
-        session.commit()
+            session.add(status)
+            session.commit()
+        except AlchemyIntegrityError as e:
+            session.rollback()
+            logger.debug('Integrity error: {}'.format(e.args[0]))
         if self.has_image():
             self.add_image()
         return True
@@ -72,7 +77,8 @@ class Addstatus:
                     retweet = self.retweet(),
                     parentid = self.parentid()
                     )
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.debug("Status %s already exists in database: %s" % (self.id, e))
             return False
         logger.debug("function addtweetdj added status %s", status)
         return True

@@ -14,12 +14,14 @@ import json
 import logging
 import argparse
 
-import tweepy                                                                   
+import tweepy                                                                  
 from .twitter import getAuth                                                     
 from .conf.cfg import getConfig                                                  
 from .log.log import setup_logging
 
 from .lib.statusdb import Addstatus
+from conversation.models import Tweetdj
+from .twitter import statuses_lookup
 
 setup_logging()                                                                 
 logger = logging.getLogger(__name__)
@@ -30,6 +32,22 @@ def addstatus(statusid):
     db = Addstatus(status._json)
     db.addtweetdj()
 
+def addstatus_if_not_exist(statusid):
+    if statusid is None:
+        return
+    elif type(statusid) is int:
+        sid_lst = [statusid]
+    else:
+        sid_lst = statusid
+    present = list(Tweetdj.objects.filter(statusid__in=sid_lst).values_list('statusid', flat=True))
+    absent = list(set(sid_lst)- set(present))
+    if not absent:
+        return
+    absent_statuses = statuses_lookup(absent)
+    for status in absent_statuses:
+        db = Addstatus(status._json)
+        db.addtweetdj()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -39,6 +57,4 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     statusid = args.statusid
-    addstatus(statusid)                                                         
-    
-
+    addstatus(statusid)

@@ -24,8 +24,8 @@ class CategoryAdmin(admin.ModelAdmin):
     
 class QueueAdmin(VersionedAdmin):
     pass
-    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag',)
+    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag', 'user_id',)
+    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag', 'user_id',)
     list_display_show_identity = False
     list_display_show_end_date = False
     list_display_show_start_date = True

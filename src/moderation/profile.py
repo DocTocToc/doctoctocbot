@@ -1,6 +1,8 @@
 import logging
 from django.core.exceptions import ObjectDoesNotExist
 from psycopg2._json import json
+from django.db import IntegrityError
+from django.db.utils import DatabaseError
 logger = logging.getLogger('root')
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
@@ -43,23 +45,38 @@ def profile(backend, user, response, *args, **kwargs):
         
         avatar(p, response)
 
-def twitterprofile(json):
+def twitterprofile(jsn):
     from .models import SocialUser, Profile, SocialMedia
+    if jsn is None:
+        logger.debug("jsn is None")
+        return
+    logger.debug("inside twitterprofile %s" % jsn)
+    logger.debug("jsn['id'] : %s" % jsn['id'])
+    logger.debug("type jsn['id'] : %s" % type(jsn['id']))
     try:
-        su = SocialUser.objects.get(user_id = json["id"])
+        su = SocialUser.objects.get(user_id=jsn["id"])
     except SocialUser.DoesNotExist:
-        sm, _ = SocialMedia.objects.get_or_create(name="twitter")
-        su = SocialUser.objects.create(user_id = json["id"],
-                                       social_media = sm 
-                                       )
+        try:
+            sm, _ = SocialMedia.objects.get_or_create(name="twitter")
+        except DatabaseError:
+            return
+        try:
+            su, _ = SocialUser.objects.get_or_create(user_id=jsn["id"], social_media = sm)
+        except DatabaseError:
+            return
+            
     if hasattr(su, 'profile'):
-        p = su.profile
-        p.json = json
+        p = Profile.objects.get(socialuser=su)
+        p.json = jsn
         p.save()
     else:
-        p = Profile.objects.create(json=json, socialuser=su)
+        try:
+            p = Profile.objects.create(socialuser=su, json=jsn)
+        except IntegrityError as e:
+            logger.debug(e)
+            return
     
-    avatar(p, json)
+    avatar(p, jsn)
             
 def avatar(profile, response):
     import requests

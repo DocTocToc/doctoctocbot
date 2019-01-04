@@ -1,8 +1,8 @@
 import logging
-from conversation.models import Tweetdj, Treedj
+from conversation.models import Tweetdj, Treedj, create_tree
 from django.db.utils import DatabaseError
 from ..addstatusdj import addstatus
-from ..doctoctocbot import retweet, isquestion, isauthorized, has_retweet_hashtag
+from ..doctoctocbot import retweet, isquestion, has_greenlight, has_retweet_hashtag
 from conversation.tree import tweet_parser, tweet_server
 from bot.conf.cfg import getConfig
 from moderation.models import SocialUser
@@ -52,7 +52,7 @@ def retweetroot(statusid: int):
         if parent_mi.parentid is None:
             add_root_to_tree(parent_mi.statusid)
             if hasquestionmark:
-                if isauthorized(parent_mi.json) and has_rt_hashtag:
+                if has_rt_hashtag and has_greenlight(parent_mi.json):
                     retweet(parent_mi.statusid)
                 break
             else:

@@ -5,6 +5,7 @@
 <title>{{ tweet.name }} on Twitter: "{{tweet.bodytext}}"</title>
 </head>
 <body>
+{% for tweet in tweet_lst %}
   <twitter-widget class="twitter-tweet twitter-tweet-rendered"
     id="twitter-widget-0"
     style="position: static; visibility: visible; display: block; transform: rotate(0deg); max-width: 100%; width: 500px; min-width: 220px; margin-top: 10px; margin-bottom: 10px;"
@@ -64,7 +65,7 @@
             <div class="Tweet-body e-entry-content"
               data-scribe="component:tweet">
               <div class="u-hiddenVisually js-inViewportScribingTarget"></div>
-              <p class="Tweet-text e-entry-title" dir="ltr" lang="fr">{{ bodyhtml }}</p>
+              <p class="Tweet-text e-entry-title" dir="ltr" lang="fr">{{ tweet.html }}</p>
               <div class="TweetInfo">
                 <div class="TweetInfo-like">
                   <a class="TweetInfo-heart" title="Like"
@@ -107,7 +108,7 @@
                     href="https://twitter.com/{{ tweet.username }}/status/{{ tweet.statusid }}">
                     <time class="dt-updated" datetime="1970-01-01T00:00:00+0000"
                       pubdate=""
-                      title="Time posted: {{ utcdatetime }} (UTC)">{{ localdatetime }}</time>
+                      title="Time posted: {{ tweet.utcdatetime }} (UTC)">{{ tweet.localdatetime }}</time>
                   </a>
                 </div>
                 <div
@@ -160,7 +161,8 @@
       </div>
     </div>
   </div>
-  <link rel="stylesheet" type="text/css" href="{% static 'landing/tweet.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'display/tweet.css' %}" />
   </twitter-widget>
+{% endfor %}
 </body>
 </html>

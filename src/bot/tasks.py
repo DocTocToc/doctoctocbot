@@ -8,7 +8,7 @@ def handle_retweetroot(statusid: int):
     
 @app.task(bind=True)
 def handle_question(self, statusid: int):
-    from bot.bin.thread import question
+    from .bin.thread import question
     ok = question(statusid) 
     if not ok:
         self.retry(args=(statusid,), countdown=15, max_retries=20 )

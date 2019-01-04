@@ -1,5 +1,7 @@
 import time
 from django.db import models
+from django.db import IntegrityError, transaction
+
 from conversation.tree.tweet_parser import Tweet 
 
 # Create your models here.
@@ -36,32 +38,35 @@ class WebTweet(models.Model):
         return time.gmtime(self.time)
     
 def createwebtweet(tweet: Tweet):
-    
-    images = {}
-    for i in range(4):
-        key: str = "image" + str(i)
-        images[key]= None
-        
-    for idx, url in enumerate(tweet.images):
-            key = "image"+ str(idx)
-            images[key] = url
-        
-    WebTweet.objects.create(statusid=tweet.statusid,
-                            conversationid=tweet.conversationid,
-                            userid=tweet.userid,
-                            username=tweet.username,
-                            name=tweet.name,
-                            time=tweet.time,
-                            html=tweet.bodyhtml,
-                            text=tweet.bodytext,
-                            reply=tweet.replies,
-                            like=tweet.favorites,
-                            retweet=tweet.retweets,
-                            rtl=tweet.rtl,
-                            image0= images['image0'],
-                            image1= images['image1'],
-                            image2= images['image2'],
-                            image3= images['image3'],
-                            avatar_mini=tweet.avatar_mini,
-                            avatar_normal=tweet.avatar_normal,
-                            avatar_bigger=tweet.avatar_bigger)
+        images = {}
+        for i in range(4):
+            key: str = "image" + str(i)
+            images[key]= None
+            
+        for idx, url in enumerate(tweet.images):
+                key = "image"+ str(idx)
+                images[key] = url
+                
+        with transaction.atomic():       
+            tweet_mi = WebTweet(statusid=tweet.statusid,
+                                    conversationid=tweet.conversationid,
+                                    userid=tweet.userid,
+                                    username=tweet.username,
+                                    name=tweet.name,
+                                    time=tweet.time,
+                                    html=tweet.bodyhtml,
+                                    text=tweet.bodytext,
+                                    reply=tweet.replies,
+                                    like=tweet.favorites,
+                                    retweet=tweet.retweets,
+                                    rtl=tweet.rtl,
+                                    image0= images['image0'],
+                                    image1= images['image1'],
+                                    image2= images['image2'],
+                                    image3= images['image3'],
+                                    avatar_mini=tweet.avatar_mini,
+                                    avatar_normal=tweet.avatar_normal,
+                                    avatar_bigger=tweet.avatar_bigger)
+            tweet_mi.save()
+            
+        return tweet_mi

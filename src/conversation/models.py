@@ -1,8 +1,14 @@
+import logging
+
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.db.utils import DatabaseError
+
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.safestring import mark_safe
-from _sqlite3 import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
+
+logger = logging.getLogger(__name__)
 
 class Tweetdj(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
@@ -103,6 +109,28 @@ class Treedj(MPTTModel):
 
     def __str__(self):
         return "https://twitter.com/statuses/" +  str(self.statusid)
+    
+    def status_url_tag(self):
+        return mark_safe('<a href="https://twitter.com/statuses/%s">Link</a>' % (self.statusid))
 
     class MPTTMeta:
         order_insertion_by = ['statusid']
+        order_by = ['statusid']
+        
+def create_tree(statusid):
+    try:
+        Treedj.objects.create(statusid=statusid)
+    except DatabaseError as e:
+        logger.error(str(e))
+
+def create_leaf(statusid, parentid):
+    try:
+        parent_mi = Treedj.objects.get(statusid=parentid)
+    except Treedj.DoesNotExist:
+        return None
+    leaf = None
+    try:
+        leaf = Treedj.objects.create(statusid=statusid, parent=parent_mi)
+    except DatabaseError as e:
+        logger.error(str(e))
+    return leaf

@@ -3,7 +3,7 @@ configparser
 unidecode
 sqlalchemy
 psycopg2
-Django==2.0.8
+Django==2.0.9
 django-mptt
 pytz
 social-auth-app-django

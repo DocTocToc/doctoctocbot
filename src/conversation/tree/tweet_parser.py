@@ -176,6 +176,9 @@ def parse_tweets_from_html(raw_html: bytes) -> TweetContext:
     TweetContext.
     """
     soup = extract_doc_from_response(raw_html)
+    if not soup:
+        return
+    
     tweet_context = TweetContext()
     
     try:
@@ -186,8 +189,13 @@ def parse_tweets_from_html(raw_html: bytes) -> TweetContext:
     if show_more_threads_button:
         tweet_context.continuation = show_more_threads_button['data-cursor']
     else:
-        div_data_min_position = soup.find("div", class_="replies-to").find("div", class_="stream-container")
-        tweet_context.continuation = div_data_min_position['data-min-position']
+        try:
+            div_data_min_position = soup.find("div", class_="replies-to").find("div", class_="stream-container")
+        except AttributeError:
+            div_data_min_position = None
+            
+        if div_data_min_position:
+            tweet_context.continuation = div_data_min_position['data-min-position']
 
     try:
         ancestor_container = soup.find_all(attrs={'class':'in-reply-to'})[0]
@@ -269,7 +277,6 @@ def parse_tweets_from_stream(soup: BeautifulSoup) -> List[Tweet]:
         tweet.conversationid = int(tweetElement['data-conversation-id'])
         
         avatar_bigger = tweetElement.find_all(attrs={'class':'avatar'})[0]['src']
-        logger.debug(f"avatar_bigger: {avatar_bigger}")
         tweet.avatar_bigger = avatar_bigger
         tweet.avatar_mini = avatar_bigger.replace('_bigger', '_mini')
         tweet.avatar_normal = avatar_bigger.replace('_bigger', '_normal')

@@ -9,5 +9,12 @@ class TweetdjAdmin(admin.ModelAdmin):
     fields = ('statusid', 'userid', 'screen_name_tag', 'status_text_tag', 'status_url_tag', 'json', 'hashtag0', 'hashtag1', 'created_at', 'quotedstatus', 'retweetedstatus',)
     readonly_fields = ('statusid', 'userid', 'screen_name_tag', 'status_text_tag', 'status_url_tag', 'json', 'created_at', 'quotedstatus', 'retweetedstatus',)
 
-admin.site.register(Treedj)
+
+class TreedjAdmin(admin.ModelAdmin):
+    list_display = ('statusid', 'parent', 'status_url_tag',)
+    search_fields = ['statusid', 'parent']
+    fields = ('statusid', 'parent', 'status_url_tag',)
+    readonly_fields = ('statusid', 'parent', 'status_url_tag',)
+
+admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Tweetdj, TweetdjAdmin)

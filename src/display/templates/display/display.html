@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load userstats %}
+
+{% block title %}{% trans view.title %}{% endblock title %}
+
+{% block content %}
+{% include "display/tweet.html" %}    
+{% endblock %}

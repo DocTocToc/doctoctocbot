@@ -21,7 +21,7 @@ social_media_list = [
     ]
 
 user_id_list = [
-        1020794606, # @medecinelibre 'moderator'
+        1020794606, # @medecinelibre 'moderator' & 'dev'
         762321963402596352, # @freehealthio 'midwife'
         2567917734, # @librehealthcare 'patient'
         2548674752, # @cryptomed 'physician' & 'moderator'
@@ -43,7 +43,8 @@ categories = [
     ['orthoptist', 'Orthoptist', 'Orthoptiste'],
     ['dentist', 'Dentist', 'Dentiste'],
     ['uap','Unlicensed assistive personnel', 'Aide-soignant'],
-    ['bot', 'Robot', 'Robot']
+    ['bot', 'Robot', 'Robot'],
+    ['dev', 'Developer', 'Développeur']
 ]
 
 def create_socialmedia_instances(apps, schema_editor):
@@ -75,6 +76,7 @@ def create_usercategoryrelationship_instances(apps, schema_editor):
     physician_cat_obj, _ = Category.objects.get_or_create(name='physician')
     pharmacist_cat_obj, _ = Category.objects.get_or_create(name='pharmacist')
     bot_cat_obj, _ = Category.objects.get_or_create(name='bot')
+    dev_cat_obj, _ = Category.objects.get_or_create(name='dev')
 
     # 1020794606 @medecinelibre 'moderator'
     social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 1020794606, social_media = soc_med_obj)
@@ -82,6 +84,16 @@ def create_usercategoryrelationship_instances(apps, schema_editor):
     user_category_relationship = UserCategoryRelationship(
         social_user = social_user_obj,
         category = mod_cat_obj,
+        moderator = moderator
+    )
+    user_category_relationship.save
+    
+    # 1020794606 @medecinelibre 'dev'
+    social_user_obj, _ = SocialUser.objects.get_or_create(user_id = 1020794606, social_media = soc_med_obj)
+    moderator = social_user_obj
+    user_category_relationship = UserCategoryRelationship(
+        social_user = social_user_obj,
+        category = dev_cat_obj,
         moderator = moderator
     )
     user_category_relationship.save

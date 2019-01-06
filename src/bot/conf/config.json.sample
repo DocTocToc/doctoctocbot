@@ -24,5 +24,9 @@
     },
     "images":{
         "dir":"/home/xxx/images/"
+    },
+    "moderation":{
+        "dev":true,
+        "moderator":false
     }
 }

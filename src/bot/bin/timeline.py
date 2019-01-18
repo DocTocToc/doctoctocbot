@@ -15,7 +15,7 @@ def get_timeline_id_lst(n=None) -> List:
     """
     return [status.statusid
             for status
-            in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None})[:n]]
+            in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None})][:n]
 
 def record_timeline():
     for status in get_timeline():

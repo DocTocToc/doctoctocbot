@@ -16,6 +16,7 @@ class WebTweet(models.Model):
     html = models.TextField()
     text = models.TextField()
     reply = models.PositiveIntegerField(null=True)
+    answer = models.PositiveIntegerField(null=True, help_text="anwsers by other accounts")
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
@@ -36,7 +37,16 @@ class WebTweet(models.Model):
     
     def utctime(self):
         return time.gmtime(self.time)
-    
+
+def create_or_update_webtweet(tweet: Tweet):
+    if tweet is None:
+        return
+    tweet_mi = WebTweet.objects.filter(statusid=tweet.statusid)
+    if tweet_mi.exists():
+        return updatewebtweet(tweet)
+    else:
+        return createwebtweet(tweet)
+        
 def createwebtweet(tweet: Tweet):
         images = {}
         for i in range(4):
@@ -70,3 +80,13 @@ def createwebtweet(tweet: Tweet):
             tweet_mi.save()
             
         return tweet_mi
+
+def updatewebtweet(tweet: Tweet):
+    with transaction.atomic():    
+        tweet_mi = WebTweet.objects.get(statusid=tweet.statusid)
+        tweet_mi.reply=tweet.replies
+        tweet_mi.like=tweet.favorites
+        tweet_mi.retweet=tweet.retweets
+        
+        tweet_mi.save()
+    return tweet_mi

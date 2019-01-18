@@ -5,11 +5,11 @@ Add tweets to databases.
 """
 
 from datetime import datetime
-import pytz
 import requests
 import logging
 
 from bot.conf.cfg import getConfig
+from bot.lib.datetime import get_datetime, get_datetime_tz
 from bot.model.model import Status, session
 from sqlalchemy.exc import IntegrityError as AlchemyIntegrityError
 from django.db import IntegrityError, transaction
@@ -48,7 +48,7 @@ class Addstatus:
             status = Status(id = self.id(),
                         userid = self.userid(),
                         json = self.json,
-                        datetime = self.datetime())
+                        datetime = get_datetime(self.json))
             session.add(status)
             session.commit()
         except AlchemyIntegrityError as e:
@@ -71,7 +71,7 @@ class Addstatus:
                     statusid = self.id(),
                     userid = self.userid(),
                     json = self.json,
-                    created_at = self.datetimetz(),
+                    created_at = get_datetime_tz(self.json),
                     reply = 0,
                     like = self.like(),
                     retweet = self.retweet(),
@@ -82,26 +82,6 @@ class Addstatus:
             return False
         logger.debug("function addtweetdj added status %s", status)
         return True
-
-    def datetime(self):
-        """ Returns the UTC creation datetime of the status as a Python object.
-
-        "created_at":"Thu Apr 06 15:24:15 +0000 2017"
-        
-        """
-        datetime_string = self.json["created_at"]
-        return datetime.strptime(datetime_string, "%a %b %d %H:%M:%S +0000 %Y")
-    
-    def datetimetz(self):
-        """ Returns the UTC creation datetime of the status as a Python object.
-
-        "created_at":"Thu Apr 06 15:24:15 +0000 2017"
-        
-        """
-        datetime_string = self.json["created_at"]
-        datetime_with_tz = datetime.strptime(datetime_string, "%a %b %d %H:%M:%S %z %Y")
-        datetime_in_utc = datetime_with_tz.astimezone(pytz.utc)
-        return datetime_in_utc
 
     def userid(self):
         return self.json["user"]["id"]

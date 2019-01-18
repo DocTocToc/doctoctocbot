@@ -1,4 +1,5 @@
 import logging
+from conversation.constants import HOURS
 
 logger = logging.getLogger(__name__)
 
@@ -293,4 +294,26 @@ def help_statusid_lst(hourdelta):
     help_lst = [(mi.statusid, count_replies_from_others(mi.statusid)) for mi in qs]
     help_lst = sorted(help_lst, key=lambda x: x[1])
     return [t[0] for t in help_lst]
+
+def last_authorized_statusid_lst(hourdelta=None):
+    """Return all tweets of interest (that contain hashtag0 & are root nodes)
+    from the import last hourdelta hours
+    """
+    from datetime import datetime, timedelta
+    from .models import Tweetdj, Treedj
+    from moderation.models import SocialUser
     
+    if hourdelta is None:
+        hourdelta = HOURS
+    
+    since = datetime.utcnow() - timedelta(hours=hourdelta)
+    tweet_sid_lst = list(Tweetdj.objects
+                         .filter(created_at__gt=since)
+                         .filter(hashtag0=True)
+                         .filter(userid__in=SocialUser.objects.authorized_users())
+                         .values_list('statusid', flat=True))
+    qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
+    qs = [mi for mi in qs if mi.is_root_node()]
+    last_lst = [mi.statusid for mi in qs]
+    last_lst = sorted(last_lst, reverse=True)
+    return last_lst

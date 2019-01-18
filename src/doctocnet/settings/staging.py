@@ -45,3 +45,12 @@ STATIC_URL='/static/'
 
 MEDIA_ROOT='/var/opt/doctocnet/media'
 MEDIA_URL='/media/'
+
+# Postgres
+POSTGRESQL = {
+    "username":"doctoctoctest",
+    "password":"doctoctoctest",
+    "host":"127.0.0.1",
+    "port":"5432",
+    "database":"status"
+}

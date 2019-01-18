@@ -42,3 +42,12 @@ STATICFILES_DIRS = [
 
 # STATIC_ROOT = ''
 STATIC_URL = '/static/'
+
+# Postgres
+POSTGRESQL = {
+    "username":"doctoctoctest",
+    "password":"doctoctoctest",
+    "host":"127.0.0.1",
+    "port":"5432",
+    "database":"status"
+}

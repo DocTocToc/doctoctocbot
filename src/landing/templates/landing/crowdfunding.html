@@ -1,33 +1,28 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<title>{{ flatpage.title }}</title>
-<!-- Required meta tags -->
-<meta charset="utf-8">
-<meta name="viewport"
-  content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- Bootstrap CSS -->
-<link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-  crossorigin="anonymous">
-</head>
-<body>
-  <h1>Hello, crowdfunding world!</h1>
+{% extends "doctocnet/base.html" %}
+{% load static %}
 
-  {{ flatpage.content }}
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous" type="text/javascript"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous" type="text/javascript"></script>
-  <script
-    src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous" type="text/javascript"></script>
-</body>
-</html>
+{% block title %}Financement participatif{% endblock title %}
+
+{% block head_css %}
+  {{ block.super }}
+  <link rel="stylesheet"
+  href="{% static "/landing/crowdfunding.css" %}"/>
+{% endblock head_css %}
+
+{% block content %}
+<div class="container">
+{% include "landing/donate.html" %}
+{% include "landing/project.html" %}
+
+<!-- Credits -->
+<div class="card">
+  <div class="card-block">
+    <h5 class="card-title">Credits</h5>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Brick icon made by <a href="https://www.flaticon.com/authors/coucou" title="Coucou">Coucou</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></li>
+    </ul>
+  </div>
+</div>
+
+</div>
+{% endblock content %}

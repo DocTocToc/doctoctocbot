@@ -3,7 +3,7 @@ configparser
 unidecode
 sqlalchemy
 psycopg2
-Django==2.0.9
+Django==2.0.10
 django-mptt
 pytz
 social-auth-app-django
@@ -19,3 +19,5 @@ lxml
 beautifulsoup4
 django-redis
 djangorestframework
+django-crispy-forms
+

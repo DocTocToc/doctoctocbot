@@ -6,6 +6,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine.url import URL
 
+from django.conf import settings
+
 from bot.conf.cfg import getConfig
 
 Base = declarative_base()
@@ -81,11 +83,11 @@ class Retweet(Base):
 
 config = getConfig()
 url = URL("postgresql",
-          username=config['postgresql']['username'],
-          password=config['postgresql']['password'],
-          host=config['postgresql']['host'],
-          port=config['postgresql']['port'],
-          database=config['postgresql']['database'],
+          username=settings.POSTGRESQL['username'],
+          password=settings.POSTGRESQL['password'],
+          host=settings.POSTGRESQL['host'],
+          port=settings.POSTGRESQL['port'],
+          database=settings.POSTGRESQL['database'],
           query=None)
 engine = create_engine(url, client_encoding='utf8', echo=False)
 Base.metadata.create_all(engine)

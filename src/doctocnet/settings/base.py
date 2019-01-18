@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'charts',
     'display',
     'timeline',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -152,7 +153,7 @@ USE_TZ = True
 
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
-LOGIN_REDIRECT_URL = 'landing:index'
+LOGIN_REDIRECT_URL = '/user/'
 
 # custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -222,3 +223,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+#Default time delta in hours for all functions related to scraping web tweets
+SCRAPING_HOUR_DELTA = 24
+
+# crispy_forms options
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

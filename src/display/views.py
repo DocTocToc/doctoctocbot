@@ -9,10 +9,10 @@ from django.utils.translation import gettext as _
 
 from conversation.tree.tweet_server import get_tweet
 from conversation.tree.tweet_parser import Tweet
-from conversation.utils import top_statusid_lst, help_statusid_lst
+from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
 
 from bot.bin.timeline import get_timeline_id_lst
-from .models import WebTweet, createwebtweet
+from .models import WebTweet, create_or_update_webtweet
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,13 +40,14 @@ class Last(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=5
+    n=10
+    hour=48
     title = _("Last tweets")
     template_name = "display/display.html"
     
     def get_context_data(self, *args, **kwargs):
         context = super(Last, self).get_context_data(*args, **kwargs)
-        sid_lst = get_timeline_id_lst(self.n)
+        sid_lst = last_authorized_statusid_lst(self.hour)[:self.n]
         tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -60,8 +61,8 @@ class Top(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=5
-    hour=96
+    n=10
+    hour=48
     title = _("Top tweets")
     template_name = "display/display.html"
     
@@ -102,8 +103,8 @@ class All(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=5
-    hour=240
+    n=10
+    hour=24
     title = _("All tweets")
     template_name = "display/all.html"
     
@@ -113,12 +114,13 @@ class All(TemplateView):
         tweet_lst_dic = {}
         
         #last
-        sid_lst = get_timeline_id_lst(self.n)
+        sid_lst = last_authorized_statusid_lst(self.hour)[:self.n]
         last_tweet_lst = []
-        #logger.debug(f"id_list: {sid_lst}")
+        logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
-            #logger.debug(f"type: {type(sid)}")
             last_tweet_lst.append(statuscontext(sid))
+        for tweet in last_tweet_lst:
+            logger.debug(f"last_tweet: {tweet.html}")
         tweet_lst_dic['last']= last_tweet_lst
         
         #help
@@ -153,15 +155,11 @@ def notfound(sid):
     return tweet
 
 def statuscontext(sid):
-    try: 
+    try:
         tweet_mi = WebTweet.objects.get(statusid=sid)
     except WebTweet.DoesNotExist:
-        tweet = get_tweet(sid)
-        if tweet is None:
-            return(notfound(sid))
-        logger.debug(f"{tweet} {tweet.statusid} {tweet.time}")
-        tweet_mi = createwebtweet(tweet)
-    logger.debug(tweet_mi)
+        return notfound(sid)
+    logger.debug(f"tweet_mid: {tweet_mi}")
     localdatetime: str = time.strftime('%H:%M - %d %b %Y', tweet_mi.localtime())
     utcdatetime: str = time.strftime('%d %B %Y %H:%M:%S', tweet_mi.utctime())
     html = addurl(tweet_mi.html, "https://twitter.com")    
@@ -173,6 +171,8 @@ def statuscontext(sid):
 
 def addurl(fragment: str, url: str) -> str:
     logger.debug(f"fragment:{fragment}")
+    if fragment is None:
+        return
     def rawsoup(soup):
         if soup.body:
             return soup.body.next

@@ -1,6 +1,10 @@
-{% extends "base.html" %}
+{% extends "doctocnet/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
+
+<div class="container">
 
 {% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
@@ -11,31 +15,33 @@
     <p>Your account doesn't have access to this page. To proceed,
     please login with an account that has access.</p>
   {% else %}
-    <p>Please login to see this page.</p>
+    <p>Please login</p>
   {% endif %}
 {% endif %}
 
+<a href="{% url 'social:begin' 'twitter' %}">
+<img border="0" alt="Sign in with Twitter" src="{% static "/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+</a>
+
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
-
-<div>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
+<div class="form-group">
+  <!--td>{{ form.username.label_tag }}</td-->
+  <td>{{ form.username|as_crispy_field }}</td>
 </div>
-<div>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
+<div class="form-group">
+  <!--td>{{ form.password.label_tag }}</td-->
+  <td>{{ form.password|as_crispy_field }}</td>
 </div>
-
-<div>
-  <input type="submit" value="login" />
+<div class="form-group">
+  <button type="submit" class="btn btn-success">login</button>
   <input type="hidden" name="next" value="{{ next }}" />
 </div>
 </form>
 
-<p><a href="{% url 'social:begin' 'twitter' %}">Login with Twitter</a></p>
-
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+
+</div>
 
 {% endblock %}

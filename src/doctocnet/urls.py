@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', include('landing.urls')),
     path('', include('users.urls')),
+    path('crowdfunding/', include('crowdfunding.urls')),
     path('display/', include('display.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),

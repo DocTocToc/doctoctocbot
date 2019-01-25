@@ -51,3 +51,14 @@ POSTGRESQL = {
     "port":"5432",
     "database":"status"
 }
+
+# django-paypal
+PAYPAL_RECEIVER_EMAIL = 'jerome-facilitator@jerome.cc'
+ 
+PAYPAL_TEST = True
+
+# Braintree
+BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account
+BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID')
+BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
+BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')

@@ -10,6 +10,5 @@ app_name = 'landing'
 urlpatterns = [
     path('', cache_page(60 * 1)(All.as_view()), name='index'),
     path('user/', views.UserInfo.as_view(), name='user'),
-    path('crowdfunding/', TemplateView.as_view(template_name="landing/crowdfunding.html")),
     path('status/<int:statusid>/', views.status),
 ]

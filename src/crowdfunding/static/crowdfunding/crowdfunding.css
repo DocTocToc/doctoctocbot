@@ -68,3 +68,28 @@ p {
 .navbar-nav  li a:hover {
 	color: #1abc9c !important;
 }
+
+/* This is the default state */
+.custom-radio .custom-control-label::before {
+    background-color: darkorange;  /* orange */
+}
+
+/* This is the checked state */
+.custom-radio .custom-control-input:checked~.custom-control-label::before,
+.custom-radio .custom-control-input:checked~.custom-control-label::after {
+    background-color: greenyellow;  /* green */
+    background-image: none;   
+    border-radius: 50%;
+}
+
+/* active state i.e. displayed while the mouse is being pressed down */
+.custom-radio .custom-control-input:active ~ .custom-control-label::before {
+    color: #fff;
+    background-color: #ff0000; /* red */
+}
+
+/* the shadow; displayed while the element is in focus */
+.custom-radio .custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(255, 123, 255, 0.25); /* pink, 25% opacity */
+}
+    

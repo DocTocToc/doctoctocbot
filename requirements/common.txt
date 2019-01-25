@@ -20,4 +20,6 @@ beautifulsoup4
 django-redis
 djangorestframework
 django-crispy-forms
-
+django-paypal
+braintree
+requests

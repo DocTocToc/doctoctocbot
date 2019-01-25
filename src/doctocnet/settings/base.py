@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'display',
     'timeline',
     'crispy_forms',
+    'paypal.standard.ipn',
+    'crowdfunding',
 ]
 
 MIDDLEWARE = [

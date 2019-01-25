@@ -34,3 +34,4 @@ src/media/twitter/profile/images/normal
 
 # artefact of celery beat
 src/celerybeat-schedule.db
+src/celerybeat.pid

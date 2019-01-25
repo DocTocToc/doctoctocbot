@@ -12,6 +12,9 @@
   <li> username: {{ user.get_username }}</li>
   <li>name: {{ name }}</li>
   <li>screen_name: {{ screen_name }}</li>
+  {% if user.email %}
+  <li>email: {{ user.email }}</li>
+  {% endif %}
   <li>location: {{ location }}</li>
   {% if expanded_url %}
   <li>Homepage: <a href="{{ expanded_url }}">{{ display_url }}</a></li>
@@ -19,11 +22,14 @@
   <li>profile_image_url_https: {{ pp_url }}</li>
   <li><img src="{{ user.socialuser.profile.normalavatar.url }}" alt="Profile pic"></li>
   <li><img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic"></li>
-  <li><img src="{{ user.socialuser.profile.miniavatar.url }}" alt="Profile pic"></li>  
+  <li><img src="{{ user.socialuser.profile.miniavatar.url }}" alt="Profile pic"></li>
+  
+  {% if uid|total_hashtag_count %} 
   <li>Total {{ hashtag0 }} & {{ hashtag1 }} questions asked: {{ uid|total_hashtag_count }}</li>
     <ul>
       <li>{{ hashtag0 }} questions asked: {{ uid|hashtag_count:0 }}</li>
       <li>{{ hashtag1 }} questions asked: {{ uid|hashtag_count:1 }}</li>
     </ul>
+  {% endif %}
   </ul>
 {% endblock %}

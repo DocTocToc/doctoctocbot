@@ -1,0 +1,45 @@
+
+
+/* change active button color */
+
+.btn-primary:focus{
+	color: red!important;
+    background: red!important;
+    border-color:rgb(94, 79, 126);
+}
+
+.btn-primary:active{
+    background: red!important;
+    border-color:rgb(94, 79, 126);
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.075) inset, 0 0 8px rgba(114, 96, 153, 0.6);
+    outline: 0 none;
+}
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active{
+  color: white;
+  background: red!important;
+/*  border-color: yellow;  */
+  outline: 0 none;
+}
+
+.btn-primary:not(:disabled):not(.disabled):hover{
+  color: violet;
+  background: red!important;
+/*  border-color: yellow; */
+  outline: 0 none;
+}
+
+.btn-primary:not(:disabled):not(.disabled):focus{
+  box-shadow: 0 0 5px green;
+  background: red!important;
+  color: red!important;
+}
+
+.btn-primary:not(:disabled):not(.disabled):check{
+  box-shadow: 0 0 5px red;
+  background: red!important;  
+}
+
+.custom-radio .custom-control-input:focus{
+  color: red;
+  background-color: red;	
+}

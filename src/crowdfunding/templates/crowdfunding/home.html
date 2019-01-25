@@ -1,0 +1,74 @@
+{% extends "doctocnet/base.html" %}
+{% load static %}
+{% block head_css %}
+<link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
+{% endblock head_css %}
+
+{% block content %}
+<div class="btn-group flex-wrap" data-toggle="buttons" id="amount-radio-group">
+<div class="custom-control custom-radio">
+  <label class="btn btn-primary">
+    <input type="radio" name="option" id="option10" class="custom-control-input"> 10€
+  </label>
+  <label class="btn btn-primary">
+    <input type="radio" name="option" id="option25" class="custom-control-input"> 25€
+  </label>
+  <label class="btn btn-primary">
+    <input type="radio" name="option" id="option50" class="custom-control-input"> 50€
+  </label>
+  <label class="btn btn-primary">
+    <input type="radio" name="option" id="option100" class="custom-control-input"> 100€
+  </label>
+    <label class="btn btn-primary">
+    <input type="radio" name="option" id="option250" class="custom-control-input"> 250€
+  </label>
+  <label class="btn btn-primary">
+    <input type="radio" name="option" id="option500" class="custom-control-input"> 500€
+  </label>
+</div>
+</div>
+
+<form action="/crowdfunding/home/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+$(document).ready(function() {
+    $('#option10').focus(function(){
+        $('#id_preset_amount').val('10');
+    });
+    $('#option25').focus(function(){
+        $('#id_preset_amount').val('25');
+    });
+    $('#option50').focus(function(){
+        $('#id_preset_amount').val('50');
+    });
+    $('#option100').focus(function(){
+        $('#id_preset_amount').val('100');
+    });
+    $('#option250').focus(function(){
+        $('#id_preset_amount').val('250');
+    });
+    $('#option500').focus(function(){
+        $('#id_preset_amount').val('500');
+    });
+});
+
+$( "#id_custom_amount" ).focus(function(){
+	 $( "#id_preset_amount" ).val('');
+	 $('.btn-group').find('label').removeClass('active')
+	  .end().find('[type="radio"]').prop('checked', false);
+});
+    
+$( "#amount-radio-group" ).click(function(){
+    $( "#id_custom_amount" ).val('');
+   });
+
+$(document).ready(function(){
+	$( "#option25" ).trigger( "click" );
+});  
+</script>
+
+{% endblock %}

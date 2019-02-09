@@ -19,16 +19,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% endblock head_meta_viewport %}
 {% endblock head_meta %}
-<link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-  crossorigin="anonymous">
-{% block head_css %}
-{% endblock head_css %}
+
+
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+  crossorigin="anonymous">
+
+{% block head_css %}
+<link rel="stylesheet" href="{% static "/doctocnet/_nav.scss" %}">
+<link rel="stylesheet" href="{% static "/doctocnet/_navbar.scss" %}">
+<link rel="stylesheet" href="{% static "/doctocnet/_reboot.scss" %}">
+<link rel="stylesheet" href="{% static "/doctocnet/mynavbar.scss" %}">
+{% endblock head_css %}
+
+<!-- The following script is necessary for navbar dropdown toogle to work. -->
+<!--script>
+$(document).ready(function() {
+    $(".dropdown-toggle").dropdown();
+});
+</script-->
+<script>
+$(document).ready(function() {
+$('body').on('mouseenter mouseleave', '.dropdown', function (e) {
+    var dropdown = $(e.target).closest('.dropdown');
+    var menu = $('.dropdown-menu', dropdown);
+    dropdown.addClass('show');
+    menu.addClass('show');
+    setTimeout(function () {
+        dropdown[dropdown.is(':hover') ? 'addClass' : 'removeClass']('show');
+        menu[dropdown.is(':hover') ? 'addClass' : 'removeClass']('show');
+    }, 300);
+});
+});
+</script>
+
 
 <title>{% block title %} Home {% endblock title %} | doctoctoc.net</title>
 

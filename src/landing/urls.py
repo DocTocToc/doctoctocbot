@@ -8,7 +8,7 @@ from . import views
 app_name = 'landing'
 
 urlpatterns = [
-    path('', cache_page(60 * 1)(All.as_view()), name='index'),
+    path('', All.as_view(), name='index'),
     path('user/', views.UserInfo.as_view(), name='user'),
     path('status/<int:statusid>/', views.status),
 ]

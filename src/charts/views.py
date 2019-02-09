@@ -14,7 +14,7 @@ from moderation.models import SocialUser
 logger = logging.getLogger(__name__)
 
 def daily(request):
-    return render(request, 'daily.html')
+    return render(request, 'charts/daily.html')
 
 def questions_daily_data(request):
     if request.user.is_authenticated:
@@ -90,7 +90,7 @@ def questions_daily_data(request):
     return JsonResponse(chart)
 
 def monthly(request):
-    return render(request, 'monthly.html')
+    return render(request, 'charts/monthly.html')
 
 def questions_monthly_data(request):
     physicians = SocialUser.objects.physician_users()
@@ -211,4 +211,4 @@ def questions_yearly_data(request):
     return JsonResponse(chart)
 
 def yearly(request):
-    return render(request, 'yearly.html')
+    return render(request, 'charts/yearly.html')

@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import views
 
+app_name = 'charts'
+
 urlpatterns = [
     path('daily/', views.daily, name='daily'),
     path('daily/data/', views.questions_daily_data, name='questions_daily_data'),

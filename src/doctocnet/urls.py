@@ -21,15 +21,16 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', include('landing.urls')),
     path('', include('users.urls')),
+    path('', include('registration.urls')),
     path('crowdfunding/', include('crowdfunding.urls')),
-    path('display/', include('display.urls')),
+    path('display/', include('display.urls', namespace='display')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
 
     path('conversation/', include('conversation.urls')),
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
-    path('', include('charts.urls')),
+    path('charts/', include('charts.urls', namespace='charts')),
 ]
 
 # Use static() to add url mappings to serve static files during development (only)

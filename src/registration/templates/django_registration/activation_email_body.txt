@@ -1,0 +1,17 @@
+Bonjour {{ user.username }}!
+
+Vous venez de vous inscrire sur le site {{ site.domain }}.
+
+Merci de bien vouloir ouvrir ce lien sécurisé pour activer votre compte:
+
+https://{{ site.domain }}{% url 'django_registration_activate' activation_key %}
+
+Ce lien restera valable pendant {{ activation_days }} jour{{ activation_days|pluralize }}.
+
+Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer et effacer ce message. Nous vous prions de nous excuser pour la gène occasionée. Votre adresse mail a probablement été entrée par erreur.
+
+Merci.
+
+Jérôme Pinguet
+Médecine Libre
+doctoctoc.net

@@ -1,9 +1,18 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
 {% load userstats %}
+{% load cache %}
 
 {% block title %}{% trans view.title %}{% endblock title %}
 
 {% block content %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+{% cache display_cache display view.title LANGUAGE_CODE %}
+
 {% include "display/tweet.html" %}    
+
+{% endcache %}
+
 {% endblock %}

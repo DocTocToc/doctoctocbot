@@ -19,9 +19,11 @@
   {% endif %}
 {% endif %}
 
-<a href="{% url 'social:begin' 'twitter' %}">
+{% if 'twitter' in backends.not_associated %}
+<a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next }}">
 <img border="0" alt="Sign in with Twitter" src="{% static "/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
 </a>
+{% endif %}
 
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}

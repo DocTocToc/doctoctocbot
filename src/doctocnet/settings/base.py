@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'paypal.standard.ipn',
     'crowdfunding',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -231,3 +232,10 @@ SCRAPING_HOUR_DELTA = 24
 
 # crispy_forms options
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# django-registration
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
+
+MIGRATION_MODULES = {
+    'sites': 'doctocnet.data_migrations.sites_migrations',
+}

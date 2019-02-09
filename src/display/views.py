@@ -14,6 +14,8 @@ from conversation.utils import top_statusid_lst, help_statusid_lst, last_authori
 from bot.bin.timeline import get_timeline_id_lst
 from .models import WebTweet, create_or_update_webtweet
 
+from .constants import DISPLAY_CACHE
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,7 @@ class Status(TemplateView):
         logger.debug(f"type: {type(tweet)}")
         logger.debug(f"type: {type(tweet)}")
         context['tweet_lst'] = [tweet]
+        context['display_cache'] = DISPLAY_CACHE
         return context
         #return render(request, 'display/display.html', context)
 
@@ -54,6 +57,7 @@ class Last(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
+        context['display_cache'] = DISPLAY_CACHE
         return context
     
 class Top(TemplateView):
@@ -75,6 +79,7 @@ class Top(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
+        context['display_cache'] = DISPLAY_CACHE
         return context
     
 class Help(TemplateView):
@@ -84,7 +89,7 @@ class Help(TemplateView):
     """
     n=5
     hour=96
-    title = _("Top tweets")
+    title = _("Help tweets")
     template_name = "display/display.html"
     
     def get_context_data(self, *args, **kwargs):
@@ -96,6 +101,7 @@ class Help(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
+        context['display_cache'] = DISPLAY_CACHE
         return context
 
 class All(TemplateView):
@@ -142,7 +148,7 @@ class All(TemplateView):
         tweet_lst_dic['top']=top_tweet_lst
         
         context['display'] = tweet_lst_dic
-        
+        context['display_cache'] = DISPLAY_CACHE  
         return context
 
 def notfound(sid):

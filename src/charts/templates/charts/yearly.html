@@ -1,0 +1,6 @@
+{% extends "charts/charts.html" %}
+{% block title %}Daily tweets{% endblock %}
+{% block container %}
+  <div id="container" data-url="{% url 'charts:questions_yearly_data' %}"></div>
+{% endblock %}
+

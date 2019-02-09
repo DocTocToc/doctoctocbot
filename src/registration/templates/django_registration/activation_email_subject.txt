@@ -1,0 +1,1 @@
+{{ site.name }} - merci d'activer votre compte

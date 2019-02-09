@@ -62,3 +62,10 @@ BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sand
 BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID')
 BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
 BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')
+
+# mail
+EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)

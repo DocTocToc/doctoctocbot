@@ -1,0 +1,32 @@
+.section-icon {
+  max-height: 30px;
+  margin-left: ($spacer * .5) !important;
+  margin-right: ($spacer * .5) !important;
+  padding-left: ($spacer * .5) !important;
+  padding-right: ($spacer * .5) !important;
+}
+
+.section-title {
+  margin-left: ($spacer * .5) !important;
+  margin-right: ($spacer * .5) !important;
+  padding-left: ($spacer * .5) !important;
+  padding-right: ($spacer * .5) !important;
+}
+
+.navbar-nav li a {
+ line-height: 20px;
+}
+
+.svg-container { 
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; 
+    vertical-align: middle; 
+    overflow: hidden;
+    margin-left: ($spacer * .5) !important;
+    margin-right: ($spacer * .5) !important;
+    padding-left: ($spacer * .5) !important;
+    padding-right: ($spacer * .5) !important;
+}
+

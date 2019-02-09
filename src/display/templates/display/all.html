@@ -1,32 +1,44 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
 {% load userstats %}
+{% load cache %}
+
+
 
 {% block title %}{% trans view.title %}{% endblock title %}
 
 {% block content %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+{% cache display_cache frontpage LANGUAGE_CODE %}
+
 <div class="container-fluid">
   
   <div class="row">
     <div class="col">
       {% with display.last as tweet_lst %}
-      <h2>Last</h2>
+      <h2><a href="{% url "display:last" %}">Last</a></h2>
       {% include "display/tweet.html" %}
       {% endwith %}
     </div>
     <div class="col">
       {% with display.help as tweet_lst %}
-      <h2>Help</h2>
+      <h2><a href="{% url "display:help" %}">Help</a></h2>
       {% include "display/tweet.html" %}
       {% endwith %}    
     </div>
     <div class="col">
       {% with display.top as tweet_lst %}
-      <h2>Top</h2>
+      <h2><a href="{% url "display:top" %}">Top</a></h2>
       {% include "display/tweet.html" %}
       {% endwith %}    
     </div>
 
   </div>
 </div>
+
+{% endcache %}
+
 {% endblock %}
+

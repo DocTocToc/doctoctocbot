@@ -9,7 +9,7 @@ pytz
 social-auth-app-django
 CleanerVersion==2.1.0
 pillow
-Celery
+Celery==4.2.0
 # redis version pinned to avoid https://github.com/celery/celery/issues/5175
 redis==2.10.6
 celery[redis]
@@ -23,3 +23,4 @@ django-crispy-forms
 django-paypal
 braintree
 requests
+django-registration

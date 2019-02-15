@@ -1,12 +1,12 @@
+from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.utils import DatabaseError
+from django.utils.safestring import mark_safe
 import logging
 
-from django.db import models
-from django.contrib.postgres.fields import JSONField
-from django.db.utils import DatabaseError
-
 from mptt.models import MPTTModel, TreeForeignKey
-from django.utils.safestring import mark_safe
-from django.core.exceptions import ObjectDoesNotExist
+
 
 logger = logging.getLogger(__name__)
 

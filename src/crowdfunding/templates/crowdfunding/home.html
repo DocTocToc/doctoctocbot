@@ -1,10 +1,23 @@
 {% extends "doctocnet/base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block head_css %}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
 {% endblock head_css %}
 
 {% block content %}
+
+{% if 'twitter' in backends.not_associated %}
+<div class="container-fluid bg-1">
+  <p>
+    Vous avez un compte Twitter? Merci de vous authentifier!
+    <a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:get-amount' %}">
+      <img border="0" alt="Sign in with Twitter" src="{% static "/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+    </a>
+  </p>
+</div>
+{% endif %}
+
 <div class="btn-group flex-wrap" data-toggle="buttons" id="amount-radio-group">
 <div class="custom-control custom-radio">
   <label class="btn btn-primary">
@@ -28,11 +41,13 @@
 </div>
 </div>
 
-<form action="/crowdfunding/home/" method="post">
+<!-- form action="/crowdfunding/home/" method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit">
-</form>
+</form-->
+
+{% crispy form %}
 
 <script>
 $(document).ready(function() {

@@ -1,6 +1,8 @@
-from django.core.management.base import  BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
+
 from conversation.models import Tweetdj
 from status.models import Status
+
 
 class Command(BaseCommand):
     help = 'Transfer tweets from prodstatus DB (Status model) to Doctocnet DB (Tweetdj model)'

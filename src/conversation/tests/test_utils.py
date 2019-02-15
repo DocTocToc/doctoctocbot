@@ -1,13 +1,12 @@
 from datetime import datetime
-
 from django.test import TestCase
 
 from conversation.models import Tweetdj
 from conversation.utils import userhashtagcount
 from conversation.utils import usertotalhashtagcount
+
 from .constants import userhashtagcount0_data, userhashtagcount1_data
 from .data import userhashtagcount_db
-
 
 
 class Userhashtagcount0TestCase(TestCase):

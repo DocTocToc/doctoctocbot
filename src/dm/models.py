@@ -1,14 +1,16 @@
-from django.db import models
-from django.contrib.postgres.fields import JSONField
-from django.utils.translation import gettext_lazy as _
-
-import logging
 from django.contrib.admin.utils import help_text_for_field
+from django.contrib.postgres.fields import JSONField
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+import logging
+
+from bot.conf.cfg import getConfig
+from common.utils import dictextract
+
+
 logger = logging.getLogger(__name__)
 
 
-from bot.conf.cfg import getConfig
-from common.utils import dictextract 
 
 class DirectMessageManager(models.Manager):
     def createdm(self, **kwargs):

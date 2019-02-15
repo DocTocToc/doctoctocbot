@@ -1,8 +1,9 @@
-from pathlib import Path
 from decouple import AutoConfig
 from dj_database_url import parse as db_url
+from pathlib import Path
 
 from .base import *
+
 
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/development")
 config = AutoConfig(search_path = CONFIG_DIR)
@@ -69,3 +70,6 @@ EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
+
+# investment
+PROJECT_NAME = 'doctoctocbot'

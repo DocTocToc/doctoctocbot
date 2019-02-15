@@ -1,9 +1,10 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import IntegrityError, transaction
-from django.conf import settings
-
+from django.db import models
 import logging
+
+
 logger = logging.getLogger(__name__)
 
 class Status(models.Model):

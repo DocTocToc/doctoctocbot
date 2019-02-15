@@ -15,18 +15,21 @@ by [Basti](https://github.com/basti2342) License: Mozilla Public License version
 """
 
 import hashlib
+import logging
 import os
 import tweepy
 from tweepy.error import TweepError
-from bot.twitter import getAuth
+import unidecode
+
 from bot.conf.cfg import getConfig
 from bot.log.log import setup_logging
-import logging
-import unidecode
+from bot.twitter import getAuth
 from moderation.models import SocialUser
+
+from .addstatusdj import addstatus_if_not_exist
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
-from .addstatusdj import addstatus_if_not_exist
+
 
 setup_logging()
 logger = logging.getLogger(__name__)

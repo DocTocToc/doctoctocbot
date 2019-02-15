@@ -1,7 +1,9 @@
-from doctocnet.celery import app
-from .profile import twitterprofile
+import logging
 from unicodedata import category
-import logging                                                                
+
+from doctocnet.celery import app
+
+from .profile import twitterprofile
 logger = logging.getLogger(__name__)
 
 @app.task

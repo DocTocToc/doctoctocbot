@@ -1,12 +1,12 @@
 from django.contrib import messages
-from django.shortcuts import render
-from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-
-from .gateway import generate_client_token, transact, find_transaction
+from django.shortcuts import render
+from django.urls import reverse
 
 from .constants import TRANSACTION_SUCCESS_STATUSES
+from .gateway import generate_client_token, transact, find_transaction
+
 
 def index(request):
     return redirect('crowdfunding:new-checkout')

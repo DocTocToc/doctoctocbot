@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include('landing.urls')),
     path('', include('users.urls')),
     path('', include('registration.urls')),
+    path('', include('customer.urls')),
     path('crowdfunding/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
     path('accounts/', include('django.contrib.auth.urls')),

@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def autolog(message):
     "Automatically log the current function details."
     import inspect, logging

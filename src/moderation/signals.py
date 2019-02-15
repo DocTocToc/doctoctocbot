@@ -1,16 +1,17 @@
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import random
 import logging
-from django.db import transaction
+import random
+
+from bot.conf.cfg import getConfig
+from dm.api import senddm
+from moderation.models import Queue, Moderation, SocialUser
 
 from .moderate import quickreply
-from dm.api import senddm
-
-from moderation.models import Queue, Moderation, SocialUser
 from .tasks import handle_create_update_profile
 from .tasks import handle_sendmoderationdm
-from bot.conf.cfg import getConfig
+
 
 logger = logging.getLogger(__name__)
 

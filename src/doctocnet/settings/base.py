@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os, sys
-from pathlib import Path
-from decouple import AutoConfig
 from django.conf.global_settings import AUTH_USER_MODEL
+from django.utils.translation import gettext_lazy as _
+import os
+import sys
+
+from decouple import AutoConfig
+from pathlib import Path
+
 
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/base")
 config = AutoConfig(search_path = CONFIG_DIR)
@@ -58,6 +62,8 @@ INSTALLED_APPS = [
     'paypal.standard.ipn',
     'crowdfunding',
     'registration',
+    'django_countries',
+    'customer',
 ]
 
 MIDDLEWARE = [
@@ -133,13 +139,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
 
-from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
-    ('en', _('English')),
     ('fr', _('French')),
+#    ('en', _('English')),
+
 ]
 
 

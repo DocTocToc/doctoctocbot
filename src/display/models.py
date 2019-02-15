@@ -1,11 +1,11 @@
-import time
-from django.db import models
 from django.db import IntegrityError, transaction
+from django.db import models
+import time
 
-from conversation.tree.tweet_parser import Tweet 
+from conversation.tree.tweet_parser import Tweet
+
 
 # Create your models here.
-
 class WebTweet(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
     conversationid = models.BigIntegerField()

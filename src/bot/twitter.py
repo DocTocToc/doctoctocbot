@@ -3,7 +3,9 @@
 
 import logging
 import tweepy
+
 from .conf.cfg import getConfig
+
 
 logger = logging.getLogger(__name__)
 

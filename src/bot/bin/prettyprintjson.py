@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 
-import sys, getopt, simplejson, json
+import getopt
+import json
+import simplejson
+import sys
+
 
 def main(argv):
    inputfile = ''

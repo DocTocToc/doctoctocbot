@@ -1,8 +1,9 @@
 from datetime import datetime
-import pytz
 import logging
+import pytz
 
 from conversation.models import Tweetdj
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

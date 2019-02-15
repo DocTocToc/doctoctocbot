@@ -1,13 +1,15 @@
-from django.db import models, connection
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
-from versions.models import Versionable
-from versions.fields import VersionedForeignKey
-import logging
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models, connection
 from django.utils.safestring import mark_safe
+import logging
 from os.path import stat
 from sys import getprofile
+
+from versions.fields import VersionedForeignKey
+from versions.models import Versionable
+
 
 class AuthorizedManager(models.Manager):
     def physician_users(self):

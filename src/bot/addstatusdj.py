@@ -9,19 +9,20 @@ Based on [retweet-bot](https://github.com/basti2342/retweet-bot) by [Basti](http
 License: Mozilla Public License, see 'LICENSE' for details.                     
 """                                                                             
                                                                                 
-import os
+import argparse
 import json
 import logging
-import argparse
+import os
+import tweepy
 
-import tweepy                                                                  
-from .twitter import getAuth                                                     
-from .conf.cfg import getConfig                                                  
-from .log.log import setup_logging
-
-from .lib.statusdb import Addstatus
 from conversation.models import Tweetdj
+
+from .conf.cfg import getConfig
+from .lib.statusdb import Addstatus
+from .log.log import setup_logging
+from .twitter import getAuth
 from .twitter import statuses_lookup
+
 
 setup_logging()                                                                 
 logger = logging.getLogger(__name__)

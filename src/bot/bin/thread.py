@@ -1,12 +1,15 @@
-import logging
-from conversation.models import Tweetdj, Treedj, create_tree
 from django.db.utils import DatabaseError
+import logging
+
+from bot.conf.cfg import getConfig
+from bot.tasks import handle_question
+from conversation.models import Tweetdj, Treedj, create_tree
+from conversation.tree import tweet_parser, tweet_server
+from moderation.models import SocialUser
+
 from ..addstatusdj import addstatus
 from ..doctoctocbot import retweet, isquestion, has_greenlight, has_retweet_hashtag
-from conversation.tree import tweet_parser, tweet_server
-from bot.conf.cfg import getConfig
-from moderation.models import SocialUser
-from bot.tasks import handle_question
+
 
 logger = logging.getLogger(__name__)
 

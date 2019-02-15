@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Project, ProjectInvestor
+from .models import Project, ProjectInvestment
 
 admin.site.register(Project)
-admin.site.register(ProjectInvestor)
+admin.site.register(ProjectInvestment)

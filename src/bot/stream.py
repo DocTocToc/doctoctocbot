@@ -1,12 +1,15 @@
-from tweepy.streaming import StreamListener
+import json
+import logging
 from tweepy import Stream
 import tweepy
-import json
+from tweepy.streaming import StreamListener
+
 from bot.conf.cfg import getConfig
-from bot.twitter import getAuth
 from bot.log.log import setup_logging
-import logging
+from bot.twitter import getAuth
+
 from .tasks import handle_on_status
+
 
 setup_logging()
 logger = logging.getLogger(__name__)

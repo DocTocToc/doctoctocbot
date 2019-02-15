@@ -1,5 +1,7 @@
-from django.core.management.base import  BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
+
 from bot.stream import main
+
 
 class Command(BaseCommand):
     help = 'Polls lists of Twiter account, update UserModerationRelationship table'

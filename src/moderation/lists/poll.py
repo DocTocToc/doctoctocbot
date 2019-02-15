@@ -8,19 +8,23 @@ This module allows for a smooth transition from solo moderation through the
 Twitter account to group moderation.
 """
 
-import os, tweepy, inspect
-import sys
-from bot.twitter import getAuth
-from bot.conf.cfg import getConfig
-
 import django
+import logging
+import os
+import tweepy
+import inspect
+import sys
 
-os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
-django.setup()
+from bot.conf.cfg import getConfig
+from bot.twitter import getAuth
 from moderation.models import SocialUser, SocialMedia, Category, UserCategoryRelationship
 
 from .constants import MODERATOR, CATEGORIES_DICT as CAT
-import logging
+
+
+os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
+django.setup()
+
 logging.basicConfig(level=logging.DEBUG)
 
 

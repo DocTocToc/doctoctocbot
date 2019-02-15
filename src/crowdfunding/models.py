@@ -1,5 +1,6 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 
 class Project(models.Model):
     name = models.CharField(max_length=191)
@@ -15,7 +16,7 @@ class Project(models.Model):
     def __str__(self):
         return "{}:{}".format(self.id, self.name)
 
-class ProjectInvestor(models.Model):
+class ProjectInvestment(models.Model):
     project = models.ForeignKey(
         'Project',
         on_delete=models.CASCADE

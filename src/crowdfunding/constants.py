@@ -9,3 +9,6 @@ TRANSACTION_SUCCESS_STATUSES = [
     braintree.Transaction.Status.Settling,
     braintree.Transaction.Status.SubmittedForSettlement
 ]
+
+
+ITEM_NAME = 'Développement application web pour professionnels de santé doctoctoc.net '

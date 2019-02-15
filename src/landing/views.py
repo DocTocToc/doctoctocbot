@@ -1,16 +1,17 @@
-import time
-from django.shortcuts import render
-from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.utils.translation import gettext as _
-
-from conversation.utils import userhashtagcount
-from bot.conf.cfg import getConfig
-from conversation.tree.tweet_server import get_tweet
+from django.shortcuts import render
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 import logging
+import time
+
+from bot.conf.cfg import getConfig
+from conversation.tree.tweet_server import get_tweet
+from conversation.utils import userhashtagcount
+
+
 logger = logging.getLogger(__name__)
 
 def index(request):

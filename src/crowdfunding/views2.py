@@ -1,70 +1,121 @@
 from decimal import *
-from random import randint
-
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+import logging
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
+from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
+from random import randint
+from django.views.generic.edit import FormView
 
 import braintree
-
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.utils.decorators import method_decorator
-from django.views import generic
-from django.utils.translation import gettext as _
-
 from paypal.standard.forms import PayPalPaymentsForm
 
+from .constants import ITEM_NAME
 from .forms import CrowdfundingHomeForm, CheckoutForm
+from .models import Project, ProjectInvestment
 
-def get_amount(request):
-    if request.method == 'POST':
-        form = CrowdfundingHomeForm(request.POST)
-        if form.is_valid():
-            custom_amount = form.cleaned_data.get('custom_amount')
-            preset_amount = form.cleaned_data.get('preset_amount')
-            amount = custom_amount or preset_amount
-            """
-            return HttpResponseRedirect(reverse('crowdfunding:crowdfunding-ok',
-                                                kwargs={'amount': amount},
-                                                current_app='crowdfunding'
-                                                )
-            )
-            """
-            return HttpResponseRedirect(reverse('crowdfunding:pay',
-                                                kwargs={'amount': amount},
-                                                current_app='crowdfunding'
-                                                )
-            )            
-    else:
-        form= CrowdfundingHomeForm()
+logger = logging.getLogger(__name__)
+
+
+class InvestView(FormView):
+
+    template_name = 'crowdfunding/home.html'
+    #if _is_twitter_auth():
+    #else:
+    #    form_class = CrowdfundingHomeForm  
+    success_url = reverse_lazy(
+                    'crowdfunding:pay',
+                    current_app='crowdfunding'
+                )
+    
+    def is_twitter_auth(self):
+        if not self.request.user.is_authenticated:
+            return False
+        return bool(self.request.user.social_auth.filter(provider='twitter'))
+
+    def form_valid(self, form):
+        if self.request.user.is_authenticated:
+            if self.is_twitter_auth():
+                logger.debug('user is using Twitter Account!')
+                logger.debug('user.email: %s' % self.request.user.email)
+                if form.cleaned_data.get('email') and not self.request.user.email:
+                    logger.debug('email: %s' %form.cleaned_data.get('email'))
+                    self.request.user.email = form.cleaned_data.get('email')
+                    self.request.user.save()
+            else:
+                logger.debug('user is using Django default authentication or another social provider')
+        else:
+                pass
+                # create user here
+                # validate against known twitter usernames to prevent impersonation
+        self.request.session['amount'] = self.get_amount(form)
+        self.request.session['username'] = form.cleaned_data.get('username')
+        self.request.session['invoice'] = form.cleaned_data.get('invoice')
+        self.request.session['email'] = form.cleaned_data.get('email')
+        self.request.session['donor'] = form.cleaned_data.get('donor')
+        return super().form_valid(form)
         
-    return (render(request, 'crowdfunding/home.html', {'form': form}))
+    def get_amount(self, form): 
+        custom_amount = form.cleaned_data.get('custom_amount')
+        preset_amount = form.cleaned_data.get('preset_amount')
+        return custom_amount or preset_amount
+            
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        return super().post(request, *args, **kwargs)
+    
+    def get_initial(self):
+        username = None
+        email = None
+        if self.request.user.is_authenticated:
+            username = self.request.user.username
+            email = self.request.user.email
 
-def process_payment(request, amount):
-    #amount = request.GET.get('amount', '0')
+        data = {
+            'username': username,
+            'email': email
+        }
+        return data
+    
+    def get_form_class(self):
+        if self.is_twitter_auth():
+            return CrowdfundingHomeForm
+        else:
+            return CrowdfundingHomeForm
+    
+    def get_form(self):
+        form = super(InvestView, self).get_form(self.get_form_class())
+        form.fields['username'].widget.attrs['readonly'] = 'readonly'
+        return form
+
+def process_payment(request):
     host = request.get_host()
-    html = "<!DOCTYPE html><html><body>Amount: %s. Host: %s </body></html>" % (amount, host)
-    amount_dec = Decimal(amount).quantize(Decimal('.01'))
+    amount = request.session.get('amount', 0)
+    amount_dec = Decimal(request.session.get('amount')).quantize(Decimal('.01'))
     paypal_dict = {
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': '%.2f' % amount_dec,
-        'item_name': 'Développement outil professionnel en ligne doctoctoc.net',
+        'item_name': ITEM_NAME,
         'invoice': str(randint(1,10000)),
         'currency_code': 'EUR',
         'notify_url': 'http://{}{}'.format(host,
-                                           reverse('crowdfunding:paypal-ipn')),
+                                           reverse_lazy('crowdfunding:paypal-ipn')),
         'return_url': 'http://{}{}'.format(host,
-                                           reverse('crowdfunding:payment_done')),
+                                           reverse_lazy('crowdfunding:payment_done')),
         'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('crowdfunding:payment_cancelled')),
+                                              reverse_lazy('crowdfunding:payment_cancelled')),
     }
- 
+    project = Project.objects.get(name=settings.PROJECT_NAME)
+    investment = ProjectInvestment()
+    investment.project=project
+
+    
     form = PayPalPaymentsForm(initial=paypal_dict)
     return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})
-    return HttpResponse(html)
 
 @csrf_exempt
 def payment_done(request):
@@ -75,8 +126,9 @@ def payment_done(request):
 def payment_canceled(request):
     return render(request, 'crowdfunding/payment_cancelled.html')
 
+"""
 class CheckoutView(generic.FormView):
-    """This view lets the user initiate a payment."""
+    #This view lets the user initiate a payment.
     form_class = CheckoutForm
     template_name = 'crowdfunding/checkout.html'
     
@@ -144,13 +196,12 @@ class CheckoutView(generic.FormView):
         # add the customer id to your user profile
         customer_id = result.customer.id
         
-        """
-        Create a new transaction and submit it.
-        I don't gather the whole address in this example, but I can
-        highly recommend to do that. It will help you to avoid any
-        fraud issues, since some providers require matching addresses
+        #Create a new transaction and submit it.
+        #I don't gather the whole address in this example, but I can
+        #highly recommend to do that. It will help you to avoid any
+        #fraud issues, since some providers require matching addresses
          
-        """
+
         address_dict = {
             "first_name": self.user.first_name,
             "last_name": self.user.last_name,
@@ -213,3 +264,4 @@ class CheckoutView(generic.FormView):
     def get_success_url(self):
         # Add your preferred success url
         return reverse('crowdfunding:payment_done')
+"""

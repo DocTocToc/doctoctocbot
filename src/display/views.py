@@ -1,22 +1,23 @@
-import time
-from typing import List
 from bs4 import BeautifulSoup
-from django.views.generic import TemplateView
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-
-from conversation.tree.tweet_server import get_tweet
-from conversation.tree.tweet_parser import Tweet
-from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
+from django.views.generic import TemplateView
+import logging
+import time
 
 from bot.bin.timeline import get_timeline_id_lst
-from .models import WebTweet, create_or_update_webtweet
+from conversation.tree.tweet_parser import Tweet
+from conversation.tree.tweet_server import get_tweet
+from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
+
+from typing import List
 
 from .constants import DISPLAY_CACHE
+from .models import WebTweet, create_or_update_webtweet
 
-import logging
+
 logger = logging.getLogger(__name__)
 
 

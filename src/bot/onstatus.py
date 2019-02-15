@@ -1,13 +1,13 @@
+from django.db.utils import DatabaseError
 import logging
 import tweepy
 
-from django.db.utils import DatabaseError
-
-from bot.twitter import getAuth
-from bot.lib.statusdb import Addstatus
-from moderation.moderate import addtoqueue
 from bot.doctoctocbot import is_following_rules, retweet, isknown, has_greenlight, has_retweet_hashtag
+from bot.lib.statusdb import Addstatus
+from bot.twitter import getAuth
 from conversation.models import create_tree
+from moderation.moderate import addtoqueue
+
 
 logger = logging.getLogger(__name__)
 

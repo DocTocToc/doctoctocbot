@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import tweepy
+
 from bot.twitter import getAuth
+
 
 def getuser(user_id):
     "get Twitter user object"

@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import tweepy
-from twitter import getAuth
-from conf.cfg import getConfig
-from log import setup_logging
 import logging
 import random
 import string
+import tweepy
+from twitter import getAuth
+
+from conf.cfg import getConfig
+from log import setup_logging
+
 
 setup_logging()
 logger = logging.getLogger(__name__)

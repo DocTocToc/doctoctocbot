@@ -1,6 +1,8 @@
-import os
 from django.conf import settings
+import os
+
 import braintree
+
 
 if settings.BRAINTREE_PRODUCTION:
     braintree_env = braintree.Environment.Production

@@ -1,7 +1,8 @@
-import re
-import string
 import codecs
 import io
+import re
+import string
+
 
 frequency = {}
 with io.open('bio', encoding='utf-8', mode='r') as f:

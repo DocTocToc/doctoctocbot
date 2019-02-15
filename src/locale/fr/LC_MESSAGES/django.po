@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-20 10:16+0100\n"
+"POT-Creation-Date: 2019-02-11 04:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: crowdfunding/forms.py:39
+msgid "We couldn't verify your payment. Please try again."
+msgstr ""
+
+#: crowdfunding/views2.py:139
+msgid "Please get in contact."
+msgstr ""
+
+#: crowdfunding/views2.py:201
+msgid ""
+"Your payment could not be processed. Please check your input or use another "
+"payment method and try again."
+msgstr ""
+
+#: display/views.py:25
+msgid "Status"
+msgstr ""
+
+#: display/views.py:48
+msgid "Last tweets"
+msgstr ""
+
+#: display/views.py:70
+msgid "Top tweets"
+msgstr ""
+
+#: display/views.py:92
+msgid "Help tweets"
+msgstr ""
+
+#: display/views.py:114
+msgid "All tweets"
+msgstr ""
+
+#: registration/forms.py:112
+msgid "I have read and agree to the Terms of Service"
+msgstr ""
 
 #: templates/versions/datetimefilter.html:2
 #, python-format

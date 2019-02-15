@@ -1,7 +1,8 @@
-import logging#, random
-
-from .models import Queue#, SocialUser
 from django.db.utils import IntegrityError
+import logging  # , random
+
+from .models import Queue  # , SocialUser
+
 
 logger = logging.getLogger(__name__)
 

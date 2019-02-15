@@ -1,5 +1,7 @@
-from django.core.management.base import  BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
+
 from moderation.lists.poll import poll
+
 
 class Command(BaseCommand):
     help = 'Get json user (profile) object of given Twitter id or username'

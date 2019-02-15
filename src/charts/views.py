@@ -1,15 +1,15 @@
 from datetime import datetime
-import time
-import logging
-
-from django.shortcuts import render
-from django.http import JsonResponse
 from django.db.models import Count
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models.functions import TruncMonth, TruncYear
+from django.http import JsonResponse
+from django.shortcuts import render
+import logging
+import time
 
 from conversation.models import Tweetdj
 from moderation.models import SocialUser
+
 
 logger = logging.getLogger(__name__)
 

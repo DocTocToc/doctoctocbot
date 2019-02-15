@@ -3,7 +3,7 @@ configparser
 unidecode
 sqlalchemy
 psycopg2
-Django==2.0.10
+Django==2.0.13
 django-mptt
 pytz
 social-auth-app-django
@@ -24,3 +24,4 @@ django-paypal
 braintree
 requests
 django-registration
+django-countries

@@ -1,4 +1,7 @@
 import logging
+
+from django.core.paginator import Paginator
+
 from conversation.constants import HOURS
 
 logger = logging.getLogger(__name__)
@@ -10,11 +13,15 @@ def normalize(statusid):
     
 def allnormalize():
     from .models import Tweetdj
-    for status_mi in Tweetdj.objects.all():
-        statusid = status_mi.statusid
-        hashtag(statusid)
-        retweetedstatus(statusid)
-        quotedstatus(statusid)
+    from .constants import TWEETDJ_PAGINATION
+    paginator = Paginator(Tweetdj.objects.all(), TWEETDJ_PAGINATION)
+    
+    for page_idx in paginator.page_range:
+        for row in paginator.page(page_idx).object_list:
+            statusid = row.statusid
+            hashtag(statusid)
+            retweetedstatus(statusid)
+            quotedstatus(statusid)
 
 def retweetedstatus(statusid):
     from common.utils import dictextract

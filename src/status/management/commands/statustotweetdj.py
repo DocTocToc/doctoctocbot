@@ -1,3 +1,5 @@
+import pytz
+
 from django.core.management.base import BaseCommand, CommandError
 
 from conversation.models import Tweetdj
@@ -13,5 +15,5 @@ class Command(BaseCommand):
                 statusid=status_mi.id,
                 userid=status_mi.userid,
                 json=status_mi.json,
-                created_at=status_mi.datetime)
+                created_at=status_mi.datetime.replace(tzinfo=pytz.UTC))
         self.stdout.write(self.style.SUCCESS('Done transferring data.'))

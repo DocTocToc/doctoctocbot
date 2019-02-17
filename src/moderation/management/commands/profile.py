@@ -11,4 +11,4 @@ class Command(BaseCommand):
         
     def handle(self, *args, **options):
         poll()
-        self.stdout.write(self.style.SUCCESS('Done polling lists.'))
+        self.stdout.write(self.style.SUCCESS('Done retrieving profile.'))

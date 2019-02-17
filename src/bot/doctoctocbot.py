@@ -180,7 +180,6 @@ def retweet(status_id) -> bool:
 
 def get_search_string():
     config = getConfig()
-    # build savepoint path + file
     keyword_list = config["keyword_retweet_list"]
     search_string = " OR ".join ( keyword_list )
     search_string = search_string + u" -filter:retweets"
@@ -206,8 +205,6 @@ def save_point():
     return savepoint
 
 def timeline_iterator():    
-    #search_string = search_string()
-
     # Tweet language (empty = all languages)
     config = getConfig()
     tweetLanguage = config["settings"]["tweet_language"]
@@ -217,9 +214,7 @@ def timeline_iterator():
 
 def main():
     from .onstatus import triage 
-    #oklist = []
     timelineIterator = timeline_iterator()
-    #api = get_api()
     current_sid = None
     for tweet in timelineIterator:
         triage(tweet.id)
@@ -246,15 +241,6 @@ def main():
         last_tweet_id = current_sid
     else:
         last_tweet_id = save_point()
-    
-    # filter bad words & users out and reverse timeline
-    # wordbadlist = set((u"remplacant",u"RT",u"remplaçant"))
-    # oklist = filter(lambda tweet: not any(word in tweet.full_text.split() for word in wordbadlist), oklist)
-    
-    #oklist = list(oklist)
-    #oklist.reverse()    
-    
-    #retweet_lst(oklist)
     
     # write last retweeted tweet id to file
     with open(last_id_file(), "w") as f:

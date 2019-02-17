@@ -16,6 +16,7 @@ INTERNAL_IPS = ['127.0.0.1']
 
 INSTALLED_APPS += [
     'debug_toolbar',
+    'status',
 ]
 
 MIDDLEWARE += [
@@ -27,7 +28,11 @@ DATABASES = {
         'DATABASE_URL',
         #default='',
         cast=db_url
-    )
+    ),
+    'status': config(
+        'DATABASE_URL_PRODSTATUS',
+        cast=db_url
+    ),
 }
 
 # Static files (CSS, JavaScript, Images)

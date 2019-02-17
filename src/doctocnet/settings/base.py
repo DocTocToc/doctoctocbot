@@ -245,3 +245,5 @@ ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 MIGRATION_MODULES = {
     'sites': 'doctocnet.data_migrations.sites_migrations',
 }
+
+PAGINATION = 1000

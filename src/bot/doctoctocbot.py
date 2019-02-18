@@ -210,7 +210,9 @@ def timeline_iterator():
     tweetLanguage = config["settings"]["tweet_language"]
     
     api = get_api()    
-    return tweepy.Cursor(api.search, q=get_search_string(), since_id=save_point(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+    #return tweepy.Cursor(api.search, q=get_search_string(), since_id=save_point(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+    return tweepy.Cursor(api.search, q=get_search_string(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+
 
 def main():
     from .onstatus import triage 
@@ -218,7 +220,7 @@ def main():
     current_sid = None
     for tweet in timelineIterator:
         triage(tweet.id)
-        current_sid = tweet.id
+        #current_sid = tweet.id
         #addstatus_if_not_exist(tweet.id)
         #status = api.get_status(tweet.id,  tweet_mode='extended')
         #status_json = status._json
@@ -237,14 +239,14 @@ def main():
         #else:
         #    logger.debug(":( not ok for RT")
     
-    if current_sid is not None:
-        last_tweet_id = current_sid
-    else:
-        last_tweet_id = save_point()
+    #if current_sid is not None:
+    #    last_tweet_id = current_sid
+    #else:
+    #    last_tweet_id = save_point()
     
     # write last retweeted tweet id to file
-    with open(last_id_file(), "w") as f:
-        f.write(str(last_tweet_id))
+    #with open(last_id_file(), "w") as f:
+    #    f.write(str(last_tweet_id))
 
 def retweet_lst(lst):
     api = get_api()

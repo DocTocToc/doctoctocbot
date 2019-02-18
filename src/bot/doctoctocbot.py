@@ -195,6 +195,8 @@ def last_id_file():
 
 def save_point():
     # retrieve last savepoint if available
+    pass
+    """
     try:
         with open(last_id_file(), "r") as f:
             savepoint = f.read()
@@ -203,7 +205,8 @@ def save_point():
         logger.debug("No savepoint found. Bot is now searching for results")
 
     return savepoint
-
+    """
+    
 def timeline_iterator():    
     # Tweet language (empty = all languages)
     config = getConfig()

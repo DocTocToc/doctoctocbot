@@ -1,17 +1,16 @@
-from django.db import transaction
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import logging
 import random
 
-from bot.conf.cfg import getConfig
+from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
+
 from dm.api import senddm
 from moderation.models import Queue, Moderation, SocialUser
-
 from .moderate import quickreply
 from .tasks import handle_create_update_profile
 from .tasks import handle_sendmoderationdm
-
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +20,16 @@ def create_moderation(sender, instance, created, **kwargs):
     if created:
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
         moderatorid_int_lst = []
-        if getConfig()["moderation"]["moderator"]:
+        if settings.MODERATION["moderator"]:
             moderatorid_int_lst.extend(SocialUser.objects.moderators())
-        elif getConfig()["moderation"]["dev"]:
+        elif settings.MODERATION["dev"]:
             logger.debug(f"SocialUser.objects.devs(): {SocialUser.objects.devs()}")
             moderatorid_int_lst.extend(SocialUser.objects.devs())
         else:
             return
         logger.debug(f"moderatorid_int_lst: {moderatorid_int_lst}")
+        if not moderatorid_int_lst:
+            return
         chosenmoderatorid_int = random.choice(moderatorid_int_lst)
         logger.debug(f"chosenmoderatorid_int: {chosenmoderatorid_int}")
         moderator_mi = SocialUser.objects.get(user_id = chosenmoderatorid_int)

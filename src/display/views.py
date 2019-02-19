@@ -1,18 +1,19 @@
+import logging
+import time
+
+from typing import List
 from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-import logging
-import time
+from django.conf import settings
 
 from bot.bin.timeline import get_timeline_id_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
-
-from typing import List
 
 from .constants import DISPLAY_CACHE
 from .models import WebTweet, create_or_update_webtweet
@@ -44,8 +45,8 @@ class Last(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=10
-    hour=48
+    n = settings.STATUS_DISPLAY_NUMBER.get('last', 10)
+    hour = settings.STATUS_DISPLAY_HOUR.get('last', 48)
     title = _("Last tweets")
     template_name = "display/display.html"
     
@@ -66,8 +67,8 @@ class Top(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=10
-    hour=48
+    n = settings.STATUS_DISPLAY_NUMBER.get('top', 10)
+    hour = settings.STATUS_DISPLAY_HOUR.get('top', 48)
     title = _("Top tweets")
     template_name = "display/display.html"
     
@@ -88,8 +89,8 @@ class Help(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=5
-    hour=96
+    n = settings.STATUS_DISPLAY_NUMBER.get('help', 10)
+    hour = settings.STATUS_DISPLAY_HOUR.get('help', 48)
     title = _("Help tweets")
     template_name = "display/display.html"
     
@@ -110,8 +111,8 @@ class All(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n=10
-    hour=24
+    n = settings.STATUS_DISPLAY_NUMBER.get('all', 10)
+    hour = settings.STATUS_DISPLAY_HOUR.get('all', 48)
     title = _("All tweets")
     template_name = "display/all.html"
     

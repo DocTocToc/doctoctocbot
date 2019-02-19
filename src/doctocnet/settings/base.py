@@ -252,3 +252,17 @@ MODERATION = {
     "dev": True,
     "moderator": False
 }
+
+STATUS_DISPLAY_NUMBER = {
+    'all': 10,
+    'last': 10,
+    'help': 10,
+    'top': 10
+}
+
+STATUS_DISPLAY_HOUR= {
+    'all': 48,
+    'last': 48,
+    'help': 48,
+    'top': 48
+}

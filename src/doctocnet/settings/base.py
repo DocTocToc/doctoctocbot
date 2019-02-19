@@ -247,3 +247,8 @@ MIGRATION_MODULES = {
 }
 
 PAGINATION = 1000
+
+MODERATION = {
+    "dev": True,
+    "moderator": False
+}

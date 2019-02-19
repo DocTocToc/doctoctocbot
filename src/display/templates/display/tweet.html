@@ -1,10 +1,4 @@
 {% load static %}
-<html>
-<head>
-<meta charset="UTF-8">
-<title>{{ tweet.name }} on Twitter: "{{tweet.bodytext}}"</title>
-</head>
-<body>
 {% for tweet in tweet_lst %}
   <twitter-widget class="twitter-tweet twitter-tweet-rendered"
     id="twitter-widget-0"
@@ -164,5 +158,3 @@
   <link rel="stylesheet" type="text/css" href="{% static 'display/tweet.css' %}" />
   </twitter-widget>
 {% endfor %}
-</body>
-</html>

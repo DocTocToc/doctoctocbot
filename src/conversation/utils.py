@@ -309,6 +309,10 @@ def help_statusid_lst(hourdelta):
 def last_authorized_statusid_lst(hourdelta=None):
     """Return all tweets of interest (that contain hashtag0 & are root nodes)
     from the import last hourdelta hours
+    TODO: scrap this
+    selects statuses that contain hashtag0 but some
+    root tweets don't contain the hashtag, which can be further down in the
+    thread
     """
     from datetime import datetime, timedelta
     from .models import Tweetdj, Treedj

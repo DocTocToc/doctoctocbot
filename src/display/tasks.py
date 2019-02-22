@@ -7,6 +7,12 @@ from timeline.models import last_tl_statusid_lst
 
 @app.task
 def handle_scrape_web_roots(hourdelta=None):
+    """
+    TODO: scrap this task 
+    last_authorized_statusid_lst selects statuses that contain hashtag0 but some
+    root tweets don't contain the hashtag, which can be further down in the
+    thread
+    """
     if hourdelta is None:
         hourdelta = HOURS    
     for sid in last_authorized_statusid_lst(hourdelta):

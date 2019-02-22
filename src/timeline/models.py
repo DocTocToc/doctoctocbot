@@ -1,5 +1,10 @@
+from datetime import datetime, timedelta
+from bot.lib.datetime import get_datetime
+from bot.lib.snowflake import snowflake2utc
+
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.utils.safestring import mark_safe
 from django.db import IntegrityError, transaction
 from django.db import models
 import logging
@@ -14,7 +19,10 @@ class Status(models.Model):
     class Meta:
         ordering = ["-statusid"]
         get_latest_by = "-statusid"
+        verbose_name_plural = "statuses"
     
+    def status_url_tag(self):
+        return mark_safe('<a href="https://twitter.com/statuses/%s">Link</a>' % (self.statusid))
 
 def add_status_tl(status):
     """
@@ -32,15 +40,10 @@ def last_tl_statusid_lst(hourdelta=None):
     """Return tweets of interest (that are not replies) from the timeline
     created in the last hourdelta hours
     """
-    from datetime import datetime, timedelta
-    from bot.lib.datetime import get_datetime
-    
     if hourdelta is None:
         hourdelta = settings.SCRAPING_HOUR_DELTA
     
-    logger.debug(f"hourdelta: {hourdelta}")
     since = datetime.utcnow() - timedelta(hours=hourdelta)
-    logger.debug(f"since: {hourdelta}")
     sid_lst = []
     for status in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None}):
         dt = get_datetime(status.json)
@@ -49,4 +52,24 @@ def last_tl_statusid_lst(hourdelta=None):
             sid_lst.append(status.statusid)
     return sid_lst
         
+def last_retweeted_statusid_lst(hourdelta=None):
+    """Return a list of statusid of tweets that were retweeted by the bot and
+    that were created less than hourdelta hours ago.
+    """
+    if hourdelta is None:
+        hourdelta = settings.SCRAPING_HOUR_DELTA
     
+    since = datetime.utcnow() - timedelta(hours=hourdelta)
+    since_ts_ms = datetime.timestamp(since)*1000
+    #Status.objects.all().filter(json__contains={'retweeted_satus'})
+    #Status.objects.raw("SELECT statusid FROM timeline_status WHERE (((json->>'id')::bigint) >> 22) + 1288834974657 > 1548679041866")
+    rqs = Status.objects.raw(
+        "SELECT "
+        "statusid "
+        "FROM "
+        "timeline_status "
+        "WHERE "
+        "(((json->'retweeted_status'->>'id')::bigint) >> 22) + 1288834974657 > %s",
+        [since_ts_ms]
+    )
+    return [row.statusid for row in rqs]

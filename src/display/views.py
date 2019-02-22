@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 
 from bot.bin.timeline import get_timeline_id_lst
+from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
@@ -52,7 +53,7 @@ class Last(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Last, self).get_context_data(*args, **kwargs)
-        sid_lst = last_authorized_statusid_lst(self.hour)[:self.n]
+        sid_lst = last_retweeted_statusid_lst(self.hour)[:self.n]
         tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:

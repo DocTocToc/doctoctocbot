@@ -260,9 +260,17 @@ STATUS_DISPLAY_NUMBER = {
     'top': 10
 }
 
-STATUS_DISPLAY_HOUR= {
+STATUS_DISPLAY_HOUR = {
     'all': 48,
     'last': 48,
     'help': 48,
     'top': 48
 }
+
+BEAT_PERIOD = {
+    'record_timeline': 60.0,
+    'scrape_web_timeline': 120.0,
+    'normalize': 600.0,
+    'poll_dm': 600.0,
+    'poll_moderation_dm': 600.0
+    }

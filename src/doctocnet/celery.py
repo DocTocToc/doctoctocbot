@@ -13,34 +13,34 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    'dm-every-10-minutes': {
+    'poll-dm': {
         'task': 'dm.tasks.directmessages',
-        'schedule': 600.0,
+        'schedule': settings.BEAT_PERIOD.get('poll_dm', 600.0),
         'args': None,
         },
-    'poll-moderation-dm-every-10-minute': {
+    'poll-moderation-dm': {
         'task': 'moderation.tasks.poll_moderation_dm',
-        'schedule': 600.0,
+        'schedule': settings.BEAT_PERIOD.get('poll_moderation_dm', 600.0),
         'args': None,
         },
-    'normalize-every-10-minute': {
+    'normalize': {
         'task': 'conversation.tasks.handle_allnormalize',
-        'schedule': 600.0,
+        'schedule': settings.BEAT_PERIOD.get('normalize', 600.0),
         'args': None,
         },
-    'handle_record_timeline': {
+    'record-timeline': {
         'task': 'timeline.tasks.handle_record_timeline',
-        'schedule': 60.0,
+        'schedule': settings.BEAT_PERIOD.get('record_timeline', 60.0),
         'args': None,
         },
-    'handle_scrape_web_roots': {
-        'task': 'display.tasks.handle_scrape_web_roots',
-        'schedule': 60.0,
-        'args': (settings.SCRAPING_HOUR_DELTA,)
-        },
-    'handle_scrape_web_timeline': {
+#    'handle_scrape_web_roots': {
+#        'task': 'display.tasks.handle_scrape_web_roots',
+#        'schedule': 60.0,
+#        'args': (settings.SCRAPING_HOUR_DELTA,)
+#        },
+    'scrape-web-timeline': {
         'task': 'display.tasks.handle_scrape_web_timeline',
-        'schedule': 60.0,
+        'schedule': settings.BEAT_PERIOD.get('scrape_web_timeline', 120),
         'args': (settings.SCRAPING_HOUR_DELTA,)
         },
     }

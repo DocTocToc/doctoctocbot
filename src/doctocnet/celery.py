@@ -43,4 +43,9 @@ app.conf.beat_schedule = {
         'schedule': settings.BEAT_PERIOD.get('scrape_web_timeline', 120),
         'args': (settings.SCRAPING_HOUR_DELTA,)
         },
+    'update_trees': {
+        'task': 'conversation.utils.update_trees',
+        'schedule': settings.BEAT_PERIOD.get('update_trees', 120),
+        'args': (settings.SCRAPING_HOUR_DELTA,)
+        },
     }

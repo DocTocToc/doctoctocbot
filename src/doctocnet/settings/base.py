@@ -272,5 +272,6 @@ BEAT_PERIOD = {
     'scrape_web_timeline': 120.0,
     'normalize': 600.0,
     'poll_dm': 600.0,
-    'poll_moderation_dm': 600.0
+    'poll_moderation_dm': 600.0,
+    'update_trees': 300.0,
     }

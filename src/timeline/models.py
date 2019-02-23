@@ -72,4 +72,4 @@ def last_retweeted_statusid_lst(hourdelta=None):
         "(((json->'retweeted_status'->>'id')::bigint) >> 22) + 1288834974657 > %s",
         [since_ts_ms]
     )
-    return [row.json['retweeted_status']['id'] for row in rqs]
+    return sorted([row.json['retweeted_status']['id'] for row in rqs], reverse=True)

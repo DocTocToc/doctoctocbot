@@ -123,7 +123,7 @@ class All(TemplateView):
         tweet_lst_dic = {}
         
         #last
-        sid_lst = last_authorized_statusid_lst(self.hour)[:self.n]
+        sid_lst = last_retweeted_statusid_lst(self.hour)[:self.n]
         last_tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:

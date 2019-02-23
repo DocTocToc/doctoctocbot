@@ -45,6 +45,8 @@ def addstatus_if_not_exist(statusid):
     if not absent:
         return
     absent_statuses = statuses_lookup(absent)
+    if not absent_statuses:
+        return
     for status in absent_statuses:
         db = Addstatus(status._json)
         db.addtweetdj()

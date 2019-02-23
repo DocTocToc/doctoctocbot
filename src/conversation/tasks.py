@@ -12,6 +12,10 @@ def handle_normalize(statusid):
 def handle_allnormalize():
     from .utils import allnormalize
     allnormalize()
-    
+
+@app.task
+def handle_update_trees(hourdelta):
+    from .utils import update_trees
+    update_trees(hourdelta)
 
         

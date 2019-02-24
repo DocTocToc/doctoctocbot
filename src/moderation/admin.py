@@ -18,6 +18,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media', )
     fields = ('normal_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media',)
     readonly_fields = ('normal_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media',)
+    search_fields = ('user_id',)
 
 class CategoryAdmin(admin.ModelAdmin):
     inlines = (CategoryRelationshipInline,)

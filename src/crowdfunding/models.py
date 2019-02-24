@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -17,6 +19,7 @@ class Project(models.Model):
         return "{}:{}".format(self.id, self.name)
 
 class ProjectInvestment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         'Project',
         on_delete=models.CASCADE
@@ -31,6 +34,7 @@ class ProjectInvestment(models.Model):
     pledged = models.DecimalField(max_digits=6, decimal_places=2)
     paid = models.BooleanField(default=False)
     datetime = models.DateTimeField(auto_now_add=True)
+    public = models.BooleanField(default=False)
     
     def __str__(self):
         return "{}:{} user:{} pledged:{} paid:{}".format(self.id, self.project, self.user, self.pledged, self.paid)

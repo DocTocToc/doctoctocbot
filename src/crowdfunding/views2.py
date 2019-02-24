@@ -52,11 +52,36 @@ class InvestView(FormView):
                 pass
                 # create user here
                 # validate against known twitter usernames to prevent impersonation
-        self.request.session['amount'] = self.get_amount(form)
-        self.request.session['username'] = form.cleaned_data.get('username')
-        self.request.session['invoice'] = form.cleaned_data.get('invoice')
-        self.request.session['email'] = form.cleaned_data.get('email')
-        self.request.session['donor'] = form.cleaned_data.get('donor')
+        pi = ProjectInvestment()
+        
+        amount = self.get_amount(form)
+        pi.pledged = amount
+        self.request.session['amount'] = amount
+                
+        username = form.cleaned_data.get('username')
+        pi.username = username
+        self.request.session['username'] = username
+        
+        invoice = form.cleaned_data.get('invoice')
+        self.request.session['invoice'] = invoice
+        
+        email = form.cleaned_data.get('email')
+        self.request.session['email'] = email
+        pi.email = email
+        
+        donor = form.cleaned_data.get('donor')
+        self.request.session['donor'] = donor
+        pi.public = donor
+        
+        if self.request.user.is_authenticated:
+            pi.user = self.request.user
+        
+        pi.project = Project.objects.get(name=settings.PROJECT_NAME)
+        
+        pi.save()
+        
+        self.request.session['custom'] = pi.id
+        
         return super().form_valid(form)
         
     def get_amount(self, form): 
@@ -100,7 +125,7 @@ def process_payment(request):
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': '%.2f' % amount_dec,
         'item_name': ITEM_NAME,
-        'invoice': str(randint(1,10000)),
+        'custom': request.session.get('custom'),
         'currency_code': 'EUR',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse_lazy('crowdfunding:paypal-ipn')),
@@ -109,10 +134,6 @@ def process_payment(request):
         'cancel_return': 'http://{}{}'.format(host,
                                               reverse_lazy('crowdfunding:payment_cancelled')),
     }
-    project = Project.objects.get(name=settings.PROJECT_NAME)
-    investment = ProjectInvestment()
-    investment.project=project
-
     
     form = PayPalPaymentsForm(initial=paypal_dict)
     return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})

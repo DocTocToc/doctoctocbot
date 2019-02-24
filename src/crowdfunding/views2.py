@@ -80,7 +80,7 @@ class InvestView(FormView):
         
         pi.save()
         
-        self.request.session['custom'] = pi.id
+        self.request.session['custom'] = str(pi.id)
         
         return super().form_valid(form)
         

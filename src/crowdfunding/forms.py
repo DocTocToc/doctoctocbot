@@ -63,7 +63,7 @@ class CrowdfundingHomeForm(forms.Form):
         label=_('Email'),
         required=False
     )
-    donor = forms.TypedChoiceField(
+    public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
         choices=((True, 'Yes'), (False, 'No')),

@@ -59,7 +59,7 @@ class InvestView(FormView):
         self.request.session['amount'] = amount
                 
         username = form.cleaned_data.get('username')
-        pi.username = username
+        pi.name = username
         self.request.session['username'] = username
         
         invoice = form.cleaned_data.get('invoice')
@@ -69,9 +69,9 @@ class InvestView(FormView):
         self.request.session['email'] = email
         pi.email = email
         
-        donor = form.cleaned_data.get('donor')
-        self.request.session['donor'] = donor
-        pi.public = donor
+        public = form.cleaned_data.get('public')
+        self.request.session['public'] = public
+        pi.public = public
         
         if self.request.user.is_authenticated:
             pi.user = self.request.user

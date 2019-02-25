@@ -10,6 +10,7 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from random import randint
 from django.views.generic.edit import FormView
+from django.views.generic import ListView
 
 import braintree
 from paypal.standard.forms import PayPalPaymentsForm
@@ -147,6 +148,12 @@ def payment_done(request):
 def payment_canceled(request):
     return render(request, 'crowdfunding/payment_cancelled.html')
 
+
+class ProjectInvestment(ListView):
+
+    context_object_name = 'investment_list'
+    queryset = ProjectInvestment.objects.all()
+    template_name = 'crowdfunding/funders.html'
 """
 class CheckoutView(generic.FormView):
     #This view lets the user initiate a payment.

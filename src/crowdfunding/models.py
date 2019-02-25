@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
@@ -38,3 +39,18 @@ class ProjectInvestment(models.Model):
     
     def __str__(self):
         return "{}:{} user:{} pledged:{} paid:{}".format(self.id, self.project, self.user, self.pledged, self.paid)
+    
+class Tier(models.Model):
+    project = models.ForeignKey(
+        'Project',
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=50)
+    slug = models.SlugField()
+    description = models.CharField(max_length=191)
+    emoji = models.CharField(max_length=4, blank=True)
+    image = models.ImageField(blank=True)
+    min = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal(0))
+    max = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('Infinity'))
+
+    

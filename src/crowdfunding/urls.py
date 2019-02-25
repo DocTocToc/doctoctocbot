@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from crowdfunding import views2
 from crowdfunding.views import index, show_checkout, new_checkout, create_checkout
-from crowdfunding.views2 import process_payment, InvestView, payment_done
+from crowdfunding.views2 import process_payment, InvestView, payment_done, ProjectInvestment
 
 
 app_name = 'crowdfunding'
@@ -24,4 +24,6 @@ urlpatterns = [
     path('paypal/', include('paypal.standard.ipn.urls'), name="paypal-ipn"),
     path('payment-done/', payment_done, name='payment_done'),
     path('payment-cancelled/', views2.payment_canceled, name='payment_cancelled'),
+    path('funders/', ProjectInvestment.as_view(), name="funders"),
+
 ]

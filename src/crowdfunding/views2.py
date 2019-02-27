@@ -11,13 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 from random import randint
 from django.views.generic.edit import FormView
 from django.views.generic import ListView
+from django.db.models import Count
 
 import braintree
 from paypal.standard.forms import PayPalPaymentsForm
 
 from .constants import ITEM_NAME
 from .forms import CrowdfundingHomeForm, CheckoutForm
-from .models import Project, ProjectInvestment
+from .models import Project, ProjectInvestment, Tier
 
 logger = logging.getLogger(__name__)
 
@@ -149,11 +150,35 @@ def payment_canceled(request):
     return render(request, 'crowdfunding/payment_cancelled.html')
 
 
-class ProjectInvestment(ListView):
+class ProjectInvestmentView(ListView):
 
     context_object_name = 'investment_list'
     queryset = ProjectInvestment.objects.all()
-    template_name = 'crowdfunding/funders.html'
+    template_name = 'crowdfunding/fund.html'
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        #context['book_list'] = Book.objects.all()
+        tier_lst = []
+        for t in Tier.objects.filter(project=Project.objects.get(name='doctoctocbot')):
+            tier = {}
+            tier['title']= t.title
+            tier['emoji']= t.emoji
+            tier['description']= t.description
+            tier['funder_lst'] = list(ProjectInvestment.objects.
+                                      filter(paid=True).
+                                      filter(public=True).
+                                      filter(pledged__gte=t.min, pledged__lte=t.max))
+            tier_lst.append(tier)
+        context['tier_lst'] = tier_lst
+        context['investor_count'] = (ProjectInvestment
+                                     .objects
+                                     .filter(paid=True)
+                                     .distinct('user')
+                                     .count())   
+        return context
+
 """
 class CheckoutView(generic.FormView):
     #This view lets the user initiate a payment.

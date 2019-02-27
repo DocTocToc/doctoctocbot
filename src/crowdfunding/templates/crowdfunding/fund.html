@@ -1,0 +1,29 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2> {% block title %} {% trans 'Funding' %} {% endblock %} </h2>
+{% now "SHORT_DATETIME_FORMAT" as now %}
+{% if investor_count %}
+<p>{% blocktrans count investor_cnt=investor_count %}
+{{ investor_cnt }} person invested in our project. Thank you!
+{% plural %}
+{{ investor_cnt }} persons invested in our project. Thank you!
+{% endblocktrans %}<p>
+<ul>
+    {% for tier in tier_lst %}
+      <li><h2>{{ tier.title }} {{ tier.emoji}}</h2>
+      {{ tier.description }}   
+         <ul>
+            {% for funder in tier.funder_lst %}
+              <li>{{ funder.user.username }} {{ tier.emoji}}</li>
+            {% endfor %}
+          </ul>
+      </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>{% blocktrans %}Be the first to invest in our project!{% endblocktrans %}<p>
+ <a href="{% url 'crowdfunding:start' %}" role="button" class="btn btn-outline-primary">{% trans "I want to fund!" %}</a>
+{% endif %}
+{% endblock %}

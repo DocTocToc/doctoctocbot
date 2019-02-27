@@ -53,4 +53,14 @@ class Tier(models.Model):
     min = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal(0))
     max = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('Infinity'))
 
+
+    class Meta:
+        ordering = ['-max']
     
+
+    def __str__(self):
+        return "{}:{} / {} min: {} max: {}".format(self.id,
+                                                   self.title,
+                                                   self.description[:140],
+                                                   self.min,
+                                                   self.max)

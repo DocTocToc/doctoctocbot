@@ -95,6 +95,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.media',
+                'django.template.context_processors.i18n',
             ],
         },
     },
@@ -144,7 +145,7 @@ LANGUAGE_CODE = 'fr'
 
 LANGUAGES = [
     ('fr', _('French')),
-#    ('en', _('English')),
+    ('en', _('English')),
 
 ]
 

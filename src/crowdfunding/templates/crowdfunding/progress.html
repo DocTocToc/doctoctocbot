@@ -1,0 +1,7 @@
+{% load l10n %}
+<div class="container">
+  <h2>Goal: {{ goal }} Current: {{ current }}</h2>
+  <div class="progress">
+    <div class="progress-bar" style="width:{{ percentage|unlocalize }}%">{{ percentage }}%</div>
+  </div>
+</div>

@@ -1,9 +1,10 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
-
+{% load crowdfunding_progress %}
 {% block content %}
 <h2> {% block title %} {% trans 'Funding' %} {% endblock %} </h2>
 {% now "SHORT_DATETIME_FORMAT" as now %}
+{% progress_bar %}
 {% if investor_count %}
 <p>{% blocktrans count investor_cnt=investor_count %}
 {{ investor_cnt }} person invested in our project. Thank you!

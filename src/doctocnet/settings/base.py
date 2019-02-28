@@ -275,4 +275,4 @@ BEAT_PERIOD = {
     'poll_dm': 600.0,
     'poll_moderation_dm': 600.0,
     'update_trees': 300.0,
-    }
+}

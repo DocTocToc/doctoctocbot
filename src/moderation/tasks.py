@@ -41,14 +41,18 @@ def handle_sendmoderationdm(mod_instance_id):
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
     screen_name = mod_mi.queue.screen_name_tag()
     counter = 0
-    while screen_name is None or counter < 10:
+    while screen_name is None and counter < 20:
             mod_mi.refresh_from_db()
             screen_name = mod_mi.queue.screen_name_tag()
-            logger.debug("waiting for screen_name...")
+            logger.debug("waiting for screen_name...%s" % counter)
             time.sleep(1)
             counter+=1
+    status_id = mod_mi.queue.status_id
+    dm_txt = ("Please moderate this user: @{screen_name} "
+              "Tweet: https://twitter.com/statuses/{status_id}"
+              .format(screen_name=screen_name, status_id=status_id))
 
-    senddm(text=f"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Please moderate this user: @{screen_name}",
+    senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            return_json=True,
            quick_reply=qr)
@@ -118,7 +122,7 @@ def poll_moderation_dm():
         
         #Check if relationship already exists
         if cat_mi in moderated_su_mi.category.all():
-            logger.debug(f"{moderator_su_mi} is already a {cat_mi}")
+            logger.debug(f"{moderated_su_mi} is already a {cat_mi}")
             return
         
         # create UserCategoryRelationship
@@ -131,8 +135,9 @@ def poll_moderation_dm():
         logger.debug(f"moderated user categories: {moderated_su_mi.category.all()}")
         
         if cat_mi in moderated_su_mi.category.all():
-            mod_mi.delete()
-            mod_mi.queue.delete()
+            with transaction.atomic():
+                mod_mi.queue.delete()
+                mod_mi.delete()
             
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM

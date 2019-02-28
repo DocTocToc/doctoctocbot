@@ -14,8 +14,6 @@ def getConfig():
     # Without this environment variable, defaults to configtest.json
     BOT_DEBUG=False
     """
-    #BOT_ENV = os.environ.get('BOT_ENV', None)
-    logger.debug(f"DEBUG={settings.DEBUG}")
     if settings.DEBUG is True:
         configfilename = "configtest.json"
     else:

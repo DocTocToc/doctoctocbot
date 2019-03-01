@@ -17,7 +17,7 @@ def getAuth():
     return auth
 
 def get_api():
-    return tweepy.API(getAuth())
+    return tweepy.API(getAuth(), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.

@@ -10,9 +10,11 @@ logger = logging.getLogger(__name__)
 def getConfig():                                                        
     """
     Get config object.
-    To use production configuration file, export environment variables:
-    # Without this environment variable, defaults to configtest.json
-    BOT_DEBUG=False
+    You must set these environment variables:
+    'TWITTER_CONSUMER_KEY', 'TWITTER_CONSUMER_SECRET', 'TWITTER_ACCESS_TOKEN',
+    TWITTER_ACCESS_TOKEN_SECRET'
+    You can set them programmatically with Python in your settings file or
+    through your .bashrc file
     """
     if settings.DEBUG is True:
         configfilename = "configtest.json"
@@ -21,8 +23,6 @@ def getConfig():
     
     path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     configfilepath = os.path.join(path, configfilename)
-    #config = configparser.SafeConfigParser()
-    #config.read(configfilepath)
     config = json.load(open(configfilepath))
     
     #add env variables
@@ -37,6 +37,8 @@ def getConfig():
         suffix = '_DOC_TEST'
     else:
         suffix = '_DOC_PROD'
+    
+    config['twitter'] = {}
     
     for key in secret_dict.keys():
         secret_dict[key] = secret_dict[key] + suffix

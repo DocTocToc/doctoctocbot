@@ -9,12 +9,6 @@
     },
     "keyword_track_list": ["#doctoctoctest", "#docstoctoctest"],
     "keyword_retweet_list": ["#doctoctoctest"],
-    "twitter":{
-        "consumer_key":"xxx",
-        "consumer_secret":"xxx",
-        "access_token":"xxx",
-        "access_token_secret":"xxx"
-    },
     "postgresql":{
         "username":"xxx",
         "password":"xxx",

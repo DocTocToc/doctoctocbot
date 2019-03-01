@@ -7,6 +7,11 @@ from .profile import twitterprofile
 logger = logging.getLogger(__name__)
 
 @app.task
+def handle_backup_lists():
+    from .lists.poll import backup_lists
+    backup_lists()
+
+@app.task
 def handle_create_update_profile(userid_int):
     from conversation.models import Tweetdj
     try:

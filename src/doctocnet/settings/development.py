@@ -88,3 +88,5 @@ BEAT_PERIOD = {
     'poll_moderation_dm': 90.0,
     'update_trees': 300.0,
 }
+
+LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')

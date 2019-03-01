@@ -8,25 +8,26 @@ This module allows for a smooth transition from solo moderation through the
 Twitter account to group moderation.
 """
 
-import django
+#import django
 import logging
 import os
 import tweepy
-import inspect
-import sys
+#import inspect
+from datetime import datetime
+import pickle
+
+from django.conf import settings
 
 from bot.conf.cfg import getConfig
-from bot.twitter import getAuth
+from bot.twitter import getAuth, get_api
 from moderation.models import SocialUser, SocialMedia, Category, UserCategoryRelationship
 
 from .constants import MODERATOR, CATEGORIES_DICT as CAT
 
-
-os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
-django.setup()
+#os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
+#django.setup()
 
 logging.basicConfig(level=logging.DEBUG)
-
 
 noi = -1 # number of items
 
@@ -113,6 +114,7 @@ def poll():
             check_add_usercategoryrelationship(socialuser_mi, category_mi, bot_socialuser_mi)
             users_id.append(member.id)
         
+        # remove users that are not in the list users_id from category
         socialusers_mis = SocialUser.objects.filter(category__name=category)
         logging.debug(f'socialusers_mi: {socialusers_mis}')
         socialusers_mis_twitter = SocialUser.objects.filter(category__name=category).filter(user_id__in=users_id)
@@ -120,20 +122,33 @@ def poll():
         logging.debug(f"to_delete_mis: {to_delete_mis}")
         remove_usercategoryrelationship(to_delete_mis, category_mi)
 
-        
-        # remove users that are not in the list from category
-        
+def backup_lists():
+    bot_id = getConfig()['settings']['bot_id']
+    bot_screen_name = getConfig()['settings']['bot_screen_name']
+    api = get_api()
+    lists = api.lists_all(bot_screen_name, bot_id)
+    if not lists:
+        return
+    dir = settings.LISTS_BACKUP_PATH
+    if not os.path.isdir(dir):
+        return
+    datetime_str = datetime.now().isoformat(timespec='seconds')
+    date_str = datetime.now().date().isoformat()
+    dir_date = dir + "/" + date_str
+    os.makedirs(dir_date, exist_ok=True)
+    for list in lists:
+        file = (dir_date
+                + "/"
+                + list.slug
+                + "_"
+                + str(list.member_count)
+                + "_"
+                + datetime_str)
+        cursor = tweepy.Cursor(api.list_members, bot_screen_name, list.slug).items(noi)
+        id_lst = [member.id for member in cursor]
+        with open(file, 'xb') as f:
+            pickle.dump(id_lst, f)
             
-        
-    # 1020794606, # @medecinelibre 'spam'                                       
-    #social_user_obj = SocialUser.objects.create(user_id = 1020794606, social_media = soc_med_obj)
-    #user_category_relationship = UserCategoryRelationship(                      
-        #social_user = social_user_obj,                                          
-        #category = spam_cat_obj,                                                
-        #moderator = moderator                                                   
-    #)                                                                           
-    #user_category_relationship.save()
-
 if __name__ == "__main__":
     # create bot
     auth = getAuth()

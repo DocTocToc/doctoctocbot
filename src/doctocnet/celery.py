@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 from celery import Celery
+from celery.schedules import crontab
 
 from django.conf import settings
 
@@ -47,5 +48,10 @@ app.conf.beat_schedule = {
         'task': 'conversation.tasks.handle_update_trees',
         'schedule': settings.BEAT_PERIOD.get('update_trees', 120),
         'args': (settings.SCRAPING_HOUR_DELTA,)
+        },
+    'backup-lists': {
+        'task': 'moderation.tasks.handle_backup_lists',
+        'schedule': crontab(hour=4, minute=0),
+        'args': None,
         },
     }

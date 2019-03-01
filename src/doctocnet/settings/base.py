@@ -276,3 +276,5 @@ BEAT_PERIOD = {
     'poll_moderation_dm': 600.0,
     'update_trees': 300.0,
 }
+
+LISTS_BACKUP_PATH = ""

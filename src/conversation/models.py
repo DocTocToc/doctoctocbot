@@ -22,7 +22,7 @@ class Tweetdj(models.Model):
     hashtag0 = models.NullBooleanField(default=None, help_text="doctoctoc(test)")
     hashtag1 = models.NullBooleanField(default=None, help_text="docstoctoc(test)")
     quotedstatus = models.NullBooleanField(default=None, help_text="Is quoted_status")
-    retweetedstatus = models.NullBooleanField(default=None, help_text="Is retweeted_status")
+    retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
     deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
     
     class Meta:

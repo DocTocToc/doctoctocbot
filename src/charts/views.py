@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models.functions import TruncMonth, TruncYear
 from django.http import JsonResponse
@@ -27,15 +27,16 @@ def questions_daily_data(request):
     
     physicians = SocialUser.objects.physician_users()
     #logger.debug(physicians)
-    qsd0or1 = Tweetdj.objects \
-        .filter(userid__in=physicians) \
-        .filter(retweetedstatus=False) \
-        .filter(quotedstatus=False) \
-        .extra({'date' : "date(created_at)"}) \
-        .values('date') \
-        .annotate(count=Count('statusid'))    
-    qsd0 = qsd0or1.filter(hashtag0=True)
-    qsd1 = qsd0or1.filter(hashtag1=True)
+    qsd = (Tweetdj.objects
+        .filter(userid__in=physicians)
+        .filter(retweetedstatus=False)
+        .filter(quotedstatus=False)
+        .extra({'date' : "date(created_at)"})
+        .values('date')
+        .annotate(count=Count('statusid')))
+    qsd0or1 = qsd.filter(Q(hashtag0=True) | Q(hashtag1=True))  
+    qsd0 = qsd.filter(hashtag0=True)
+    qsd1 = qsd.filter(hashtag1=True)
     
     series_lst = []
     qs_lst = [qsd0, qsd1, qsd0or1]
@@ -103,15 +104,15 @@ def questions_monthly_data(request):
         .values('year', 'month', 'count') \
         .order_by('year', 'month')
     '''    
-    qsm0or1 = Tweetdj.objects \
-        .filter(userid__in=physicians) \
-        .annotate(date = TruncMonth('created_at')) \
-        .values('date') \
-        .annotate(count=Count('statusid')) \
-        .order_by('date')
-        
-    qsm0 = qsm0or1.filter(hashtag0=True)
-    qsm1 = qsm0or1.filter(hashtag1=True)
+    qsm = (Tweetdj.objects
+        .filter(userid__in=physicians)
+        .annotate(date = TruncMonth('created_at'))
+        .values('date')
+        .annotate(count=Count('statusid'))
+        .order_by('date'))
+    qsm0or1 = qsm.filter(Q(hashtag0=True) | Q(hashtag1=True))    
+    qsm0 = qsm.filter(hashtag0=True)
+    qsm1 = qsm.filter(hashtag1=True)
     
     qs_lst = [qsm0, qsm1, qsm0or1]
     
@@ -162,17 +163,17 @@ def questions_yearly_data(request):
         .values('year', 'month', 'count') \
         .order_by('year', 'month')
     '''    
-    qsm0or1 = Tweetdj.objects \
+    qsy = Tweetdj.objects \
         .filter(userid__in=physicians) \
         .annotate(date = TruncYear('created_at')) \
         .values('date') \
         .annotate(count=Count('statusid')) \
         .order_by('date')
-        
-    qsm0 = qsm0or1.filter(hashtag0=True)
-    qsm1 = qsm0or1.filter(hashtag1=True)
+    qsy0or1 = qsy.filter(Q(hashtag0=True) | Q(hashtag1=True))    
+    qsy0 = qsy.filter(hashtag0=True)
+    qsy1 = qsy.filter(hashtag1=True)
     
-    qs_lst = [qsm0, qsm1, qsm0or1]
+    qs_lst = [qsy0, qsy1, qsy0or1]
     
     series_lst = []
     for qs in qs_lst:

@@ -117,7 +117,6 @@ def is_following_rules(status):
 
 def isrt( status ):
     "is this status a RT?"
-    isrt = False
     isrt = "retweeted_status" in status
     logger.debug("is this status a retweet? %s" , isrt)
     return isrt

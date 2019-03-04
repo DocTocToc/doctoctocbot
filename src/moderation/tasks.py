@@ -2,6 +2,7 @@ import logging
 from unicodedata import category
 
 from doctocnet.celery import app
+from bot.tasks import handle_retweet
 
 from .profile import twitterprofile
 logger = logging.getLogger(__name__)
@@ -138,6 +139,10 @@ def poll_moderation_dm():
                 moderator = moderator_su_mi)
             
         logger.debug(f"moderated user categories: {moderated_su_mi.category.all()}")
+        
+        # retweet status if user category is among authorized categories
+        if cat_mi in Category.authorized.all():
+            handle_retweet.apply_async(args=(mod_mi.queue.status_id,))
         
         if cat_mi in moderated_su_mi.category.all():
             with transaction.atomic():

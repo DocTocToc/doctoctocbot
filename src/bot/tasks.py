@@ -1,6 +1,5 @@
 from doctocnet.celery import app
 
-
 @app.task
 def handle_retweetroot(statusid: int):
     from .bin.thread import retweetroot
@@ -17,3 +16,8 @@ def handle_question(self, statusid: int):
 def handle_on_status(statusid: int):
     from .onstatus import triage
     triage(statusid)
+    
+@app.task
+def handle_retweet(statusid: int):
+    from bot.doctoctocbot import retweet
+    retweet(statusid)

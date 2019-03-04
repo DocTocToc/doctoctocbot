@@ -1,11 +1,13 @@
+import logging
+from os.path import stat
+from sys import getprofile
+
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, connection
 from django.utils.safestring import mark_safe
-import logging
-from os.path import stat
-from sys import getprofile
+from django.conf import settings
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
@@ -144,10 +146,20 @@ class SocialUser(models.Model):
     class Meta:
         ordering = ('user_id',)
 
+
+class AuthorizedCategoryManager(models.Manager):
+    def get_queryset(self):
+        name_lst = settings.MODERATION_AUTHORIZED_CATEGORIES
+        return super().get_queryset().filter(name__in=name_lst)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     label_en = models.CharField(max_length=255, unique=True)
     label_fr = models.CharField(max_length=255, unique=True)
+    
+    objects = models.Manager()
+    authorized = AuthorizedCategoryManager()
     
     def __str__(self):
         return self.name
@@ -156,6 +168,7 @@ class Category(models.Model):
         ordering = ('name',)
         verbose_name_plural = "categories"
 
+    
 
 class UserCategoryRelationship(models.Model):
     social_user = models.ForeignKey('SocialUser', on_delete=models.CASCADE, related_name="categoryrelationships")

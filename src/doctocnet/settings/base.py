@@ -278,3 +278,5 @@ BEAT_PERIOD = {
 }
 
 LISTS_BACKUP_PATH = ""
+
+MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]

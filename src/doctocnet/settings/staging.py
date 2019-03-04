@@ -13,7 +13,10 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS += ['staging.doctoctoc.net']
 
+SITE_ID = 2
+
 INSTALLED_APPS += [
+    'django_extensions',
     'status',
 ]
 

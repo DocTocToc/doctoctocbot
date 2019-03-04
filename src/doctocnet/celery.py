@@ -18,6 +18,9 @@ app.conf.beat_schedule = {
         'task': 'dm.tasks.directmessages',
         'schedule': settings.BEAT_PERIOD.get('poll_dm', 600.0),
         'args': None,
+        'options': {
+                    'expires': 15*60,
+                    },
         },
     'poll-moderation-dm': {
         'task': 'moderation.tasks.poll_moderation_dm',

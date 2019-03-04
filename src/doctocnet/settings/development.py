@@ -81,11 +81,11 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
 PROJECT_NAME = 'doctoctocbot'
 
 BEAT_PERIOD = {
-    'record_timeline': 60.0,
+    'record_timeline': 120.0,
     'scrape_web_timeline': 120.0,
     'normalize': 600.0,
-    'poll_dm': 90.0,
-    'poll_moderation_dm': 90.0,
+    'poll_dm': 180.0,
+    'poll_moderation_dm': 120.0,
     'update_trees': 300.0,
 }
 

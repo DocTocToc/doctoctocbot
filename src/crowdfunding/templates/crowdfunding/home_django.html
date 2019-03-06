@@ -1,0 +1,12 @@
+{% extends "doctocnet/base.html" %}
+{% block title %}Register for an account{% endblock %}
+
+{% block content %}
+
+{% include 'crowdfunding/twitter_signin.html' %}
+
+  <form action="." method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <p class="submit"><button type="submit">Submit</button></p>
+  </form>
+{% endblock %}

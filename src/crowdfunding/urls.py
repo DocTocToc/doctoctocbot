@@ -1,9 +1,10 @@
 from django.urls import include, path, re_path
+from django.conf.urls import url
 from django.views.generic import TemplateView
 
 from crowdfunding import views2
 from crowdfunding.views import index, show_checkout, new_checkout, create_checkout
-from crowdfunding.views2 import process_payment, InvestView, payment_done, ProjectInvestmentView
+from crowdfunding.views2 import process_payment, InvestView, payment_done, ProjectInvestmentView, InvestViewBase
 
 
 app_name = 'crowdfunding'
@@ -15,7 +16,10 @@ urlpatterns = [
     path('checkouts/<transaction_id>', show_checkout, name="show-checkout"),
     re_path('checkouts/', create_checkout, name="create-checkout"),
     path('presentation/', TemplateView.as_view(template_name="crowdfunding/crowdfunding.html")),
-    path('home/', InvestView.as_view(), name="start"),
+    #path('home/', InvestViewBase.as_view(), name="start"),
+    url(r'^home/$',
+        InvestViewBase.as_view(),
+        name='start'),
     #re_path('pay/(?P<amount>\d+)', views2.process_payment, name="pay"),
     path('pay/', process_payment, name="pay"),
     #re_path('braintree/(?P<amount>\d+)', CheckoutView.as_view(), name="braintree"),

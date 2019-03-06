@@ -6,15 +6,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from .models import ProjectInvestment
-
+from registration.forms import RegistrationFormPasswordlessCaseInsensitiveSocial as RegistrationForm
 
 class UserNameField(forms.CharField):
     default_validators = [ASCIIUsernameValidator]
 
 
-class CrowdfundingHomeForm(forms.Form):
+class CrowdfundingHomeTwitterForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(CrowdfundingHomeForm, self).__init__(*args, **kwargs)
+        super(CrowdfundingHomeTwitterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'crowdfunding-form'
         # self.helper.form_class = 'form-horizontal'
@@ -28,15 +28,19 @@ class CrowdfundingHomeForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        email = cleaned_data.get("email")
-        invoice = cleaned_data.get("invoice")
+        
+        #email = cleaned_data.get("email")
+        #invoice = cleaned_data.get("invoice")
 
-        if invoice and not email:
-            msg = "We need your email to send your invoice."
-            self.add_error('email', msg)
+        #if invoice and not email:
+        #    msg = "We need your email to send your invoice."
+        #    self.add_error('email', msg)
+
+    def save(self):
+        pass
 
     custom_amount = forms.IntegerField(
-        label='Custom amount',
+        label=_('Custom amount'),
         max_value=1000,
         min_value=1,
         required=False
@@ -53,16 +57,40 @@ class CrowdfundingHomeForm(forms.Form):
     username = UserNameField(
         label=_('Username')
     )
-    invoice = forms.TypedChoiceField(
-        label=_('Do you want an invoice?'),
-        coerce=lambda x: x =='True', 
-        choices=((True, 'Yes'), (False, 'No')),
-        required=False,
-    )
+    #invoice = forms.TypedChoiceField(
+    #    label=_('Do you want an invoice?'),
+    #    coerce=lambda x: x =='True', 
+    #    choices=((True, 'Yes'), (False, 'No')),
+    #    required=False,
+    #)
+    
     email = forms.EmailField(
         label=_('Email'),
         required=False
     )
+    public = forms.TypedChoiceField(
+        label=_('Do you want to appear on the donor list?'),
+        coerce=lambda x: x == 'True',
+        choices=((True, 'Yes'), (False, 'No')),
+        required=False,
+    )
+
+
+class CrowdfundingHomeDjangoUserForm(RegistrationForm):
+    custom_amount = forms.IntegerField(
+        label=_('Custom amount'),
+        max_value=1000,
+        min_value=1,
+        required=False)
+
+    preset_amount = forms.IntegerField(
+        label='Preset amount',
+        widget=forms.HiddenInput(),
+        max_value=1000,
+        min_value=1,
+        required=False
+    )
+
     public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
@@ -92,3 +120,4 @@ class CheckoutForm(forms.Form):
             raise forms.ValidationError(_(
                 'We couldn\'t verify your payment. Please try again.'))
         return self.cleaned_data
+

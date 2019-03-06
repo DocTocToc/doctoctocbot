@@ -15,6 +15,7 @@ from django.contrib.auth.forms import UsernameField
 from django.utils.translation import ugettext_lazy as _
 
 from django_registration import validators
+from .validators import CaseInsensitiveReservedSocialUsername
 
 
 User = get_user_model()
@@ -130,4 +131,22 @@ class RegistrationFormPasswordlessUniqueEmail(RegistrationFormPasswordless):
                 User, email_field,
                 validators.DUPLICATE_EMAIL
             )
+        )
+
+class RegistrationFormPasswordlessCaseInsensitiveSocial(RegistrationFormPasswordless):
+    """T
+
+    Subclass of ``RegistrationForm`` enforcing case-insensitive
+    uniqueness of usernames and adding social usernames (screen_name for Twitter)
+    to reserved names.
+
+    """
+    def __init__(self, *args, **kwargs):
+        super(RegistrationFormPasswordlessCaseInsensitiveSocial, self).__init__(*args, **kwargs)
+        self.fields[User.USERNAME_FIELD].validators.extend(
+            [validators.CaseInsensitiveUnique(
+                User, User.USERNAME_FIELD,
+                validators.DUPLICATE_USERNAME
+                ),
+            CaseInsensitiveReservedSocialUsername]
         )

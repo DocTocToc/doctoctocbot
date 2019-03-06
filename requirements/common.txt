@@ -25,3 +25,4 @@ braintree
 requests
 django-registration
 django-countries
+django-sendmail-backend

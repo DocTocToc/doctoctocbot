@@ -71,11 +71,22 @@ BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
 BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')
 
 # mail
-EMAIL_HOST = config('EMAIL_HOST', default='localhost')
-EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
+#EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+#EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+#EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+#EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+#EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
+SERVER_EMAIL = config('SERVER_EMAIL', default='noreply@example.com')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@example.com')
+ADMIN_FIRST_NAME = config('ADMIN_FIRST_NAME', default='admin')
+ADMIN_LAST_NAME = config('ADMIN_LAST_NAME', default='admin')
+ADMIN_NAME = " ".join([ADMIN_FIRST_NAME, ADMIN_LAST_NAME])
+ADMIN_EMAIL_ADDRESS = config('ADMIN_EMAIL_ADDRESS', default='admin@example.com')
+ADMINS=[
+(ADMIN_NAME, ADMIN_EMAIL_ADDRESS),
+]
+MANAGERS=ADMINS
+EMAIL_BACKEND='django_sendmail_backend.backends.EmailBackend'
 
 # investment
 PROJECT_NAME = 'doctoctocbot'
@@ -90,3 +101,5 @@ BEAT_PERIOD = {
 }
 
 LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')
+
+REGISTRATION_SALT = 'YYrwXggvsquEMiZ45BA3CyAtxthUdbR45PZ'

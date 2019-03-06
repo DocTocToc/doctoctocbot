@@ -33,8 +33,8 @@ class QueueAdmin(VersionedAdmin):
     
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
-    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
+    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json',)
+    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json',)
 
 class ModerationAdmin(VersionedAdmin):
     pass

@@ -18,6 +18,8 @@ INSTALLED_APPS += [
     'debug_toolbar',
     'status',
     'django_extensions',
+    'contact',
+    'gpgcontact',
 ]
 
 MIDDLEWARE += [
@@ -102,4 +104,13 @@ BEAT_PERIOD = {
 
 LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')
 
+# django-registration
 REGISTRATION_SALT = 'YYrwXggvsquEMiZ45BA3CyAtxthUdbR45PZ'
+ACCOUNT_ACTIVATION_DAYS = 42
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/css", ".scss", True)
+
+# Path on disk where images are saved
+BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")

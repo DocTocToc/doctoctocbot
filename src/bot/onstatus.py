@@ -18,8 +18,8 @@ def triage(statusid):
     logger.debug(f'extended status: {sjson["user"]["screen_name"]} {sjson["full_text"]}')
 
     dbstatus = Addstatus(sjson)
-    #dbstatus.addstatus()
     dbstatus.addtweetdj()
+    dbstatus.add_image()
 
     if not isknown(sjson) \
         and has_retweet_hashtag(sjson) \

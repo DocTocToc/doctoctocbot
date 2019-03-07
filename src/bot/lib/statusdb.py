@@ -13,6 +13,7 @@ from bot.lib.datetime import get_datetime, get_datetime_tz
 from bot.model.model import Status, session
 from sqlalchemy.exc import IntegrityError as AlchemyIntegrityError
 from django.db import IntegrityError, transaction
+from django.conf import settings
 
 
 """
@@ -110,12 +111,13 @@ class Addstatus:
     def add_image(self):
         """ Stores one or more images contained in the status.
         """
-        for photo in self.json["extended_entities"]["media"]: 
-            url = photo["media_url_https"]
-            filename = url.rsplit('/', 1)[1]
-            filepath = getConfig()["images"]["dir"] + filename
-            r = requests.get(url, allow_redirects=True)
-            open(filepath, 'wb').write(r.content)
+        if self.has_image():
+            for photo in self.json["extended_entities"]["media"]: 
+                url = photo["media_url_https"]
+                filename = url.rsplit('/', 1)[1]
+                filepath = settings.BOT_IMAGES_PATH + "/" + filename
+                r = requests.get(url, allow_redirects=True)
+                open(filepath, 'wb').write(r.content)
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]

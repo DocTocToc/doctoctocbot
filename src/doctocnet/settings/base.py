@@ -280,3 +280,6 @@ BEAT_PERIOD = {
 LISTS_BACKUP_PATH = ""
 
 MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
+
+# Path on disk where images are saved
+BOT_IMAGES_PATH = ""

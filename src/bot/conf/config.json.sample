@@ -16,9 +16,6 @@
         "port":"5432",
         "database":"xxx"
     },
-    "images":{
-        "dir":"/home/xxx/images/"
-    },
     "moderation":{
         "dev":true,
         "moderator":false

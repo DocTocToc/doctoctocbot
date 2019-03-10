@@ -17,7 +17,7 @@ urlpatterns = [
     re_path('checkouts/', create_checkout, name="create-checkout"),
     path('presentation/', TemplateView.as_view(template_name="crowdfunding/crowdfunding.html")),
     #path('home/', InvestViewBase.as_view(), name="start"),
-    url(r'^home/$',
+    url(r'^start/$',
         InvestViewBase.as_view(),
         name='start'),
     #re_path('pay/(?P<amount>\d+)', views2.process_payment, name="pay"),
@@ -29,5 +29,6 @@ urlpatterns = [
     path('payment-done/', payment_done, name='payment_done'),
     path('payment-cancelled/', views2.payment_canceled, name='payment_cancelled'),
     path('fund/', ProjectInvestmentView.as_view(), name="fund"),
+    path('progress/', TemplateView.as_view(template_name='crowdfunding/progress_template.html'), name='progress'),
 
 ]

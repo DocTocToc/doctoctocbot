@@ -1,0 +1,68 @@
+{% extends "doctocnet/base.html" %}
+{% load crowdfunding_progress %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block header_javascript %}
+<script src='{% static "/gpgcontact/script/private/keys.js" %}'></script>
+<script src='{% static "/gpgcontact/script/openpgp.min.js" %}'></script>
+<script>
+var openpgp = window.openpgp;
+openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" %}' }); // set the relative web worker path
+</script>
+<script src='{% static "/gpgcontact/script/encrypt.js" %}'></script>
+{% endblock header_javascript %}
+
+{% block title %}{% trans 'Contact' %}{% endblock %}
+
+{% block content %}
+<!--span class="border border-primary">
+  <form action="." method="post" class="m-3">{% csrf_token %}
+  <div class="form-group">
+  {{ form|crispy }}
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</span-->
+
+<div class="form-group">
+  <div id="div_id_name" class="form-group">
+    <label for="id_name" class="col-form-label  requiredField">
+      Your name<span class="asteriskField">*</span>
+    </label>
+    <div class="">
+    <input type="text" maxlength="100" class="textinput textInput form-control" id="id_name"/>
+    </div>
+  </div>
+  <div id="div_id_email" class="form-group">
+    <label for="id_email" class="col-form-label  requiredField">
+      Your email address<span class="asteriskField">*</span>
+    </label>
+    <div class="">
+      <input type="email" maxlength="200" class="emailinput form-control" id="id_email"/>
+    </div>
+  </div>
+  <div id="div_id_message" class="form-group">
+    <label for="id_message" class="col-form-label  requiredField">
+      Your message<span class="asteriskField">*</span>
+    </label>
+    <div id="content">
+      <textarea class="form-control" id="id_message" maxlength="1000" style="white-space: pre-line; white-space: pre-wrap;"></textarea>
+    </div>
+  </div>
+</div>
+<form action="." method="post" class="m-3" id="form">
+  {% csrf_token %}
+  <textarea name="ciphertext" required id="id_ciphertext" style="white-space: pre-line; white-space: pre-wrap; display:none;"></textarea>
+  <div id="send" class="btn btn-primary">Encrypt &amp; Send</div>
+</form>
+
+<p id="fingerprint"></p>
+
+
+
+<!--script src='{% static "/gpgcontact/script/require.js" %}'></script-->
+
+
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "doctocnet/base.html" %}
+{% load crowdfunding_progress %}
+{% load i18n %}
+<h2> {% block title %} {% trans 'Progress' %} {% endblock %} </h2>
+{% block content %}
+{% progress_bar %}
+{% endblock %}

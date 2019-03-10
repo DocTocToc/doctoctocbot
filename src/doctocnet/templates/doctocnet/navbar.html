@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <header class="navbar navbar-expand-md navbar-light bg-light bd-navbar flex-column flex-md-row">
   <a class="navbar-brand" href="/">DocTocToc.net</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,16 +26,28 @@
         </div>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAbout" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           About
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="{% url 'charts:daily' %}">Daily</a>
-          <a class="dropdown-item" href="{% url 'charts:monthly' %}">Monthly</a>
-          <a class="dropdown-item" href="{% url 'charts:yearly' %}">Yearly</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAbout">
+          <a class="dropdown-item" href="{% url 'charts:daily' %}">{% trans "Guidelines" %}</a>
+          <a class="dropdown-item" href="{% url 'charts:daily' %}">{% trans "Bot rules" %}</a>
+          <a class="dropdown-item" href="{% url 'charts:monthly' %}">{% trans "Values" %}</a>
+          <a class="dropdown-item" href="{% url 'charts:yearly' %}">{% trans "Privacy" %}</a>
+          <a class="dropdown-item" href="{% url 'contact_form' %}">{% trans "Contact" %}</a>
         </div>
       </li>
-      <li class="nav-item"><a class="nav-link" href="/crowdfunding/presentation/">Crowdfunding</a></li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="{% url 'crowdfunding:start' %}" id="navbarDropdownCrowdfunding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">>
+          {% trans "Crowdfunding" %}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuCrowdfunding">
+          <a class="dropdown-item" href="{% url 'crowdfunding:start' %}">{% trans "Participate" %}</a>
+          <a class="dropdown-item" href="{% url 'crowdfunding:progress' %}">{% trans "Progress" %}</a>
+          <a class="dropdown-item" href="{% url 'crowdfunding:fund' %}">{% trans "Funders" %}</a>
+        </div>
+      </li>
+      
       {% if 'twitter' in backends.not_associated %}
       <li class="nav-item">
         <a class="nav-link mx-2 px-2" href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}" aria-label="Twitter">

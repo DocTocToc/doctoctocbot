@@ -1,4 +1,4 @@
-from decouple import AutoConfig
+from decouple import AutoConfig, Csv
 from dj_database_url import parse as db_url
 from pathlib import Path
 
@@ -18,7 +18,6 @@ INSTALLED_APPS += [
     'debug_toolbar',
     'status',
     'django_extensions',
-    'contact',
     'gpgcontact',
 ]
 
@@ -44,12 +43,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "doctocnet/static/"),
-        #'/var/www/static/',
+    os.path.join(BASE_DIR, "doctocnet/static"),
         ]
 
-# STATIC_ROOT = ''
+STATIC_ROOT = config('STATIC_ROOT')
 STATIC_URL = '/static/'
 
 # Postgres
@@ -114,3 +111,7 @@ mimetypes.add_type("text/css", ".scss", True)
 
 # Path on disk where images are saved
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
+
+# gpgcontact
+GNUPGHOME = config('GNUPGHOME')
+GNUPG_PUBLIC_KEYS = config('GNUPG_PUBLIC_KEYS', cast=Csv())

@@ -1,5 +1,5 @@
 from pathlib import Path
-from decouple import AutoConfig
+from decouple import AutoConfig, Csv
 from dj_database_url import parse as db_url
 
 from .base import *
@@ -18,6 +18,7 @@ SITE_ID = 2
 INSTALLED_APPS += [
     'django_extensions',
     'status',
+    'gpgcontact',
 ]
 
 DATABASES = {
@@ -39,11 +40,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "doctocnet/static/"),
+    os.path.join(BASE_DIR, "doctocnet/static"),
         ]
 
-STATIC_ROOT='/var/cache/doctocnet/static/'
+STATIC_ROOT = config('STATIC_ROOT')
 STATIC_URL='/static/'
 
 MEDIA_ROOT='/var/opt/doctocnet/media'
@@ -66,3 +66,7 @@ BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY', default='')
 
 # Path on disk where images are saved
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
+
+# gpgcontact
+GNUPGHOME = config('GNUPGHOME')
+GNUPG_PUBLIC_KEYS = config('GNUPG_PUBLIC_KEYS', cast=Csv())

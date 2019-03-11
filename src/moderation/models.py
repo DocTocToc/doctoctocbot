@@ -267,7 +267,7 @@ class Queue(Versionable):
             p = self.profile()
             url = p.miniavatar.url
         else:
-            url = static("twitter_unknown_images/egg24x24.png")
+            url = static("moderation/twitter_unknown_images/egg24x24.png")
         
         return mark_safe('<img src="%s"/>' % url)
     
@@ -336,7 +336,7 @@ class Moderation(Versionable):
         if p is not None:
             url = p.miniavatar.url
         else:
-            url = static("twitter_unknown_images/egg24x24.png")
+            url = static("moderation/twitter_unknown_images/egg24x24.png")
         return mark_safe('<img src="%s"/>' % url)
     
     moderator_mini_image_tag.short_description = 'Moderator image'
@@ -350,7 +350,7 @@ class Moderation(Versionable):
         if p is not None:
             url = p.miniavatar.url
         else:
-            url = static("twitter_unknown_images/egg24x24.png")
+            url = static("moderation/twitter_unknown_images/egg24x24.png")
         return mark_safe('<img src="%s"/>' % url)
     
     moderated_mini_image_tag.short_description = 'Moderated image'

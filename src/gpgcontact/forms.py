@@ -52,7 +52,7 @@ class ContactForm(forms.Form):
         logger.debug("type of data: %s" % type(data))
         verified = gpg.verify(data)
         if not (verified and verified.fingerprint in settings.GNUPG_PUBLIC_KEYS):
-            raise forms.ValidationError("NO SPAM ALLOWED ON THIS SERVER SORRY!")
+            raise forms.ValidationError(_("NO SPAM ALLOWED ON THIS SERVER SORRY!"), code='invalid')
         
         begin = '-----BEGIN PGP MESSAGE-----'
         end = '-----END PGP MESSAGE-----'
@@ -63,7 +63,9 @@ class ContactForm(forms.Form):
         except ValueError as e:
             logger.debug(e.args)
             raise forms.ValidationError(
-                "The message must be encrypted Header %s is missing" % begin)
+                _("The message must be encrypted Header %(begin)s is missing"),
+                params={'begin': begin},
+            )
             return data
         
         try:
@@ -71,7 +73,9 @@ class ContactForm(forms.Form):
         except ValueError as e:
             logger.debug(e.args)
             raise forms.ValidationError(
-                "The message must be encrypted Header %s is missing" % end)
+                _("The message must be encrypted Header %(begin)s is missing"),
+                params={'begin': end},
+            )
             return data
         s = slice(begin_idx, end_idx)
         return "".join([data[s], end])

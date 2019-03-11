@@ -2,6 +2,7 @@ from django.contrib.auth.validators import ASCIIUsernameValidator
 from django import forms
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
+from django.urls import reverse
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -19,7 +20,7 @@ class CrowdfundingHomeTwitterForm(forms.Form):
         self.helper.form_id = 'crowdfunding-form'
         # self.helper.form_class = 'form-horizontal'
         self.helper.form_method = 'post'
-        self.helper.form_action = '/crowdfunding/home/'
+        self.helper.form_action = reverse('crowdfunding:start')
         self.helper.form_group_wrapper_class = 'row'
         # self.helper.label_class = 'offset-md-1 col-md-1'
         self.helper.label_class = 'col-md-8'
@@ -66,8 +67,9 @@ class CrowdfundingHomeTwitterForm(forms.Form):
     
     email = forms.EmailField(
         label=_('Email'),
-        required=False
+        required=True
     )
+    
     public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
@@ -77,6 +79,19 @@ class CrowdfundingHomeTwitterForm(forms.Form):
 
 
 class CrowdfundingHomeDjangoUserForm(RegistrationForm):
+    def __init__(self, *args, **kwargs):
+        super(CrowdfundingHomeDjangoUserForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'crowdfunding-form'
+        # self.helper.form_class = 'form-horizontal'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('crowdfunding:start')
+        self.helper.form_group_wrapper_class = 'row'
+        # self.helper.label_class = 'offset-md-1 col-md-1'
+        self.helper.label_class = 'col-md-8'
+        self.helper.field_class = 'col-md-8'
+        self.helper.add_input(Submit('submit', 'Submit'))
+        
     custom_amount = forms.IntegerField(
         label=_('Custom amount'),
         max_value=1000,
@@ -84,7 +99,7 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
         required=False)
 
     preset_amount = forms.IntegerField(
-        label='Preset amount',
+        label=_('Preset amount'),
         widget=forms.HiddenInput(),
         max_value=1000,
         min_value=1,
@@ -97,6 +112,18 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
         choices=((True, 'Yes'), (False, 'No')),
         required=False,
     )
+    
+    field_order = ['custom_amount']
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        preset = cleaned_data.get("preset_amount")
+        custom = cleaned_data.get("custom_amount")
+
+        if not (custom or preset):
+            raise forms.ValidationError(
+                _("You must choose a preset amount or a custom amount. Thank you.")
+            )
 
 
 class CrowdfundingCompleteForm(ModelForm):

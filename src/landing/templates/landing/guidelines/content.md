@@ -6,7 +6,7 @@ Cette charte est le fruit d'une réflexion collective menée avec les modérateu
 
 Cette charte est élaborée collectivement sur ce [Framapad](https://mypads.framapad.org/mypads/?/mypads/group/doctoctoc-g14n7o7ag/pad/view/doctoctocbot-kp3l8v7wb).
 
-Vous pouvez également consulter les [règles de fonctionnement du robot](https://doctoctoc.net/rules).
+Vous pouvez également consulter les [règles de fonctionnement du robot](/rules).
 
 ## Thèmes recommandés
 Nous souhaitons privilégier ces thèmes constatés et largement admis par la communauté DocTocToc:

@@ -64,4 +64,4 @@ Le site doctoctoc.net ne diffusera jamais de publicité.
     * disponibilité assurée même en cas de disparition de l'entreprise qui édite le site
 
 ## Confidentialité
-Nous nous engageons à préserver et protéger vos données personnelles. Voir notre [politique de confidentialité](https://doctoctoc.net/privacy).
+Nous nous engageons à préserver et protéger vos données personnelles. Voir notre [politique de confidentialité](/privacy).

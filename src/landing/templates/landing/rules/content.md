@@ -1,6 +1,6 @@
 Ces règles de fonctionnement sont inscrites dans le code source et s'appliquent au robot Twitter [@DocTocTocBot](https://twitter.com/doctoctocbot).
 
-Vous pouvez aussi lire nos recommandations de bonnes pratiques à l'usage des utilisateurs: la [Charte](https://doctoctoc.net/guidelines) des utilisateurs du bot.
+Vous pouvez aussi lire nos recommandations de bonnes pratiques à l'usage des utilisateurs: la [Charte](/guidelines) des utilisateurs du bot.
 
 ## Hashtag
 Je retweete les tweets contenant le hashtag #DocTocToc
@@ -17,12 +17,12 @@ D'autres professions de santé pourront être ajoutées ultérieurement après r
 ## Thèmes
 J'essaie de retweeter uniquement les questions qui se rapportent à ces thèmes constatés et largement admis par la communauté DocTocToc:
 
-    * démarche diagnostique
-    * prise en charge thérapeutique
-    * question administrative
-    * organisation du cabinet
-    * matériel médical
-    * quotidien professionnel
+   * démarche diagnostique
+   * prise en charge thérapeutique
+   * question administrative
+   * organisation du cabinet
+   * matériel médical
+   * quotidien professionnel
 
 ## Publicité
 J'essaie dans la mesure du possible de ne pas retweeter la publicité.

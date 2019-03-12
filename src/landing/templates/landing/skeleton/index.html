@@ -1,0 +1,17 @@
+{% extends "doctocnet/base.html" %}
+
+{% block head_meta %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="" og_title="" og_description="" og_image="" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} ... {% endblock title %}</h1>
+
+{% include "landing/.../content.html" %}
+
+{% endblock content %}
+

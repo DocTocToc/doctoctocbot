@@ -1,0 +1,16 @@
+{% extends "doctocnet/base.html" %}
+
+{% block head_meta %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net/privacy" og_title="Politique de confidentialité" og_description="Comment nous protégeons vos données personnelles." og_image="" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} Politique de confidentialité {% endblock title %}</h1>
+
+{% include "landing/privacy/content.html" %}
+{% endblock content %}
+

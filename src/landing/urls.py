@@ -11,4 +11,12 @@ urlpatterns = [
     path('', All.as_view(), name='index'),
     path('user/', views.UserInfo.as_view(), name='user'),
     path('status/<int:statusid>/', views.status),
+    
+    path('privacy/', TemplateView.as_view(template_name='landing/privacy/index.html'), name='privacy'),
+    path('about/', TemplateView.as_view(template_name='landing/about/index.html'), name='about'),
+    path('license/', TemplateView.as_view(template_name='landing/license/index.html'), name='license'),
+    path('rules/', TemplateView.as_view(template_name='landing/rules/index.html'), name='rules'),
+    path('values/', TemplateView.as_view(template_name='landing/values/index.html'), name='values'),
+    path('guidelines/', TemplateView.as_view(template_name='landing/guidelines/index.html'), name='guidelines'),
+
 ]

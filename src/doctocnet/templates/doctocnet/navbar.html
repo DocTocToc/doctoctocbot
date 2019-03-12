@@ -30,10 +30,11 @@
           About
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAbout">
-          <a class="dropdown-item" href="{% url 'charts:daily' %}">{% trans "Guidelines" %}</a>
-          <a class="dropdown-item" href="{% url 'charts:daily' %}">{% trans "Bot rules" %}</a>
-          <a class="dropdown-item" href="{% url 'charts:monthly' %}">{% trans "Values" %}</a>
-          <a class="dropdown-item" href="{% url 'charts:yearly' %}">{% trans "Privacy" %}</a>
+          <a class="dropdown-item" href="{% url 'landing:about' %}">{% trans "About us" %}</a>
+          <a class="dropdown-item" href="{% url 'landing:guidelines' %}">{% trans "Guidelines" %}</a>
+          <a class="dropdown-item" href="{% url 'landing:rules' %}">{% trans "Bot rules" %}</a>
+          <a class="dropdown-item" href="{% url 'landing:values' %}">{% trans "Values" %}</a>
+          <a class="dropdown-item" href="{% url 'landing:privacy' %}">{% trans "Privacy" %}</a>
           <a class="dropdown-item" href="{% url 'contact_form' %}">{% trans "Contact" %}</a>
         </div>
       </li>

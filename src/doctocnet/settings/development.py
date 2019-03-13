@@ -54,8 +54,11 @@ POSTGRESQL = {
 
 # django-paypal
 PAYPAL_RECEIVER_EMAIL = 'jerome-facilitator@jerome.cc'
- 
 PAYPAL_TEST = True
+PAYPAL_PRIVATE_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
+PAYPAL_PUBLIC_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
+PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
+PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
 
 # Braintree
 BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account

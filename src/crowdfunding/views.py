@@ -20,7 +20,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 
 import braintree
-from paypal.standard.forms import PayPalPaymentsForm
+#from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.forms import PayPalEncryptedPaymentsForm
+#from paypal.standard.forms import PayPalSharedSecretEncryptedPaymentsForm
 #from django_registration.views import RegistrationView
 from django_registration.views import RegistrationView as BaseRegistrationView
 from django_registration import signals
@@ -406,7 +408,9 @@ def process_payment(request):
                                               reverse_lazy('crowdfunding:payment_cancelled')),
     }
     
-    form = PayPalPaymentsForm(initial=paypal_dict)
+    #form = PayPalPaymentsForm(initial=paypal_dict)
+    #form = PayPalSharedSecretEncryptedPaymentsForm(initial=paypal_dict)
+    form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})
 
 @csrf_exempt

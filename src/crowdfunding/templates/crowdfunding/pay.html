@@ -1,14 +1,22 @@
 {% extends "doctocnet/base.html" %}
-{% block content %}
-<ul>
-  <li>Username: {{ request.session.username }}</li>
-  <li>Invoice: {{ request.session.invoice }}</li>
-  <li>Email: {{ request.session.email }}</li>
-  <li>Donor: {{ request.session.donor }}</li>
-  <li>Custom: {{ request.session.custom }}</li>
-</ul>
 
-<h4>Pay {{ amount }}€ with PayPal</h4>
-{{ form.render }}
+{% block title %}Paiement{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Paiement</h5>
+    <p class="card-text">{{ request.session.username }}, merci d'effectuer le réglement de {{ amount }}€ avec une carte bancaire via PayPal.</p>
+  <p>Il n'est pas nécessaire d'avoir ou de créer un compte Paypal.
+  Choisissez l'option <span style="background-color: #e1e7eb;">Payer par carte</span> sur la page suivante.</p>
+  </div>
+   <div class="card-body text-center">
+   {{ form.render }}
+   </div>
+  <div class="card-footer text-muted">
+A l'issue de la transaction, Paypal vous proposera d'ouvrir un compte. Vous pouvez décliner en cliquant sur "Pas maintenant"
+puis sur "Revenir sur le site marchand".</div>
+</div>
 
 {% endblock %}

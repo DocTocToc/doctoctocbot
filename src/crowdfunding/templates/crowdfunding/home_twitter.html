@@ -7,21 +7,15 @@
 
 {% block header_javascript %}
 {{ block.super }}
-<script src="{% static 'crowdfunding/javascript/tiers.js' %}" type="text/javascript"></script>
 {% endblock header_javascript %}
+
+{% block title %}Financement participatif{% endblock %}
 
 {% block content %}
 
-{% if 'twitter' in backends.not_associated %}
-<div class="container-fluid bg-1">
-  <p>
-    Vous avez un compte Twitter? Merci de vous authentifier!
-    <a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">
-      <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
-    </a>
-  </p>
-</div>
-{% endif %}
+{% include 'landing/donate.html' %}
+
+{% include 'crowdfunding/twitter_signin.html' %}
 
 {% include "crowdfunding/tiers.html" %}
 
@@ -32,5 +26,5 @@
 </form-->
 
 {% crispy form %}
-
+<script src="{% static 'crowdfunding/javascript/tiers.js' %}" type="text/javascript"></script>
 {% endblock %}

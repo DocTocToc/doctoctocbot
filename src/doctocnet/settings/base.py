@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'display',
     'timeline',
     'crispy_forms',
-    'paypal.standard.ipn',
+#    'paypal.standard.ipn',
     'crowdfunding',
     'registration',
     'django_countries',

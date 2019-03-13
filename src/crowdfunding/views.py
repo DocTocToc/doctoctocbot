@@ -19,9 +19,9 @@ from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 
-import braintree
-#from paypal.standard.forms import PayPalPaymentsForm
-from paypal.standard.forms import PayPalEncryptedPaymentsForm
+import stripe
+from paypal.standard.forms import PayPalPaymentsForm
+#from paypal.standard.forms import PayPalEncryptedPaymentsForm
 #from paypal.standard.forms import PayPalSharedSecretEncryptedPaymentsForm
 #from django_registration.views import RegistrationView
 from django_registration.views import RegistrationView as BaseRegistrationView
@@ -35,6 +35,8 @@ logger = logging.getLogger(__name__)
 
 REGISTRATION_SALT = getattr(settings, 'REGISTRATION_SALT', 'registration')
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 def get_amount(form): 
     custom_amount = form.cleaned_data.get('custom_amount')
     preset_amount = form.cleaned_data.get('preset_amount')
@@ -47,7 +49,7 @@ class InvestViewDjango(BaseRegistrationView):
     
     def get_success_url(self, _):
         return reverse_lazy(
-            'crowdfunding:pay',
+            'crowdfunding:stripe-checkout',
             current_app='crowdfunding')
 
     def _form_valid(self, form):
@@ -166,7 +168,7 @@ class InvestViewDjango(BaseRegistrationView):
 class InvestViewTwitter(FormView):  
     def get_success_url(self):
         return reverse_lazy(
-            'crowdfunding:pay',
+            'crowdfunding:stripe-checkout',
             current_app='crowdfunding')
         
     def form_valid(self, form):
@@ -238,7 +240,7 @@ class InvestViewBase(View):
     
     def get_success_url(self):
         return reverse_lazy(
-            'crowdfunding:pay',
+            'crowdfunding:stripe-checkout',
             current_app='crowdfunding')
 
     def form_valid(self, form):
@@ -254,23 +256,11 @@ class InvestViewBase(View):
         else:
             return InvestViewDjango.as_view()(self.request)
     
-    #def get_initial(self, *args, **kwargs):
-    #    if self.is_twitter_auth():
-    #        return InvestViewTwitter().get_initial(self, *args, **kwargs)
-    #    else:
-    #        return
-
     def get_form_class(self):
         if self.is_twitter_auth():
             return InvestViewTwitter().get_form_class(self)
         else:
             return InvestViewDjango().get_form_class(self)
-        
-    def get_form_class(self):
-        if self.is_twitter_auth():
-            return InvestViewTwitter().get_form(self)
-        else:
-            return InvestViewDjango().get_form(self)
         
     def get_template_names(self):
         if self.is_twitter_auth():
@@ -278,117 +268,6 @@ class InvestViewBase(View):
         else:
             return InvestViewDjango().get_template_names(self)
 
-class InvestView(FormView):
-
-    # replaced by get_template_names()
-    #template_name = 'crowdfunding/home_twitter.html'
-    
-    #if _is_twitter_auth():
-    #else:
-    #    form_class = CrowdfundingHomeForm  
-    def get_success_url(self):
-        return reverse_lazy(
-            'crowdfunding:pay',
-            current_app='crowdfunding')
-    
-    def is_twitter_auth(self):
-        if not self.request.user.is_authenticated:
-            return False
-        return bool(self.request.user.social_auth.filter(provider='twitter'))
-
-    def form_valid(self, form):
-        if self.request.user.is_authenticated:
-            if self.is_twitter_auth():
-                logger.debug('user is using Twitter Account!')
-                logger.debug('user.email: %s' % self.request.user.email)
-                if form.cleaned_data.get('email') and not self.request.user.email:
-                    logger.debug('email: %s' %form.cleaned_data.get('email'))
-                    self.request.user.email = form.cleaned_data.get('email')
-                    self.request.user.save()
-            else:
-                logger.debug('user is using Django default authentication or another social provider')
-        else:
-                pass
-                # create user here
-                # validate against known twitter usernames to prevent impersonation
-        pi = ProjectInvestment()
-        
-        amount = self.get_amount(form)
-        pi.pledged = amount
-        self.request.session['amount'] = amount
-                
-        username = form.cleaned_data.get('username')
-        pi.name = username
-        self.request.session['username'] = username
-        
-        #invoice = form.cleaned_data.get('invoice')
-        #self.request.session['invoice'] = invoice
-        
-        email = form.cleaned_data.get('email')
-        self.request.session['email'] = email
-        pi.email = email
-        
-        public = form.cleaned_data.get('public')
-        self.request.session['public'] = public
-        pi.public = public
-        
-        if self.request.user.is_authenticated:
-            pi.user = self.request.user
-        else:
-            User = get_user_model()
-            try:
-                pi.user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                raise SuspiciousOperation("Invalid request; see documentation for correct paramaters")
-                
-        pi.project = Project.objects.get(name=settings.PROJECT_NAME)
-        
-        pi.save()
-        
-        self.request.session['custom'] = str(pi.id)
-        
-        return super().form_valid(form)
-        
-    def get_amount(self, form): 
-        custom_amount = form.cleaned_data.get('custom_amount')
-        preset_amount = form.cleaned_data.get('preset_amount')
-        return custom_amount or preset_amount
-            
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        return super().post(request, *args, **kwargs)
-    
-    def get_initial(self):
-        username = None
-        email = None
-        if self.request.user.is_authenticated:
-            username = self.request.user.username
-            email = self.request.user.email
-
-        data = {
-            'username': username,
-            'email': email
-        }
-        return data
-    
-    def get_form_class(self):
-        if self.is_twitter_auth():
-            return CrowdfundingHomeTwitterForm
-        else:
-            return CrowdfundingHomeDjangoUserForm
-    
-    def get_form(self):
-        form = super(InvestView, self).get_form(self.get_form_class())
-        if self.is_twitter_auth():
-            form.fields['username'].widget.attrs['readonly'] = 'readonly'
-        return form
-    
-    def get_template_names(self):
-        if self.is_twitter_auth():
-            return 'crowdfunding/home_twitter.html'
-        else:
-            return 'crowdfunding/home_django.html'
-        
 
 def process_payment(request):
     host = request.get_host()
@@ -408,10 +287,44 @@ def process_payment(request):
                                               reverse_lazy('crowdfunding:payment_cancelled')),
     }
     
-    #form = PayPalPaymentsForm(initial=paypal_dict)
+    form = PayPalPaymentsForm(initial=paypal_dict)
     #form = PayPalSharedSecretEncryptedPaymentsForm(initial=paypal_dict)
-    form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
+    #form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})
+
+def stripe_checkout(request):
+    host = request.get_host()
+    amount = request.session.get('amount', 0)
+    amount_dec = Decimal(request.session.get('amount')).quantize(Decimal('.01'))
+    amount_str = '%.2f' % amount_dec
+    paypal_dict = {
+        'amount': '%.2f' % amount_dec,
+        'item_name': ITEM_NAME,
+        'custom': request.session.get('custom'),
+        'currency_code': 'EUR',
+        'notify_url': 'http://{}{}'.format(host,
+                                           reverse_lazy('crowdfunding:paypal-ipn')),
+        'return_url': 'http://{}{}'.format(host,
+                                           reverse_lazy('crowdfunding:payment_done')),
+        'cancel_return': 'http://{}{}'.format(host,
+                                              reverse_lazy('crowdfunding:payment_cancelled')),
+    }
+    public_key = settings.STRIPE_PUBLIC_KEY
+    return render(request,
+                  'crowdfunding/stripe_checkout.html',
+                  {'amount_str': amount_str, 'public_key': public_key})
+
+
+def charge(request):
+    if request.method == 'POST':
+        amount = request.session.get('amount', 0)
+        charge = stripe.Charge.create(
+            amount=amount,
+            currency='eur',
+            description='A Django charge',
+            source=request.POST['stripeToken']
+        )
+        return render(request, 'crowdfunding/stripe_charge.html')
 
 @csrf_exempt
 def payment_done(request):

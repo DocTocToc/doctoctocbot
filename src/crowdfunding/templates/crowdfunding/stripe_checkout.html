@@ -1,0 +1,15 @@
+{% extends "doctocnet/base.html" %}
+
+{% block title %} {% endblock title %}
+
+{% block content %}
+<h2>{{ amount }}</h2>
+<form action="{% url 'charge' %}" method="post">
+  {% csrf_token %}
+<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-key="{{ public_key }}"
+    data-description="A Django Charge"
+    data-amount="{{ amount }}"
+    data-locale="auto">
+</script>
+{% endblock content %}

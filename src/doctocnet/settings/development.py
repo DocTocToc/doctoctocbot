@@ -11,18 +11,20 @@ config = AutoConfig(search_path = CONFIG_DIR)
 SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
+#INTERNAL_IPS = ['127.0.0.1']
 
-INTERNAL_IPS = ['127.0.0.1']
+ALLOWED_HOSTS = ['tunnel.doctoctoc.net', 'localhost', '127.0.0.1', '[::1]']
 
 INSTALLED_APPS += [
-    'debug_toolbar',
+    #'debug_toolbar',
     'status',
     'django_extensions',
     'gpgcontact',
+    #'djstripe',
 ]
 
 MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 DATABASES = {
@@ -61,10 +63,18 @@ PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
 PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
 
 # Braintree
-BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account
-BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID')
-BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
-BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')
+#BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account
+#BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID')
+#BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
+#BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')
+
+# Stripe
+#STRIPE_LIVE_PUBLIC_KEY = config("STRIPE_LIVE_PUBLIC_KEY")
+#STRIPE_LIVE_SECRET_KEY = config("STRIPE_LIVE_SECRET_KEY")
+STRIPE_PUBLIC_KEY = config("STRIPE_TEST_PUBLIC_KEY")
+STRIPE_SECRET_KEY = config("STRIPE_TEST_SECRET_KEY")
+DJSTRIPE_WEBHOOK_SECRET = config("DJSTRIPE_WEBHOOK_SECRET")
+STRIPE_LIVE_MODE = False
 
 # mail
 #EMAIL_HOST = config('EMAIL_HOST', default='localhost')

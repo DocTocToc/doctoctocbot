@@ -1,4 +1,4 @@
 {% extends "doctocnet/base.html" %}
 {% block content %}
-<h2>Merci d'avoir investi {{ amount }}€ dans votre réseau social professionnel libre et indépendant!</h2>
+<h2>Merci d'avoir investi {{ request.session.amount }}€ dans votre réseau social professionnel libre et indépendant!</h2>
 {% endblock %}

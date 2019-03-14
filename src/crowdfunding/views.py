@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _lazy
 from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
 from random import randint
@@ -27,7 +28,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 from django_registration.views import RegistrationView as BaseRegistrationView
 from django_registration import signals
 
-from .constants import ITEM_NAME
+from .constants import ITEM_NAME, HOURLY_RATE_EUR
 from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm, CheckoutForm
 from .models import Project, ProjectInvestment, Tier
 
@@ -304,26 +305,71 @@ def stripe_checkout(request):
         'item_name': ITEM_NAME,
         'custom': request.session.get('custom'),
     }
+    button_label = _("Pay with card")
     public_key = settings.STRIPE_PUBLIC_KEY
     return render(
         request,
         'crowdfunding/stripe_checkout.html',
         {'amount_str': amount_str,
          'public_key': public_key,
-         'amount_cents': amount_cents}
+         'amount_cents': amount_cents,
+         'button_label': button_label}
     )
 
 
 def charge(request):
     if request.method == 'POST':
-        amount = request.session.get('amount', 0)
-        charge = stripe.Charge.create(
-            amount=amount,
-            currency='EUR',
-            description='A Django charge',
-            source=request.POST['stripeToken']
-        )
-        return render(request, 'crowdfunding/stripe_charge.html')
+        amount_int = request.session.get('amount', 0)
+        amount_cents = amount_int * 100
+        try:
+            charge = stripe.Charge.create(
+                amount=amount_cents,
+                currency='eur',
+                description=ITEM_NAME,
+                source=request.POST['stripeToken']
+            )
+        except stripe.error.CardError as e:
+            # Since it's a decline, stripe.error.CardError will be caught
+            body = e.json_body
+            err  = body.get('error', {})
+            err_msg=(
+                "Status is: {}" 
+                "Type is: {}"
+                "Code is: {}" 
+                "Param is: {}" 
+                "Message is: {}" 
+                .format(
+                    e.http_status,
+                    err.get('type'),
+                    err.get('code'),
+                    err.get('param'),
+                    err.get('message')
+                )
+            )
+            logger.error(err_msg)
+        
+        except stripe.error.RateLimitError as e:
+            logger.info("Too many requests made to the API too quickly")
+        
+        except stripe.error.InvalidRequestError as e:
+            logger.error("Invalid parameters were supplied to Stripe's API")
+        
+        except stripe.error.AuthenticationError as e:
+            logger.error("Authentication with Stripe's API failed"
+                         "(maybe you changed API keys recently)"
+                         )
+        
+        except stripe.error.APIConnectionError as e:
+            logger.error("Network communication with Stripe failed")
+                    
+        except stripe.error.StripeError as e:
+            logger.error("Display a very generic error to the user,"
+                         "and maybe send yourself an email")
+            
+        except Exception as e:
+            logger.error("Something else happened, completely unrelated to Stripe")
+        
+    return render(request, 'crowdfunding/stripe_charge.html')
 
 @csrf_exempt
 def payment_done(request):

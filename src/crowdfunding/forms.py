@@ -25,7 +25,7 @@ class CrowdfundingHomeTwitterForm(forms.Form):
         # self.helper.label_class = 'offset-md-1 col-md-1'
         self.helper.label_class = 'col-md-8'
         self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -90,7 +90,7 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
         # self.helper.label_class = 'offset-md-1 col-md-1'
         self.helper.label_class = 'col-md-8'
         self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
         
     custom_amount = forms.IntegerField(
         label=_('Custom amount'),

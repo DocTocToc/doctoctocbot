@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-27 03:17+0100\n"
-"PO-Revision-Date: 2019-02-27 03:18+0100\n"
+"POT-Creation-Date: 2019-03-14 16:05+0100\n"
+"PO-Revision-Date: 2019-03-14 15:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,30 +18,71 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: crowdfunding/forms.py:54
+#: crowdfunding/forms.py:28 crowdfunding/forms.py:93
+msgid "Submit"
+msgstr "Envoyez"
+
+#: crowdfunding/forms.py:44 crowdfunding/forms.py:96
+msgid "Custom amount"
+msgstr "Montant personnalisé"
+
+#: crowdfunding/forms.py:59
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: crowdfunding/forms.py:57
-msgid "Do you want an invoice?"
-msgstr "Voulez-vous une facture?"
-
-#: crowdfunding/forms.py:63
+#: crowdfunding/forms.py:69
 msgid "Email"
+msgstr "Email"
+
+#: crowdfunding/forms.py:74 crowdfunding/forms.py:110
+msgid "Do you want to appear on the donor list?"
+msgstr ""
+"Voulez-vous que votre nom d'utilisateur apparaisse dans la liste des "
+"financeurs?"
+
+#: crowdfunding/forms.py:102
+msgid "Preset amount"
 msgstr ""
 
-#: crowdfunding/forms.py:67
-msgid "Do you want to appear on the donor list?"
-msgstr "Voulez-vous apparaître dans la liste des financeurs?"
+#: crowdfunding/forms.py:125
+msgid "You must choose a preset amount or a custom amount. Thank you."
+msgstr "Vous devez choisir 1 montant. Merci."
 
-#: crowdfunding/forms.py:93
+#: crowdfunding/forms.py:148
 msgid "We couldn't verify your payment. Please try again."
 msgstr ""
+"Nous n'avons pas pu vérifier votre paiement. Veuillez recommencer s'il vous "
+"plaît."
 
 #: crowdfunding/templates/crowdfunding/fund.html:5
 msgid "Funding"
 msgstr "Financement"
 
-#: crowdfunding/templates/crowdfunding/fund.html:19
-msgid "This is the title"
-msgstr "Ceci est le titre"
+#: crowdfunding/templates/crowdfunding/fund.html:9
+#, python-format
+msgid "%(investor_cnt)s person invested in our project. Thank you!"
+msgid_plural "%(investor_cnt)s persons invested in our project. Thank you!"
+msgstr[0] "%(investor_cnt)s personne a investi dans notre projet. Merci!"
+msgstr[1] "%(investor_cnt)s personnes ont investi dans notre projet. Merci!"
+
+#: crowdfunding/templates/crowdfunding/fund.html:23
+msgid "Be the first to invest in our project!"
+msgstr "Soyez la première ou le premier à investir dans notre projet!"
+
+#: crowdfunding/templates/crowdfunding/fund.html:24
+msgid "I want to fund!"
+msgstr "Je veux financer!"
+
+#: crowdfunding/templates/crowdfunding/progress_template.html:4
+msgid "Progress"
+msgstr "Progression"
+
+#: crowdfunding/views.py:308
+msgid "Pay with card"
+msgstr "Payez par carte"
+
+#~ msgid "Do you want an invoice?"
+#~ msgstr "Voulez-vous une facture?"
+
+#~ msgid "This is the title"
+#~ msgstr "Ceci est le titre"

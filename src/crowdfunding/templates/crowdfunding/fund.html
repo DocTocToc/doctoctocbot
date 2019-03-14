@@ -6,11 +6,7 @@
 {% now "SHORT_DATETIME_FORMAT" as now %}
 {% progress_bar %}
 {% if investor_count %}
-<p>{% blocktrans count investor_cnt=investor_count %}
-{{ investor_cnt }} person invested in our project. Thank you!
-{% plural %}
-{{ investor_cnt }} persons invested in our project. Thank you!
-{% endblocktrans %}<p>
+<p>{% blocktrans count investor_cnt=investor_count %}{{ investor_cnt }} person invested in our project. Thank you!{% plural %}{{ investor_cnt }} persons invested in our project. Thank you!{% endblocktrans %}<p>
 <ul>
     {% for tier in tier_lst %}
       <li><h2>{{ tier.title }} {{ tier.emoji}}</h2>

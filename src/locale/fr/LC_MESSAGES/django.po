@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-27 03:17+0100\n"
+"POT-Creation-Date: 2019-03-14 16:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,8 +38,40 @@ msgstr ""
 msgid "All tweets"
 msgstr ""
 
-#: registration/forms.py:112
+#: gpgcontact/forms.py:55
+msgid "NO SPAM ALLOWED ON THIS SERVER SORRY!"
+msgstr ""
+
+#: gpgcontact/forms.py:66 gpgcontact/forms.py:76
+#, python-format
+msgid "The message must be encrypted Header %(begin)s is missing"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:17
+#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
+msgid "Contact"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:6
+msgid ""
+"\n"
+"  Thank you. Your message is on its way. We'll get back to you ASAP.\n"
+"  "
+msgstr ""
+
+#: registration/forms.py:113
 msgid "I have read and agree to the Terms of Service"
+msgstr ""
+
+#: registration/validators.py:21
+msgid "This name is reserved and cannot be registered."
+msgstr ""
+
+#: templates/404.html:7
+msgid ""
+"\n"
+"<h1>4🧐4 Page Not Found</h1>\n"
+"<p>This page does not exist yet!</p>\n"
 msgstr ""
 
 #: templates/versions/datetimefilter.html:2

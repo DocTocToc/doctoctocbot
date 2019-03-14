@@ -47,5 +47,4 @@ def getConfig():
     return config
 
 if __name__ == "__main__":
-    logger.debug(os.environ.get('TWITTER_CONSUMER_KEY_DOC_PROD'))
     getConfig()

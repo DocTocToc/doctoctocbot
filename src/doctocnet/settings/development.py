@@ -71,9 +71,8 @@ PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
 # Stripe
 #STRIPE_LIVE_PUBLIC_KEY = config("STRIPE_LIVE_PUBLIC_KEY")
 #STRIPE_LIVE_SECRET_KEY = config("STRIPE_LIVE_SECRET_KEY")
-STRIPE_PUBLIC_KEY = config("STRIPE_TEST_PUBLIC_KEY")
-STRIPE_SECRET_KEY = config("STRIPE_TEST_SECRET_KEY")
-DJSTRIPE_WEBHOOK_SECRET = config("DJSTRIPE_WEBHOOK_SECRET")
+STRIPE_PUBLIC_KEY = config("STRIPE_TEST_PUBLIC_KEY", default="")
+STRIPE_SECRET_KEY = config("STRIPE_TEST_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False
 
 # mail
@@ -116,8 +115,12 @@ import mimetypes
 mimetypes.add_type("text/css", ".css", True)
 mimetypes.add_type("text/css", ".scss", True)
 
+# BOT settings
 # Path on disk where images are saved
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
+KEYWORD_TRACK_LIST = ["#doctoctoctest", "#docstoctoctest"]
+KEYWORD_RETWEET_LIST = ["#doctoctoctest",]
+
 
 # gpgcontact
 GNUPGHOME = config('GNUPGHOME')

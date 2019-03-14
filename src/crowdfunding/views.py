@@ -295,18 +295,23 @@ def process_payment(request):
 
 def stripe_checkout(request):
     host = request.get_host()
-    amount = request.session.get('amount', 0)
-    amount_dec = Decimal(request.session.get('amount')).quantize(Decimal('.01'))
-    amount_str = '%.2f' % amount_dec
-    paypal_dict = {
+    amount_int = request.session.get('amount')
+    amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
+    amount_str = "{:.2f}".format(amount_dec)
+    amount_cents = amount_int * 100
+    checkout = {
         'amount': '%.2f' % amount_dec,
         'item_name': ITEM_NAME,
         'custom': request.session.get('custom'),
     }
     public_key = settings.STRIPE_PUBLIC_KEY
-    return render(request,
-                  'crowdfunding/stripe_checkout.html',
-                  {'amount_str': amount_str, 'public_key': public_key})
+    return render(
+        request,
+        'crowdfunding/stripe_checkout.html',
+        {'amount_str': amount_str,
+         'public_key': public_key,
+         'amount_cents': amount_cents}
+    )
 
 
 def charge(request):
@@ -314,7 +319,7 @@ def charge(request):
         amount = request.session.get('amount', 0)
         charge = stripe.Charge.create(
             amount=amount,
-            currency='eur',
+            currency='EUR',
             description='A Django charge',
             source=request.POST['stripeToken']
         )

@@ -3,13 +3,25 @@
 {% block title %} {% endblock title %}
 
 {% block content %}
-<h2>{{ amount }}</h2>
-<form action="{% url 'crowdfunding:stripe-charge' %}" method="post">
+
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">Paiement</h5>
+    <p class="card-text">{{ request.session.username }}, merci d'effectuer le règlement de {{ request.session.amount }}€ avec une carte bancaire.</p>
+  </div>
+   <div class="card-body">
+<form action="{% url 'crowdfunding:stripe-charge' %}" method="POST">
   {% csrf_token %}
 <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
     data-key="{{ public_key }}"
-    data-description="A Django Charge"
-    data-amount="{{ amount }}"
-    data-locale="auto">
+    data_name="doctoctoc.net (Médecine Libre)"
+    data-description="Développement robot et web apps."
+    data-amount="{{ amount_cents }}"
+    data-locale="fr"
+    data-currency="eur">
 </script>
+   </div>
+  <div class="card-footer text-muted">
+  Merci de financer le développement de vos outils professionnels indépendants {% include "landing/link/bot.html" %} & {% include "landing/link/net.html" %}</div>
+</div>
 {% endblock content %}

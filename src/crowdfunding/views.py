@@ -268,7 +268,7 @@ class InvestViewBase(View):
         else:
             return InvestViewDjango().get_template_names(self)
 
-
+"""
 def process_payment(request):
     host = request.get_host()
     amount = request.session.get('amount', 0)
@@ -291,6 +291,7 @@ def process_payment(request):
     #form = PayPalSharedSecretEncryptedPaymentsForm(initial=paypal_dict)
     #form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})
+"""
 
 def stripe_checkout(request):
     host = request.get_host()
@@ -301,13 +302,6 @@ def stripe_checkout(request):
         'amount': '%.2f' % amount_dec,
         'item_name': ITEM_NAME,
         'custom': request.session.get('custom'),
-        'currency_code': 'EUR',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse_lazy('crowdfunding:paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse_lazy('crowdfunding:payment_done')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse_lazy('crowdfunding:payment_cancelled')),
     }
     public_key = settings.STRIPE_PUBLIC_KEY
     return render(request,

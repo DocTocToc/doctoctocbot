@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 #import djstripe
 #from crowdfunding.views3 import show_checkout, new_checkout, create_checkout
-from crowdfunding.views import stripe_checkout, process_payment, payment_done, payment_canceled, ProjectInvestmentView, InvestViewBase
+from crowdfunding.views import stripe_checkout, payment_done, payment_canceled, ProjectInvestmentView, InvestViewBase
 from crowdfunding.views import charge
 app_name = 'crowdfunding'
 

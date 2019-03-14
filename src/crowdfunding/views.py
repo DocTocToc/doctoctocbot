@@ -305,7 +305,7 @@ def stripe_checkout(request):
     }
     public_key = settings.STRIPE_PUBLIC_KEY
     return render(request,
-                  'crowdfunding/stripe_checkout.html',
+                  reverse_lazy('crowdfunding:stripe-checkout'),
                   {'amount_str': amount_str, 'public_key': public_key})
 
 

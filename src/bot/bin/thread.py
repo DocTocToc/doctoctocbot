@@ -1,11 +1,12 @@
 from django.db.utils import DatabaseError
 import logging
 
-from bot.conf.cfg import getConfig
 from bot.tasks import handle_question
 from conversation.models import Tweetdj, Treedj, create_tree
 from conversation.tree import tweet_parser, tweet_server
 from moderation.models import SocialUser
+
+from django.conf import settings
 
 from ..addstatusdj import addstatus
 from ..doctoctocbot import retweet, isquestion, has_greenlight, has_retweet_hashtag
@@ -139,7 +140,7 @@ def _has_retweet_hashtag(tweet: tweet_parser.Tweet) -> bool:
     Returns False otherwise.
     """
     ismatch = False
-    for keyword in getConfig()["keyword_retweet_list"]:
+    for keyword in settings.KEYWORD_RETWEET_LIST:
         logger.debug(f"keyword.lower():{keyword.lower()} txt.lower():{tweet.bodytext.lower()}")
         if keyword.lower() in tweet.bodytext.lower():
             ismatch = True

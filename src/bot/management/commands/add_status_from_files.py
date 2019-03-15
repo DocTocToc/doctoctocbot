@@ -2,8 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 from os import listdir
 from os.path import isfile, join
 import json
-from bot.twitter import getAuth                                                     
-from bot.conf.cfg import getConfig                                                  
 from bot.log.log import setup_logging
 #import logging
 from bot.lib.statusdb import Addstatus

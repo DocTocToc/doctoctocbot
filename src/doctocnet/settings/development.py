@@ -117,10 +117,21 @@ mimetypes.add_type("text/css", ".scss", True)
 
 # BOT settings
 # Path on disk where images are saved
+TWITTER_CONSUMER_KEY = config('TWITTER_CONSUMER_KEY')
+TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
+TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
+TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
+BOT_ID = config('BOT_ID', cast=int)
+BOT_SCREEN_NAME = config('BOT_SCREEN_NAME')
 KEYWORD_TRACK_LIST = ["#doctoctoctest", "#docstoctoctest"]
 KEYWORD_RETWEET_LIST = ["#doctoctoctest",]
+NUMBER_OF_RT = 20
+TWEET_LANGUAGE = ""
 
+# Twitter key (social-auth-app-django)
+SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET = config('TWITTER_CONSUMER_SECRET')
 
 # gpgcontact
 GNUPGHOME = config('GNUPGHOME')

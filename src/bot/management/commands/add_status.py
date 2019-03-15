@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 import tweepy                                                                   
 from bot.twitter import getAuth                                                     
-from bot.conf.cfg import getConfig                                                  
 #from bot.log import setup_logging
 #import logging
 from bot.lib.statusdb import Addstatus

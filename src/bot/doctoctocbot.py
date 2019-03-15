@@ -21,7 +21,8 @@ import tweepy
 from tweepy.error import TweepError
 import unidecode
 
-from bot.conf.cfg import getConfig
+from django.conf import settings
+
 from bot.log.log import setup_logging
 from bot.twitter import getAuth
 from moderation.models import SocialUser
@@ -53,7 +54,7 @@ def has_retweet_hashtag( status ):
     hashtags = status["entities"]["hashtags"]
     ismatch = False
     for hashtag in hashtags:
-        for keyword in getConfig()["keyword_retweet_list"]:
+        for keyword in settings.KEYWORD_RETWEET_LIST:
             if keyword[1:].lower() == hashtag["text"].lower():
                 ismatch = True
     return ismatch
@@ -90,7 +91,7 @@ def isretweeted(status):
     return status['retweeted']
 
 def isselfstatus(status):
-    if status['user']['id'] == getConfig()['settings']['bot_id']:
+    if status['user']['id'] == settings.BOT_ID:
         logger.debug("self status, no RT")
         return False
 
@@ -178,8 +179,7 @@ def retweet(status_id) -> bool:
 
 
 def get_search_string():
-    config = getConfig()
-    keyword_list = config["keyword_retweet_list"]
+    keyword_list = settings.KEYWORD_RETWEET_LIST
     search_string = " OR ".join ( keyword_list )
     search_string = search_string + u" -filter:retweets"
     logger.debug("search_string: %s" % (search_string))
@@ -208,12 +208,13 @@ def save_point():
     
 def timeline_iterator():    
     # Tweet language (empty = all languages)
-    config = getConfig()
-    tweetLanguage = config["settings"]["tweet_language"]
+    tweetLanguage = settings.TWEET_LANGUAGE
     
     api = get_api()    
-    #return tweepy.Cursor(api.search, q=get_search_string(), since_id=save_point(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
-    return tweepy.Cursor(api.search, q=get_search_string(), lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+    return tweepy.Cursor(api.search,
+                         q=get_search_string(),
+                         lang=tweetLanguage,
+                         tweet_mode='extended').items(settings.NUMBER_OF_RT)
 
 
 def main():

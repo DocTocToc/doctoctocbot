@@ -1,6 +1,7 @@
 import logging
 
 from django.core.paginator import Paginator
+from django.conf import settings
 
 from conversation.constants import HOURS
 
@@ -60,13 +61,12 @@ def allquotedstatus():
         quotedstatus(status_mi.statusid)    
 
 def hashtag(statusid):
-    from bot.conf.cfg import getConfig
     from .models import Tweetdj
     from common.utils import dictextract
 
     logger = logging.getLogger(__name__)
     
-    keyword_lst = getConfig()["keyword_track_list"]
+    keyword_lst = settings.KEYWORD_TRACK_LIST
     if not keyword_lst:
         return
     status_mi = Tweetdj.objects.get(pk=statusid)
@@ -115,17 +115,15 @@ def usertotalhashtagcount(userid: int) -> int:
     Return the count of status posted by the user with this userid, including any hashtag
     from the keyword track list, that are neither retweets nor quotes.
     """
-    from bot.conf.cfg import getConfig
     if userid is None:
         return
     count = 0
-    for idx in range(len(getConfig()["keyword_track_list"])):
+    for idx in range(len(settings.KEYWORD_TRACK_LIST)):
         count += userhashtagcount(userid, idx)
     return count
 
 def gethashtag(idx):
-    from bot.conf.cfg import getConfig
-    keyword_lst = getConfig()["keyword_track_list"]
+    keyword_lst = settings.KEYWORD_TRACK_LIST
     try:
         return keyword_lst[idx]
     except IndexError:

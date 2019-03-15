@@ -132,7 +132,7 @@ class CrowdfundingCompleteForm(ModelForm):
         model = ProjectInvestment
         fields = ['pledged']
 
-
+"""
 class CheckoutForm(forms.Form):
     payment_method_nonce = forms.CharField(
         max_length=1000,
@@ -147,4 +147,4 @@ class CheckoutForm(forms.Form):
             raise forms.ValidationError(_(
                 'We couldn\'t verify your payment. Please try again.'))
         return self.cleaned_data
-
+"""

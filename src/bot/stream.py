@@ -5,7 +5,6 @@ import tweepy
 from tweepy.streaming import StreamListener
 
 from django.conf import settings
-from bot.conf.cfg import getConfig
 from bot.log.log import setup_logging
 from bot.twitter import getAuth
 
@@ -14,8 +13,6 @@ from .tasks import handle_on_status
 
 setup_logging()
 logger = logging.getLogger(__name__)
-
-config = getConfig()
 
 #import pkgutil
 #search_path = '.' # set to None to see all modules importable from sys.path

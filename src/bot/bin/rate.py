@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import tweepy
-from twitter import getAuth
-
-from cfg import getConfig
-
+from bot.twitter import get_api
 
 def getratelimit():
     "get Twitter API rate limit info"
-    api = tweepy.API(getAuth())
+    api = get_api()
     return "API rate limite status: {0}".format(api.rate_limit_status())

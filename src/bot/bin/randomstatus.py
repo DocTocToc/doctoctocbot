@@ -4,12 +4,9 @@
 import logging
 import random
 import string
-import tweepy
-from twitter import getAuth
+from bot.twitter import get_api
 
-from conf.cfg import getConfig
 from log import setup_logging
-
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -20,5 +17,5 @@ if __name__ == '__main__':
     randomchars = "".join( [random.choice(string.ascii_letters) for i in range(15)] )
     status = hashtag + " " + randomchars
     logger.debug(status)
-    api = tweepy.API(getAuth())
+    api = get_api()
     api.update_status(status)

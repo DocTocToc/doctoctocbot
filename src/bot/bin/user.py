@@ -9,4 +9,4 @@ from bot.twitter import getAuth
 def getuser(user_id):
     "get Twitter user object"
     api = tweepy.API(getAuth())
-    return api.get_user(id)._json
+    return api.get_user(user_id)._json

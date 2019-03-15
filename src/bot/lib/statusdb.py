@@ -4,14 +4,10 @@
 Add tweets to databases.
 """
 
-from datetime import datetime
 import requests
 import logging
 
-from bot.conf.cfg import getConfig
-from bot.lib.datetime import get_datetime, get_datetime_tz
-from bot.model.model import Status, session
-from sqlalchemy.exc import IntegrityError as AlchemyIntegrityError
+from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, transaction
 from django.conf import settings
 
@@ -43,22 +39,6 @@ logger = logging.getLogger(__name__)
 class Addstatus:
     def __init__(self, json):
         self.json = json
-
-    def addstatus(self):
-        try:
-            status = Status(id = self.id(),
-                        userid = self.userid(),
-                        json = self.json,
-                        datetime = get_datetime(self.json))
-            session.add(status)
-            session.commit()
-        except AlchemyIntegrityError as e:
-            session.rollback()
-            logger.debug('Integrity error: {}'.format(e.args[0]))
-        if self.has_image():
-            self.add_image()
-        return True
-
 
     def addtweetdj(self):
         """

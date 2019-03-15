@@ -1,16 +1,17 @@
 from .pythontwitter import twitter
-from bot.conf.cfg import getConfig                                                                      
 from bot.log.log import setup_logging
 import logging
+
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 def getapi():                                           
     api_dict = {'sleep_on_rate_limit': True}                                                      
-    api_dict['consumer_key'] = getConfig()["twitter"]["consumer_key"]
-    api_dict['consumer_secret'] = getConfig()["twitter"]["consumer_secret"]
-    api_dict['access_token_key'] = getConfig()["twitter"]["access_token"]
-    api_dict['access_token_secret'] = getConfig()["twitter"]["access_token_secret"]
+    api_dict['consumer_key'] = settings.TWITTER_CONSUMER_KEY
+    api_dict['consumer_secret'] = settings.TWITTER_CONSUMER_SECRET
+    api_dict['access_token_key'] = settings.TWITTER_ACCESS_TOKEN
+    api_dict['access_token_secret'] = settings.TWITTER_ACCESS_TOKEN_SECRET
     
     return twitter.Api(**api_dict)
 

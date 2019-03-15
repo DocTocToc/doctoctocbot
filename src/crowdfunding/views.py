@@ -3,25 +3,20 @@ import logging
 
 from django.core import signing
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy as _lazy
-from django.views import generic, View
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from random import randint
 from django.views.generic.edit import FormView
 from django.views.generic import ListView
-from django.db.models import Count
 from django.contrib.auth import get_user_model
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 
 import stripe
-from paypal.standard.forms import PayPalPaymentsForm
+#from paypal.standard.forms import PayPalPaymentsForm
 #from paypal.standard.forms import PayPalEncryptedPaymentsForm
 #from paypal.standard.forms import PayPalSharedSecretEncryptedPaymentsForm
 #from django_registration.views import RegistrationView
@@ -29,7 +24,7 @@ from django_registration.views import RegistrationView as BaseRegistrationView
 from django_registration import signals
 
 from .constants import ITEM_NAME, HOURLY_RATE_EUR
-from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm, CheckoutForm
+from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm
 from .models import Project, ProjectInvestment, Tier
 
 logger = logging.getLogger(__name__)

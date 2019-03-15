@@ -1,3 +1,4 @@
+"""
 from django.conf import settings
 import os
 
@@ -26,3 +27,4 @@ def transact(options):
 
 def find_transaction(id):
     return gateway.transaction.find(id)
+"""

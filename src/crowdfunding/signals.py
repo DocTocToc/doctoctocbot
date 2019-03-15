@@ -1,12 +1,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.shortcuts import get_object_or_404
+#from django.shortcuts import get_object_or_404
 
-from paypal.standard.ipn.signals import valid_ipn_received
+#from paypal.standard.ipn.signals import valid_ipn_received
 
-from .models import Project, ProjectInvestment
+from .models import ProjectInvestment
 
-
+"""
 @receiver(valid_ipn_received)
 def payment_notification(sender, **kwargs):
     ipn = sender
@@ -18,6 +18,7 @@ def payment_notification(sender, **kwargs):
             # mark the order as paid
             order.paid = True
             order.save()
+"""
 
 @receiver(post_save, sender=ProjectInvestment)
 def update_amount_paid(sender, instance, created, **kwargs):

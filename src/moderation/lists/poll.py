@@ -18,7 +18,6 @@ import pickle
 
 from django.conf import settings
 
-from bot.conf.cfg import getConfig
 from bot.twitter import getAuth, get_api
 from moderation.models import SocialUser, SocialMedia, Category, UserCategoryRelationship
 
@@ -67,11 +66,9 @@ def remove_usercategoryrelationship(user_mis, category):
             ucr.delete()
 
 def poll():
-    config = getConfig()
-    test = config["test"]
-    logging.debug("test: %s" % test)
-    bot_id = config['settings']['bot_id']
-    bot_screen_name = config['settings']['bot_screen_name']
+    debug = settings.DEBUG
+    bot_id = settings.BOT_ID
+    bot_screen_name = settings.BOT_SCREEN_NAME
     
     # create Tweepy api object
     auth = getAuth()
@@ -88,7 +85,7 @@ def poll():
     for l in lists:
         for k, v in CAT.items():
             # Test account: use list slug to find category
-            if test:
+            if debug:
                 logging.debug(f'l.slug: {l.slug}, v["slug"]: {v["slug"]}')
                 if l.slug == v["slug"]:
                     category = k
@@ -123,8 +120,8 @@ def poll():
         remove_usercategoryrelationship(to_delete_mis, category_mi)
 
 def backup_lists():
-    bot_id = getConfig()['settings']['bot_id']
-    bot_screen_name = getConfig()['settings']['bot_screen_name']
+    bot_id = settings.BOT_ID
+    bot_screen_name = settings.BOT_SCREEN_NAME
     api = get_api()
     lists = api.lists_all(bot_screen_name, bot_id)
     if not lists:

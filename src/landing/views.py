@@ -1,13 +1,14 @@
+import logging
+import time
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-import logging
-import time
+from django.conf import settings
 
-from bot.conf.cfg import getConfig
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
 
@@ -64,7 +65,7 @@ class UserInfo(LoginRequiredMixin, TemplateView):
             context['uid'] = uid
             context['pp_url'] = json.get("profile_image_url_https", None)
             
-            track_list = getConfig().get("keyword_track_list", None)
+            track_list = settings.KEYWORD_TRACK_LIST
             context["hashtag0"] = None
             context["hashtag1"] = None
             if track_list is not None:

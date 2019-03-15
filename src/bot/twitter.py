@@ -4,16 +4,20 @@
 import logging
 import tweepy
 
-from .conf.cfg import getConfig
-
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 def getAuth():
     "get Tweepy OAuthHandler authentication object"
-    config = getConfig()
-    auth = tweepy.OAuthHandler(config["twitter"]["consumer_key"], config["twitter"]["consumer_secret"])
-    auth.set_access_token(config["twitter"]["access_token"], config["twitter"]["access_token_secret"])
+    auth = tweepy.OAuthHandler(
+        settings.TWITTER_CONSUMER_KEY,
+        settings.TWITTER_CONSUMER_SECRET
+    )
+    auth.set_access_token(
+        settings.TWITTER_ACCESS_TOKEN,
+        settings.TWITTER_ACCESS_TOKEN_SECRET
+    )
     return auth
 
 def get_api():

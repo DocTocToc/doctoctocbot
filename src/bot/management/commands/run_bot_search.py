@@ -1,11 +1,10 @@
 from django.core.management.base import  BaseCommand, CommandError
-
+from django.conf import settings
 from bot.doctoctocbot import isauthorized, isrt, isquestion, okrt
 import hashlib
 import os
 import tweepy
 from bot.twitter import getAuth
-from bot.conf.cfg import getConfig
 from bot.log.log import setup_logging
 import logging
 
@@ -15,9 +14,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         setup_logging()
         logger = logging.getLogger(__name__)
-        config = getConfig()
         # build savepoint path + file
-        keyword_list = config["keyword_retweet_list"]
+        keyword_list = settings.KEYWORD_RETWEET_LIST
         search_string = " OR ".join(keyword_list)
         search_string = search_string + u" -filter:retweets"
         logger.debug("search_string: %s" % (search_string))
@@ -39,10 +37,16 @@ class Command(BaseCommand):
         
         
         # Tweet language (empty = all languages)
-        tweetLanguage = config["settings"]["tweet_language"]
+        tweetLanguage = settings.TWEET_LANGUAGE
         
         # search query
-        timelineIterator = tweepy.Cursor(api.search, q=search_string, since_id=savepoint, lang=tweetLanguage, tweet_mode='extended').items(config["settings"]["number_of_rt"])
+        timelineIterator = tweepy.Cursor(
+            api.search,
+            q=search_string,
+            since_id=savepoint,
+            lang=tweetLanguage,
+            tweet_mode='extended'
+        ).items(settings.NUMBER_OF_RT)
         
         # put everything into a list to be able to sort/filter        
         oklist = []

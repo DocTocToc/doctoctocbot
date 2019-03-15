@@ -17,7 +17,6 @@ import tweepy
 
 from conversation.models import Tweetdj
 
-from .conf.cfg import getConfig
 from .lib.statusdb import Addstatus
 from .log.log import setup_logging
 from .twitter import getAuth

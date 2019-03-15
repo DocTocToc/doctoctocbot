@@ -2,9 +2,9 @@ from django.contrib.admin.utils import help_text_for_field
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 import logging
 
-from bot.conf.cfg import getConfig
 from common.utils import dictextract
 
 
@@ -53,7 +53,7 @@ class DirectMessage(models.Model):
         get_latest_by = "-created_timestamp"
     
     def __str__(self):
-        if getConfig()["settings"]["bot_id"] == self.sender_id:
+        if settings.BOT_ID == self.sender_id:
             direction = "Sent"
         else:
             direction = "Received"

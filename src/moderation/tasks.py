@@ -68,11 +68,11 @@ def poll_moderation_dm():
     import logging
     from dm.models import DirectMessage
     from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
-    from bot.conf.cfg import getConfig
+    from django.conf import settings
 
     logger = logging.getLogger(__name__)
 
-    bot_id = getConfig()["settings"]["bot_id"]
+    bot_id = settings.BOT_ID
     #sender_id_lst = Moderation.objects.as_of().values('moderator')
     #logger.debug(f"sender_id_lst: {sender_id_lst}")
     #sender_id_lst1 = SocialUser.objects.filter(user_id__in=sender_id_lst).values('user_id')

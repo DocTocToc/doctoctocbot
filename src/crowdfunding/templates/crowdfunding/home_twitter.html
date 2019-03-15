@@ -19,6 +19,10 @@
 
 {% include "crowdfunding/tiers.html" %}
 
+{% if frontend_error_msg %}
+<p>❌ {{ frontend_error_msg }}</p>
+{% endif %}
+
 <!-- form action="/crowdfunding/home/" method="post">
     {% csrf_token %}
     {{ form }}

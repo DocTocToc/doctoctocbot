@@ -1,5 +1,6 @@
 from decimal import *
 import logging
+from uuid import UUID
 
 from django.core import signing
 from django.conf import settings
@@ -14,6 +15,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
 
 import stripe
 #from paypal.standard.forms import PayPalPaymentsForm
@@ -316,13 +318,41 @@ def charge(request):
     if request.method == 'POST':
         amount_int = request.session.get('amount', 0)
         amount_cents = amount_int * 100
+        
+        uuid_str = request.session.get('custom')
+        
+        try:
+            UUID(uuid_str, version=4)
+        except ValueError:
+            # If it's a value error, then the string 
+            # is not a valid hex code for a UUID.
+            frontend_error_msg =(
+                _("Please authorize cookies and try again.")
+            )
+            return render(request,
+                          reverse('crowdfunding:start'),
+                          {'frontend_error_msg': frontend_error_msg})
+        
+        
         try:
             charge = stripe.Charge.create(
                 amount=amount_cents,
                 currency='eur',
                 description=ITEM_NAME,
-                source=request.POST['stripeToken']
+                source=request.POST['stripeToken'],
+                metadata={'uuid': uuid_str}
             )
+            logger.debug(charge)
+            # mark project investmen object as paid
+            order = get_object_or_404(ProjectInvestment, id=uuid_str)
+ 
+            if (order.pledged * 100 == charge["amount"]
+                and order.id == charge["metadata"]["uuid"]):
+                # mark the order as paid
+                order.paid = True
+                order.save()
+            return render(request, 'crowdfunding/stripe_charge.html')
+
         except stripe.error.CardError as e:
             # Since it's a decline, stripe.error.CardError will be caught
             body = e.json_body
@@ -342,6 +372,15 @@ def charge(request):
                 )
             )
             logger.error(err_msg)
+            frontend_error_msg =(
+                _("You payment card was not authorized."
+                  "Pleace try again with this card or another. {}")
+                .format(err.get('message')))
+            return render(
+                request,
+                reverse('crowdfunding:start'),
+                {'frontend_error_msg': frontend_error_msg}
+            )
         
         except stripe.error.RateLimitError as e:
             logger.info("Too many requests made to the API too quickly")
@@ -364,7 +403,13 @@ def charge(request):
         except Exception as e:
             logger.error("Something else happened, completely unrelated to Stripe")
         
-    return render(request, 'crowdfunding/stripe_charge.html')
+        frontend_error_msg =(
+                _("Ann error occurred during the processing of your payment."
+                  "You will not be charged. Please try again.")
+        )
+        return render(request,
+                      reverse('crowdfunding:start'),
+                      {'frontend_error_msg': frontend_error_msg})
 
 @csrf_exempt
 def payment_done(request):

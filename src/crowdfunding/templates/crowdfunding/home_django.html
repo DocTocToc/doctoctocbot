@@ -20,6 +20,10 @@
 
 {% include "crowdfunding/tiers.html" %}
 
+{% if frontend_error_msg %}
+<p>❌ {{ frontend_error_msg }}</p>
+{% endif %}
+
 {% crispy form %}
 
   <!--form action="." method="post">{% csrf_token %}

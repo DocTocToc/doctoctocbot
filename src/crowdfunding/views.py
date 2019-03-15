@@ -320,6 +320,8 @@ def charge(request):
         amount_cents = amount_int * 100
         
         uuid_str = request.session.get('custom')
+        logger.debug("uuid_str %s" % uuid_str)
+
         
         try:
             UUID(uuid_str, version=4)
@@ -340,7 +342,7 @@ def charge(request):
                 currency='eur',
                 description=ITEM_NAME,
                 source=request.POST['stripeToken'],
-                metadata={'uuid': uuid_str}
+                metadata={'uuid': uuid_str},
             )
             logger.debug(charge)
             # mark project investmen object as paid

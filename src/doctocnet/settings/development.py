@@ -16,15 +16,14 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ['tunnel.doctoctoc.net', 'localhost', '127.0.0.1', '[::1]']
 
 INSTALLED_APPS += [
-    #'debug_toolbar',
+    'debug_toolbar',
     'status',
     'django_extensions',
     'gpgcontact',
-    #'djstripe',
 ]
 
 MIDDLEWARE += [
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 DATABASES = {

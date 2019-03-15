@@ -1,5 +1,7 @@
 from decimal import *
-import logging
+
+
+
 from uuid import UUID
 
 from django.core import signing
@@ -16,6 +18,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 import stripe
 #from paypal.standard.forms import PayPalPaymentsForm
@@ -29,6 +32,7 @@ from .constants import ITEM_NAME, HOURLY_RATE_EUR
 from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm
 from .models import Project, ProjectInvestment, Tier
 
+import logging
 logger = logging.getLogger(__name__)
 
 REGISTRATION_SALT = getattr(settings, 'REGISTRATION_SALT', 'registration')
@@ -171,7 +175,6 @@ class InvestViewTwitter(FormView):
         
     def form_valid(self, form):
         if form.cleaned_data.get('email') and not self.request.user.email:
-            #logger.debug('email: %s' %form.cleaned_data.get('email'))
             self.request.user.email = form.cleaned_data.get('email')
             self.request.user.save()
 
@@ -297,11 +300,6 @@ def stripe_checkout(request):
     amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
     amount_str = "{:.2f}".format(amount_dec)
     amount_cents = amount_int * 100
-    checkout = {
-        'amount': '%.2f' % amount_dec,
-        'item_name': ITEM_NAME,
-        'custom': request.session.get('custom'),
-    }
     button_label = _("Pay with card")
     public_key = settings.STRIPE_PUBLIC_KEY
     return render(
@@ -318,10 +316,7 @@ def charge(request):
     if request.method == 'POST':
         amount_int = request.session.get('amount', 0)
         amount_cents = amount_int * 100
-        
         uuid_str = request.session.get('custom')
-        logger.debug("uuid_str %s" % uuid_str)
-
         
         try:
             UUID(uuid_str, version=4)
@@ -344,12 +339,10 @@ def charge(request):
                 source=request.POST['stripeToken'],
                 metadata={'uuid': uuid_str},
             )
-            logger.debug(charge)
             # mark project investmen object as paid
             order = get_object_or_404(ProjectInvestment, id=uuid_str)
- 
-            if (order.pledged * 100 == charge["amount"]
-                and order.id == charge["metadata"]["uuid"]):
+            if ((int(float(order.pledged * 100)) == charge["amount"])
+                and (str(order.id) == charge["metadata"]["uuid"])):
                 # mark the order as paid
                 order.paid = True
                 order.save()
@@ -413,15 +406,17 @@ def charge(request):
                       reverse('crowdfunding:start'),
                       {'frontend_error_msg': frontend_error_msg})
 
+"""
 @csrf_exempt
 def payment_done(request):
     return render(request, 'crowdfunding/payment_done.html')
- 
- 
+""" 
+
+""" 
 @csrf_exempt
 def payment_canceled(request):
     return render(request, 'crowdfunding/payment_canceled.html')
-
+"""
 
 class ProjectInvestmentView(ListView):
 

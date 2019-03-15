@@ -10,10 +10,11 @@ config = AutoConfig(search_path = CONFIG_DIR)
 
 SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
+#DEBUG = config('DEBUG', default=True, cast=bool)
 #INTERNAL_IPS = ['127.0.0.1']
 
-ALLOWED_HOSTS = ['tunnel.doctoctoc.net', 'localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS += [
     'debug_toolbar',
@@ -54,12 +55,12 @@ POSTGRESQL = {
 }
 
 # django-paypal
-PAYPAL_RECEIVER_EMAIL = 'jerome-facilitator@jerome.cc'
-PAYPAL_TEST = True
-PAYPAL_PRIVATE_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
-PAYPAL_PUBLIC_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
-PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
-PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
+#PAYPAL_RECEIVER_EMAIL = 'jerome-facilitator@jerome.cc'
+#PAYPAL_TEST = True
+#PAYPAL_PRIVATE_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
+#PAYPAL_PUBLIC_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
+#PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
+#PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
 
 # Braintree
 #BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account

@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 #import djstripe
 #from crowdfunding.views3 import show_checkout, new_checkout, create_checkout
-from crowdfunding.views import stripe_checkout, payment_done, payment_canceled, ProjectInvestmentView, InvestViewBase
+from crowdfunding.views import stripe_checkout, ProjectInvestmentView, InvestViewBase
 from crowdfunding.views import charge
 app_name = 'crowdfunding'
 
@@ -14,8 +14,8 @@ urlpatterns = [
     #path('pay/', process_payment, name="pay"),
     path('pay/', stripe_checkout, name="stripe-checkout"),
     #path('paypal/', include('paypal.standard.ipn.urls'), name="paypal-ipn"),
-    path('payment-done/', payment_done, name='payment_done'),
-    path('payment-cancelled/', payment_canceled, name='payment_cancelled'),
+    #path('payment-done/', payment_done, name='payment_done'),
+    #path('payment-cancelled/', payment_canceled, name='payment_cancelled'),
     path('fund/', ProjectInvestmentView.as_view(), name="fund"),
     path('progress/', TemplateView.as_view(template_name='crowdfunding/progress_template.html'), name='progress'),
     #path('stripe/', include("djstripe.urls", namespace="djstripe")),

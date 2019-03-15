@@ -10,6 +10,10 @@ Ce lien restera valable pendant {{ activation_days }} jour{{ activation_days|plu
 
 Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer et effacer ce message. Nous vous prions de nous excuser pour la gène occasionée. Votre adresse mail a probablement été entrée par erreur.
 
+L'application web DocTocToc.net a généré un mot de passe aléatoire pour faciliter votre inscription.
+
+Pour le changer, merci de vous rendre sur la page de connexion et de cliquer sur "Réinitialer le mot de passe".
+
 Merci.
 
 Jérôme Pinguet

@@ -5,31 +5,201 @@
 {% block title %}{% trans view.title %}{% endblock title %}
 
 {% block content %}
-  <a type="button" class="btn btn-primary" href="/settings">{% trans "Connection settings" %}</a>
-  <h1>{{ view.title }}</h1>
-  <ul>
-  <li>userid: {{ uid }}</li>
-  <li> username: {{ user.get_username }}</li>
-  <li>name: {{ name }}</li>
-  <li>screen_name: {{ screen_name }}</li>
-  {% if user.email %}
-  <li>email: {{ user.email }}</li>
-  {% endif %}
-  <li>location: {{ location }}</li>
   {% if expanded_url %}
-  <li>Homepage: <a href="{{ expanded_url }}">{{ display_url }}</a></li>
+  <!--Homepage: <a href="{{ expanded_url }}">{{ display_url }}</a></li-->
   {% endif %}
-  <li>profile_image_url_https: {{ pp_url }}</li>
-  <li><img src="{{ user.socialuser.profile.normalavatar.url }}" alt="Profile pic"></li>
-  <li><img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic"></li>
-  <li><img src="{{ user.socialuser.profile.miniavatar.url }}" alt="Profile pic"></li>
-  
-  {% if uid|total_hashtag_count %} 
+<div class="container">
+    <div class="row my-2">
+        <div class="col-lg-8 order-lg-2">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">{% trans "Profile" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" data-target="#messages" data-toggle="tab" class="nav-link">{% trans "Contact info" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" data-target="#edit" data-toggle="tab" class="nav-link">{% trans "Other info" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" data-target="#socialauth" data-toggle="tab" class="nav-link">{% trans "Social authentication" %}</a>
+                </li>
+            </ul>
+            <div class="tab-content py-4">
+                <div class="tab-pane active" id="profile">
+                    <h5 class="mb-3">{% trans "User Profile" %}</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><b>{% trans "Twitter screen name:" %}</b></h6>
+                            <p>{{ screen_name }}</p>
+                            <h6><b>{% trans "Profession:" %}</b></h6>
+                            <p>
+                            ...
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{% trans "Recent badges" %}</h6>
+                            <a href="#" class="badge badge-dark badge-pill">user</a>
+                            <hr>
+                              {% if uid|total_hashtag_count %} 
   <li>Total {{ hashtag0 }} & {{ hashtag1 }} questions asked: {{ uid|total_hashtag_count }}</li>
     <ul>
       <li>{{ hashtag0 }} questions asked: {{ uid|hashtag_count:0 }}</li>
       <li>{{ hashtag1 }} questions asked: {{ uid|hashtag_count:1 }}</li>
     </ul>
   {% endif %}
-  </ul>
+                            <span class="badge badge-primary"><i class="fa fa-user"></i> {{ uid|total_hashtag_count }} {% trans "Question(s)" %}</span>
+                            <span class="badge badge-success"><i class="fa fa-cog"></i> {{ uid|hashtag_count:0 }} {{ hashtag0 }}</span>
+                            <span class="badge badge-danger"><i class="fa fa-eye"></i> {{ uid|hashtag_count:1 }} {{ hashtag1 }}</span>
+                        </div>
+                        <div class="col-md-12">
+                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>
+                            <table class="table table-sm table-hover table-striped">
+                                <tbody>                                    
+                                    <tr>
+                                        <td>
+                                            ...
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ...
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--/row-->
+                </div>
+                <div class="tab-pane" id="messages">
+                    <div class="alert alert-info alert-dismissable">
+                        <a class="panel-close close" data-dismiss="alert">×</a> This is an <strong>.alert</strong>. Use this to show important messages to the user.
+                    </div>
+                    <table class="table table-hover table-striped">
+                        <tbody>                                    
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">X hrs ago</span> ...
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">Yesterday</span> ...
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <span class="float-right font-weight-bold">X/XX</span> ... 
+                                </td>
+                            </tr>
+                        </tbody> 
+                    </table>
+                </div>
+                <div class="tab-pane" id="edit">
+                    <form role="form">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">First name</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Last name</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Email</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="email" value="{% if user.email %}{{ user.email }}{% endif %}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Company</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Website</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="url" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Address</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="" placeholder="Street" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                            <div class="col-lg-6">
+                                <input class="form-control" type="text" value="" placeholder="City" disabled>
+                            </div>
+                            <div class="col-lg-3">
+                                <input class="form-control" type="text" value="{{ location }}" placeholder="Country" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Time Zone</label>
+                            <div class="col-lg-9">
+                                <select id="user_time_zone" class="form-control" size="0" disabled>
+                                    <option value="CET" selected="selected">Central European Time (CET)</option>
+                                    <option value="Hawaii">(GMT-10:00) Hawaii</option>
+                                    <option value="Alaska">(GMT-09:00) Alaska</option>
+                                    <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                                    <option value="Arizona">(GMT-07:00) Arizona</option>
+                                    <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                                    <option value="Central Time (US &amp; Canada)">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                                    <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                                    <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Username</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="text" value="{{ user.get_username }}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Password</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="password" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Confirm password</label>
+                            <div class="col-lg-9">
+                                <input class="form-control" type="password" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                            <div class="col-lg-9">
+                                <input type="reset" class="btn btn-secondary" value="Cancel" disabled>
+                                <input type="button" class="btn btn-primary" value="Save Changes" disabled>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane" id="socialauth">
+                  <a type="button" class="btn btn-primary" href="/settings">{% trans "Connection settings" %}</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 order-lg-1 text-center">
+            <img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic" class="mx-auto img-fluid img-circle d-block">
+        <h6>{{ name }}</h6>
+        </div>
+    </div>
+</div>
 {% endblock %}

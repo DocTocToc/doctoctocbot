@@ -34,8 +34,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
-    
-
 ]
 
 # Use static() to add url mappings to serve static files during development (only)

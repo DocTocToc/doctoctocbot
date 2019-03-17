@@ -144,7 +144,7 @@ LANGUAGE_CODE = 'fr'
 
 LANGUAGES = [
     ('fr', _('French')),
-    ('en', _('English')),
+#    ('en', _('English')),
 
 ]
 

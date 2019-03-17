@@ -1,0 +1,75 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-17 20:17+0100\n"
+"PO-Revision-Date: 2019-03-17 20:18+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: templates/404.html:7
+msgid ""
+"\n"
+"<h1>4🧐4 Page Not Found</h1>\n"
+"<p>This page does not exist yet!</p>\n"
+msgstr ""
+"\n"
+"<h1>4🧐4 Page non trouvée</h1>\n"
+"<p>Cette page n'existe pas encore!</p>\n"
+
+#: templates/registration/login.html:13
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Votre nom d'utilisateur et votre mot de passe ne correspondent à aucun "
+"compte connu. Merci de réessayer."
+
+#: templates/registration/login.html:21
+msgid "Please login"
+msgstr "Connectez-vous s'il vous plaît"
+
+#: templates/registration/login.html:27
+msgid "Sign in with Twitter"
+msgstr "Se connecter avec Twitter"
+
+#: templates/registration/login.html:47
+msgid "Reset your password"
+msgstr "Réinitialiser votre mot de passe"
+
+#: templates/registration/password_reset_done.html:4
+msgid ""
+"We've emailed you instructions for setting your password. If they haven't "
+"arrived in a few minutes, check your spam folder."
+msgstr ""
+"Nous vous avons envoyé un mail avec des instructions pour réinitialiser "
+"votre mot de passe. Si le mail n'arrive pas dans quelques minutes, vérifiez "
+"votre dossier spam."
+
+#: templates/registration/password_reset_form.html:4
+msgid "Please enter the email you used to register your account."
+msgstr ""
+"Merci d'indiquer l'adresse mail que vous avez utilisée pour créer votre "
+"compte."
+
+#: templates/versions/datetimefilter.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr " Par %(filter_title)s "
+
+#: templates/versions/datetimefilter.html:29
+msgid "Search"
+msgstr "Recherche"
+
+#: templates/versions/datetimefilter.html:30
+msgid "Clear"
+msgstr "Effacer"

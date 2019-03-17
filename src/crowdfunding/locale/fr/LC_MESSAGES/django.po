@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-14 16:05+0100\n"
+"POT-Creation-Date: 2019-03-17 20:17+0100\n"
 "PO-Revision-Date: 2019-03-14 15:53+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -48,12 +48,6 @@ msgstr ""
 msgid "You must choose a preset amount or a custom amount. Thank you."
 msgstr "Vous devez choisir 1 montant. Merci."
 
-#: crowdfunding/forms.py:148
-msgid "We couldn't verify your payment. Please try again."
-msgstr ""
-"Nous n'avons pas pu vérifier votre paiement. Veuillez recommencer s'il vous "
-"plaît."
-
 #: crowdfunding/templates/crowdfunding/fund.html:5
 msgid "Funding"
 msgstr "Financement"
@@ -77,9 +71,30 @@ msgstr "Je veux financer!"
 msgid "Progress"
 msgstr "Progression"
 
-#: crowdfunding/views.py:308
+#: crowdfunding/views.py:303
 msgid "Pay with card"
 msgstr "Payez par carte"
+
+#: crowdfunding/views.py:327
+msgid "Please authorize cookies and try again."
+msgstr ""
+
+#: crowdfunding/views.py:371
+msgid ""
+"You payment card was not authorized.Pleace try again with this card or "
+"another. {}"
+msgstr ""
+
+#: crowdfunding/views.py:402
+msgid ""
+"Ann error occurred during the processing of your payment.You will not be "
+"charged. Please try again."
+msgstr ""
+
+#~ msgid "We couldn't verify your payment. Please try again."
+#~ msgstr ""
+#~ "Nous n'avons pas pu vérifier votre paiement. Veuillez recommencer s'il "
+#~ "vous plaît."
 
 #~ msgid "Do you want an invoice?"
 #~ msgstr "Voulez-vous une facture?"

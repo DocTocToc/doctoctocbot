@@ -1,27 +1,30 @@
 {% extends "doctocnet/base.html" %}
+{% load i18n %}
 {% load static %}
+
 {% load crispy_forms_tags %}
 
 {% block content %}
+{% load i18n %}
 
 <div class="container">
 
 {% if form.errors %}
-  <p>Your username and password didn't match. Please try again.</p>
+  <p>{% trans "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
 {% if next %}
   {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
+    <p>{% trans "Your account doesn't have access to this page. To proceed,
+    please login with an account that has access." %}</p>
   {% else %}
-    <p>Please login</p>
+    <p>{% trans 'Please login' %}</p>
   {% endif %}
 {% endif %}
 
 {% if 'twitter' in backends.not_associated %}
 <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next }}">
-<img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+<img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
 </a>
 {% endif %}
 
@@ -32,7 +35,6 @@
   <td>{{ form.username|as_crispy_field }}</td>
 </div>
 <div class="form-group">
-  <!--td>{{ form.password.label_tag }}</td-->
   <td>{{ form.password|as_crispy_field }}</td>
 </div>
 <div class="form-group">
@@ -42,7 +44,7 @@
 </form>
 
 {# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+<p><a href="{% url 'password_reset' %}">{% trans 'Reset your password' %}</a></p>
 
 </div>
 

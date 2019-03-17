@@ -9,8 +9,12 @@
   <!--Homepage: <a href="{{ expanded_url }}">{{ display_url }}</a></li-->
   {% endif %}
 <div class="container">
-    <div class="row my-2">
-        <div class="col-lg-8 order-lg-2">
+    <div class="row">
+        <div class="col">
+        <img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic" class="mx-auto img-fluid img-circle">
+        <h6>{{ name }}</h6>
+        </div>
+        <div class="col">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">{% trans "Profile" %}</a>
@@ -29,7 +33,7 @@
                 <div class="tab-pane active" id="profile">
                     <h5 class="mb-3">{% trans "User Profile" %}</h5>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col">
                             <h6><b>{% trans "Twitter screen name:" %}</b></h6>
                             <p>{{ screen_name }}</p>
                             <h6><b>{% trans "Profession:" %}</b></h6>
@@ -37,17 +41,10 @@
                             ...
                             </p>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col">
                             <h6>{% trans "Recent badges" %}</h6>
                             <a href="#" class="badge badge-dark badge-pill">user</a>
                             <hr>
-                              {% if uid|total_hashtag_count %} 
-  <li>Total {{ hashtag0 }} & {{ hashtag1 }} questions asked: {{ uid|total_hashtag_count }}</li>
-    <ul>
-      <li>{{ hashtag0 }} questions asked: {{ uid|hashtag_count:0 }}</li>
-      <li>{{ hashtag1 }} questions asked: {{ uid|hashtag_count:1 }}</li>
-    </ul>
-  {% endif %}
                             <span class="badge badge-primary"><i class="fa fa-user"></i> {{ uid|total_hashtag_count }} {% trans "Question(s)" %}</span>
                             <span class="badge badge-success"><i class="fa fa-cog"></i> {{ uid|hashtag_count:0 }} {{ hashtag0 }}</span>
                             <span class="badge badge-danger"><i class="fa fa-eye"></i> {{ uid|hashtag_count:1 }} {{ hashtag1 }}</span>
@@ -196,10 +193,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 order-lg-1 text-center">
-            <img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic" class="mx-auto img-fluid img-circle d-block">
-        <h6>{{ name }}</h6>
-        </div>
+
     </div>
 </div>
 {% endblock %}

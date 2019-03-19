@@ -16,9 +16,8 @@
 {% include 'landing/donate.html' %}
 
 {% include 'crowdfunding/twitter_signin.html' %}
-
+<div id="donate"></div>
 {% include "crowdfunding/tiers.html" %}
-
 {% if frontend_error_msg %}
 <p>❌ {{ frontend_error_msg }}</p>
 {% endif %}
@@ -30,5 +29,8 @@
 </form-->
 
 {% crispy form %}
+
+{% include "crowdfunding/project.html" %}
+
 <script src="{% static 'crowdfunding/javascript/tiers.js' %}" type="text/javascript"></script>
 {% endblock %}

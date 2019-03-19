@@ -32,7 +32,7 @@ If you already cloned the repository, cd into it and
 * How to enhance the dialogue with other healthcare professionals (pharmacists, ...)?
 * Can we automatically classify the type of request (clinical case, administrative tip, other kind of help)?
 * Can we automatically classify the medical category of the request? (Dermatology, cardiology, psychiatry, social problems)
-* What classifications should we user? (ICPC, ICD)
+* What classifications should we use? (ICPC, ICD)
 * Should we use another hashtag for clinical quizzes (when the requester already knows the answer) such as \#DocQuiz ?
 
 ## Wiki, documentation, links

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-17 20:17+0100\n"
+"POT-Creation-Date: 2019-03-19 18:35+0100\n"
 "PO-Revision-Date: 2018-12-20 10:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,7 +22,43 @@ msgstr ""
 msgid "Home"
 msgstr "Accueil"
 
-#: landing/templates/landing/user.html:8
+#: landing/templates/landing/user.html:20
+msgid "Profile"
+msgstr ""
+
+#: landing/templates/landing/user.html:23
+msgid "Contact info"
+msgstr ""
+
+#: landing/templates/landing/user.html:26
+msgid "Other info"
+msgstr ""
+
+#: landing/templates/landing/user.html:29
+msgid "Social authentication"
+msgstr ""
+
+#: landing/templates/landing/user.html:34
+msgid "User Profile"
+msgstr ""
+
+#: landing/templates/landing/user.html:37
+msgid "Twitter screen name:"
+msgstr ""
+
+#: landing/templates/landing/user.html:39
+msgid "Profession:"
+msgstr ""
+
+#: landing/templates/landing/user.html:45
+msgid "Recent badges"
+msgstr ""
+
+#: landing/templates/landing/user.html:48
+msgid "Question(s)"
+msgstr ""
+
+#: landing/templates/landing/user.html:192
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-17 20:17+0100\n"
-"PO-Revision-Date: 2019-03-14 15:53+0100\n"
+"POT-Creation-Date: 2019-03-19 18:35+0100\n"
+"PO-Revision-Date: 2019-03-19 18:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -40,9 +40,17 @@ msgstr ""
 "Voulez-vous que votre nom d'utilisateur apparaisse dans la liste des "
 "financeurs?"
 
+#: crowdfunding/forms.py:76 crowdfunding/forms.py:112
+msgid "Yes"
+msgstr "Oui"
+
+#: crowdfunding/forms.py:76 crowdfunding/forms.py:112
+msgid "No"
+msgstr "Non"
+
 #: crowdfunding/forms.py:102
 msgid "Preset amount"
-msgstr ""
+msgstr "Montant prédéfini"
 
 #: crowdfunding/forms.py:125
 msgid "You must choose a preset amount or a custom amount. Thank you."
@@ -67,6 +75,14 @@ msgstr "Soyez la première ou le premier à investir dans notre projet!"
 msgid "I want to fund!"
 msgstr "Je veux financer!"
 
+#: crowdfunding/templates/crowdfunding/progress.html:4
+msgid "Goal"
+msgstr "Objectif"
+
+#: crowdfunding/templates/crowdfunding/progress.html:6
+msgid "Current amount"
+msgstr "Somme récoltée"
+
 #: crowdfunding/templates/crowdfunding/progress_template.html:4
 msgid "Progress"
 msgstr "Progression"
@@ -77,19 +93,23 @@ msgstr "Payez par carte"
 
 #: crowdfunding/views.py:327
 msgid "Please authorize cookies and try again."
-msgstr ""
+msgstr "Merci d'autoriser les cookies et de réessayer."
 
 #: crowdfunding/views.py:371
 msgid ""
 "You payment card was not authorized.Pleace try again with this card or "
 "another. {}"
 msgstr ""
+"Votre carte de paiement n'a pas été autorisée. Merci de recommencer avec "
+"cette carte ou une autre. {}"
 
 #: crowdfunding/views.py:402
 msgid ""
 "Ann error occurred during the processing of your payment.You will not be "
 "charged. Please try again."
 msgstr ""
+"Une erreur est survenue pendant le traitement de la transaction. Votre carte "
+"de sera pas débitée. Merci d'essayer à nouveau."
 
 #~ msgid "We couldn't verify your payment. Please try again."
 #~ msgstr ""

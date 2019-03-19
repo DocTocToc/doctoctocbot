@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-17 20:17+0100\n"
+"POT-Creation-Date: 2019-03-19 18:35+0100\n"
 "PO-Revision-Date: 2019-03-17 19:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,10 +22,6 @@ msgstr ""
 msgid "French"
 msgstr "Français"
 
-#: doctocnet/settings/base.py:147
-msgid "English"
-msgstr "Anglais"
-
 #: doctocnet/templates/doctocnet/navbar.html:10
 msgid "Home"
 msgstr "Accueil"
@@ -33,10 +29,6 @@ msgstr "Accueil"
 #: doctocnet/templates/doctocnet/navbar.html:12
 msgid "Logout"
 msgstr "Se déconnecter"
-
-#: doctocnet/templates/doctocnet/navbar.html:13
-msgid "User"
-msgstr "Utilisateur"
 
 #: doctocnet/templates/doctocnet/navbar.html:15
 msgid "Login"
@@ -106,3 +98,9 @@ msgstr "Financeurs"
 #: doctocnet/templates/doctocnet/navbar.html:65
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
+
+#~ msgid "English"
+#~ msgstr "Anglais"
+
+#~ msgid "User"
+#~ msgstr "Utilisateur"

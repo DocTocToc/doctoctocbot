@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% block head_css %}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
+<link rel="stylesheet" href="{% static "/crowdfunding/crowdfunding.css" %}"/>
 {% endblock head_css %}
 
 {% block header_javascript %}
@@ -21,12 +22,6 @@
 {% if frontend_error_msg %}
 <p>❌ {{ frontend_error_msg }}</p>
 {% endif %}
-
-<!-- form action="/crowdfunding/home/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form-->
 
 {% crispy form %}
 

@@ -73,7 +73,7 @@ class CrowdfundingHomeTwitterForm(forms.Form):
     public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _('Yes')), (False, _('No'))),
         required=False,
     )
 
@@ -109,7 +109,7 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
     public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _('Yes')), (False, _('No'))),
         required=False,
     )
     

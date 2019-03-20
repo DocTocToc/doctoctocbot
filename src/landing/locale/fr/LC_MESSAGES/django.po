@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-19 18:35+0100\n"
-"PO-Revision-Date: 2018-12-20 10:17+0100\n"
+"POT-Creation-Date: 2019-03-20 13:15+0100\n"
+"PO-Revision-Date: 2019-03-20 13:17+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: landing/templates/landing/index.html:6
 msgid "Home"
@@ -24,41 +24,45 @@ msgstr "Accueil"
 
 #: landing/templates/landing/user.html:20
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: landing/templates/landing/user.html:23
 msgid "Contact info"
-msgstr ""
+msgstr "Info de contact"
 
 #: landing/templates/landing/user.html:26
 msgid "Other info"
-msgstr ""
+msgstr "Autres infos"
 
 #: landing/templates/landing/user.html:29
 msgid "Social authentication"
-msgstr ""
+msgstr "Authentification sociale (Twitter)"
 
-#: landing/templates/landing/user.html:34
-msgid "User Profile"
-msgstr ""
+#: landing/templates/landing/user.html:32
+msgid "Receipt"
+msgstr "Facture"
 
 #: landing/templates/landing/user.html:37
+msgid "User Profile"
+msgstr "Profil utilisateur"
+
+#: landing/templates/landing/user.html:40
 msgid "Twitter screen name:"
-msgstr ""
+msgstr "Nom d'utilisateur Twitter:"
 
-#: landing/templates/landing/user.html:39
+#: landing/templates/landing/user.html:42
 msgid "Profession:"
-msgstr ""
-
-#: landing/templates/landing/user.html:45
-msgid "Recent badges"
-msgstr ""
+msgstr "Profession:"
 
 #: landing/templates/landing/user.html:48
-msgid "Question(s)"
-msgstr ""
+msgid "Recent badges"
+msgstr "Badges récents"
 
-#: landing/templates/landing/user.html:192
+#: landing/templates/landing/user.html:51
+msgid "Question(s)"
+msgstr "Question(s)"
+
+#: landing/templates/landing/user.html:195
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 

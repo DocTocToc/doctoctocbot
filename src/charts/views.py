@@ -106,6 +106,8 @@ def questions_monthly_data(request):
     '''    
     qsm = (Tweetdj.objects
         .filter(userid__in=physicians)
+        .filter(retweetedstatus=False)
+        .filter(quotedstatus=False)
         .annotate(date = TruncMonth('created_at'))
         .values('date')
         .annotate(count=Count('statusid'))
@@ -163,12 +165,14 @@ def questions_yearly_data(request):
         .values('year', 'month', 'count') \
         .order_by('year', 'month')
     '''    
-    qsy = Tweetdj.objects \
-        .filter(userid__in=physicians) \
-        .annotate(date = TruncYear('created_at')) \
-        .values('date') \
-        .annotate(count=Count('statusid')) \
-        .order_by('date')
+    qsy = (Tweetdj.objects
+        .filter(userid__in=physicians)
+        .filter(retweetedstatus=False)
+        .filter(quotedstatus=False)
+        .annotate(date = TruncYear('created_at'))
+        .values('date')
+        .annotate(count=Count('statusid'))
+        .order_by('date'))
     qsy0or1 = qsy.filter(Q(hashtag0=True) | Q(hashtag1=True))    
     qsy0 = qsy.filter(hashtag0=True)
     qsy1 = qsy.filter(hashtag1=True)

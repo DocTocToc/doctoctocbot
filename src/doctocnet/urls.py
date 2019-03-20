@@ -25,7 +25,7 @@ urlpatterns = [
     path('', include('registration.urls')),
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
-    path('payment/', include('crowdfunding.urls')),
+    path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),

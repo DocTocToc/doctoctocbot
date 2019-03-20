@@ -14,7 +14,7 @@
 {% cache display_cache frontpage LANGUAGE_CODE %}
 
 <div class="container-fluid">
-  
+  {% include "landing/funding.html" %}
   <div class="row">
     <div class="col">
       {% with display.last as tweet_lst %}

@@ -1,4 +1,4 @@
-Le robot Twitter @DocTocTocBot et le site doctoctoc.net sont des projets libres initiés par Jérôme Pinguet en juillet 2017. A l'origine, le robot se résumait à 1 script libre de quelques dizaines de lignes. Aujourd'hui, il s'agit d'1 vaste projet projet innovant et professionnel de plus de 10.000 lignes de code.
+Le robot Twitter @DocTocTocBot et le site doctoctoc.net sont des projets libres initiés par Jérôme Pinguet en juillet 2017. A l'origine, le robot se résumait à 1 script libre de quelques dizaines de lignes. Aujourd'hui, il s'agit d'1 vaste projet innovant et professionnel de plus de 10.000 lignes de code.
 
 * [code source](https://github.com/doctoctoc/doctoctocbot)
 * [liste des contributeurs au code](https://github.com/DocTocToc/doctoctocbot/graphs/contributors)

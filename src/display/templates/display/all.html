@@ -4,7 +4,7 @@
 {% load cache %}
 
 {% block head_meta %}
-{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net" og_title="DocTocToc.net" og_description="Votre réseau social professionnel indépendant, sans publicité ni sponsor." og_image="https://doctoctoc.net/static/doctocnet/bot_logo_400x400.jpg" %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net" og_title="DocTocToc.net" og_description="Votre réseau social professionnel indépendant, sans publicité ni sponsor." og_image="https://staging.doctoctoc.net/static/doctocnet/bot_logo_400x400.jpg" %}
 {{ block.super }}
 {% include "doctocnet/twitter_opengraph.html" %}
 {% endwith %}

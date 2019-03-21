@@ -3,6 +3,12 @@
 {% load userstats %}
 {% load cache %}
 
+{% block head_meta %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net" og_title="DocTocToc.net" og_description="Votre réseau social professionnel indépendant, sans publicité ni sponsor." og_image="https://pbs.twimg.com/profile_images/881707788107476992/LqaiI3gr_400x400.jpg" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endblock head_meta %}
 
 
 {% block title %}{% trans view.title %}{% endblock title %}

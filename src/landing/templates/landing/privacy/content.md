@@ -13,12 +13,12 @@ Médecine Libre, l'entreprise qui édite ce site et développe les outils connex
 
 ## Quelles données?
 ### Tweets
-L'immense majorité des données que nous traitons sont issues du web et accessibles librement par tout le monde sur le web. Il s'agit notamment de tweets conservés sur les serveurs de l'entreprise Twitter Inc. Ces tweets ont été publiées librement sur le web par leurs auteurs.
+L'immense majorité des données que nous traitons sont issues du web et accessibles librement par tout le monde sur le web. Il s'agit notamment de tweets conservés sur les serveurs de l'entreprise Twitter Inc. Ces tweets ont été publiés librement sur le web par leurs auteurs.
 
 ### Emails
 Lors de l'inscription au site, une adresse mail est demandée afin de vérifier que l'inscription est bien le fait d'un être humain et pas d'un processus automatisé. L'adresse servira à créer ou à modifier votre mot de passe, notamment en cas d'oubli du mot de passe. Votre adresse mail ne sera jamais cédée ou revendue à un tiers. Elle ne sera pas partagé avec un service tiers puisque nous construisons et utilisons nos propres serveurs mail.
 
-Si vous êtes client de l'entrepris Médecine Libre, l'adresse mail pourra être utilisée pour vous envoyer 1 facture ou 1 demande de complément d'information en vue d'établir une facture.
+Si vous êtes client de l'entreprise Médecine Libre, l'adresse mail pourra être utilisée pour vous envoyer 1 facture ou 1 demande de complément d'information en vue d'établir une facture.
 
 Si un problème de sécurité lié à votre compte survient, nous pourrons vous en informer par mail.
 

@@ -1,6 +1,12 @@
 {% extends "doctocnet/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+
+{% block head_meta %}
+{{ block.super }}
+{% include "crowdfunding/twitter_card.html" %}
+{% endblock head_meta %}
+
 {% block head_css %}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
 <link rel="stylesheet" href="{% static "/crowdfunding/crowdfunding.css" %}"/>

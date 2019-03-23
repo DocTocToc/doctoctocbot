@@ -31,6 +31,7 @@ from django_registration import signals
 from .constants import ITEM_NAME, HOURLY_RATE_EUR
 from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm
 from .models import Project, ProjectInvestment, Tier
+from .tasks import handle_tweet_investment
 
 import logging
 logger = logging.getLogger(__name__)
@@ -346,6 +347,21 @@ def charge(request):
                 # mark the order as paid
                 order.paid = True
                 order.save()
+                # count paid ProjectInvestments with date inf or equal this
+                # to invesment date
+                rank = (
+                    ProjectInvestment.objects
+                    .filter(paid=True)
+                    .filter(date__lte=order.date)
+                    .count()
+                )
+                handle_tweet_investment.apply_async(
+                    args=(
+                        userid=request.user.id,
+                        rank=rank,
+                        public=order.public,
+                    )
+                )
             return render(request, 'crowdfunding/stripe_charge.html')
 
         except stripe.error.CardError as e:

@@ -357,9 +357,9 @@ def charge(request):
                 )
                 handle_tweet_investment.apply_async(
                     args=(
-                        userid=request.user.id,
-                        rank=rank,
-                        public=order.public,
+                        request.user.id,
+                        rank,
+                        order.public,
                     )
                 )
             return render(request, 'crowdfunding/stripe_charge.html')

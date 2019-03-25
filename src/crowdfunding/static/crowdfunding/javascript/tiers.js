@@ -33,5 +33,5 @@ $( "#amount-radio-group" ).click(function(){
    });
 
 $(document).ready(function(){
-	$( "#option25" ).trigger( "click" );
+	$( "#option50" ).trigger( "click" );
 });

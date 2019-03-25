@@ -1,0 +1,15 @@
+{% extends "doctocnet/base.html" %}
+
+{% block content %}
+<h2>Merci d'accepter les cookies sur votre navigateur.</h2>
+<p>
+Merci d'accepter les cookies en provenance de doctoctoc.net sur votre navigateur
+web.
+Pour fonctionner et sécuriser les échanges, les pages du financement
+participatif doivent déposer des cookies temporaires sur votre navigateur.
+Ces cookies ne contiennent aucune donnée sensible.
+Vous pourrez les effacer immédiatement après la validation de votre contribution.
+</p>
+<p>Veuillez autoriser les cookies puis <a href="{% url "crowdfunding:start" %}">essayer à nouveau.</p>
+<p><a href="{% url "gpgcontact:contact-form" %}">Nous contacter.</a></p>
+{% endblock %}

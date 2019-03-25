@@ -14,14 +14,14 @@ def handle_tweet_investment(userid: int,
     User = get_user_model()
     
     try:
-        django_user = User.objects.get(userid)
+        django_user = User.objects.get(id=userid)
     except User.DoesNotExist:
         return
     
     display_name = django_user.username
     
     try:
-        display_name = django_user.social_auth.get(provider='twitter').extra_data.get('access_token').get('screen_name') 
+        display_name = "@" + django_user.social_auth.get(provider='twitter').extra_data.get('access_token').get('screen_name') 
     except ObjectDoesNotExist:
         pass
     

@@ -13,9 +13,9 @@ class UserNameField(forms.CharField):
     default_validators = [ASCIIUsernameValidator]
 
 
-class CrowdfundingHomeTwitterForm(forms.Form):
+class CrowdfundingHomeAuthenticatedForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(CrowdfundingHomeTwitterForm, self).__init__(*args, **kwargs)
+        super(CrowdfundingHomeAuthenticatedForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'crowdfunding-form'
         # self.helper.form_class = 'form-horizontal'

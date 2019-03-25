@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
 import stripe
@@ -29,7 +29,7 @@ from django_registration.views import RegistrationView as BaseRegistrationView
 from django_registration import signals
 
 from .constants import ITEM_NAME, HOURLY_RATE_EUR
-from .forms import CrowdfundingHomeTwitterForm, CrowdfundingHomeDjangoUserForm
+from .forms import CrowdfundingHomeAuthenticatedForm, CrowdfundingHomeDjangoUserForm
 from .models import Project, ProjectInvestment, Tier
 from .tasks import handle_tweet_investment
 
@@ -117,7 +117,7 @@ class InvestViewDjango(BaseRegistrationView):
         new_user = form.save(commit=False)
         new_user.is_active = False
         new_user.save()
-
+        self.request.session['userid'] = new_user.id
         self.send_activation_email(new_user)
 
         return new_user
@@ -168,7 +168,7 @@ class InvestViewDjango(BaseRegistrationView):
 
 
 
-class InvestViewTwitter(FormView):  
+class InvestViewAuthenticated(FormView):  
     def get_success_url(self):
         return reverse_lazy(
             'crowdfunding:stripe-checkout',
@@ -215,15 +215,15 @@ class InvestViewTwitter(FormView):
         return data
     
     def get_form_class(self):
-        return CrowdfundingHomeTwitterForm
+        return CrowdfundingHomeAuthenticatedForm
     
     def get_form(self):
-        form = super(InvestViewTwitter, self).get_form(self.get_form_class())
+        form = super(InvestViewAuthenticated, self).get_form(self.get_form_class())
         form.fields['username'].widget.attrs['readonly'] = 'readonly'
         return form
 
     def get_template_names(self):
-        return 'crowdfunding/home_twitter.html'
+        return 'crowdfunding/home_authenticated.html'
 
 
 
@@ -234,9 +234,10 @@ class InvestViewBase(View):
         return bool(self.request.user.social_auth.filter(provider='twitter'))
     
     def get(self, *args, **kwargs):
-        if self.is_twitter_auth():
-            return InvestViewTwitter.as_view()(self.request)
-            #return InvestViewTwitter().get(self, *args, **kwargs)
+        self.request.session.set_test_cookie()
+        
+        if self.request.user.is_authenticated:
+            return InvestViewAuthenticated.as_view()(self.request)
         else:
             return InvestViewDjango.as_view()(self.request)
     
@@ -246,27 +247,26 @@ class InvestViewBase(View):
             current_app='crowdfunding')
 
     def form_valid(self, form):
-        if self.is_twitter_auth():
-            return InvestViewTwitter().form_valid(form)
+        if self.request.user.is_authenticated:
+            return InvestViewAuthenticated().form_valid(form)
         else:
             return InvestViewDjango().form_valid(form)
 
     def post(self, request, *args, **kwargs):
-        if self.is_twitter_auth():
-            return InvestViewTwitter.as_view()(self.request)
-            #return InvestViewTwitter().post(self, request, *args, **kwargs)
+        if self.request.user.is_authenticated:
+            return InvestViewAuthenticated.as_view()(self.request)
         else:
             return InvestViewDjango.as_view()(self.request)
     
     def get_form_class(self):
-        if self.is_twitter_auth():
-            return InvestViewTwitter().get_form_class(self)
+        if self.request.user.is_authenticated:
+            return InvestViewAuthenticated().get_form_class(self)
         else:
             return InvestViewDjango().get_form_class(self)
         
     def get_template_names(self):
-        if self.is_twitter_auth():
-            return InvestViewTwitter().get_template_names(self)
+        if self.request.user.is_authenticated:
+            return InvestViewAuthenticated().get_template_names(self)
         else:
             return InvestViewDjango().get_template_names(self)
 
@@ -296,42 +296,54 @@ def process_payment(request):
 """
 
 def stripe_checkout(request):
-    host = request.get_host()
-    amount_int = request.session.get('amount')
-    amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
-    amount_str = "{:.2f}".format(amount_dec)
-    amount_cents = amount_int * 100
-    button_label = _("Pay with card")
-    public_key = settings.STRIPE_PUBLIC_KEY
-    return render(
-        request,
-        'crowdfunding/stripe_checkout.html',
-        {'amount_str': amount_str,
-         'public_key': public_key,
-         'amount_cents': amount_cents,
-         'button_label': button_label}
-    )
+    if request.session.test_cookie_worked():
+        request.session.delete_test_cookie()
+        host = request.get_host()
+        amount_int = request.session.get('amount')
+        amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
+        amount_str = "{:.2f}".format(amount_dec)
+        amount_cents = amount_int * 100
+        button_label = _("Pay with card")
+        public_key = settings.STRIPE_PUBLIC_KEY
+        return render(
+            request,
+            'crowdfunding/stripe_checkout.html',
+            {'amount_str': amount_str,
+             'public_key': public_key,
+             'amount_cents': amount_cents,
+             'button_label': button_label}
+        )
+    else:
+        return render(
+            request,
+            'crowdfunding/stripe_cookies_failure.html',
+        )
 
 
 def charge(request):
+    def render_error(request, frontend_error_msg):
+        return render(
+            request,
+            "crowdfunding/stripe_charge_failure.html",
+            {'frontend_error_msg': frontend_error_msg}
+        )
+     
     if request.method == 'POST':
         amount_int = request.session.get('amount', 0)
         amount_cents = amount_int * 100
         uuid_str = request.session.get('custom')
+        userid = request.session.get('userid')
         
         try:
             UUID(uuid_str, version=4)
         except ValueError:
-            # If it's a value error, then the string 
-            # is not a valid hex code for a UUID.
-            frontend_error_msg =(
-                _("Please authorize cookies and try again.")
+            err_str = _("UUID verification error.")
+            logger.error(err_str)
+            return render_error(
+                request,
+                err_str
             )
-            return render(request,
-                          reverse('crowdfunding:start'),
-                          {'frontend_error_msg': frontend_error_msg})
-        
-        
+               
         try:
             charge = stripe.Charge.create(
                 amount=amount_cents,
@@ -341,29 +353,7 @@ def charge(request):
                 metadata={'uuid': uuid_str},
             )
             # mark project investmen object as paid
-            order = get_object_or_404(ProjectInvestment, id=uuid_str)
-            if ((int(float(order.pledged * 100)) == charge["amount"])
-                and (str(order.id) == charge["metadata"]["uuid"])):
-                # mark the order as paid
-                order.paid = True
-                order.save()
-                # count paid ProjectInvestments with date inf or equal this
-                # to invesment date
-                rank = (
-                    ProjectInvestment.objects
-                    .filter(paid=True)
-                    .filter(date__lte=order.date)
-                    .count()
-                )
-                handle_tweet_investment.apply_async(
-                    args=(
-                        request.user.id,
-                        rank,
-                        order.public,
-                    )
-                )
-            return render(request, 'crowdfunding/stripe_charge.html')
-
+            
         except stripe.error.CardError as e:
             # Since it's a decline, stripe.error.CardError will be caught
             body = e.json_body
@@ -387,41 +377,106 @@ def charge(request):
                 _("You payment card was not authorized."
                   "Pleace try again with this card or another. {}")
                 .format(err.get('message')))
-            return render(
+            return render_error(
                 request,
-                reverse('crowdfunding:start'),
-                {'frontend_error_msg': frontend_error_msg}
+                frontend_error_msg
             )
         
         except stripe.error.RateLimitError as e:
-            logger.info("Too many requests made to the API too quickly")
+            err_str = _("Too many requests made to the API too quickly")
+            logger.info(err_str)
+            return render_error(
+                request,
+                err_str
+            )
         
         except stripe.error.InvalidRequestError as e:
-            logger.error("Invalid parameters were supplied to Stripe's API")
+            err_str = _("Invalid parameters were supplied to Stripe's API")
+            logger.error(err_str)
+            return render_error(
+                request,
+                err_str
+            )
         
         except stripe.error.AuthenticationError as e:
-            logger.error("Authentication with Stripe's API failed"
-                         "(maybe you changed API keys recently)"
-                         )
+            err_str = _(
+                "Authentication with Stripe's API failed"
+                "(maybe you changed API keys recently)"
+            )
+            logger.info(err_str)
+            return render_error(
+                request,
+                err_str
+            )
         
         except stripe.error.APIConnectionError as e:
-            logger.error("Network communication with Stripe failed")
+            err_str = _("Network communication with Stripe failed")
+            logger.error(err_str)
+            return render_error(
+                request,
+                err_str
+            )
                     
         except stripe.error.StripeError as e:
-            logger.error("Display a very generic error to the user,"
-                         "and maybe send yourself an email")
+            err_str = _(
+                "An error occured during the processing of your payment."
+                "We will look into the matter and contact you as soon as "
+                "possible."
+            )
+            logger.info(err_str)
+            return render_error(
+                request,
+                err_str
+            )
             
         except Exception as e:
-            logger.error("Something else happened, completely unrelated to Stripe")
-        
-        frontend_error_msg =(
-                _("Ann error occurred during the processing of your payment."
-                  "You will not be charged. Please try again.")
-        )
-        return render(request,
-                      reverse('crowdfunding:start'),
-                      {'frontend_error_msg': frontend_error_msg})
+            err_str = _(
+                "Ann error occurred during the processing of your payment."
+                "You will not be charged. Please try again."
+            )
+            logger.error(err_str)
+            return render_error(
+                request,
+                err_str
+            )
 
+        else:
+            order = get_object_or_404(ProjectInvestment, id=uuid_str)
+            if ((int(float(order.pledged * 100)) == charge["amount"])
+                and (str(order.id) == charge["metadata"]["uuid"])):
+                # mark the order as paid
+                order.paid = True
+                order.save()
+                # count paid ProjectInvestments with date inf or equal this
+                # to invesment date
+                rank = (
+                    ProjectInvestment.objects
+                    .filter(paid=True)
+                    .filter(datetime__lte=order.datetime)
+                    .count()
+                )
+                if request.user.is_authenticated:
+                    userid = request.user.id
+
+                handle_tweet_investment.apply_async(
+                    args=(
+                        userid,
+                        rank,
+                        order.public,
+                    )
+                )
+                return render(
+                    request,
+                    'crowdfunding/stripe_charge_success.html'
+                )
+            else:
+                return render(
+                    request,
+                    'crowdfunding/stripe_charge_mismatch.html'
+                )
+    else:
+        return redirect('/financement/')
+        
 """
 @csrf_exempt
 def payment_done(request):

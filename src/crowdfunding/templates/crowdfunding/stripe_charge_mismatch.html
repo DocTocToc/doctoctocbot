@@ -1,0 +1,14 @@
+{% extends "doctocnet/base.html" %}
+
+{% block content %}
+<h2>Un problème est survenu.</h2>
+<p>
+La transaction bancaire a réussi et votre règlement va bientôt nous parvenir.
+Merci pour votre participation.
+Un léger problème est survenu lors de
+l'enregistrement de la transaction sur nos bases de données.
+Nous allons résoudre ce problème rapidement.
+N'hésitez pas à nous contacter via le 
+<a href="{% url "gpgcontact:contact-form" %}">formulaire de contact.</a>
+</p>
+{% endblock %}

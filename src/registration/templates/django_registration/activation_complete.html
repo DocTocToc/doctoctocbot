@@ -3,5 +3,14 @@
 {% block title %}Activation du compte réussie{% endblock %}
 
 {% block content %}
-<p>Félicitations! Votre compte a été activé.</p>  
+<h2>Félicitations! Votre compte a été activé.</h2>
+<p>
+Pour simplifier l'inscription, un mot de passe aléatoire par défaut
+a été généré pour votre compte. Avant de pouvoir vous connecter, vous devrez
+réinitialiser ce mot de passe (Reset your password).
+</p>
+<p><a href="/accounts/password_reset/" class="btn btn-primary">
+Réinitialiser le mot de passe
+</a> 
+</p>
 {% endblock %}

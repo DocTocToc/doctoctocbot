@@ -12,7 +12,7 @@ from .forms import ContactForm
 class ContactFormView(FormView):
     form_class = ContactForm
     recipient_list = None
-    success_url = reverse_lazy('contact_form_sent')
+    success_url = reverse_lazy('contact-form-sent')
     template_name = 'gpg_contact_form/contact_form.html'
 
     def form_valid(self, form):

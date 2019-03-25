@@ -10,13 +10,14 @@ from django.views.generic import TemplateView
 
 from gpgcontact.views import ContactFormView
 
+app_name = 'gpgcontact'
 
 urlpatterns = [
     url(r'^contact/$',
         ContactFormView.as_view(),
-        name='contact_form'),
+        name='contact-form'),
     url(r'^contact/sent/$',
         TemplateView.as_view(
             template_name='gpg_contact_form/contact_form_sent.html'),
-        name='contact_form_sent'),
+        name='contact-form-sent'),
 ]

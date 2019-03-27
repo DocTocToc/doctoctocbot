@@ -1,3 +1,4 @@
+{% load static %}
 <div class="container-fluid bg-2 text-left">
   <h4>
   Moteur de recherche
@@ -208,6 +209,116 @@
   <li>Mises à jour de sécurité des logiciels faisant tourner les serveurs</li>
   <li>Sauvegarde des données</li>
   </ul>
+  </p>
+  </details>
+  <a href="#donate" class="btn btn-outline-primary">Je soutiens!</a>
+</div>
+<div class="container-fluid bg-1 text-left" id="project-moderation">
+  <h4>
+  Modération collective
+  <span class="badge badge-info">40h</span>
+  <span class="badge badge-pill badge-primary">2400€</span>
+  <div class="progress w-25 my-2">
+  <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
+  </div>
+  </h4>
+  <details>
+  <summary>
+  <b>
+  Une solution technique pour filtrer collectivement les tweets qui ne
+  proviennent pas des professionnels de santé.
+  </b>
+  </summary>
+  <h5> Pourquoi une modération? </h5>
+    <p>
+    Un des objectifs du bot est de filtrer les tweets qui ne proviennent pas des
+    professionnels de santé: demandes de conseil, publicité, promotion, spam.
+    </p>
+  <h5>Comment ça fonctionne?</h5>
+    <p>
+    La modération ne se fait pas au niveau de chaque tweet mais au niveau du
+    compte Twitter. Le modérateur détermine si l'auteur d'1 tweet est
+    1 professionnel de santé exerçant 1 profession admise à être retweetée
+    (pour l'instant, sages-femme et médecins et dès que possible, pharmaciens).
+    Ensuite, nous comptons sur le professionnalisme de chacun pour
+    une utilisation raisonnée du hashtag si possible conforme aux usages admis
+    tels qu'ils sont décrits dans nos recommandations de bonne pratique.
+    </p>
+  <h5>Qui modère?</h5>
+   <p>
+   Depuis juillet 2017, un seul modérateur (Jérôme Pinguet alias @MedecineLibre)
+   a vérifié la qualité de médecin ou de sage-femme de chaque compte Twitter
+   utilisant le #DocTocToc.
+   Il a vérifié 730 médecins, 22 sages-femmes et 32 pharmaciens.
+   Il a déterminé que 463 comptes Twitter avaient tenté d'obtenir
+   un ou plusieurs conseils médicaux et que 11 comptes utilisaient le hashtag
+   à des fins publicitaires.
+   Au total il y a eu 1399 modérations.
+   Chaque modération prend entre 30 secondes pour les cas les plus évidents
+   (comptes connus, suivis par de très nombreux médecins) et jusqu'à 5 minutes
+   dans les cas les plus complexes
+   (comptes avec peu d'activité, peu de followers, tweetant peu de sujets médicaux).
+   Le travail de modération accompli depuis la création du bot a occupé
+   son créateur entre 30 et 40 heures.
+   Ce modèle de modération centralisée sur 1 seule personne est chronophage
+   et n'est pas pérenne. Il n'est pas non plus conforme à la tradition
+   d'auto-organisation et de décentralisation de la communauté DocTocToc.
+   Nous avons donc commencé à développer 1 système de modération collective.
+   </p>
+  <h5>Vers la modération collective</h5>
+  <p>
+  Depuis mai 2018 un groupe d'une dizaine de professionnels de santé volontaires
+  réfléchit à la mise en place de la modération collective.
+  Nous avons formalisé nos règles de modération.
+  Techniquement, le code du bot détectera toute question provenant
+  d'1 utilisateur qui n'a pas été modéré et le bot enverra 1 DM à l'un des
+  modérateurs. Voici le prototype d'un tel DM (Direct Message).
+  </p>
+  <a href="#" data-toggle="modal" data-target="#pop-up-moderation">
+  
+  <img src="{% static "crowdfunding/images/moderation.png" %}" width="480" class=".img-thumbnail mb-2" alt="modération collective de @DocTocTocBot par DM">
+  </a>
+  
+  <!--  Modal content for the mixer image example -->
+  <div id="pop-up-moderation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body mb-0 p-0">
+        <img src="{% static "crowdfunding/images/moderation.png" %}" class="img-responsive" alt="modération collective de @DocTocTocBot par DM">
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal mixer image -->
+  
+  <p>
+  Dans la version finale, le DM sera accompagné d'1 lien vers une page créée à
+  la volée sur le site doctoctoc.net comportant des aides à la modération.
+  Par exemple, une sélection de tweets de l'utilisateur comportant
+  des mots-clefs tels que "médecine", "patient", "médecin", où la fréquence
+  de termes techniques médicaux relevée dans ses derniers tweets publics.
+  Cette page indiquera aussi le nombre de followers ou de followés exerçant
+  chaque profession.
+  </p>
+  <p>
+  Le modérateur pourra temporiser s'il n'a pas de temps à consacrer à
+  la modération ou passer la main s'il n'arrive pas à modérer.
+  Il pourra aussi indiquer sur un planning les heures, les jours ou les périodes
+  de l'année où il ne souhaite pas être sollicité.
+  </p>
+  <h5>
+  Comment participer à la modération collective?
+  </h5>
+  <p>
+  Envoyez 1 DM au bot qui vous ajoutera au DM collectif des modérateurs.
+  </p>
+  <h5>Lancement</h5>
+  <p>
+  La modération collective est bien avancée, 90% du travail a déjà été accompli.
+  Elle deviendra bientôt une réalité grace à votre participation et aussi grâce
+  à votre contribution financière.
+  Votre investissement permettra au développeur de consacrer encore plus
+  de temps à la programmation de cette nouvelle fonctionnalité de @DocTocTocBot.
+  Merci.
   </p>
   </details>
   <a href="#donate" class="btn btn-outline-primary">Je soutiens!</a>

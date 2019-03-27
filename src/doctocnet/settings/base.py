@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'registration',
     'django_countries',
     'customer',
+    'mptt',
 ]
 
 MIDDLEWARE = [

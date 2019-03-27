@@ -111,7 +111,26 @@ class Treedj(MPTTModel):
         return "https://twitter.com/statuses/" +  str(self.statusid)
     
     def status_url_tag(self):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">Link</a>' % (self.statusid))
+        return mark_safe('<a href="https://twitter.com/statuses/%s">🔗</a>' % (self.statusid))
+
+    status_url_tag.short_description = "url"
+
+    def status_text_tag(self):
+        try:
+            status = Tweetdj.objects.get(statusid=self.statusid).json
+        except Tweetdj.DoesNotExist:
+            return
+        
+        if 'full_text' in status:  
+            status_str = status.get("full_text")
+        elif 'text' in status:
+            status_str = status.get("text")
+        else:
+            status_str = ""
+            
+        return status_str
+    
+    status_text_tag.short_description = "Text"
 
     class MPTTMeta:
         order_insertion_by = ['statusid']

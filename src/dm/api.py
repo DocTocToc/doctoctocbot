@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 
 def getapi():                                           
     api_dict = {'sleep_on_rate_limit': True}                                                      
-    api_dict['consumer_key'] = settings.TWITTER_CONSUMER_KEY
-    api_dict['consumer_secret'] = settings.TWITTER_CONSUMER_SECRET
-    api_dict['access_token_key'] = settings.TWITTER_ACCESS_TOKEN
-    api_dict['access_token_secret'] = settings.TWITTER_ACCESS_TOKEN_SECRET
+    api_dict['consumer_key'] = settings.BACKEND_TWITTER_CONSUMER_KEY
+    api_dict['consumer_secret'] = settings.BACKEND_TWITTER_CONSUMER_SECRET
+    api_dict['access_token_key'] = settings.BACKEND_TWITTER_ACCESS_TOKEN
+    api_dict['access_token_secret'] = settings.BACKEND_TWITTER_ACCESS_TOKEN_SECRET
     
     return twitter.Api(**api_dict)
 

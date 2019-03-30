@@ -117,6 +117,8 @@ mimetypes.add_type("text/css", ".scss", True)
 
 # BOT settings
 # Path on disk where images are saved
+
+# main bot Twitter account
 TWITTER_CONSUMER_KEY = config('TWITTER_CONSUMER_KEY')
 TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
 TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
@@ -128,6 +130,12 @@ KEYWORD_TRACK_LIST = ["#doctoctoctest", "#docstoctoctest"]
 KEYWORD_RETWEET_LIST = ["#doctoctoctest",]
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""
+
+# backend bot Twitter API credentials (same as main credentials for dev settings)
+BACKEND_TWITTER_CONSUMER_KEY = config('TWITTER_CONSUMER_KEY')
+BACKEND_TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
+BACKEND_TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
+BACKEND_TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
 
 # Twitter key (social-auth-app-django)
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')

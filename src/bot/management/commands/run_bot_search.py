@@ -9,7 +9,7 @@ from bot.log.log import setup_logging
 import logging
 
 class Command(BaseCommand):
-    help = 'Polls lists of Twiter account, update UserModerationRelationship table'
+    help = 'Run bot search and retweet'
     
     def handle(self, *args, **options):
         setup_logging()

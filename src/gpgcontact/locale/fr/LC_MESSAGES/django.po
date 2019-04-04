@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-04 22:55+0200\n"
-"PO-Revision-Date: 2019-04-04 22:55+0200\n"
+"POT-Creation-Date: 2019-04-04 23:52+0200\n"
+"PO-Revision-Date: 2019-04-04 23:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -30,7 +30,23 @@ msgstr ""
 #: gpgcontact/templates/gpg_contact_form/contact_form.html:17
 #: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:32
+msgid "Your name"
+msgstr "Votre nom"
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:40
+msgid "Your email address"
+msgstr "Votre adresse e-mail"
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:48
+msgid "Your message"
+msgstr "Votre message"
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:58
+msgid "Encrypt & Send"
+msgstr "Chiffrer & Envoyer"
 
 #: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:6
 msgid "Thank you. Your message is on its way. We'll get back to you ASAP."

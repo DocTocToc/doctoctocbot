@@ -32,9 +32,15 @@ class SocialUserAdmin(admin.ModelAdmin):
     search_fields = ('user_id',)
 
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'label', 'relationships_count_tag',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label',)
-
+    fields = ('name', 'label', 'relationships_count_tag',)
+    
+    def relationships_count_tag(self, obj):
+        return obj.relationships.count()
+    
+    relationships_count_tag.short_description = 'Count'
+    readonly_fields = ('relationships_count_tag',)
     
 class QueueAdmin(VersionedAdmin):
     pass
@@ -77,24 +83,33 @@ class TwitterListAdmin(admin.ModelAdmin):
         'uid',
         'label',
         'local_description',
+        'member_count_tag',
     )
     fields = (
         'list_id',
         'slug',
         'name',
         'twitter_description',
+        'member_count_tag',
         'uid',
         'label',
         'local_description',
-        'json'    
+        'json',
+
     )
     readonly_fields = (
         'list_id',
         'slug',
         'name',
         'twitter_description',
-        'json'    
+        'json',
+        'member_count_tag',  
     )
+    def member_count_tag(self, obj):
+        member_count = obj.json.get("member_count", None)
+        return member_count
+    
+    member_count_tag.short_description = 'Members'
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)

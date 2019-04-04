@@ -384,7 +384,7 @@ class TwitterList(models.Model):
     name = models.CharField(max_length=25, unique=True)
     twitter_description = models.TextField(blank=True, null=True)
     uid = models.CharField(max_length=25, blank=True, null=True)
-    label = models.CharField(max_length=25, blank=True, null=True)
+    label = models.CharField(max_length=50, blank=True, null=True)
     local_description = models.TextField(blank=True, null=True)
     json = JSONField(blank=True, null=True)
     

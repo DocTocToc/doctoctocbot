@@ -29,7 +29,7 @@ openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" 
 <div class="form-group">
   <div id="div_id_name" class="form-group">
     <label for="id_name" class="col-form-label  requiredField">
-      Your name<span class="asteriskField">*</span>
+      {% trans "Your name" %}<span class="asteriskField">*</span>
     </label>
     <div class="">
     <input type="text" maxlength="100" class="textinput textInput form-control" id="id_name"/>
@@ -37,7 +37,7 @@ openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" 
   </div>
   <div id="div_id_email" class="form-group">
     <label for="id_email" class="col-form-label  requiredField">
-      Your email address<span class="asteriskField">*</span>
+      {% trans "Your email address" %}<span class="asteriskField">*</span>
     </label>
     <div class="">
       <input type="email" maxlength="200" class="emailinput form-control" id="id_email"/>
@@ -45,7 +45,7 @@ openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" 
   </div>
   <div id="div_id_message" class="form-group">
     <label for="id_message" class="col-form-label  requiredField">
-      Your message<span class="asteriskField">*</span>
+      {% trans "Your message" %}<span class="asteriskField">*</span>
     </label>
     <div id="content">
       <textarea class="form-control" id="id_message" maxlength="1000" style="white-space: pre-line; white-space: pre-wrap;"></textarea>
@@ -55,7 +55,7 @@ openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" 
 <form action="." method="post" class="m-3" id="form">
   {% csrf_token %}
   <textarea name="ciphertext" required id="id_ciphertext" style="white-space: pre-line; white-space: pre-wrap; display:none;"></textarea>
-  <div id="send" class="btn btn-primary">Encrypt &amp; Send</div>
+  <div id="send" class="btn btn-primary">{% trans "Encrypt & Send" %}</div>
 </form>
 
 <p id="fingerprint"></p>

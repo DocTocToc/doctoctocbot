@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-20 13:15+0100\n"
+"POT-Creation-Date: 2019-04-04 22:55+0200\n"
 "PO-Revision-Date: 2019-03-19 18:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -87,15 +87,15 @@ msgstr "Somme récoltée"
 msgid "Progress"
 msgstr "Progression"
 
-#: crowdfunding/views.py:303
+#: crowdfunding/views.py:306
 msgid "Pay with card"
 msgstr "Payez par carte"
 
-#: crowdfunding/views.py:327
-msgid "Please authorize cookies and try again."
-msgstr "Merci d'autoriser les cookies et de réessayer."
+#: crowdfunding/views.py:340
+msgid "UUID verification error."
+msgstr ""
 
-#: crowdfunding/views.py:371
+#: crowdfunding/views.py:377
 msgid ""
 "You payment card was not authorized.Pleace try again with this card or "
 "another. {}"
@@ -103,13 +103,45 @@ msgstr ""
 "Votre carte de paiement n'a pas été autorisée. Merci de recommencer avec "
 "cette carte ou une autre. {}"
 
-#: crowdfunding/views.py:402
+#: crowdfunding/views.py:386
+msgid "Too many requests made to the API too quickly"
+msgstr ""
+
+#: crowdfunding/views.py:394
+msgid "Invalid parameters were supplied to Stripe's API"
+msgstr ""
+
+#: crowdfunding/views.py:403
+msgid ""
+"Authentication with Stripe's API failed(maybe you changed API keys recently)"
+msgstr ""
+
+#: crowdfunding/views.py:413
+msgid "Network communication with Stripe failed"
+msgstr ""
+
+#: crowdfunding/views.py:422
+#, fuzzy
+#| msgid ""
+#| "Ann error occurred during the processing of your payment.You will not be "
+#| "charged. Please try again."
+msgid ""
+"An error occured during the processing of your payment.We will look into the "
+"matter and contact you as soon as possible."
+msgstr ""
+"Une erreur est survenue pendant le traitement de la transaction. Votre carte "
+"de sera pas débitée. Merci d'essayer à nouveau."
+
+#: crowdfunding/views.py:434
 msgid ""
 "Ann error occurred during the processing of your payment.You will not be "
 "charged. Please try again."
 msgstr ""
 "Une erreur est survenue pendant le traitement de la transaction. Votre carte "
 "de sera pas débitée. Merci d'essayer à nouveau."
+
+#~ msgid "Please authorize cookies and try again."
+#~ msgstr "Merci d'autoriser les cookies et de réessayer."
 
 #~ msgid "We couldn't verify your payment. Please try again."
 #~ msgstr ""

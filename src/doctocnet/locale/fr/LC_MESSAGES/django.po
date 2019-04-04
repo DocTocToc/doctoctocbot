@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-20 13:15+0100\n"
+"POT-Creation-Date: 2019-04-04 22:55+0200\n"
 "PO-Revision-Date: 2019-03-17 19:01+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings/base.py:146
+#: doctocnet/settings/base.py:147
 msgid "French"
 msgstr "Français"
 

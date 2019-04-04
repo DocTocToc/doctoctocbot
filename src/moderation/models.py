@@ -155,8 +155,7 @@ class AuthorizedCategoryManager(models.Manager):
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    label_en = models.CharField(max_length=255, unique=True)
-    label_fr = models.CharField(max_length=255, unique=True)
+    label = models.CharField(max_length=255, unique=True)
     
     objects = models.Manager()
     authorized = AuthorizedCategoryManager()
@@ -378,3 +377,19 @@ class Moderation(Versionable):
             return None
     
     moderated_screen_name_tag.short_description = 'Moderated screen name'
+    
+class TwitterList(models.Model):
+    list_id = models.BigIntegerField(unique=True)
+    slug = models.CharField(max_length=25, unique=True)
+    name = models.CharField(max_length=25, unique=True)
+    twitter_description = models.TextField(blank=True, null=True)
+    uid = models.CharField(max_length=25, blank=True, null=True)
+    label = models.CharField(max_length=25, blank=True, null=True)
+    local_description = models.TextField(blank=True, null=True)
+    json = JSONField(blank=True, null=True)
+    
+    def __str__(self):
+        if self.uid:
+            return f'{self.uid}'
+        else:
+            return f'{self.slug}'

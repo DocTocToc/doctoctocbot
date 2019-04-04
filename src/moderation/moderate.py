@@ -25,14 +25,13 @@ def quickreply(id):
     options = []
     option = {
                 "label": "Red Bird",
-                "description": "A description about the red bird.",
+                "description": "",
                 "metadata": "external_id_1"
              }
     logger.debug(f"Category.objects.all(): {Category.objects.all()}")
     for cat in Category.objects.all():
         opt = dict(option)
-        opt["label"] = cat.label_fr
-        opt["description"] = cat.label_en
+        opt["label"] = cat.label
         opt["metadata"] = f"moderation_{id}_{cat.name}"
         options.append(opt)
 

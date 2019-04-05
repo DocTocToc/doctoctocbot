@@ -63,13 +63,19 @@ def get_or_create_social_user(user_id, socialmedia_mi):
     return socialuser
 
 def check_add_usercategoryrelationship(user, category, moderator_mi):
+    if not user or not category or not moderator_mi:
+        return
     if category not in user.category.all():
         user_category_relationship = UserCategoryRelationship(
             social_user = user,
             category = category,
             moderator = moderator_mi
         )
-        user_category_relationship.save()
+        try:
+            user_category_relationship.save()
+        except DatabaseError as e:
+            logger.debug("Database error while trying to add a new "
+                         "UserCategoryRelationship instance: %r", e)
         
 def remove_usercategoryrelationship(user_mis, category):
     for user_mi in user_mis:

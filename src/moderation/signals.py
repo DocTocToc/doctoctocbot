@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.conf import settings
 
 from dm.api import senddm
-from moderation.models import Queue, Moderation, SocialUser
+from moderation.models import Queue, Moderation, SocialUser, UserCategoryRelationship
 from .moderate import quickreply
 from .tasks import handle_create_update_profile
 from .tasks import handle_sendmoderationdm
@@ -36,10 +36,16 @@ def create_moderation(sender, instance, created, **kwargs):
         Moderation.objects.create(moderator = moderator_mi, queue = instance)
         
 @receiver(post_save, sender=Queue)
-def createprofile(sender, instance, created, **kwargs):
+def createprofile_queue(sender, instance, created, **kwargs):
     logger.debug(f"instance {instance}")
     logger.debug(f"instance.status_id {instance.user_id}")
     handle_create_update_profile.apply_async(args=(instance.user_id,))
+    
+@receiver(post_save, sender=UserCategoryRelationship)
+def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
+    logger.debug(f"instance {instance}")
+    logger.debug(f"instance.social_user.user_id {instance.social_user.user_id}")
+    handle_create_update_profile.apply_async(args=(instance.social_user.user_id,))
     
 @receiver(post_save, sender=Moderation)
 def createupdatemoderatorprofile(sender, instance, created, **kwargs):

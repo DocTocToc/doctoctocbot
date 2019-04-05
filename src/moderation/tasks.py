@@ -5,12 +5,22 @@ from doctocnet.celery import app
 from bot.tasks import handle_retweet
 
 from .profile import twitterprofile
+from moderation.lists.poll import poll_lists_members, create_update_lists
+
 logger = logging.getLogger(__name__)
 
 @app.task
 def handle_backup_lists():
     from .lists.poll import backup_lists
     backup_lists()
+
+@app.task
+def handle_poll_lists_members():
+    poll_lists_members()
+    
+@app.task
+def handle_create_update_lists():
+    create_update_lists()
 
 @app.task
 def handle_create_update_profile(userid_int):

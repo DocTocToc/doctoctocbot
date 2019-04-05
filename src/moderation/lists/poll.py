@@ -30,7 +30,6 @@ from bot.lib.datetime import datetime_twitter_str
 #os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
 #django.setup()
 
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 noi = -1 # number of items
@@ -40,7 +39,7 @@ def get_or_create_category(cat):
     try:
         twitter_list_mi = TwitterList.objects.get(uid=cat)
     except TwitterList.DoesNotExist:
-        logger.debug("Category %s does not exist in TwitterList table." % cat)
+        logger.error("Category %s does not exist in TwitterList table." % cat)
         return
 
     label = twitter_list_mi.label
@@ -74,7 +73,7 @@ def check_add_usercategoryrelationship(user, category, moderator_mi):
         try:
             user_category_relationship.save()
         except DatabaseError as e:
-            logger.debug("Database error while trying to add a new "
+            logger.error("Database error while trying to add a new "
                          "UserCategoryRelationship instance: %r", e)
         
 def remove_usercategoryrelationship(user_mis, category):
@@ -103,7 +102,7 @@ def poll_lists_members():
         try:
             twitter_list_mi = TwitterList.objects.get(list_id=list.id)
         except TwitterList.DoesNotExist:
-            logger.debug("List %i does not exist in TwitterList table." % list.id)
+            logger.error("List %i does not exist in TwitterList table." % list.id)
             continue
         category_name = twitter_list_mi.uid
         category_mi = get_or_create_category(category_name)
@@ -174,7 +173,7 @@ def update_twitter_list(list):
     try:
         twitter_list_mi.save(update_fields=['slug', 'name', 'twitter_description', 'json'])
     except DatabaseError:
-        logger.debug("Error during TwitterList %s instance update." % list.id) 
+        logger.error("Error during TwitterList %s instance update." % list.id) 
 
 def create_twitter_list(list):
     try:
@@ -189,7 +188,7 @@ def create_twitter_list(list):
             json=tweepy_list_json(list)
         )
     except DatabaseError:
-        logger.debug("Error during TwitterList creation.")
+        logger.error("Error during TwitterList creation.")
     
 def tweepy_list_json(list):
     lst_dict = {}

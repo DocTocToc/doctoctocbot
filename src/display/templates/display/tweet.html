@@ -94,6 +94,19 @@
                     data-scribe="element:heart_count">{{ tweet.reply }}</span>
                   </a>
                 </div>
+                {% if tweet.node %}
+                <div class="TweetInfo-like">
+                  <a class="TweetInfo-heart" title="Nodes"
+                    href="#"
+                    data-scribe="component:actions">
+                    <div data-scribe="element:heart">
+                      <div class="Icon Icon--node " aria-label="Nodes"
+                        title="Nodes" role="img"></div>
+                    </div> <span class="TweetInfo-heartStat"
+                    data-scribe="element:heart_count">{{ tweet.node }}</span>
+                  </a>
+                </div>
+                {% endif %}
                 <div class="TweetInfo-timeGeo">
                   <a
                     class="u-linkBlend u-url customisable-highlight long-permalink"

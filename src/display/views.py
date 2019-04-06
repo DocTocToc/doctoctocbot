@@ -15,6 +15,7 @@ from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
+from conversation.models import Treedj
 
 from .constants import DISPLAY_CACHE
 from .models import WebTweet, create_or_update_webtweet
@@ -174,9 +175,16 @@ def statuscontext(sid):
     html = addurl(tweet_mi.html, "https://twitter.com")    
     setattr(tweet_mi, 'localdatetime', localdatetime)
     setattr(tweet_mi, 'utcdatetime', utcdatetime)
+    setattr(tweet_mi, 'node', get_descendant_count(sid))
     #tweet_mi.html = html
     tweet_mi.html = mark_safe(html)
     return tweet_mi
+
+def get_descendant_count(sid):
+    try:
+        return Treedj.objects.get(statusid=sid).get_descendant_count()
+    except Treedj.DoesNotExist:
+        return
 
 def addurl(fragment: str, url: str) -> str:
     logger.debug(f"fragment:{fragment}")

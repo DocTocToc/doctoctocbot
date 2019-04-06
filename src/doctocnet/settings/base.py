@@ -212,6 +212,9 @@ BROKER_TRANSPORT_OPTIONS = {
     'fanout_prefix': True,
     'fanout_patterns': True} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_TASK_SOFT_TIME_LIMIT = 1010
+CELERY_TASK_TIME_LIMIT = 1020
+
 
 CACHES = {
     "default": {

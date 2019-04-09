@@ -26,7 +26,7 @@ class Tweetdj(models.Model):
     deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
     
     class Meta:
-        get_latest_by = "-statusid"
+        get_latest_by = "statusid"
 
     def __str__(self):
         return str(self.statusid)

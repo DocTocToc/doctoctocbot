@@ -26,10 +26,10 @@ class UserRelationshipInline(admin.TabularInline):
 
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media', )
-    fields = ('normal_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media',)
-    readonly_fields = ('normal_image_tag', 'screen_name_tag', 'name_tag', 'user_id', 'social_media',)
-    search_fields = ('user_id',)
+    list_display = ('user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media', )
+    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
+    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
+    search_fields = ('user_id', 'profile__json',)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'relationships_count_tag',)
@@ -53,8 +53,8 @@ class QueueAdmin(VersionedAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
-    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json',)
+    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json', 'updated', 'normalavatar',)
+    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json', 'updated', 'normalavatar',)
 
 
 class ModerationAdmin(VersionedAdmin):

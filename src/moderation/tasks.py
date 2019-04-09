@@ -1,4 +1,6 @@
 import logging
+import datetime
+
 from unicodedata import category
 
 from doctocnet.celery import app
@@ -25,6 +27,7 @@ def handle_create_update_lists():
 @app.task
 def handle_create_update_profile(userid_int):
     from conversation.models import Tweetdj
+
     try:
         tweetdj_mi = Tweetdj.objects.filter(userid = userid_int).latest()
     except Tweetdj.DoesNotExist:
@@ -35,7 +38,7 @@ def handle_create_update_profile(userid_int):
         userjson = getuser(userid_int)
     else:
         userjson = tweetdj_mi.json.get("user")
-        
+
     logger.debug(userjson)
     twitterprofile(userjson)
 

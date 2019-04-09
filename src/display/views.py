@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from bot.bin.timeline import get_timeline_id_lst
 from timeline.models import last_retweeted_statusid_lst
@@ -16,6 +17,12 @@ from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
 from conversation.models import Treedj
+from moderation.tasks import handle_create_update_profile
+from moderation.profile import is_profile_uptodate
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
+
+from moderation.models import SocialUser
 
 from .constants import DISPLAY_CACHE
 from .models import WebTweet, create_or_update_webtweet
@@ -169,6 +176,10 @@ def statuscontext(sid):
         tweet_mi = WebTweet.objects.get(statusid=sid)
     except WebTweet.DoesNotExist:
         return notfound(sid)
+
+    if not is_profile_uptodate(tweet_mi.userid):
+        handle_create_update_profile.apply_async(args=(tweet_mi.userid,))
+
     logger.debug(f"tweet_mid: {tweet_mi}")
     localdatetime: str = time.strftime('%H:%M - %d %b %Y', tweet_mi.localtime())
     utcdatetime: str = time.strftime('%d %B %Y %H:%M:%S', tweet_mi.utctime())
@@ -176,9 +187,30 @@ def statuscontext(sid):
     setattr(tweet_mi, 'localdatetime', localdatetime)
     setattr(tweet_mi, 'utcdatetime', utcdatetime)
     setattr(tweet_mi, 'node', get_descendant_count(sid))
-    #tweet_mi.html = html
+    setattr(tweet_mi, 'biggeravatar', get_biggeravatar_url(tweet_mi.userid))
+    setattr(tweet_mi, 'normalavatar', get_normalavatar_url(tweet_mi.userid))
     tweet_mi.html = mark_safe(html)
     return tweet_mi
+
+def get_biggeravatar_url(userid):
+    try:
+        return SocialUser.objects.get(user_id=userid).profile.biggeravatar.url
+    except SocialUser.DoesNotExist:
+        pass
+    except ObjectDoesNotExist:
+        pass
+    else:
+        return static("moderation/twitter_unknown_images/egg73x73.png")
+
+def get_normalavatar_url(userid):
+    try:
+        return SocialUser.objects.get(user_id=userid).profile.normalavatar.url
+    except SocialUser.DoesNotExist:
+        pass
+    except ObjectDoesNotExist:
+        pass
+    else:
+        return static("moderation/twitter_unknown_images/egg48x48.png")       
 
 def get_descendant_count(sid):
     try:

@@ -1,8 +1,13 @@
 import logging
+import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from psycopg2._json import json
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
+from django.conf import settings
+from moderation.models import SocialUser
+
+
 logger = logging.getLogger('root')
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
@@ -86,8 +91,11 @@ def avatar(profile, response):
     img_url = response["profile_image_url_https"]
     name = urlparse(img_url).path.split('/')[-1]
     logger.debug(f"name (Twitter): {name}, name (Database): {profile.normalavatar.name.split('/')[-1]}")
-    #if name == profile.normalavatar.name.split('/')[-1]:
-    #    return
+    name_twitter_uid = name.split('_')[0]
+    name_database_uid = profile.normalavatar.name.split('/')[-1].split('_')[0]
+    logger.debug(f"uid (Twitter): {name_twitter_uid}, uid (Database): {name_database_uid}")
+    if name_twitter_uid == name_database_uid:
+        return
     
     resp = requests.get(img_url)
     if resp.status_code == 200:
@@ -109,3 +117,17 @@ def avatar(profile, response):
         profile.miniavatar.save(name, ContentFile(resp.content), save=False)
     
     profile.save()
+
+def is_profile_uptodate(userid):    
+    
+    try:
+        su = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+        
+    if hasattr(su, "profile"):
+        td = datetime.timedelta(days=settings.PROFILE_TIMEDELTA_DAYS)
+        if (datetime.datetime.now(datetime.timezone.utc) - su.profile.updated) < td:
+            return True
+    else:
+        return False

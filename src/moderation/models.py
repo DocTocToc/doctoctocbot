@@ -191,7 +191,7 @@ class SocialMedia(models.Model):
         ordering = ('name',)
         
 class Profile(models.Model):
-    socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE)
+    socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
     json = JSONField()
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)

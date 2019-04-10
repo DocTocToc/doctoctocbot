@@ -21,6 +21,7 @@ DICT_CONFIG = {
 
     "handlers": {
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'default',
             'filters': ['require_debug_true'],
@@ -43,14 +44,14 @@ DICT_CONFIG = {
     },
 
     "loggers": {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
         "django": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": 'INFO',
-        },
-        "my_module": {
-            "level": "DEBUG",
-            "handlers": ["console"],
-            "propagate": "no"
         },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },

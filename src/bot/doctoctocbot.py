@@ -23,7 +23,6 @@ import unidecode
 
 from django.conf import settings
 
-from bot.log.log import setup_logging
 from bot.twitter import getAuth
 from moderation.models import SocialUser
 
@@ -32,7 +31,6 @@ from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 def has_greenlight(status):

@@ -1,11 +1,9 @@
 import logging
 
-from bot.log.log import setup_logging
 from dm.api import getdm
 from dm.models import DirectMessage
 
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 def savedm():

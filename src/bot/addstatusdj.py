@@ -18,12 +18,10 @@ import tweepy
 from conversation.models import Tweetdj
 
 from .lib.statusdb import Addstatus
-from .log.log import setup_logging
 from .twitter import getAuth
 from .twitter import statuses_lookup
 
 
-setup_logging()                                                                 
 logger = logging.getLogger(__name__)
 
 def addstatus(statusid):

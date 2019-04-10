@@ -6,9 +6,6 @@ import random
 import string
 from bot.twitter import get_api
 
-from log import setup_logging
-
-setup_logging()
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':

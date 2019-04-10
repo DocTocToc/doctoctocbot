@@ -1,8 +1,13 @@
 from decouple import AutoConfig, Csv
 from dj_database_url import parse as db_url
 from pathlib import Path
-
+import logging
+import os
+from doctocnet.logging import DICT_CONFIG
 from .base import *
+
+LOGLEVEL = "DEBUG"
+logging.config.dictConfig(DICT_CONFIG)
 
 
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/development")

@@ -5,13 +5,11 @@ import tweepy
 from tweepy.streaming import StreamListener
 
 from django.conf import settings
-from bot.log.log import setup_logging
 from bot.twitter import getAuth
 
 from .tasks import handle_on_status
 
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 #import pkgutil

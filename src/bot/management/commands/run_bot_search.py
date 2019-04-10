@@ -5,14 +5,12 @@ import hashlib
 import os
 import tweepy
 from bot.twitter import getAuth
-from bot.log.log import setup_logging
 import logging
 
 class Command(BaseCommand):
     help = 'Run bot search and retweet'
     
     def handle(self, *args, **options):
-        setup_logging()
         logger = logging.getLogger(__name__)
         # build savepoint path + file
         keyword_list = settings.KEYWORD_RETWEET_LIST

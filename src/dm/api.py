@@ -1,5 +1,4 @@
 from .pythontwitter import twitter
-from bot.log.log import setup_logging
 import logging
 
 from django.conf import settings

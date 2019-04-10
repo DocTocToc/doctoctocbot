@@ -4,9 +4,7 @@ from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
-from bot.log.log import setup_logging
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 def simple_get(url):

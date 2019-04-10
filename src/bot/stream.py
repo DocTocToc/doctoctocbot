@@ -1,6 +1,5 @@
 import json
 import logging
-from tweepy import Stream
 import tweepy
 from tweepy.streaming import StreamListener
 
@@ -12,23 +11,10 @@ from .tasks import handle_on_status
 
 logger = logging.getLogger(__name__)
 
-#import pkgutil
-#search_path = '.' # set to None to see all modules importable from sys.path
-#all_modules = [x[1] for x in pkgutil.iter_modules(path=search_path)]
-#print(all_modules)
-
-def printStatus( status ):
-    "output stuff"
-    json_str = json.dumps(status._json)
-    print(json_str)
-    print("\n")
-    return
-
-#This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
 
     def on_status(self, status):
-        #logger.debug("stream status: %s", status._jsonj)
+        logger.info("stream status: %s", status._json)
         handle_on_status.apply_async(args=(status.id,))
         return True
 

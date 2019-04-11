@@ -80,6 +80,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'doctocnet.urls'
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

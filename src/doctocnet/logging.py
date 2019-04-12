@@ -53,6 +53,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": 'INFO',
         },
+        "bot.stream": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }

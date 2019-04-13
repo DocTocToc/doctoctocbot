@@ -4,12 +4,12 @@
 Add tweets to databases.
 """
 
-import requests
 import logging
 
 from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, transaction
 from django.conf import settings
+from bot.tasks import handle_image
 
 
 """
@@ -26,7 +26,7 @@ from conversation.models import Tweetdj
 
 
 __author__ = "Jerome Pinguet"
-__copyright__ = "Copyright 2017-2018, DocTocTocBot"
+__copyright__ = "Copyright 2017-2019, DocTocTocBot"
 #__credits__ = [""]
 __license__ = "GPLv3"
 __version__ = "0.1"
@@ -96,8 +96,7 @@ class Addstatus:
                 url = photo["media_url_https"]
                 filename = url.rsplit('/', 1)[1]
                 filepath = settings.BOT_IMAGES_PATH + "/" + filename
-                r = requests.get(url, allow_redirects=True)
-                open(filepath, 'wb').write(r.content)
+                handle_image.apply_async(args=(url, filepath))
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]

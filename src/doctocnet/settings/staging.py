@@ -1,8 +1,73 @@
 from pathlib import Path
 from decouple import AutoConfig, Csv
 from dj_database_url import parse as db_url
+from django.utils.log import DEFAULT_LOGGING
+import logging
 
 from .base import *
+
+LOGLEVEL = "DEBUG"
+DICT_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s %(name)s %(pathname)s:%(lineno)s:%(funcName)s %(levelname)s %(message)s",
+        },
+        "django.server": DEFAULT_LOGGING['formatters']['django.server'],
+    },
+
+    "handlers": {
+        'console': {
+            'level': (LOGLEVEL or "DEBUG"),
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+            'filters': ['require_debug_true'],
+    },
+
+        "console_debug_false": {
+            "level": (LOGLEVEL or "INFO"),
+            "filters": ["require_debug_false"],
+            "class": "logging.StreamHandler",
+        },
+
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler"
+        },
+        
+        "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
+
+    },
+
+    "loggers": {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        "django": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
+        "bot.stream": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
+        "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
+    },
+}
+logging.config.dictConfig(DICT_CONFIG)
+
 
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/staging")
 config = AutoConfig(search_path = CONFIG_DIR)

@@ -53,13 +53,14 @@ def handle_sendmoderationdm(mod_instance_id):
     
     mod_mi = Moderation.objects.get(pk=mod_instance_id)
     qr = quickreply(mod_instance_id)
-    logger.debug(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! moderator user_id: {mod_mi.moderator.user_id}")
+    logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
     #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")
     mod_mi.refresh_from_db()
-    logger.debug(f"&&&&&&&&&&&&&&&&& {mod_mi.queue.user_id}")
+    logger.info(f"mod_mi.queue.user_id {mod_mi.queue.user_id}")
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
     screen_name = mod_mi.queue.screen_name_tag()
     counter = 0
+    # TODO use chained celery tasks or calbacks instead of this loop
     while screen_name is None and counter < 20:
             mod_mi.refresh_from_db()
             screen_name = mod_mi.queue.screen_name_tag()

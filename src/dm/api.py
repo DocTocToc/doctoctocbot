@@ -41,7 +41,25 @@ def senddm(text,
            return_json=True,
            quick_reply=None):
     api_ = getapi()
-    api_.PostDirectMessage(text=text,
+    try:
+        response = api_.PostDirectMessage(text=text,
                            user_id=user_id,
                            return_json=True,
                            quick_reply=quick_reply)
+    except twitter.error.TwitterError as e:
+        logger.error("message_create event (DM) error: %s", e)
+        return
+    
+    logger.debug(response)
+
+    try:
+        ok = (response["event"]["message_create"]["message_data"]["text"] == text)
+    except KeyError:
+        logger.error("Unknown message_create event (DM) error")
+        return
+
+    if ok:
+        id = response["event"]["message_create"]["target"]["recipient_id"]
+        txt = response["event"]["message_create"]["message_data"]["text"]
+        msg = f"Sending DM '{txt}' to user_id {id} was successful"
+        logger.info(msg)    

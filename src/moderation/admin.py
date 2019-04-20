@@ -32,15 +32,15 @@ class SocialUserAdmin(admin.ModelAdmin):
     search_fields = ('user_id', 'profile__json',)
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'label', 'relationships_count_tag',)
+    list_display = ('name', 'label', 'description', 'relationships_count_tag',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'relationships_count_tag',)
+    fields = ('name', 'label', 'relationships_count_tag', 'description')
     
     def relationships_count_tag(self, obj):
         return obj.relationships.count()
     
     relationships_count_tag.short_description = 'Count'
-    readonly_fields = ('relationships_count_tag',)
+    readonly_fields = ('name', 'relationships_count_tag',)
     
 class QueueAdmin(VersionedAdmin):
     pass

@@ -33,6 +33,7 @@ def quickreply(id):
         opt = dict(option)
         opt["label"] = cat.label
         opt["metadata"] = f"moderation_{id}_{cat.name}"
+        opt["description"] = cat.description or cat.label
         options.append(opt)
 
     qr["options"] = options

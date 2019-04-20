@@ -38,7 +38,7 @@ class Status(TemplateView):
         
     def get_context_data(self, *args, **kwargs):
         context = super(Status, self).get_context_data(*args, **kwargs)
-        logger.debug(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {self.kwargs['statusid']}")
+        logger.debug(f"statusid: {self.kwargs['statusid']}")
         statusid= self.kwargs['statusid']
         logger.debug(type(statusid))
         tweet = statuscontext(statusid)
@@ -164,7 +164,8 @@ class All(TemplateView):
 
 def notfound(sid):
     html = ("<html><body>We couldn't find a tweet with id %s. "
-                        "This tweet was deleted or the id is not correct. "
+                        "This tweet might not be in our archive yet, or it was "
+                        "deleted, or the id is not correct. "
                         "Sorry about that! 🙇"
                         "</body></html>" % sid)
     tweet = Tweet(0)

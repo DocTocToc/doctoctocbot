@@ -1,15 +1,14 @@
-import logging
-import datetime
-
 from unicodedata import category
+
+from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from doctocnet.celery import app
 from bot.tasks import handle_retweet
-
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 
-logger = logging.getLogger(__name__)
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
 
 @app.task
 def handle_backup_lists():
@@ -47,9 +46,7 @@ def handle_sendmoderationdm(mod_instance_id):
     from .moderate import quickreply
     from .models import Moderation
     from dm.api import senddm
-    import logging
     import time
-    logger = logging.getLogger(__name__)
     
     mod_mi = Moderation.objects.get(pk=mod_instance_id)
     qr = quickreply(mod_instance_id)
@@ -79,12 +76,9 @@ def handle_sendmoderationdm(mod_instance_id):
 @app.task
 def poll_moderation_dm():
     from django.db import transaction
-    import logging
     from dm.models import DirectMessage
     from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
     from django.conf import settings
-
-    logger = logging.getLogger(__name__)
 
     bot_id = settings.BOT_ID
     #sender_id_lst = Moderation.objects.as_of().values('moderator')
@@ -113,6 +107,11 @@ def poll_moderation_dm():
         logger.debug(f"dmsg id:{moderation_id}, cat: {mod_cat_name}")
         #retrieve moderaton instance
         mod_mi = Moderation.objects.get(pk=moderation_id)
+        # if mod_mi is not the current version, current_version() returns None
+        # and it means this moderation was already done and we pass
+        if not Moderation.objects.current_version(mod_mi):
+            logger.info(f"Moderation instance {mod_mi} was already moderated.")
+            continue
         logger.debug(f"mod_mi:{mod_mi}")
         # determine id of moderated user
         su_id_int = mod_mi.queue.user_id
@@ -160,8 +159,12 @@ def poll_moderation_dm():
         
         if cat_mi in moderated_su_mi.category.all():
             with transaction.atomic():
-                mod_mi.queue.delete()
-                mod_mi.delete()
+                try:
+                    mod_mi.queue.delete()
+                    mod_mi.delete()
+                except DeletionOfNonCurrentVersionError as e:
+                    logger.info(f"Moderation instance {mod_mi} was already moderated. %s" % e)
+                    
             
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM

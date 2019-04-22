@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import os
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import setup_logging
 
 from django.conf import settings
 
@@ -9,6 +10,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'doctocnet.settings.development'
 
 app = Celery('quick_publisher')
 app.config_from_object('django.conf:settings')
+
+@setup_logging.connect
+def config_loggers(*args, **kwags):
+    from logging.config import dictConfig
+    dictConfig(settings.DICT_CONFIG)
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()

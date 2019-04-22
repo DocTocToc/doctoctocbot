@@ -7,7 +7,7 @@ from doctocnet.celery import app
 from bot.tasks import handle_retweet
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
-
+from django.conf import settings
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
@@ -24,6 +24,8 @@ def setup_loggers(logger, *args, **kwargs):
     str = logging.StreamHandler()
     str.setFormatter(formatter)
     logger.addHandler(str)
+    
+    logger.logLevel = settings.LOG_LEVEL
 
 
 @app.task

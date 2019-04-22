@@ -5,7 +5,8 @@ import logging
 from .base import *
 from django.utils.log import DEFAULT_LOGGING
 
-LOGLEVEL = "DEBUG"
+LOG_LEVEL = "DEBUG"
+
 DICT_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -26,14 +27,14 @@ DICT_CONFIG = {
 
     "handlers": {
         'console': {
-            'level': (LOGLEVEL or "DEBUG"),
+            'level': (LOG_LEVEL or "DEBUG"),
             'class': 'logging.StreamHandler',
             'formatter': 'default',
             'filters': ['require_debug_true'],
     },
 
         "console_debug_false": {
-            "level": (LOGLEVEL or "INFO"),
+            "level": (LOG_LEVEL or "INFO"),
             "filters": ["require_debug_false"],
             "class": "logging.StreamHandler",
         },
@@ -74,6 +75,8 @@ logging.config.dictConfig(DICT_CONFIG)
 
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/development")
 config = AutoConfig(search_path = CONFIG_DIR)
+
+CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 SECRET_KEY = config('SECRET_KEY')
 

@@ -1,3 +1,4 @@
+import logging
 from unicodedata import category
 
 from versions.exceptions import DeletionOfNonCurrentVersionError
@@ -9,6 +10,21 @@ from moderation.lists.poll import poll_lists_members, create_update_lists
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
+
+from celery.signals import after_setup_logger
+
+@after_setup_logger.connect
+def setup_loggers(logger, *args, **kwargs):
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # SysLogHandler
+    slh = logging.handlers.SysLogHandler()
+    slh.setFormatter(formatter)
+    logger.addHandler(slh)
+    # StreamHandler
+    str = logging.StreamHandler()
+    str.setFormatter(formatter)
+    logger.addHandler(str)
+
 
 @app.task
 def handle_backup_lists():

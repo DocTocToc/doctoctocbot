@@ -45,8 +45,9 @@ def addstatus_if_not_exist(statusid):
     if not absent_statuses:
         return
     for status in absent_statuses:
-        db = Addstatus(status._json)
-        db.addtweetdj()
+        if hasattr(status, '_json'):
+            db = Addstatus(status._json)
+            db.addtweetdj()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

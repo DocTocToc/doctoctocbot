@@ -1,5 +1,3 @@
-import logging
-from logging.handlers import RotatingFileHandler
 from unicodedata import category
 
 from versions.exceptions import DeletionOfNonCurrentVersionError

@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import logging
+from logging.handlers import RotatingFileHandler
 from celery import Celery
 from celery.schedules import crontab
 from celery.signals import after_setup_logger, after_setup_task_logger
@@ -9,8 +10,6 @@ from django.conf import settings
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'doctocnet.settings.development')
 
 app = Celery('doctocnet')
 app.config_from_object('django.conf:settings')

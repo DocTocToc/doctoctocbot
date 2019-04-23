@@ -108,7 +108,7 @@ def handle_sendmoderationdm(mod_instance_id):
     while screen_name is None and counter < 20:
             mod_mi.refresh_from_db()
             screen_name = mod_mi.queue.screen_name_tag()
-            logger.debug("waiting for screen_name...%s" % counter)
+            logger.debug("waiting for screen_name... %s" % counter)
             time.sleep(1)
             counter+=1
     status_id = mod_mi.queue.status_id

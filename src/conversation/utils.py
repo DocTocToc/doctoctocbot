@@ -1,6 +1,7 @@
 import logging
 
 from django.core.paginator import Paginator
+from django.db import connection, Error
 from django.conf import settings
 
 from conversation.constants import HOURS
@@ -173,7 +174,8 @@ def add_leaves(statusid):
     from django.db import transaction
     from .tree.tweet_server import request_context, request_tweets
     from .models import Treedj, create_leaf
-    context = request_context(statusid)
+    username = screen_name(statusid)
+    context = request_context(statusid, username)
     if not context:
         return
     for lst in context.descendants:
@@ -330,3 +332,22 @@ def last_authorized_statusid_lst(hourdelta=None):
     last_lst = [mi.statusid for mi in qs]
     last_lst = sorted(last_lst, reverse=True)
     return last_lst
+
+def screen_name(statusid):
+    """
+    Get Twitter screen_name from statusid.
+    TODO: Improve by fetching screen_name from the last status corresponding
+    to the userid in order to avoid obsolete screen_name?
+    Requires 3 queries: benchmark this.
+    """
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("SELECT json -> 'user' ->> 'screen_name' from conversation_tweetdj where statusid = %s", [statusid])
+        except Error as e:
+            err_msg = f'''Error while retrieving screen_name for status 
+                      {statusid}: {str(e)}'''
+            logger.error(err_msg)
+            return
+        row = cursor.fetchone()
+    if row:
+        return row[0]

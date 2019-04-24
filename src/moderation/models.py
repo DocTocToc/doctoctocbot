@@ -4,7 +4,7 @@ from sys import getprofile
 
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, connection
 from django.utils.safestring import mark_safe
 from django.conf import settings
@@ -157,12 +157,20 @@ class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
+    quickreply = models.BooleanField(default=False,
+                                         help_text="Include in DM quickreply?")
     
     objects = models.Manager()
     authorized = AuthorizedCategoryManager()
     
     def __str__(self):
         return self.name
+    
+    def clean(self):
+        if (self.quickreply and
+                Category.objects.filter(quickreply=True).count() > 20):
+            raise ValidationError(_('Maximum number of category instances '
+                                    ' that can be included in a quickreply is 20.'))
     
     class Meta:
         ordering = ('name',)

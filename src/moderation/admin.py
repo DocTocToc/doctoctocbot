@@ -32,9 +32,10 @@ class SocialUserAdmin(admin.ModelAdmin):
     search_fields = ('user_id', 'profile__json',)
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'label', 'description', 'relationships_count_tag',)
+    list_display = ('name', 'label', 'description', 'relationships_count_tag',
+                    'quickreply',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'relationships_count_tag', 'description')
+    fields = ('name', 'label', 'quickreply', 'relationships_count_tag', 'description')
     
     def relationships_count_tag(self, obj):
         return obj.relationships.count()

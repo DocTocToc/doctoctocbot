@@ -7,6 +7,8 @@ from bot.tasks import handle_retweet
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
+from conversation.utils import screen_name
+
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
@@ -73,24 +75,17 @@ def handle_sendmoderationdm(mod_instance_id):
     mod_mi.refresh_from_db()
     logger.info(f"mod_mi.queue.user_id {mod_mi.queue.user_id}")
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
-    screen_name = mod_mi.queue.screen_name_tag()
-    counter = 0
-    # TODO use chained celery tasks or calbacks instead of this loop
-    while screen_name is None and counter < 20:
-            mod_mi.refresh_from_db()
-            screen_name = mod_mi.queue.screen_name_tag()
-            logger.debug("waiting for screen_name... %s" % counter)
-            time.sleep(1)
-            counter+=1
+    sn = screen_name(mod_mi.queue.status_id)
     status_id = mod_mi.queue.status_id
     dm_txt = ("Please moderate this user: @{screen_name} "
-              "Tweet: https://twitter.com/statuses/{status_id}"
-              .format(screen_name=screen_name, status_id=status_id))
+              "Tweet: https://twitter.com/{screen_name}/status/{status_id}"
+              .format(screen_name=sn, status_id=status_id))
 
     senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            return_json=True,
            quick_reply=qr)
+
 @app.task
 def poll_moderation_dm():
     from django.db import transaction

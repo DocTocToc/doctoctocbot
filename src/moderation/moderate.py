@@ -28,8 +28,9 @@ def quickreply(id):
                 "description": "",
                 "metadata": "external_id_1"
              }
-    logger.debug(f"Category.objects.all(): {Category.objects.all()}")
-    for cat in Category.objects.all():
+        
+    for cat in Category.objects.filter(quickreply=True):
+        logger.debug(f"Category name: {cat.name}")
         opt = dict(option)
         opt["label"] = cat.label
         opt["metadata"] = f"moderation_{id}_{cat.name}"

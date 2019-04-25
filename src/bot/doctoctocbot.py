@@ -91,7 +91,7 @@ def isretweeted(status):
 def isselfstatus(status):
     if status['user']['id'] == settings.BOT_ID:
         logger.debug("self status, no RT")
-        return False
+        return True
 
 def is_following_rules(status):
     """

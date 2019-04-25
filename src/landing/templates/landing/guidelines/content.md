@@ -28,7 +28,10 @@ Nous déconseillons fortement l'utilisation du hashtag pour ce thèmes car il ex
 Les tweets à vocation publicitaire ne sont pas acceptés.
 Les tweets annonçant des congrès sont considérés comme des tweets promotionnels.
 Le fait qu'un produit ou service soit prétendûment "gratuit" ne change rien.
-Les comptes Twitter utilisant le hashtag DocTocToc à des fins de promotion seront ajoutés à la liste Twitter publique SpamTocToc.
+Les comptes Twitter utilisant le hashtag #DocTocToc ou intervenant dans 1 thread #DocTocToc à des fins de promotion seront ajoutés à la liste Twitter publique SpamTocToc.
+
+### Avertissement aux entreprises intervenant dans les threads #DocToToc
+Les professionnels de santé utilisateurs de #DocTocToc et de @DocTocTocBot souhaitent parfois avoir des avis ou des conseils au sujet d'1 produit ou d'1 service en provenance d'autres professionnels de santé. Ils souhaitent obtenir des avis neutres et objectifs, sans conflits d'intérêts. Si vous intervenez de manière intempestive dans 1 thread #DocTocToc (c'est à dire sans y avoir été expressément invité par l'auteur de la question) pour promouvoir votre produit, votre compte sera bloqué. Il sera également inscrit sur la liste publique des spammeurs jusqu'à la suppression de vos réponses. Ceci est valable même si votre entreprise offre le produit dont il est question et même si le produit ou 1 compte lié au produit est mentionné. En cas de récidive, l'inscription sera définitive. Si un professionnel de santé souhaite vous poser 1 question sur votre produit, il le fera sans utiliser ce hashtag. Merci de respecter les professionnels de santé.
 
 ## Politique de santé, syndicalisme
 Nous souhaitons reserver l'usage du bot aux questions concrètes que se posent les professionnels de santé. Nous pensons que le hashtag DocTocToc ne doit pas servir aux débats syndicaux ou aux débats sur la politique de santé.

@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.db.models import Count
 from versions.admin import VersionedAdmin
-
+from django.utils.safestring import mark_safe
+from django.urls import reverse
 from .models import SocialUser, UserCategoryRelationship, Category, Profile, Queue, Moderation, TwitterList
 
 
@@ -10,12 +12,20 @@ class CategoryRelationshipInline(admin.TabularInline):
     fk_name = 'category'
     raw_id_fields = ("social_user", "moderator",)
     
-    def screen_name_tag(self, obj):
+    def social_user_screen_name_tag(self, obj):
         screen_name = obj.social_user.profile.json.get("screen_name", None)
         return screen_name
     
-    screen_name_tag.short_description = 'Screen name'
-    readonly_fields = ('screen_name_tag',)
+    def moderator_screen_name_tag(self, obj):
+        screen_name = obj.moderator.profile.json.get("screen_name", None)
+        return screen_name
+    
+    moderator_screen_name_tag.short_description = 'Moderator screen name'
+    social_user_screen_name_tag.short_description = 'Social User screen name'
+    readonly_fields = (
+        'social_user_screen_name_tag',
+        'moderator_screen_name_tag',
+    )
 
     
 class UserRelationshipInline(admin.TabularInline):
@@ -32,16 +42,21 @@ class SocialUserAdmin(admin.ModelAdmin):
     search_fields = ('user_id', 'profile__json',)
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'label', 'description', 'relationships_count_tag',
+    list_display = ('name', 'label', 'description', 'show_relationships_count',
                     'quickreply',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'quickreply', 'relationships_count_tag', 'description')
+    fields = ('name', 'label', 'quickreply', 'show_relationships_count', 'description')
     
-    def relationships_count_tag(self, obj):
-        return obj.relationships.count()
+    def get_queryset(self, request):
+        qs = super(CategoryAdmin, self).get_queryset(request)
+        return qs.annotate(relationships_count=Count('relationships'))
+
+    def show_relationships_count(self, inst):
+        return inst.relationships_count
     
-    relationships_count_tag.short_description = 'Count'
-    readonly_fields = ('name', 'relationships_count_tag',)
+    show_relationships_count.admin_order_field = '-relationships_count'    
+    show_relationships_count.short_description = 'Count'
+    readonly_fields = ('name', 'show_relationships_count',)
     
 class QueueAdmin(VersionedAdmin):
     pass

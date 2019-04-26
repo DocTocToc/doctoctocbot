@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-04 23:52+0200\n"
+"POT-Creation-Date: 2019-04-26 04:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,24 +18,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: display/views.py:28
+#: display/views.py:36
 msgid "Status"
 msgstr ""
 
-#: display/views.py:51
+#: display/views.py:59
 msgid "Last tweets"
 msgstr ""
 
-#: display/views.py:73
+#: display/views.py:81
 msgid "Top tweets"
 msgstr ""
 
-#: display/views.py:95
+#: display/views.py:103
 msgid "Help tweets"
 msgstr ""
 
-#: display/views.py:117
+#: display/views.py:125
 msgid "All tweets"
+msgstr ""
+
+#: moderation/models.py:172
+msgid ""
+"Maximum number of category instances  that can be included in a quickreply "
+"is 20."
 msgstr ""
 
 #: registration/forms.py:113

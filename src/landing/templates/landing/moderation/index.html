@@ -1,0 +1,23 @@
+{% extends "doctocnet/base.html" %}
+{% load static %}
+
+{% block head_meta %}
+{% static "doctocnet/bot_logo_400x400.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
+{% with request.build_absolute_uri as og_url %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_title="Modération" og_description="Fonctionnement de la modération collective du bot @DocTocTocBot" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} Modération {% endblock title %}</h1>
+
+{% include "landing/moderation/content.html" %}
+
+{% endblock content %}
+

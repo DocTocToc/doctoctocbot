@@ -1,0 +1,19 @@
+{% extends "doctocnet/base.html" %}
+
+{% block head_meta %}
+{% with request.build_absolute_uri as og_url %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_title="Guide du modérateur" og_description="" og_image="" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} Guide du modérateur {% endblock title %}</h1>
+
+{% include "landing/moderator/content.html" %}
+
+{% endblock content %}
+

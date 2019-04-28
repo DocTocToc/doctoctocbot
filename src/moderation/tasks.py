@@ -129,7 +129,13 @@ def poll_moderation_dm():
         moderation_id, mod_cat_name = metadata[11:].split("_")    
         logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
         #retrieve moderaton instance
-        mod_mi = Moderation.objects.get(pk=moderation_id)
+        try:
+            mod_mi = Moderation.objects.get(pk=moderation_id)
+        except:
+            Moderation.DoesNotExist as e:
+            logger.error(f"Moderation object with id {moderation_id} "
+                         f"does not exist. Error message: {e}")
+            continue
         logger.info(f"mod_mi:{mod_mi}")
         # if mod_mi is not the current version, current_version() returns None
         # and it means this moderation was already done and we pass

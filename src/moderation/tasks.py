@@ -131,8 +131,7 @@ def poll_moderation_dm():
         #retrieve moderaton instance
         try:
             mod_mi = Moderation.objects.get(pk=moderation_id)
-        except:
-            Moderation.DoesNotExist as e:
+        except Moderation.DoesNotExist as e:
             logger.error(f"Moderation object with id {moderation_id} "
                          f"does not exist. Error message: {e}")
             continue

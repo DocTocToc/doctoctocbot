@@ -21,13 +21,20 @@ def triage(statusid):
     dbstatus.addtweetdj()
     dbstatus.add_image()
 
-    if not isknown(sjson) \
-        and has_retweet_hashtag(sjson) \
-        and not isselfstatus(sjson) \
-        and not 'retweeted_status' in sjson:
-        
-        addtoqueue(sjson)
+    logger.info(f"1° not isknown(sjson): {not isknown(sjson)}")
+    logger.info(f"2° has_retweet_hashtag(sjson): {has_retweet_hashtag(sjson)}")
+    logger.info(f"3° isselfstatus(sjson) {isselfstatus(sjson)}")
+    logger.info(f"4° not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}")
+
+    ok = (not isknown(sjson) and
+            has_retweet_hashtag(sjson) and
+            not isselfstatus(sjson) and
+            not ('retweeted_status' in sjson))
+    logger.info(f"ok: {ok}")
     
+    if ok:
+        addtoqueue(sjson)
+
     if is_following_rules(sjson):
         create_tree(statusid)
         if has_greenlight(sjson) and has_retweet_hashtag(sjson):

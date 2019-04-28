@@ -9,6 +9,11 @@ from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
 
+from django.db import transaction, DatabaseError
+from dm.models import DirectMessage
+from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
+import os
+
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
@@ -88,96 +93,105 @@ def handle_sendmoderationdm(mod_instance_id):
 
 @app.task
 def poll_moderation_dm():
-    from django.db import transaction
-    from dm.models import DirectMessage
-    from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
-    from django.conf import settings
+    def delete_moderation_queue(mod_mi):
+        with transaction.atomic():
+            try:
+                mod_mi.queue.delete()
+            except DeletionOfNonCurrentVersionError as e:
+                logger.info(f"Queue {mod_mi.queue} was already deleted. %s" % e)
+            try:
+                mod_mi.delete()
+            except DeletionOfNonCurrentVersionError as e:
+                logger.info(f"Moderation instance {mod_mi} was already moderated. %s" % e)
 
+    
     bot_id = settings.BOT_ID
-    #sender_id_lst = Moderation.objects.as_of().values('moderator')
-    #logger.debug(f"sender_id_lst: {sender_id_lst}")
-    #sender_id_lst1 = SocialUser.objects.filter(user_id__in=sender_id_lst).values('user_id')
-    #logger.debug(f"sender_id_lst1: {sender_id_lst1}")
-    sender_id_lst = [mod_mi.moderator.user_id for mod_mi in Moderation.objects.current.all()]
-    logger.debug(f"sender_id_lst: {sender_id_lst}")
-    uid_lst = list(SocialUser.objects.filter(user_id__in=sender_id_lst).values_list('user_id', flat=True))
-    #su_dict = SocialUser.objects.in_bulk(sender_id_lst)
-    #uid_lst = list(su_dict[k].user_id for k in su_dict.keys())
-    #logger.debug(f"su: {su_dict}")
-    logger.debug(f"uid_lst: {uid_lst}")
-    #logger.debug({type(uid_lst[0])})
-
-    #dmsgs0 = DirectMessage.objects.filter(recipient_id=bot_id)
-    #dmsgs1 = DirectMessage.objects.filter(recipient_id=bot_id).filter(sender_id__in=uid_lst)
-    dmsgs = DirectMessage.objects\
+    #current_moderations_uuid_str_lst = [str(mod.id) for mod in Moderation.objects.current.all()]
+    #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
+    dms = DirectMessage.objects\
         .filter(recipient_id=bot_id)\
-        .filter(sender_id__in=uid_lst)\
         .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation_")
-        
-    for dmsg in dmsgs:
-        metadata = dmsg.jsn["kwargs"]["message_create"]["message_data"]["quick_reply_response"]["metadata"]
+    logger.info(f"all moderation direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
+    #dmsgs_current = [dmsg for dmsg in dmsgs if (dmsg.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] in current_moderations_uuid_str_lst)]
+    """
+    dms_current = []
+    for dm in dms:
+        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] 
+        logger.info(f"uid: {uid}")
+        ok = uid in current_moderations_uuid_str_lst
+        if ok:
+            dms_current.append(dm)
+    """
+    
+    #logger.info(f"current moderation direct messages answers: {len(dms_current)} {[dm.text + os.linesep for dm in dms_current]}")
+    for dm in dms:
+        metadata = dm.jsn["kwargs"]["message_create"]["message_data"]["quick_reply_response"]["metadata"]
         moderation_id, mod_cat_name = metadata[11:].split("_")    
-        logger.debug(f"dmsg id:{moderation_id}, cat: {mod_cat_name}")
+        logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
         #retrieve moderaton instance
         mod_mi = Moderation.objects.get(pk=moderation_id)
+        logger.info(f"mod_mi:{mod_mi}")
         # if mod_mi is not the current version, current_version() returns None
         # and it means this moderation was already done and we pass
-        if not Moderation.objects.current_version(mod_mi):
+        is_current = bool(Moderation.objects.current_version(mod_mi))
+        if not is_current:    
             logger.info(f"Moderation instance {mod_mi} was already moderated.")
             continue
-        logger.debug(f"mod_mi:{mod_mi}")
+        
         # determine id of moderated user
         su_id_int = mod_mi.queue.user_id
         
         # moderated SocialUser instance
         try:
             moderated_su_mi = SocialUser.objects.get(user_id=su_id_int)
-            logger.debug(f"moderated_su_mi:{moderated_su_mi}")
-            logger.debug(f"moderated_su_mi.profile:{moderated_su_mi.profile}")
+            logger.info(f"moderated_su_mi:{moderated_su_mi}")
+            logger.info(f"moderated_su_mi.profile:{moderated_su_mi.profile}")
 
         except SocialUser.DoesNotExist:
-            continue
+            moderated_su_mi = None
         
         # Category instance
         try:
             cat_mi = Category.objects.get(name=mod_cat_name)
-            logger.debug(f"cat_mi:{cat_mi}")
+            logger.info(f"cat_mi:{cat_mi}")
         except Category.DoesNotExist:
-            continue
+            cat_mi = None
         
         # moderator SocialUser instance
         try:
-            moderator_su_mi = SocialUser.objects.get(user_id=dmsg.sender_id)
-            logger.debug(f"moderator_su_mi:{moderator_su_mi}")
+            moderator_su_mi = SocialUser.objects.get(user_id=dm.sender_id)
+            logger.info(f"moderator_su_mi:{moderator_su_mi}")
         except SocialUser.DoesNotExist:
-            continue
+            moderator_su_mi = None
         
         #Check if relationship already exists
-        if cat_mi in moderated_su_mi.category.all():
-            logger.debug(f"{moderated_su_mi} is already a {cat_mi}")
-            return
+        is_already = None
+        all_cat = moderated_su_mi.category.all()
+        if all_cat:
+            is_already = cat_mi in all_cat
+            if is_already:
+                logger.info(f"{moderated_su_mi} is already a {cat_mi}")
+                delete_moderation_queue(mod_mi)
         
         # create UserCategoryRelationship
-        with transaction.atomic():
-            UserCategoryRelationship.objects.create(
-                social_user = moderated_su_mi,
-                category = cat_mi,
-                moderator = moderator_su_mi)
-            
-        logger.debug(f"moderated user categories: {moderated_su_mi.category.all()}")
-        
-        # retweet status if user category is among authorized categories
-        if cat_mi in Category.authorized.all():
-            handle_retweet.apply_async(args=(mod_mi.queue.status_id,))
-        
-        if cat_mi in moderated_su_mi.category.all():
+        ucr = None
+        if (is_current and cat_mi and moderated_su_mi and not is_already):
             with transaction.atomic():
                 try:
-                    mod_mi.queue.delete()
-                    mod_mi.delete()
-                except DeletionOfNonCurrentVersionError as e:
-                    logger.info(f"Moderation instance {mod_mi} was already moderated. %s" % e)
-                    
-            
+                    ucr = UserCategoryRelationship.objects.create(
+                        social_user = moderated_su_mi,
+                        category = cat_mi,
+                        moderator = moderator_su_mi)
+                except DatabaseError as e:
+                    logger.error(e)
+
+        # retweet status if user category is among authorized categories  
+        if ucr:
+            logger.info(f"ucr creation successful: {ucr}")
+            status_id = mod_mi.queue.status_id
+            delete_moderation_queue(mod_mi)
+            if cat_mi in Category.authorized.all():
+                handle_retweet.apply_async(args=(status_id,))
+
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM

@@ -116,12 +116,12 @@ def poll_lists_members():
             users_id.append(member.id)
         
         # remove users that are not in the list users_id from category
-        socialusers_mis = SocialUser.objects.filter(category__name=category_name)
-        logging.debug(f'socialusers_mi: {socialusers_mis}')
-        socialusers_mis_twitter = SocialUser.objects.filter(category__name=category_name).filter(user_id__in=users_id)
-        to_delete_mis = socialusers_mis.difference(socialusers_mis_twitter)
-        logging.debug(f"to_delete_mis: {to_delete_mis}")
-        remove_usercategoryrelationship(to_delete_mis, category_mi)
+        #socialusers_mis = SocialUser.objects.filter(category__name=category_name)
+        #logging.debug(f'socialusers_mi: {socialusers_mis}')
+        #socialusers_mis_twitter = SocialUser.objects.filter(category__name=category_name).filter(user_id__in=users_id)
+        #to_delete_mis = socialusers_mis.difference(socialusers_mis_twitter)
+        #logging.debug(f"to_delete_mis: {to_delete_mis}")
+        #remove_usercategoryrelationship(to_delete_mis, category_mi)
 
         # TODO: remove from twitter list users that are not in the category
 

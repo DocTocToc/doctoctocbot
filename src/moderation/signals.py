@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Queue)
 def create_moderation(sender, instance, created, **kwargs):
-    logger.debug(f"inside create_moderation {sender}, {instance}, {created}")
     if created:
+        logger.debug(f"inside create_moderation {sender}, {instance}, {created}")
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
         moderatorid_int_lst = []
         if settings.MODERATION["moderator"]:
@@ -37,10 +37,18 @@ def create_moderation(sender, instance, created, **kwargs):
         
 @receiver(post_save, sender=Queue)
 def createprofile_queue(sender, instance, created, **kwargs):
-    logger.debug(f"instance {instance}")
-    logger.debug(f"instance.status_id {instance.user_id}")
-    handle_create_update_profile.apply_async(args=(instance.user_id,))
-    
+    if created:
+        logger.debug(f"instance {instance}")
+        logger.debug(f"instance.status_id {instance.user_id}")
+        handle_create_update_profile.apply_async(args=(instance.user_id,))
+
+@receiver(post_save, sender=UserCategoryRelationship)
+def log_usercategoryrelationship(sender, instance, created, **kwargs):
+    logger.debug(f"ucr saved: sender: {sender}; instance: {instance}; created: {created}")
+    logger.debug(f"instance.social_user.user_id: {instance.social_user.user_id}")
+    logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
+    logger.debug(f"instance.category: {instance.category}")
+
 @receiver(post_save, sender=UserCategoryRelationship)
 def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
     logger.debug(f"instance {instance}")
@@ -49,11 +57,12 @@ def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
     
 @receiver(post_save, sender=Moderation)
 def createupdatemoderatorprofile(sender, instance, created, **kwargs):
-    if not hasattr(instance.moderator, 'profile'):
-        logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
-        handle_create_update_profile.apply_async(args=(instance.moderator.user_id,))
+    if created:
+        if not hasattr(instance.moderator, 'profile'):
+            logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
+            handle_create_update_profile.apply_async(args=(instance.moderator.user_id,))
 
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):
-    #transaction.on_commit(lambda: handle_sendmoderationdm(kwargs['instance'].id))
-    transaction.on_commit(lambda: handle_sendmoderationdm.apply_async(args=(instance.id,)))
+    if created:
+        transaction.on_commit(lambda: handle_sendmoderationdm.apply_async(args=(instance.id,)))

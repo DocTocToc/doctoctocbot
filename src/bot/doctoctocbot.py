@@ -89,9 +89,9 @@ def isretweeted(status):
     return status['retweeted']
 
 def isselfstatus(status):
-    if status['user']['id'] == settings.BOT_ID:
-        logger.debug("self status, no RT")
-        return True
+    isselfstatus = status['user']['id'] == settings.BOT_ID
+    logger.info("isselfstatus: {isselfstatus}")
+    return isselfstatus
 
 def is_following_rules(status):
     """
@@ -127,11 +127,13 @@ def isquote( status ):
 
 def isknown( status ):
     user_id = status['user']['id']
-    if user_id not in SocialUser.objects.moderated_users():
-        logger.debug("user %s UNKNOWN", user_id)
+    try:
+        social_user = SocialUser.objects.get(user_id=user_id)
+    except SocialUser.DoesNotExist:
         return False
-    logger.debug("user %s known", user_id)
-    return True
+    isknown = bool(social_user.category.all())
+    logger.info(f"user {user_id} isknown: {isknown}")
+    return isknown
 
 def isauthorized(status):
     logger.debug(f"isauthorized(status): {status['user']['id'] in SocialUser.objects.authorized_users()}")

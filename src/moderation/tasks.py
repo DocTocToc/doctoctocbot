@@ -18,23 +18,6 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 
-
-"""
-@after_setup_task_logger.connect
-def setup_loggers(logger, *args, **kwargs):
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    # SysLogHandler
-    slh = logging.handlers.SysLogHandler()
-    slh.setFormatter(formatter)
-    logger.addHandler(slh)
-    # StreamHandler
-    str = logging.StreamHandler()
-    str.setFormatter(formatter)
-    logger.addHandler(str)
-    
-    logger.logLevel = settings.LOG_LEVEL
-"""
-
 @app.task
 def handle_backup_lists():
     from .lists.poll import backup_lists

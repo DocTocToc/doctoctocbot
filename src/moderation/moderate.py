@@ -24,16 +24,16 @@ def quickreply(id):
           }
     options = []
     option = {
-                "label": "Red Bird",
-                "description": "",
-                "metadata": "external_id_1"
+                "label": "?",
+                "description": "?",
+                "metadata": "?"
              }
         
     for cat in Category.objects.filter(quickreply=True):
         logger.debug(f"Category name: {cat.name}")
         opt = dict(option)
         opt["label"] = cat.label
-        opt["metadata"] = f"moderation_{id}_{cat.name}"
+        opt["metadata"] = f"moderation{id}{cat.name}"
         opt["description"] = cat.description or cat.label
         options.append(opt)
 

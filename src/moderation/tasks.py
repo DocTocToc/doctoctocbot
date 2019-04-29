@@ -106,27 +106,32 @@ def poll_moderation_dm():
 
     
     bot_id = settings.BOT_ID
-    #current_moderations_uuid_str_lst = [str(mod.id) for mod in Moderation.objects.current.all()]
+    current_mod_uuids = [str(mod.id) for mod in Moderation.objects.current.all()]
+    
+    # return if no current Moderation object
+    if not current_mod_uuids:
+        return
+    
     #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
     dms = DirectMessage.objects\
         .filter(recipient_id=bot_id)\
-        .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation_")
+        .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation")
     logger.info(f"all moderation direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
     #dmsgs_current = [dmsg for dmsg in dmsgs if (dmsg.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] in current_moderations_uuid_str_lst)]
-    """
+
     dms_current = []
     for dm in dms:
-        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] 
+        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'][11:47]
         logger.info(f"uid: {uid}")
-        ok = uid in current_moderations_uuid_str_lst
+        ok = uid in current_mod_uuids
         if ok:
             dms_current.append(dm)
-    """
     
     #logger.info(f"current moderation direct messages answers: {len(dms_current)} {[dm.text + os.linesep for dm in dms_current]}")
-    for dm in dms:
+    for dm in dms_current:
         metadata = dm.jsn["kwargs"]["message_create"]["message_data"]["quick_reply_response"]["metadata"]
-        moderation_id, mod_cat_name = metadata[11:].split("_")    
+        moderation_id = metadata[11:47]
+        mod_cat_name = metadata[48:]    
         logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
         #retrieve moderaton instance
         try:

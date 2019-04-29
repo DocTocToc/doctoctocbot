@@ -70,7 +70,11 @@ def hashtag(statusid):
     keyword_lst = settings.KEYWORD_TRACK_LIST
     if not keyword_lst:
         return
-    status_mi = Tweetdj.objects.get(pk=statusid)
+    try:
+        status_mi = Tweetdj.objects.get(pk=statusid)
+    except Tweetdj.DoesNotExist as e:
+        logger.info(f"Status {statusid} does not exist in table Tweetdj."
+                    f"Error message: {e}")
     if (status_mi.hashtag0 is not None) and (status_mi.hashtag1 is not None):
         return
     

@@ -88,13 +88,13 @@ def poll_moderation_dm():
                 logger.info(f"Moderation instance {mod_mi} was already moderated. %s" % e)
 
     
-    bot_id = settings.BOT_ID
     current_mod_uuids = [str(mod.id) for mod in Moderation.objects.current.all()]
-    
+    logger.debug(f"current_mod_uuids: {current_mod_uuids}")
     # return if no current Moderation object
     if not current_mod_uuids:
         return
     
+    bot_id = settings.BOT_ID
     #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
     dms = DirectMessage.objects\
         .filter(recipient_id=bot_id)\
@@ -104,17 +104,18 @@ def poll_moderation_dm():
 
     dms_current = []
     for dm in dms:
-        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'][11:47]
+        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'][10:46]
         logger.info(f"uid: {uid}")
         ok = uid in current_mod_uuids
+        logger.info(f"ok = uid in current_mod_uuids: {ok}")
         if ok:
             dms_current.append(dm)
     
     #logger.info(f"current moderation direct messages answers: {len(dms_current)} {[dm.text + os.linesep for dm in dms_current]}")
     for dm in dms_current:
         metadata = dm.jsn["kwargs"]["message_create"]["message_data"]["quick_reply_response"]["metadata"]
-        moderation_id = metadata[11:47]
-        mod_cat_name = metadata[48:]    
+        moderation_id = metadata[10:46]
+        mod_cat_name = metadata[46:]    
         logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
         #retrieve moderaton instance
         try:
@@ -142,41 +143,39 @@ def poll_moderation_dm():
 
         except SocialUser.DoesNotExist:
             moderated_su_mi = None
+            continue
         
         # Category instance
         try:
             cat_mi = Category.objects.get(name=mod_cat_name)
             logger.info(f"cat_mi:{cat_mi}")
         except Category.DoesNotExist:
-            cat_mi = None
+            continue
         
         # moderator SocialUser instance
         try:
             moderator_su_mi = SocialUser.objects.get(user_id=dm.sender_id)
             logger.info(f"moderator_su_mi:{moderator_su_mi}")
         except SocialUser.DoesNotExist:
-            moderator_su_mi = None
+            continue
         
         #Check if relationship already exists
-        is_already = None
-        all_cat = moderated_su_mi.category.all()
-        if all_cat:
-            is_already = cat_mi in all_cat
-            if is_already:
-                logger.info(f"{moderated_su_mi} is already a {cat_mi}")
-                delete_moderation_queue(mod_mi)
+        if cat_mi in moderated_su_mi.category.all():
+            logger.info(f"{moderated_su_mi} is already a {cat_mi}")
+            delete_moderation_queue(mod_mi)
+            continue
         
         # create UserCategoryRelationship
         ucr = None
-        if (is_current and cat_mi and moderated_su_mi and not is_already):
-            with transaction.atomic():
-                try:
-                    ucr = UserCategoryRelationship.objects.create(
-                        social_user = moderated_su_mi,
-                        category = cat_mi,
-                        moderator = moderator_su_mi)
-                except DatabaseError as e:
-                    logger.error(e)
+        with transaction.atomic():
+            try:
+                ucr = UserCategoryRelationship.objects.create(
+                    social_user = moderated_su_mi,
+                    category = cat_mi,
+                    moderator = moderator_su_mi)
+            except DatabaseError as e:
+                logger.error(e)
+                continue
 
         # retweet status if user category is among authorized categories  
         if ucr:

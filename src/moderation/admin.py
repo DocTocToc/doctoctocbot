@@ -32,6 +32,11 @@ class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
     extra = 10
     fk_name = 'social_user'
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "moderator":
+            kwargs["queryset"] = SocialUser.objects.filter(id=request.user.socialuser.id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class SocialUserAdmin(admin.ModelAdmin):
@@ -40,6 +45,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
     readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
     search_fields = ('user_id', 'profile__json',)
+
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'description', 'show_relationships_count',
@@ -59,12 +65,25 @@ class CategoryAdmin(admin.ModelAdmin):
     readonly_fields = ('name', 'show_relationships_count',)
     
 class QueueAdmin(VersionedAdmin):
-    pass
-    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag', 'user_id',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'status_tag', 'user_id', 'status_id',)
+    list_display = ('mini_image_tag', 'screen_name_link', 'name_tag', 'status_tag', 'user_id',)
+    readonly_fields = ('mini_image_tag', 'screen_name_link', 'name_tag', 'status_tag', 'user_id', 'status_id',)
     list_display_show_identity = False
     list_display_show_end_date = False
     list_display_show_start_date = True
+    
+    def screen_name_link(self, obj):
+        try:
+            su = SocialUser.objects.get(user_id=obj.user_id)
+            return mark_safe(
+                '<a href="{link}">{tag}</a>'.format(
+                    link = reverse("admin:moderation_socialuser_change", args=(su.pk,)),
+                    tag = obj.screen_name_tag()
+                )
+            )
+        except SocialUser.DoesNotExist:
+            return obj.screen_name_tag()
+    
+    screen_name_link.short_description = 'SocialUser'
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -75,19 +94,33 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class ModerationAdmin(VersionedAdmin):
     pass
-    list_display = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'moderated_screen_name_tag', 'status_tag',)
+    list_display = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'screen_name_link', 'status_tag',)
     fields = ('moderator_mini_image_tag',
               'moderator_screen_name_tag',
               'moderated_mini_image_tag',
-              'moderated_screen_name_tag',
+              'screen_name_link',
               'status_tag',
               'id',
               'identity',
               )
-    readonly_fields = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'moderated_screen_name_tag', 'status_tag',)
+    readonly_fields = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'screen_name_link', 'status_tag',)
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
+    
+    def screen_name_link(self, obj):
+        try:
+            su = SocialUser.objects.get(user_id=obj.queue.user_id)
+            return mark_safe(
+                '<a href="{link}">{tag}</a>'.format(
+                    link = reverse("admin:moderation_socialuser_change", args=(su.pk,)),
+                    tag = obj.moderated_screen_name_tag()
+                )
+            )
+        except SocialUser.DoesNotExist:
+            return obj.moderated_screen_name_tag()
+    
+    screen_name_link.short_description = 'Moderated screen_name'
 
 
 class TwitterListAdmin(admin.ModelAdmin):

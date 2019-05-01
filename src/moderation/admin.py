@@ -3,7 +3,7 @@ from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import SocialUser, UserCategoryRelationship, Category, Profile, Queue, Moderation, TwitterList
+from .models import SocialUser, UserCategoryRelationship, Category, Profile, Queue, Moderation, TwitterList, Follower
 
 
 class CategoryRelationshipInline(admin.TabularInline):
@@ -42,10 +42,15 @@ class UserRelationshipInline(admin.TabularInline):
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = ('user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media', )
-    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
-    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category',)
+    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category', 'category_moderator_lst')
+    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category', 'category_moderator_lst')
     search_fields = ('user_id', 'profile__json',)
-
+    
+    def category_moderator_lst(self, obj):
+        cat_mod_lst = []
+        for relation in obj.categoryrelationships.all():
+            cat_mod_lst.append((relation.category.name, relation.moderator.screen_name_tag(),))
+        return cat_mod_lst
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'description', 'show_relationships_count',
@@ -160,6 +165,21 @@ class TwitterListAdmin(admin.ModelAdmin):
     
     member_count_tag.short_description = 'Members'
 
+class FollowerAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'user',
+        '__str__',
+        'created'
+    )
+    readonly_fields = (
+        'id',
+        'user',
+        'followers',
+        'created'
+    )
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 
@@ -168,3 +188,4 @@ admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(Moderation, ModerationAdmin)
 admin.site.register(TwitterList, TwitterListAdmin)
+admin.site.register(Follower, FollowerAdmin)

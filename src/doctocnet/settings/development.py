@@ -63,10 +63,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": 'INFO',
         },
-        "moderation.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
-            "level": 'INFO',
-        },
+#        "moderation.tasks": {
+#            "handlers": ["console", "console_debug_false", "mail_admins"],
+#            "level": 'INFO',
+#        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }
@@ -167,12 +167,12 @@ EMAIL_BACKEND='django_sendmail_backend.backends.EmailBackend'
 PROJECT_NAME = 'doctoctocbot'
 
 BEAT_PERIOD = {
-    'record_timeline': 120.0,
-    'scrape_web_timeline': 120.0,
+    'record_timeline': 600.0,
+    'scrape_web_timeline': 600.0,
     'normalize': 600.0,
-    'poll_dm': 180.0,
-    'poll_moderation_dm': 120.0,
-    'update_trees': 300.0,
+    'poll_dm': 120.0,
+    'poll_moderation_dm': 30.0,
+    'update_trees': 3600.0,
     'poll_lists_members': 900.0,
 }
 

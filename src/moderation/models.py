@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, connection
+from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
 
@@ -14,6 +15,26 @@ from versions.models import Versionable
 
 
 class AuthorizedManager(models.Manager):
+    def category_users(self, category):
+        """
+        Return list of users bigint user_id from a category.
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT user_id
+                FROM moderation_socialuser
+                WHERE id IN
+                (
+                SELECT social_user_id FROM moderation_usercategoryrelationship WHERE category_id IN
+                (SELECT id FROM moderation_category WHERE name = %s)
+                );
+                """,
+                [category]
+            )
+            result = cursor.fetchall()
+        return [row[0] for row in result]
+
     def physician_users(self):
         """
         Return list of physician users bigint user_id.
@@ -159,7 +180,9 @@ class Category(models.Model):
     description = models.TextField(blank=True, null=True)
     quickreply = models.BooleanField(default=False,
                                          help_text="Include in DM quickreply?")
-    
+    socialgraph = models.BooleanField(default=False,
+                                         help_text="Include in moderation social graph?")    
+
     objects = models.Manager()
     authorized = AuthorizedCategoryManager()
     
@@ -402,3 +425,21 @@ class TwitterList(models.Model):
             return f'{self.uid}'
         else:
             return f'{self.slug}'
+        
+class Follower(models.Model):
+    user = models.ForeignKey(
+        SocialUser,
+        on_delete=models.CASCADE
+    )
+    followers = ArrayField(
+        models.BigIntegerField()
+        )
+    created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        screen_name = None
+        if hasattr(self.user, "profile"):
+            screen_name = self.user.profile.json.get("screen_name", None)
+        
+        name = screen_name or str(self.user.user_id)
+        return "followers of %s " % name

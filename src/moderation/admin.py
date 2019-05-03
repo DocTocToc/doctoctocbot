@@ -41,9 +41,9 @@ class UserRelationshipInline(admin.TabularInline):
 
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media', )
-    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category', 'category_moderator_lst')
-    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media', 'category', 'category_moderator_lst')
+    list_display = ('user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media_profile', )
+    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
+    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
     search_fields = ('user_id', 'profile__json',)
     
     def category_moderator_lst(self, obj):
@@ -51,12 +51,21 @@ class SocialUserAdmin(admin.ModelAdmin):
         for relation in obj.categoryrelationships.all():
             cat_mod_lst.append((relation.category.name, relation.moderator.screen_name_tag(),))
         return cat_mod_lst
+    
+    def social_media_profile(self, obj):
+        return mark_safe(
+            '<a href="https://twitter.com/intent/user?user_id={user_id}">{tag}</a>'.format(
+                user_id = obj.user_id,
+                tag = obj.social_media
+            )
+        )
 
+    
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'description', 'show_relationships_count',
-                    'quickreply',)
+                    'quickreply', 'socialgraph',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'quickreply', 'show_relationships_count', 'description')
+    fields = ('name', 'label', 'quickreply', 'socialgraph', 'show_relationships_count', 'description')
     
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)

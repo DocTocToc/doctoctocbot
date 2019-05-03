@@ -4,6 +4,7 @@ from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from doctocnet.celery import app
 from bot.tasks import handle_retweet
+from bot.bin.user import getuser_lst
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
@@ -48,6 +49,26 @@ def handle_create_update_profile(userid_int):
 
     logger.debug(userjson)
     twitterprofile(userjson)
+
+def handle_create_all_profiles():
+    from conversation.models import Tweetdj
+    su_qs_lst = SocialUser.objects.values('user_id', 'profile')
+    user_id_request_lst = []
+    
+    for su in su_qs_lst:
+        if not su["profile"]:
+            try:
+                tweetdj_mi = Tweetdj.objects.filter(userid = su["user_id"]).latest()
+            except Tweetdj.DoesNotExist:
+                user_id_request_lst.append(su["user_id"])
+                continue
+            userjson = tweetdj_mi.json.get("user")
+            twitterprofile(userjson)
+    
+    if user_id_request_lst:
+        user_jsn_lst = getuser_lst(user_id_request_lst)
+        for user_jsn in user_jsn_lst:
+            twitterprofile(user_jsn)
 
 @app.task
 def handle_sendmoderationdm(mod_instance_id):

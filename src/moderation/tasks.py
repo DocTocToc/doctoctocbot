@@ -14,6 +14,7 @@ from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
 from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
 import os
+from common.utils import trim_grouper
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -66,9 +67,12 @@ def handle_create_all_profiles():
             twitterprofile(userjson)
     
     if user_id_request_lst:
-        user_jsn_lst = getuser_lst(user_id_request_lst)
-        for user_jsn in user_jsn_lst:
-            twitterprofile(user_jsn)
+        for user_id_lst in trim_grouper(user_id_request_lst, 100):
+            user_jsn_lst = getuser_lst(user_id_lst)
+            if not user_jsn_lst:
+                continue
+            for user_jsn in user_jsn_lst:
+                twitterprofile(user_jsn)
 
 @app.task
 def handle_sendmoderationdm(mod_instance_id):

@@ -26,3 +26,5 @@ django-countries
 django-sendmail-backend
 python-gnupg
 stripe
+matplotlib
+numpy

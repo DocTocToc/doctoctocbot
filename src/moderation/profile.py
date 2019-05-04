@@ -131,3 +131,12 @@ def is_profile_uptodate(userid):
             return True
     else:
         return False
+    
+def screen_name(userid):
+    try:
+        su = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+
+    if hasattr(su, "profile"):
+        return su.profile.screen_name_tag()

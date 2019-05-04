@@ -39,13 +39,15 @@ def getdm(dmid):
 def senddm(text,
            user_id=None,
            return_json=True,
-           quick_reply=None):
+           quick_reply=None,
+           attachment=None):
     api_ = getapi()
     try:
         response = api_.PostDirectMessage(text=text,
                            user_id=user_id,
                            return_json=True,
-                           quick_reply=quick_reply)
+                           quick_reply=quick_reply,
+                           attachment=attachment)
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
         return

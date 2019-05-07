@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-07 13:26+0200\n"
-"PO-Revision-Date: 2019-05-07 13:26+0200\n"
+"POT-Creation-Date: 2019-05-07 16:26+0200\n"
+"PO-Revision-Date: 2019-05-07 16:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -26,37 +26,37 @@ msgid ""
 msgstr ""
 "Le nombre maximal de catégories pouvant être ajoutées à un quickreply est 20."
 
-#: moderation/social.py:78
+#: moderation/social.py:79
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:95
+#: moderation/social.py:96
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:95
+#: moderation/social.py:96
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:158
+#: moderation/social.py:160
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:161
+#: moderation/social.py:163
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:165
+#: moderation/social.py:167
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:200
+#: moderation/social.py:205
 #, python-brace-format
-msgid "Social graph of user {screen_name}.{txt}"
-msgstr "Graphe social du compte {screen_name}.{txt}"
+msgid "Social graph of user @{screen_name}.{txt}"
+msgstr "Graphe social du compte @{screen_name}.{txt}"
 
 #: moderation/tasks.py:95
 #, python-brace-format

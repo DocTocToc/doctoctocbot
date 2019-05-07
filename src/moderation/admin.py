@@ -63,9 +63,9 @@ class SocialUserAdmin(admin.ModelAdmin):
     
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'description', 'show_relationships_count',
-                    'quickreply', 'socialgraph',)
+                    'quickreply', 'socialgraph', 'color',)
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'quickreply', 'socialgraph', 'show_relationships_count', 'description')
+    fields = ('name', 'label', 'quickreply', 'socialgraph', 'show_relationships_count', 'description','color',)
     
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)

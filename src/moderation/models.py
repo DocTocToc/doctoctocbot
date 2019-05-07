@@ -182,6 +182,7 @@ class Category(models.Model):
                                          help_text="Include in DM quickreply?")
     socialgraph = models.BooleanField(default=False,
                                          help_text="Include in moderation social graph?")    
+    color = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     objects = models.Manager()
     authorized = AuthorizedCategoryManager()

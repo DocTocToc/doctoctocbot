@@ -1,0 +1,72 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-07 13:26+0200\n"
+"PO-Revision-Date: 2019-05-07 13:26+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: moderation/models.py:196
+#, fuzzy
+msgid ""
+"Maximum number of category instances  that can be included in a quickreply "
+"is 20."
+msgstr ""
+"Le nombre maximal de catégories pouvant être ajoutées à un quickreply est 20."
+
+#: moderation/social.py:78
+msgid "Followers"
+msgstr "Abonnés"
+
+#: moderation/social.py:95
+msgid "Verified"
+msgstr "Vérifiés"
+
+#: moderation/social.py:95
+msgid "Others"
+msgstr "Autres"
+
+#: moderation/social.py:158
+#, python-brace-format
+msgid "Categories of verified {title}"
+msgstr "Catégories des {title} vérifiés"
+
+#: moderation/social.py:161
+#, python-brace-format
+msgid "Share of verified {title}"
+msgstr "Part des {title} vérifiés"
+
+#: moderation/social.py:165
+#, python-brace-format
+msgid "{title} of {screen_name}: {total}"
+msgstr "{title} de {screen_name}: {total}"
+
+#: moderation/social.py:200
+#, python-brace-format
+msgid "Social graph of user {screen_name}.{txt}"
+msgstr "Graphe social du compte {screen_name}.{txt}"
+
+#: moderation/tasks.py:95
+#, python-brace-format
+msgid ""
+"Please moderate this user: @{screen_name} Tweet: https://twitter.com/"
+"{screen_name}/status/{status_id}"
+msgstr ""
+"Merci de modérer ce compte: @{screen_name} Tweet: https://twitter.com/"
+"{screen_name}/status/{status_id}"
+
+#: moderation/tasks.py:101
+msgid "You will soon receive a moderation request for this user."
+msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."

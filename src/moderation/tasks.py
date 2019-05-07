@@ -15,6 +15,8 @@ from dm.models import DirectMessage
 from moderation.models import Moderation, SocialUser, Category, UserCategoryRelationship
 import os
 from common.utils import trim_grouper
+from django.utils.translation import gettext as _
+from moderation.social import send_graph_dm
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -90,10 +92,14 @@ def handle_sendmoderationdm(mod_instance_id):
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
     sn = screen_name(mod_mi.queue.status_id)
     status_id = mod_mi.queue.status_id
-    dm_txt = ("Please moderate this user: @{screen_name} "
-              "Tweet: https://twitter.com/{screen_name}/status/{status_id}"
+    dm_txt = (_("Please moderate this user: @{screen_name} "
+              "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
               .format(screen_name=sn, status_id=status_id))
-
+    send_graph_dm(
+        mod_mi.queue.user_id,
+        mod_mi.moderator.user_id,
+        _("You will soon receive a moderation request for this user.")
+    )
     senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            return_json=True,

@@ -190,21 +190,24 @@ def get_dm_media_id(file):
     file.close()
     return res.media_id
     
-def send_graph_dm(user_id, dest_user_id, text=None):
-    user_screen_name = screen_name(user_id)
-    file = pie_plot(graph(user_id))
-    media_id = get_dm_media_id(file)
-    attachment = {"type": "media",
-                  "media": {
-                      "id": media_id }
-                  }
-    dm_text = (
-        _("Social graph of user {screen_name}.{txt}")
-        .format(screen_name=user_screen_name, txt=(" " + text))
-    )
-    senddm(dm_text,
-           user_id=dest_user_id,
-           attachment=attachment)
-    
+def send_graph_dm(user_id, dest_user_id, text=""):
+    with translation.override(settings.TRANSLATION_OVERRIDE):
+        user_screen_name = screen_name(user_id)
+        file = pie_plot(graph(user_id))
+        media_id = get_dm_media_id(file)
+        attachment = {"type": "media",
+                      "media": {
+                          "id": media_id }
+                      }
+        if text:
+            text = " " + text
+        dm_text = (
+            _("Social graph of user @{screen_name}.{txt}")
+            .format(screen_name=user_screen_name, txt=(text))
+        )
+        senddm(dm_text,
+               user_id=dest_user_id,
+               attachment=attachment)
+        
 def order_dict(dct, reverse=False):
     return OrderedDict(sorted(dct.items(), key=operator.itemgetter(1), reverse=reverse))

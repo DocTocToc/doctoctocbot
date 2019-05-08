@@ -75,6 +75,7 @@ def hashtag(statusid):
     except Tweetdj.DoesNotExist as e:
         logger.info(f"Status {statusid} does not exist in table Tweetdj."
                     f"Error message: {e}")
+        return
     if (status_mi.hashtag0 is not None) and (status_mi.hashtag1 is not None):
         return
     

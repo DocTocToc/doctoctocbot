@@ -50,18 +50,18 @@ def senddm(text,
                            attachment=attachment)
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
-        return
+        return False
     
     logger.debug(response)
 
     try:
-        ok = (response["event"]["message_create"]["message_data"]["text"] == text)
+        response["event"]["created_timestamp"]
     except KeyError:
         logger.error("Unknown message_create event (DM) error")
-        return
+        return False
 
-    if ok:
-        id = response["event"]["message_create"]["target"]["recipient_id"]
-        txt = response["event"]["message_create"]["message_data"]["text"]
-        msg = f"Sending DM '{txt}' to user_id {id} was successful"
-        logger.info(msg)    
+    id = response["event"]["message_create"]["target"]["recipient_id"]
+    txt = response["event"]["message_create"]["message_data"]["text"]
+    msg = f"Sending DM '{txt}' to user_id {id} was successful"
+    logger.info(msg)
+    return True

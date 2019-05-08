@@ -29,6 +29,8 @@ def get_socialuser(user):
 
 def followersids(user):
     su = get_socialuser(user)
+    if not su:
+        return
     hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR or 24
     datetime_limit = timezone.now() - timedelta(hours=hourdelta)
     try:
@@ -113,6 +115,8 @@ def intersection_count(a, b):
     return len(set(a) & set(b))    
 
 def pie_plot(dct):
+    if not dct:
+        return
     with translation.override(settings.TRANSLATION_OVERRIDE):
         def func(pct, allvals):
             absolute = int(pct/100.*np.sum(allvals))
@@ -194,6 +198,8 @@ def send_graph_dm(user_id, dest_user_id, text=""):
     with translation.override(settings.TRANSLATION_OVERRIDE):
         user_screen_name = screen_name(user_id)
         file = pie_plot(graph(user_id))
+        if not file:
+            return False
         media_id = get_dm_media_id(file)
         attachment = {"type": "media",
                       "media": {
@@ -205,9 +211,9 @@ def send_graph_dm(user_id, dest_user_id, text=""):
             _("Social graph of user @{screen_name}.{txt}")
             .format(screen_name=user_screen_name, txt=(text))
         )
-        senddm(dm_text,
-               user_id=dest_user_id,
-               attachment=attachment)
+        return senddm(dm_text,
+                      user_id=dest_user_id,
+                      attachment=attachment)
         
 def order_dict(dct, reverse=False):
     return OrderedDict(sorted(dct.items(), key=operator.itemgetter(1), reverse=reverse))

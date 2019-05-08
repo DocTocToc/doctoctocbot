@@ -76,8 +76,8 @@ def handle_create_all_profiles():
             for user_jsn in user_jsn_lst:
                 twitterprofile(user_jsn)
 
-@app.task
-def handle_sendmoderationdm(mod_instance_id):
+@app.task(bind=True, max_retries=5)
+def handle_sendmoderationdm(self, mod_instance_id):
     from .moderate import quickreply
     from .models import Moderation
     from dm.api import senddm
@@ -95,15 +95,19 @@ def handle_sendmoderationdm(mod_instance_id):
     dm_txt = (_("Please moderate this user: @{screen_name} "
               "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
               .format(screen_name=sn, status_id=status_id))
-    send_graph_dm(
+    ok = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,
         _("You will soon receive a moderation request for this user.")
     )
-    senddm(dm_txt,
+    if not ok:
+        self.retry(countdown= 2 ** self.request.retries)
+    ok = senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            return_json=True,
            quick_reply=qr)
+    if not ok:
+        self.retry(countdown= 2 ** self.request.retries)
 
 @app.task
 def poll_moderation_dm():

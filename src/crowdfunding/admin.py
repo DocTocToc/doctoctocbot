@@ -4,6 +4,10 @@ from .models import Project, ProjectInvestment, Tier
 
 class ProjectInvestmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'name', 'email', 'pledged', 'paid', 'datetime', 'public',)
+    search_fields = ['user', 'name', 'email',]
+    list_filter = ['paid', 'datetime', 'public',]
+    ordering = ['-datetime',]
+    date_hierarchy = 'datetime'
 
 class TierAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'description', 'emoji', 'min', 'max',)

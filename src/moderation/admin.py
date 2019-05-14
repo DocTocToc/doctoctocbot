@@ -3,7 +3,17 @@ from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import SocialUser, UserCategoryRelationship, Category, Profile, Queue, Moderation, TwitterList, Follower
+from .models import (
+    SocialUser,
+    UserCategoryRelationship,
+    Category,
+    Profile,
+    Queue,
+    Moderation,
+    TwitterList,
+    Follower,
+    Moderator
+)
 
 
 class CategoryRelationshipInline(admin.TabularInline):
@@ -41,9 +51,9 @@ class UserRelationshipInline(admin.TabularInline):
 
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media_profile', )
-    fields = ('screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
-    readonly_fields = ( 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
+    list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media_profile', )
+    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
+    readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
     search_fields = ('user_id', 'profile__json',)
     
     def category_moderator_lst(self, obj):
@@ -204,6 +214,12 @@ class FollowerAdmin(admin.ModelAdmin):
         'created'
     )
 
+class ModeratorAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'socialuser',
+        'active',
+    )
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
@@ -214,3 +230,4 @@ admin.site.register(Queue, QueueAdmin)
 admin.site.register(Moderation, ModerationAdmin)
 admin.site.register(TwitterList, TwitterListAdmin)
 admin.site.register(Follower, FollowerAdmin)
+admin.site.register(Moderator, ModeratorAdmin)

@@ -1,0 +1,1 @@
+/home/elkcloner/dev/javascript/svelte/svelte-moderator-yarn/public/app.js

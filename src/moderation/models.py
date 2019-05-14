@@ -13,6 +13,9 @@ from django.conf import settings
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class AuthorizedManager(models.Manager):
     def category_users(self, category):
@@ -84,6 +87,16 @@ class AuthorizedManager(models.Manager):
             logging.debug(result)
         return [row[0] for row in result]
 
+    def active_moderators(self):
+        try:
+            return SocialUser.objects.filter(
+                category=Category.objects.get(name="moderator"),
+                moderator__in=Moderator.objects.filter(active=True)
+                ).values_list('user_id', flat=True)
+        except:
+            return []
+            
+ 
     def moderators(self):
         """
         Return a list of BIGINTs representing moderator user_id.
@@ -138,7 +151,10 @@ class SocialUser(models.Model):
     objects = AuthorizedManager()
     
     def __str__(self):
-        return str("%i %s " % (self.user_id, self.social_media))
+        try:
+            return str("%s %i " % (self.profile.json["screen_name"], self.user_id))
+        except:
+            return str("%i %s " % (self.user_id, self.social_media))
 
     def normal_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.profile.normalavatar.url))
@@ -444,3 +460,44 @@ class Follower(models.Model):
         
         name = screen_name or str(self.user.user_id)
         return "followers of %s " % name
+    
+class Moderator(models.Model):
+    socialuser = models.OneToOneField(SocialUser,
+                                      verbose_name='socialuser',
+                                      primary_key=True,
+                                      on_delete=models.CASCADE)
+    active = models.BooleanField(default=False,
+                                 help_text="Is this moderator active?")
+    
+    def __str__(self):
+        try:
+            return self.socialuser.profile.json["screen_name"]
+        except:
+            return str("%i %s " % (self.socialuser.user_id, self.socialuser.social_media))
+    
+    @staticmethod
+    def has_read_permission(self):
+        return True
+
+    def has_write_permission(self):
+        return False
+    
+    def has_update_permission(self):
+        return True
+    
+    def has_object_read_permission(self, request):
+        #return True
+        try:
+            return request.user.socialuser == self.socialuser
+        except:
+            return False
+
+    def has_object_write_permission(self, request):
+        return False
+
+    def has_object_update_permission(self, request):
+        logger.debug("(request.user.socialuser == self.socialuser) = %s" % (request.user.socialuser == self.socialuser))
+        try:
+            return request.user.socialuser == self.socialuser
+        except:
+            return False

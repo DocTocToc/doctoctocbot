@@ -28,3 +28,4 @@ python-gnupg
 stripe
 matplotlib
 numpy
+dry-rest-permissions

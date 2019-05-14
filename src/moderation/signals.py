@@ -1,13 +1,22 @@
 import logging
 import random
 
+from django.db.utils import DatabaseError
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 
 from dm.api import senddm
-from moderation.models import Queue, Moderation, SocialUser, UserCategoryRelationship
+from moderation.models import (
+    Queue,
+    Moderation,
+    SocialUser,
+    UserCategoryRelationship,
+    Category,
+    Moderator
+)
+
 from .moderate import quickreply
 from .tasks import handle_create_update_profile
 from .tasks import handle_sendmoderationdm
@@ -21,13 +30,16 @@ def create_moderation(sender, instance, created, **kwargs):
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
         moderatorid_int_lst = []
         if settings.MODERATION["moderator"]:
-            moderatorid_int_lst.extend(SocialUser.objects.moderators())
+            #moderatorid_int_lst.extend(SocialUser.objects.moderators())
+            moderatorid_int_lst.extend(SocialUser.objects.active_moderators())
         elif settings.MODERATION["dev"]:
             logger.debug(f"SocialUser.objects.devs(): {SocialUser.objects.devs()}")
             moderatorid_int_lst.extend(SocialUser.objects.devs())
         else:
             return
         logger.debug(f"moderatorid_int_lst: {moderatorid_int_lst}")
+        if not moderatorid_int_lst:
+            moderatorid_int_lst.extend(SocialUser.objects.devs())
         if not moderatorid_int_lst:
             return
         chosenmoderatorid_int = random.choice(moderatorid_int_lst)
@@ -48,6 +60,20 @@ def log_usercategoryrelationship(sender, instance, created, **kwargs):
     logger.debug(f"instance.social_user.user_id: {instance.social_user.user_id}")
     logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
     logger.debug(f"instance.category: {instance.category}")
+    
+@receiver(post_save, sender=UserCategoryRelationship)
+def moderator(sender, instance, created, **kwargs):
+    if created:
+        try:
+            mod_cat = Category.objects.get(name="moderator")
+        except Category.DoesNotExist:
+            return
+        if instance.category == mod_cat:
+            with transaction.atomic():
+                try:
+                    Moderator.objects.create(socialuser=instance.social_user)
+                except DatabaseError:
+                    return
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):

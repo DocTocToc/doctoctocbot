@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-07 16:26+0200\n"
+"POT-Creation-Date: 2019-05-14 20:33+0200\n"
 "PO-Revision-Date: 2019-05-07 16:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:196
+#: moderation/models.py:212
 #, fuzzy
 msgid ""
 "Maximum number of category instances  that can be included in a quickreply "
@@ -26,34 +26,34 @@ msgid ""
 msgstr ""
 "Le nombre maximal de catégories pouvant être ajoutées à un quickreply est 20."
 
-#: moderation/social.py:79
+#: moderation/social.py:81
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:96
+#: moderation/social.py:98
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:96
+#: moderation/social.py:98
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:160
+#: moderation/social.py:164
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:163
+#: moderation/social.py:167
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:167
+#: moderation/social.py:171
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:205
+#: moderation/social.py:211
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"

@@ -64,9 +64,14 @@ INSTALLED_APPS = [
     'django_countries',
     'customer',
     'mptt',
+    'dry_rest_permissions',
+    #'corsheaders',
 ]
 
 MIDDLEWARE = [
+    # CORS
+    #'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -234,7 +239,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -254,8 +259,8 @@ MIGRATION_MODULES = {
 PAGINATION = 1000
 
 MODERATION = {
-    "dev": True,
-    "moderator": False
+    "dev": False,
+    "moderator": True
 }
 
 STATUS_DISPLAY_NUMBER = {
@@ -288,3 +293,5 @@ MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
 
 # Path on disk where images are saved
 BOT_IMAGES_PATH = ""
+
+#CORS_ORIGIN_ALLOW_ALL = True

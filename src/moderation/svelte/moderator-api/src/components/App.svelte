@@ -29,7 +29,7 @@
   
   // async data fetching function
   const fetchModerator = async (data, component) => {
-    const response = await fetch(`http://127.0.0.1:8007/moderators/${socialuserid}/`);
+    const response = await fetch(`${window.location.origin}/moderators/${socialuserid}/`);
     const json = await response.json();
     const jsn = json;
     console.log(jsn);
@@ -39,7 +39,7 @@
   
   const patchModerator = async (data) => {
       console.log(socialuserid);
-	  const url = `http://127.0.0.1:8007/moderators/${socialuserid}/`;
+	  const url = `${window.location.origin}/moderators/${socialuserid}/`;
 	  var check = document.getElementById("myonoffswitch").checked;
 	  const body = {'active': check};
 	  try {

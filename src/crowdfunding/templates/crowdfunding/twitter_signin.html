@@ -1,12 +1,10 @@
 {% load static %}
 {% if 'twitter' in backends.not_associated %}
 <div class="container-fluid bg-1">
-  <p>
-    Vous avez un compte Twitter? Merci de vous authentifier!
+  <p>Vous avez un compte Twitter? Merci de vous authentifier!
     <a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">
       <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
-    </a>
-  </p>
+    </a></p>
   {% if not user.is_authenticated %}
   <p>
   Vous n'avez pas de compte Twitter mais vous avez un compte sur
@@ -15,6 +13,8 @@
   connecter!
   </a>
   </p>
+  <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir 1 nom d'utilisateur.
+  <small>Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</small></p>
   {% endif %}
 </div>
 {% endif %}

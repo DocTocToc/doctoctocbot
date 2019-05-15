@@ -8,6 +8,7 @@
 {% endblock head_meta %}
 
 {% block head_css %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
 <link rel="stylesheet" href="{% static "/crowdfunding/crowdfunding.css" %}"/>
 {% endblock head_css %}

@@ -8,8 +8,9 @@
 {% endblock head_meta %}
 
 {% block head_css %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
-<link rel="stylesheet" href="{% static "/crowdfunding/crowdfunding.css" %}"/>
+<link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/crowdfunding.css" %}"/>
 {% endblock head_css %}
 
 {% block header_javascript %}
@@ -21,7 +22,6 @@
 {% block content %}
 
 {% include 'landing/donate.html' %}
-
 {% include 'crowdfunding/twitter_signin.html' %}
 <div id="donate"></div>
 {% include "crowdfunding/tiers.html" %}

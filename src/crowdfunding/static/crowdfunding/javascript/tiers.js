@@ -8,6 +8,9 @@ $(document).ready(function() {
     $('#option50').focus(function(){
         $('#id_preset_amount').val('50');
     });
+    $('#option75').focus(function(){
+        $('#id_preset_amount').val('75');
+    });
     $('#option100').focus(function(){
         $('#id_preset_amount').val('100');
     });
@@ -22,12 +25,12 @@ $(document).ready(function() {
     });
 });
 
-$( "#id_custom_amount" ).focus(function(){
-	 $( "#id_preset_amount" ).val('');
-	 $('.btn-group').find('label').removeClass('active')
-	  .end().find('[type="radio"]').prop('checked', false);
+$('#id_custom_amount').focus( function() {
+	$('.btn-group').find('label').removeClass('active');
+	$('.btn').prop('checked', false);
+	$("#id_preset_amount").val('');
 });
-    
+
 $( "#amount-radio-group" ).click(function(){
     $( "#id_custom_amount" ).val('');
    });

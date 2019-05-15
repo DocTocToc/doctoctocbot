@@ -2,7 +2,7 @@
 
 Nous souhaitons préserver les utilisateurs des applications doctoctoc.net de l'influence des firmes intervenant dans le domaine de la santé.
 
-Nous refusons les avantages en nature, dons et subventions de firmes intervenant dans le domaine de la santé ou d'autres organismes susceptibles de poursuivre d'autres intérêts que ceux de nos utilisateurs.
+Nous refusons les avantages en nature, dons et subventions de firmes intervenant dans le domaine de la santé ou d'autres organismes susceptibles de poursuivre d'autres intérêts que ceux de nos utilisateurs et de leurs patients.
 
 ## Ouverture
 Les services proposés par le bot @DocTocTocBot resteront pour toujours ouverts à tous les professionnels de santé qui participent ou ont participé aux conversations DocTocToc via leurs questions ou leurs réponses.
@@ -12,14 +12,14 @@ De même, tous les services proposés sur le site doctoctoc.net qui existent gr�
 ## Financement
 
 Nous souhaitons que 100% du financement provienne de nos utilisateurs.
-Nous lançons une campagne de financement participatif pour l'année 2019. Merci pour votre investissement financier.
+Nous lançons une campagne de [financement participatif](/financement/) pour l'année 2019. Merci pour votre investissement financier.
 
 DocTocToc.net a besoin de ressources pour financer:
 
 * recherche & développement
     * veille scientifique
     * veille technologique
-    * futurs outils de communication
+    * futurs outils de communication hors Twitter
 * programmation
     * robot Twitter
     * applications web
@@ -45,7 +45,7 @@ Dans le futur, si les ressources issues du financement participatif ne sont pas 
 
 * vidéoconférence chiffrée et sécurisée
 * messagerie médicale chiffrée et sécuriséé
-* autres services compatibles avec nos engagements et nos valeurs
+* autres services libres et open source compatibles avec nos engagements et nos valeurs
 
 ## Publicité
 

@@ -44,7 +44,7 @@ pensez à recadrer votre image pour lui donner un aspect strictement médical qu
 
 ## Secret professionnel
 
-Merci de veiller à ce que votre description des situations cliniques ne permette pas d'identifer un patient. Il est préférable de ne pas donner de lieu précis ou de date précise concernant 1 événement, surtout si ça n'apporte aucune information pertinente au niveau clinique. Par exemple, "j'ai vu ce cas rarissime en garde le XX/XX/XXXX dans les urgences du CHR de X." comporte un risque élevé d'identification par un tiers. Il est préférable de dire "j'ai vu ce cas rarissime en garde dans un service d'urgences il y a quelques jours".
+Merci de veiller à ce que votre description des situations cliniques ne permette pas d'identifier un patient. Il est préférable de ne pas donner de lieu précis ou de date précise concernant 1 événement, surtout si ça n'apporte aucune information pertinente au niveau clinique. Par exemple, "j'ai vu ce cas rarissime en garde le XX/XX/XXXX dans les urgences du CHR de X." comporte un risque élevé d'identification par un tiers. Il est préférable de dire "j'ai vu ce cas rarissime en garde dans un service d'urgences il y a quelques jours".
 Dire l'âge précis du patient n'est pas toujours indispensable, une tranche d'âge ou un arrondi suffisent souvent. Si votre patient a 34 ans ou 37 ans, vous pouvez dire qu'il a 35 ans sans perte d'information clinique.
 
 ## Publicité et promotion

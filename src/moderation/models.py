@@ -466,8 +466,15 @@ class Moderator(models.Model):
                                       verbose_name='socialuser',
                                       primary_key=True,
                                       on_delete=models.CASCADE)
-    active = models.BooleanField(default=False,
-                                 help_text="Is this moderator active?")
+    active = models.BooleanField(
+        default=False,
+        help_text="Is this moderator active?"
+    )
+    
+    public = models.BooleanField(
+        default=True,
+        help_text="Does this moderator want to appear on the public list?"
+    )
     
     def __str__(self):
         try:
@@ -486,7 +493,6 @@ class Moderator(models.Model):
         return True
     
     def has_object_read_permission(self, request):
-        #return True
         try:
             return request.user.socialuser == self.socialuser
         except:

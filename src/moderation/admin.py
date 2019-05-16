@@ -219,6 +219,17 @@ class ModeratorAdmin(admin.ModelAdmin):
         'pk',
         'socialuser',
         'active',
+        'public',
+    )
+    fields = (
+        'pk',
+        'socialuser',
+        'active',
+        'public',
+    )
+    readonly_fields = (
+        'pk',
+        'socialuser',
     )
 
 admin.site.register(Category, CategoryAdmin)

@@ -2,6 +2,8 @@ from django.urls import include, path
 from rest_framework import routers
 from moderation import views
 
+app_name = 'moderation'
+
 router = routers.DefaultRouter()
 router.register(r'moderators', views.ModeratorViewSet)
 

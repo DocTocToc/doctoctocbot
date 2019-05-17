@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-17 04:14+0200\n"
-"PO-Revision-Date: 2019-05-15 23:47+0200\n"
+"POT-Creation-Date: 2019-05-17 04:23+0200\n"
+"PO-Revision-Date: 2019-05-17 04:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -78,32 +78,36 @@ msgstr "Confidentialité"
 msgid "Moderation"
 msgstr "Modération"
 
-#: doctocnet/templates/doctocnet/navbar.html:42
+#: doctocnet/templates/doctocnet/navbar.html:41
+msgid "Moderators"
+msgstr "Modérateurs"
+
+#: doctocnet/templates/doctocnet/navbar.html:43
 msgid "Moderator guide"
 msgstr "Guide du modérateur"
 
-#: doctocnet/templates/doctocnet/navbar.html:44
+#: doctocnet/templates/doctocnet/navbar.html:45
 msgid "Contact"
 msgstr "Contact"
 
-#: doctocnet/templates/doctocnet/navbar.html:49
-#: doctocnet/templates/doctocnet/navbar.html:52
+#: doctocnet/templates/doctocnet/navbar.html:50
+#: doctocnet/templates/doctocnet/navbar.html:53
 msgid "Crowdfunding"
 msgstr "Financement participatif"
 
-#: doctocnet/templates/doctocnet/navbar.html:55
+#: doctocnet/templates/doctocnet/navbar.html:56
 msgid "Participate"
 msgstr "Je finance"
 
-#: doctocnet/templates/doctocnet/navbar.html:56
+#: doctocnet/templates/doctocnet/navbar.html:57
 msgid "Progress"
 msgstr "Progression"
 
-#: doctocnet/templates/doctocnet/navbar.html:57
+#: doctocnet/templates/doctocnet/navbar.html:58
 msgid "Funders"
 msgstr "Financeurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:71
+#: doctocnet/templates/doctocnet/navbar.html:72
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 

@@ -36,7 +36,7 @@
   
   // async data fetching function
   const fetchModerator = async (data, component) => {
-    const response = await fetch(`${window.location.origin}/moderators/${socialuserid}/`);
+    const response = await fetch(`${window.location.origin}/moderation/moderators/${socialuserid}/`);
     const json = await response.json();
     const jsn = json;
     console.log(jsn);
@@ -46,7 +46,7 @@
   
   const patchModerator = async (data) => {
       console.log(socialuserid);
-	  const url = `${window.location.origin}/moderators/${socialuserid}/`;
+	  const url = `${window.location.origin}/moderation/moderators/${socialuserid}/`;
 	  var active = document.getElementById("activeswitch").checked;
 	  var _public = document.getElementById("publicprivateswitch").checked;
 	  

@@ -164,7 +164,7 @@ class SocialUser(models.Model):
     def mini_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.profile.miniavatar.url))
     
-    mini_image_tag.short_description = 'Image'   
+    mini_image_tag.short_description = 'Image'
 
     def screen_name_tag(self):
         screen_name = self.profile.json.get("screen_name", None)
@@ -253,6 +253,9 @@ class Profile(models.Model):
 
     def mini_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.miniavatar.url))
+    
+    def get_normalavatar_url(self, obj):
+        return obj.normalavatar.url
     
     mini_image_tag.short_description = 'Image'   
 

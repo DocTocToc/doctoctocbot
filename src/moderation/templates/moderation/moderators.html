@@ -1,0 +1,15 @@
+{% extends "doctocnet/base.html" %}
+{% block title %}{{view.title}}{% endblock title %}
+{% block content %}
+<h2>{{view.title}}</h2>
+<a href="{% url "landing:moderation" %}">Rejoignez-nous!</a>
+<ul class="list-group">
+{% for moderator in moderators %}
+<li class="list-group-item">
+<img src="{{moderator.avatar}}"/>
+{{moderator.name}}
+<a href="https://twitter.com/{{moderator.screen_name}}">@{{moderator.screen_name}}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}

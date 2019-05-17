@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-16 20:41+0200\n"
-"PO-Revision-Date: 2019-05-07 16:26+0200\n"
+"POT-Creation-Date: 2019-05-17 04:14+0200\n"
+"PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -19,12 +19,12 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: moderation/models.py:212
-#, fuzzy
 msgid ""
 "Maximum number of category instances  that can be included in a quickreply "
 "is 20."
 msgstr ""
-"Le nombre maximal de catégories pouvant être ajoutées à un quickreply est 20."
+"Le nombre maximal de catégories pouvant être ajoutées à un DM QuickReply est "
+"20."
 
 #: moderation/social.py:81
 msgid "Followers"
@@ -70,3 +70,7 @@ msgstr ""
 #: moderation/tasks.py:101
 msgid "You will soon receive a moderation request for this user."
 msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."
+
+#: moderation/views.py:38
+msgid "Moderators"
+msgstr "Modérateurs"

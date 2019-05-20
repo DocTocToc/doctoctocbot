@@ -1,15 +1,29 @@
 {% extends "doctocnet/base.html" %}
 {% block title %}{{view.title}}{% endblock title %}
+{% block head_meta %}
+{{ block.super }}
+{% include "moderation/twitter_card.html" %}
+{% endblock head_meta %}
 {% block content %}
 <h2>{{view.title}}</h2>
 <a href="{% url "landing:moderation" %}">Rejoignez-nous!</a>
-<ul class="list-group">
-{% for moderator in moderators %}
-<li class="list-group-item">
-<img src="{{moderator.avatar}}"/>
-{{moderator.name}}
-<a href="https://twitter.com/{{moderator.screen_name}}">@{{moderator.screen_name}}</a>
-</li>
+
+
+{% for chunk in moderators %}
+<div class="row">
+{% for moderator in chunk %}
+<div class="column">
+  <div class="card" style="width: 14rem;">
+
+    <img class="card-img-top" src="{{moderator.avatar}}" alt="@{{moderator.screen_name}} Twitter avatar">
+    <div class="card-header">{{moderator.name}}</div>
+    <div class="card-footer">
+      <a href="https://twitter.com/{{moderator.screen_name}}" class="card-link">@{{moderator.screen_name}}</a>
+    </div>
+  </div>
+</div>
 {% endfor %}
-</ul>
+</div>
+{% endfor %}
+
 {% endblock %}

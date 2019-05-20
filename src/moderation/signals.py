@@ -6,6 +6,7 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from moderation.thumbnail import generate_thumbnail
 
 from dm.api import senddm
 from moderation.models import (
@@ -74,6 +75,7 @@ def moderator(sender, instance, created, **kwargs):
                     Moderator.objects.create(socialuser=instance.social_user)
                 except DatabaseError:
                     return
+            generate_thumbnail()
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):

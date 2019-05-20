@@ -16,7 +16,6 @@ from versions.models import Versionable
 import logging
 logger = logging.getLogger(__name__)
 
-
 class AuthorizedManager(models.Manager):
     def category_users(self, category):
         """
@@ -510,3 +509,12 @@ class Moderator(models.Model):
             return request.user.socialuser == self.socialuser
         except:
             return False
+
+class Image(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    img = models.ImageField(null=True,
+                          blank=True,
+                          upload_to='moderation/')
+    
+    def __str__(self):
+        return self.name

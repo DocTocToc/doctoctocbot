@@ -10,6 +10,8 @@ from django.utils.translation import gettext as _
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import F
 from django.conf import settings
+from django.core.paginator import Paginator
+from moderation.thumbnail import get_thumbnail_url
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,6 +41,13 @@ class ModeratorPublicList(TemplateView):
     template_name = "moderation/moderators.html"
 
     def get_context_data(self, *args, **kwargs):
+        # Yield successive n-sized 
+        # chunks from l. 
+        def divide_chunks(l, n): 
+            # looping till length l 
+            for i in range(0, len(l), n):  
+                yield l[i:i + n] 
+        
         context = super(ModeratorPublicList, self).get_context_data(*args, **kwargs)
         moderators_qs = (
             Moderator.objects.filter(public=True)
@@ -46,7 +55,7 @@ class ModeratorPublicList(TemplateView):
                 screen_name=KeyTextTransform('screen_name', 'socialuser__profile__json'),
                 name=KeyTextTransform('name', 'socialuser__profile__json'),
                 user_id=KeyTextTransform('id', 'socialuser__profile__json'),
-                avatar=F('socialuser__profile__normalavatar')
+                avatar=F('socialuser__profile__biggeravatar')
             ).values(
                 'screen_name',
                 'name',
@@ -58,8 +67,12 @@ class ModeratorPublicList(TemplateView):
         moderators = []
         for moderator in moderators_qs:
             moderator["avatar"] = media_url + moderator["avatar"]
-            moderators.append(moderator)     
+            moderators.append(moderator)
+            
+        n = 3
+        moderators = list(divide_chunks(moderators, n))    
         context["moderators"] = moderators
+        context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url()}"
         logger.debug(context)
         return context
 

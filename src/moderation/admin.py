@@ -12,7 +12,8 @@ from .models import (
     Moderation,
     TwitterList,
     Follower,
-    Moderator
+    Moderator,
+    Image
 )
 
 
@@ -242,3 +243,4 @@ admin.site.register(Moderation, ModerationAdmin)
 admin.site.register(TwitterList, TwitterListAdmin)
 admin.site.register(Follower, FollowerAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
+admin.site.register(Image)

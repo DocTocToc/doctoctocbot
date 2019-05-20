@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('socialuser', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='moderation.SocialUser', verbose_name='socialuser')),
                 ('active', models.BooleanField(default=False, help_text='Is this moderator active?')),
+                ('public', models.BooleanField(default=True, help_text='Does this moderator want to appear on the public list?')),
             ],
         ),
     ]

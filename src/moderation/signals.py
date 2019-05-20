@@ -1,6 +1,6 @@
 import logging
 import random
-
+import os
 from django.db.utils import DatabaseError
 from django.db import transaction
 from django.db.models.signals import post_save
@@ -43,6 +43,7 @@ def create_moderation(sender, instance, created, **kwargs):
             moderatorid_int_lst.extend(SocialUser.objects.devs())
         if not moderatorid_int_lst:
             return
+        random.seed(os.urandom(128))
         chosenmoderatorid_int = random.choice(moderatorid_int_lst)
         logger.debug(f"chosenmoderatorid_int: {chosenmoderatorid_int}")
         moderator_mi = SocialUser.objects.get(user_id = chosenmoderatorid_int)

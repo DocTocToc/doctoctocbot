@@ -20,4 +20,6 @@ urlpatterns = [
     path('guidelines/', TemplateView.as_view(template_name='landing/guidelines/index.html'), name='guidelines'),
     path('moderation/', TemplateView.as_view(template_name='landing/moderation/index.html'), name='moderation'),
     path('moderation/moderator', TemplateView.as_view(template_name='landing/moderator/index.html'), name='moderator'),
+    path('faq/', TemplateView.as_view(template_name='landing/faq/index.html'), name='faq'),
+
 ]

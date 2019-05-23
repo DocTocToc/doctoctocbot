@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-17 04:23+0200\n"
+"POT-Creation-Date: 2019-05-23 20:04+0200\n"
 "PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:212
+#: moderation/models.py:211
 msgid ""
 "Maximum number of category instances  that can be included in a quickreply "
 "is 20."
@@ -26,39 +26,39 @@ msgstr ""
 "Le nombre maximal de catégories pouvant être ajoutées à un DM QuickReply est "
 "20."
 
-#: moderation/social.py:81
+#: moderation/social.py:86
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:98
+#: moderation/social.py:103
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:98
+#: moderation/social.py:103
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:164
+#: moderation/social.py:169
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:167
+#: moderation/social.py:172
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:171
+#: moderation/social.py:176
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:211
+#: moderation/social.py:216
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:95
+#: moderation/tasks.py:97
 #, python-brace-format
 msgid ""
 "Please moderate this user: @{screen_name} Tweet: https://twitter.com/"
@@ -67,10 +67,10 @@ msgstr ""
 "Merci de modérer ce compte: @{screen_name} Tweet: https://twitter.com/"
 "{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:101
+#: moderation/tasks.py:103
 msgid "You will soon receive a moderation request for this user."
 msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."
 
-#: moderation/views.py:38
+#: moderation/views.py:40
 msgid "Moderators"
 msgstr "Modérateurs"

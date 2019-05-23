@@ -1,3 +1,5 @@
+Version du 23/05/2019.
+
 Ces règles de fonctionnement sont inscrites dans le code source et s'appliquent au robot Twitter [DocTocTocBot][bot].
 
 Vous pouvez aussi lire nos recommandations de bonnes pratiques à l'usage des utilisateurs: la [Charte](/guidelines) des utilisateurs du bot.
@@ -13,6 +15,11 @@ Je retweete exclusivement les comptes Twitter qui, selon mes modérateurs humain
   * sages-femmes
 
 D'autres professions de santé pourront être ajoutées ultérieurement après référendum.
+
+## Followers
+A partir du 24 mai 2019, si un utilisateur de Twitter pose une question #DocTocToc pour la première fois, je transmets sa question aux modérateurs uniquement s'il me suit.
+Je retweete les anciens utilisateurs qui ne me suivent pas (ceux qui ont déjà été verifiés et retweetés) jusqu'au 30/06/2019.
+A partir du 01/07/2019, je retweeterai uniquement mes followers.
 
 ## Thèmes
 J'essaie de retweeter uniquement les questions qui se rapportent à ces thèmes constatés et largement admis par la communauté DocTocToc:

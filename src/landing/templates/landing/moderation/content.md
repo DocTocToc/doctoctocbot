@@ -5,8 +5,11 @@ Un des objectifs du projet @DocTocTocBot est de filtrer ces messages hors-sujet 
 ## Qu'est-ce qui fait l'objet d'une modération?
 Les modérateurs de @DocTocTocBot modère les comptes Twitter, pas le contenu du message. Nous faisons confiance aux professionnels que nous retweetons pour suivre nos [suggestions d'utilisation du hashtag][guidelines] pour leur plus grand bénéfice et celui de toute la communauté DocTocToc.
 
+## Quels comptes font l'objet d'une modération?
+Depuis le 24 mai 2019, seuls les comptes qui suivent @DocTocTocBot peuvent faire l'objet d'une modération puis être retweetés s'ils exercent une des professions admises. Ainsi, nous respectons mieux le choix des twittos: celles et ceux qui souhaitent être retweetés par le bot suivent le bot et nous laissons les autres tranquilles. Nous pourrons mieux communiquer nos recommandations en envoyant un DM avec un lien vers les [recommandations de bonne pratique][guidelines] à chaque nouveau follower.
+
 ## Quels sont les règles suivies pour la modération?
-Les règles sont décidées collectivement par l'équipe des modérateurs depuis octobre 2018. Voir nos [recommandations][guidelines] de bonnes pratiques et les [règles][rules] du bot.
+Les règles sont décidées collectivement par l'équipe des modérateurs depuis octobre 2018. Voir nos [recommandations][guidelines] de bonne pratique et les [règles][rules] du bot.
 
 ## Comment se déroule la modération?
 

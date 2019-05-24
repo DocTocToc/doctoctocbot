@@ -1,9 +1,16 @@
 {% extends "doctocnet/base.html" %}
 
+{% load static %}
+
 {% block head_meta %}
-{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="" og_title="" og_description="" og_image="" %}
+{% static "landing/images/magna_carta.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
+{% with request.build_absolute_uri as og_url %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_title="Charte 🤖@DocTocTocBot" og_description="Charte des utilisateurs de @DocTocTocBot: recommandations de bonne pratique" %}
 {{ block.super }}
 {% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
 {% endwith %}
 {% endblock head_meta %}
 

@@ -51,7 +51,7 @@ Compte collectif représentant un Ordre professionnel, une association de profes
 
 ## DM Quick Reply
 
-<div><a href="/static/landing/quick-reply.png"><img class="img-fluid" src="/static/landing/quick-reply.png" alt="Quick Reply DM"></a></div>
+<div><a href="/static/landing/images/quick-reply.png"><img class="img-fluid" src="/static/landing/images/quick-reply.png" alt="Quick Reply DM"></a></div>
 
 Pour voir apparaître les boutons correspondant aux différents choix, le DM Quick Reply doit être le dernier message dans votre liste de DM. Si le bot vous envoie plusieurs modérations à la suite, il suffit de répondre à la dernière (chronologiquement) puis d'effacer votre réponse (elle est enregistrée par Twitter dès qu'une marque "check" apparaît: vous pouvez l'effacer sans crainte une seconde ou deux après l'avoir envoyée) et les DM du bot jusqu'au DM QuickReply correspondant à la modération précédente. Les boutons apparaitront et vous pourrez modérer.
 
@@ -82,7 +82,7 @@ Nous vous fournissons un graphique qui rend compte de l'analyse du réseau socia
 
 ### Followers
 
-<div><a href="/static/landing/doctoctocbot.jpeg"><img class="img-fluid" src="/static/landing/doctoctocbot.jpeg" alt="followers of @DocTocTocBot"></a></div>
+<div><a href="/static/landing/images/doctoctocbot.jpeg"><img class="img-fluid" src="/static/landing/doctoctocbot.jpeg" alt="followers of @DocTocTocBot"></a></div>
 
 Vous connaitrez le nombre et le pourcentage de followers (abonné·e·s) qui sont des utilisateurs vérifiés, et leur répartition parmi les différentes catégories de professionnels de santé. Ca vous donnera une bonne orientation sur sa profession.
 
@@ -107,7 +107,7 @@ Nous ajouterons des boutons "Pause" (1 jour, 1 semaine) pour indiquer que vous n
 
 Disponible dès maintenant dans l'onglet *Modération* de l'espace utilisateur du site, un interrupteur pour suspendre et reprendre la modération collective quand vous le souhaitez. Vous devez vous connecter via Twitter pour vous authentifier et accéder à votre espace utilisateur.
 
-<div><a href="/static/landing/moderation-switch.png"><img class="img-fluid" src="/static/landing/moderation-switch.png" alt="moderation switch"></a></div>
+<div><a href="/static/landing/images/moderation-switch.png"><img class="img-fluid" src="/static/landing/images/moderation-switch.png" alt="moderation switch"></a></div>
 
 Dans le futur il sera possible de choisir votre planning de modération à la carte via l'espace utilisateur du site web.
 

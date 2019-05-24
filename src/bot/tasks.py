@@ -27,7 +27,7 @@ def handle_on_status(statusid: int):
 def handle_retweet(statusid: int):
     from bot.doctoctocbot import retweet
     retweet(statusid)
-    
+
 @app.task
 def handle_image(url, filepath):
     r = requests.get(url, allow_redirects=True)

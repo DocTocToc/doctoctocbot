@@ -6,6 +6,7 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, connection
+from django.db.models import Q
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
@@ -73,18 +74,14 @@ class AuthorizedManager(models.Manager):
         """
         Return list of authorized users bigint user_id.
         """
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT user_id
-                FROM moderation_socialuser
-                WHERE id IN
-                (
-                SELECT social_user_id FROM moderation_usercategoryrelationship WHERE category_id IN
-                (SELECT id FROM moderation_category WHERE name = 'physician' OR name = 'midwife')
-                );""")
-            result = cursor.fetchall()
-            logging.debug(result)
-        return [row[0] for row in result]
+        cat_names = settings.MODERATION_AUTHORIZED_CATEGORIES
+        cat_instances = [Category.objects.get(name=cat) for cat in cat_names]
+        args_list = [Q(**{'category':cat_instance}) for cat_instance in cat_instances]
+        args = Q()  #defining args as empty Q class object to handle empty args_list
+        for each_args in args_list :
+            args = args | each_args
+        queryset = SocialUser.objects.filter(*(args,) ).exclude(donotretweet__current=True).values_list('user_id', flat=True)
+        return list(queryset)
 
     def active_moderators(self):
         try:
@@ -515,6 +512,29 @@ class Image(models.Model):
     img = models.ImageField(null=True,
                           blank=True,
                           upload_to='moderation/')
-    
     def __str__(self):
         return self.name
+
+class DoNotRetweet(models.Model):
+    socialuser = models.ForeignKey(
+        SocialUser,
+        verbose_name='socialuser',
+        on_delete=models.CASCADE,
+        related_name='donotretweet'
+    )
+    current = models.BooleanField(
+        default=True,
+        help_text="Is this row current?"
+    )
+    duration = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="Duration in days, null means unlimited"
+    )
+    comment = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return "{} {}".format(self.socialuser, self.current)
+    

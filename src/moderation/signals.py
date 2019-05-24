@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
 
-from dm.api import senddm
 from moderation.models import (
     Queue,
     Moderation,
@@ -18,9 +17,11 @@ from moderation.models import (
     Moderator
 )
 
-from .moderate import quickreply
-from .tasks import handle_create_update_profile
-from .tasks import handle_sendmoderationdm
+from moderation.tasks import (
+    handle_create_update_profile,
+    handle_sendmoderationdm,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ def create_moderation(sender, instance, created, **kwargs):
         logger.debug(f"chosenmoderatorid_int: {chosenmoderatorid_int}")
         moderator_mi = SocialUser.objects.get(user_id = chosenmoderatorid_int)
         Moderation.objects.create(moderator = moderator_mi, queue = instance)
-        
+
 @receiver(post_save, sender=Queue)
 def createprofile_queue(sender, instance, created, **kwargs):
     if created:

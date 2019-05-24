@@ -1,13 +1,19 @@
-from django.db.utils import DatabaseError
 import logging
 import tweepy
 
-from bot.doctoctocbot import is_following_rules, retweet, isknown, \
-    has_greenlight, has_retweet_hashtag, isselfstatus
+from bot.doctoctocbot import (
+    is_following_rules,
+    retweet,
+    isknown,
+    has_greenlight,
+    has_retweet_hashtag,
+    isselfstatus
+)
 from bot.lib.statusdb import Addstatus
 from bot.twitter import getAuth
-from conversation.models import create_tree
-from moderation.moderate import addtoqueue
+from conversation.models import create_tree, Tweetdj
+from moderation.moderate import process_unknown_user
+
 
 
 logger = logging.getLogger(__name__)
@@ -26,17 +32,29 @@ def triage(statusid):
     logger.info(f"3° isselfstatus(sjson) {isselfstatus(sjson)}")
     logger.info(f"4° not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}")
 
-    ok = (not isknown(sjson) and
-            has_retweet_hashtag(sjson) and
-            not isselfstatus(sjson) and
-            not ('retweeted_status' in sjson))
-    logger.info(f"ok: {ok}")
-    
-    if ok:
-        addtoqueue(sjson)
-
-    if is_following_rules(sjson):
+    if not isknown(sjson):
+        triage_user(sjson)
+    elif is_following_rules(sjson):
         create_tree(statusid)
         if has_greenlight(sjson) and has_retweet_hashtag(sjson):
             logger.info("Retweeting status %s: %s ", status.id, status.full_text)
             retweet(status.id)
+
+def triage_status(status_id):
+    try:
+        sjson = Tweetdj.objects.get(statusid=status_id).json
+    except Tweetdj.DoesNotExist:
+        triage(status_id)
+        return
+    
+    if (is_following_rules(sjson) and
+        has_greenlight(sjson) and
+        has_retweet_hashtag(sjson)):
+            logger.info("Retweeting status %s: %s ", sjson["id"], sjson["full_text"])
+            retweet(sjson["id"])
+       
+def triage_user(sjson):
+    if (has_retweet_hashtag(sjson) and
+        not isselfstatus(sjson) and
+        not ('retweeted_status' in sjson)):
+        process_unknown_user(sjson["user"]["id"], sjson["id"])

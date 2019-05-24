@@ -1,20 +1,24 @@
+import logging
+
 from django.db.utils import IntegrityError
-import logging  # , random
+from django.conf import settings
 
-from .models import Queue  # , SocialUser
-
+from moderation.models import Queue
+from moderation.social import followersids
 
 logger = logging.getLogger(__name__)
 
-def addtoqueue(sjson):
-    q = Queue.objects.create(user_id = sjson["user"]["id"], status_id = sjson["id"])
+def process_unknown_user(user_id, status_id):
+    if user_id in followersids(settings.BOT_ID):
+        addtoqueue(user_id, status_id)
+
+def addtoqueue(user_id, status_id):
+    q = Queue.objects.create(user_id = user_id, status_id = status_id)
     try:
         q.save()
     except IntegrityError:
         logging.exception('')
         return
-    # launch asynchronous moderation task
-    return
 
 def quickreply(id):
     from .models import Category

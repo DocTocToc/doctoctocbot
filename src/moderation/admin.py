@@ -13,7 +13,8 @@ from .models import (
     TwitterList,
     Follower,
     Moderator,
-    Image
+    Image,
+    DoNotRetweet
 )
 
 
@@ -244,3 +245,4 @@ admin.site.register(TwitterList, TwitterListAdmin)
 admin.site.register(Follower, FollowerAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
+admin.site.register(DoNotRetweet)

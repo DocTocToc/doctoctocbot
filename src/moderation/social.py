@@ -37,9 +37,14 @@ def followersids(user):
         fi = Follower.objects.filter(user=su).last()
     except Follower.DoesNotExist:
         fi = None
-    
+
     try:
-        ok = fi.created > datetime_limit
+        bot_cat = Category.objects.get(name='bot')
+    except Category.DoesNotExist:
+        return 
+
+    try:
+        ok = fi.created > datetime_limit and not (bot_cat in user.category.all())
         if ok:
             return fi.followers
     except AttributeError:

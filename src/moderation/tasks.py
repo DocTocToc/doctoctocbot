@@ -17,10 +17,10 @@ import os
 from common.utils import trim_grouper
 from django.utils.translation import gettext as _
 from moderation.social import send_graph_dm
+from bot.onstatus import triage_status
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
-
 
 @app.task
 def handle_backup_lists():
@@ -34,6 +34,8 @@ def handle_poll_lists_members():
 @app.task
 def handle_create_update_lists():
     create_update_lists()
+
+
 
 @app.task
 def handle_create_update_profile(userid_int):
@@ -218,7 +220,10 @@ def poll_moderation_dm():
             status_id = mod_mi.queue.status_id
             delete_moderation_queue(mod_mi)
             if cat_mi in Category.authorized.all():
-                handle_retweet.apply_async(args=(status_id,))
+                triage_status(status_id)
 
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM
+        
+
+        

@@ -1,3 +1,5 @@
+from django.utils.formats import localize
+
 from doctocnet.celery import app
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
@@ -43,8 +45,8 @@ def handle_campaign(name):
             )
             if receipts:
                 for r in receipts:
-                    logger.info("Message already sent on %s", r.created)
-                    celery_logger.info("Message already sent on %s", r.created)
+                    logger.info("Message already sent on %s", localize(r.created))
+                    celery_logger.info("Message already sent on %s", localize(r.created))
                 continue
             text=_format(msg, recipient, campaign)
             response = senddm(

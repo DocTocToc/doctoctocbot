@@ -43,7 +43,8 @@ def handle_campaign(name):
             )
             if receipts:
                 for r in receipts:
-                    logger.info(f"Message already sent on {r.created}")
+                    logger.info("Message already sent on %s", r.created)
+                    celery_logger.info("Message already sent on %s", r.created)
                 continue
             text=_format(msg, recipient, campaign)
             response = senddm(

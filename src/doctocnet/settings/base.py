@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'mptt',
     'dry_rest_permissions',
     #'corsheaders',
+    'django_celery_beat',
+    'messenger',
 ]
 
 MIDDLEWARE = [

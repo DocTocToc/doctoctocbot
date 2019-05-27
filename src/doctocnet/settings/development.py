@@ -63,10 +63,9 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": 'INFO',
         },
-#        "moderation.tasks": {
-#            "handlers": ["console", "console_debug_false", "mail_admins"],
-#            "level": 'INFO',
-#        },
+        "messenger.tasks": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],#            "level": 'INFO',
+        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }

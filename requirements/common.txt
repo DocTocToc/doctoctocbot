@@ -29,3 +29,4 @@ stripe
 matplotlib
 numpy
 dry-rest-permissions
+django-celery-beat

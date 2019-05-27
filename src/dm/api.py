@@ -1,3 +1,4 @@
+import json
 from .pythontwitter import twitter
 import logging
 
@@ -49,19 +50,28 @@ def senddm(text,
                            quick_reply=quick_reply,
                            attachment=attachment)
     except twitter.error.TwitterError as e:
+        error_msg = "message_create event (DM) error: %s" % e
         logger.error("message_create event (DM) error: %s", e)
-        return False
+        return error_msg
     
     logger.debug(response)
 
     try:
         response["event"]["created_timestamp"]
     except KeyError:
-        logger.error("Unknown message_create event (DM) error")
-        return False
+        """
+        {'errors': [{'code': 349, 'message': 'You cannot send messages to this user.'}]}
+        """
+        try:
+            error_msg = json.dumps(response)
+        except:
+            error_msg = "Unknown message_create event (DM) error"
+        
+        logger.error(error_msg)
+        return error_msg
 
     id = response["event"]["message_create"]["target"]["recipient_id"]
     txt = response["event"]["message_create"]["message_data"]["text"]
     msg = f"Sending DM '{txt}' to user_id {id} was successful"
     logger.info(msg)
-    return True
+    return response

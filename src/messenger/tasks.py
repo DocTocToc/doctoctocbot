@@ -50,7 +50,7 @@ def handle_campaign(name):
                 continue
             text=_format(msg, recipient, campaign)
             response = senddm(
-                msg.content,
+                text,
                 user_id=recipient.user_id
             )
             print(response)

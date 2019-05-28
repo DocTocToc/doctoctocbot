@@ -124,13 +124,13 @@ class CampaignMessage(models.Model):
     order = models.IntegerField(
         verbose_name    = _(u'Order'),
         help_text           = _(u'What order to display this person within the department.'),
-        unique=True,
     )
 
     class Meta:
         verbose_name = _(u"Campaign Message")
         verbose_name_plural = _(u"Campaign Messages")
         ordering = ['order',]
+        unique_together = ('campaign', 'order')
 
     def __str__(self):
         return (

@@ -43,6 +43,7 @@ def create_celery_logger_handler(logger, propagate):
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+"""
 app.conf.beat_schedule = {
     'poll-dm': {
         'task': 'dm.tasks.directmessages',
@@ -98,3 +99,4 @@ app.conf.beat_schedule = {
         'args': None,
         },
     }
+"""

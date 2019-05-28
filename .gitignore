@@ -41,3 +41,6 @@ src/gpgcontact/static/gpgcontact/script/private
 
 # ignore private subfolder of static folders
 **/static/private
+
+# ignore django_celery_beat default db file
+django_celery_beat.schedulers:DatabaseScheduler.db

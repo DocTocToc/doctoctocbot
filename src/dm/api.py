@@ -50,9 +50,8 @@ def senddm(text,
                            quick_reply=quick_reply,
                            attachment=attachment)
     except twitter.error.TwitterError as e:
-        error_msg = "message_create event (DM) error: %s" % e
         logger.error("message_create event (DM) error: %s", e)
-        return error_msg
+        return str(e)
     
     logger.debug(response)
 

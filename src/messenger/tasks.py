@@ -1,15 +1,25 @@
 from django.utils.formats import localize
 from django.conf import settings
 from doctocnet.celery import app
-from moderation.models import SocialUser
+from moderation.models import SocialUser, Follower
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
 from celery.utils.log import get_task_logger
 from moderation.social import followersids
 import logging
+import random
+import time
+import datetime
 
 logger = logging.getLogger(__name__)
 celery_logger = get_task_logger(__name__)
+
+def hoursago(hours):
+    delta = datetime.timedelta(hours=hours)
+    return datetime.datetime.now() - delta
+
+def randinterval():
+    return random.randint(10, 20)/10.0
 
 def _format(message, socialuser, campaign):
     d = {
@@ -32,6 +42,10 @@ def handle_campaign(name):
     followersids(bot_su)
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
+    receipts = Receipt.objects.filter(created__gte=hoursago(24))
+    limit = 1000
+    current_limit = limit - receipts.count()
+
     socialuser_lst = []
     for category in categories:
         cat_lst = category.socialuser_set.filter(user_id__in=bot_followers)
@@ -49,18 +63,50 @@ def handle_campaign(name):
                 message = msg,
                 user = recipient
             )
+            skip = False
             if receipts:
                 for r in receipts:
-                    logger.info("Message already sent on %s", localize(r.created))
-                    celery_logger.info("Message already sent on %s", localize(r.created))
+                    receipt_info = (f"Tried sending this on {localize(r.created)} "
+                                    f"Error: {r.error} ID: {r.event_id}")
+                    logger.info(receipt_info)
+                    celery_logger.info(receipt_info)
+                    code = None
+                    if r.error:
+                        try:
+                            code = r.error["errors"][0]["code"]
+                        except:
+                            pass
+                    if r.event_id or code in [420,429,88]:
+                        skip = True
+
+            if skip:
+                logger.info("SKIPPING!")
                 continue
+
             text=_format(msg, recipient, campaign)
-            response = senddm(
-                text,
-                user_id=recipient.user_id
-            )
-            print(response)
+
+            time.sleep(randinterval())
+
+            if current_limit>0:
+                response = senddm(
+                    text,
+                    user_id=recipient.user_id
+                )
+            else:
+                response = f"No remaining DM (limit={current_limit})"
+            
+            current_limit-=1
+
             r = Receipt(campaign= campaign, message=msg, user=recipient)
+            
+            try:
+                code = response["errors"][0]["code"]
+            except:
+                code = None
+
+            if code in [420,429,88]:
+                current_limit=0
+            
             try:
                 eventid = int(response["event"]["id"])
                 r.event_id = eventid

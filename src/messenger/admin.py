@@ -41,14 +41,16 @@ class ReceiptAdmin(admin.ModelAdmin):
         'message',
         'user',
         'event_id',
-        'error'
+        'error',
+        'created',
     )
     list_filter = [
         'campaign',
         'message',
         EventIdListFilter,
         'error',
-        'user'
+        'user',
+        'created',
     ]
 
 

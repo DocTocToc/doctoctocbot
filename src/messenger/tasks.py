@@ -44,7 +44,9 @@ def handle_campaign(name):
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
     limit = settings.MESSENGER_DM_LIMIT
-    current_limit = limit - receipts.count()
+    #current_limit = limit - receipts.count()
+    current_limit = limit
+
 
     socialuser_lst = []
     for category in categories:

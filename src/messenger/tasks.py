@@ -19,7 +19,7 @@ def hoursago(hours):
     return datetime.datetime.now() - delta
 
 def randinterval():
-    return random.randint(300, 600)/10.0
+    return random.randint(600, 1200)/10.0
 
 def _format(message, socialuser, campaign):
     d = {

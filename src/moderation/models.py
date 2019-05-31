@@ -448,10 +448,17 @@ class Follower(models.Model):
         on_delete=models.CASCADE
     )
     followers = ArrayField(
-        models.BigIntegerField()
+        models.BigIntegerField(),
+        null=True,
+        blank=True
         )
     created = models.DateTimeField(auto_now_add=True)
-    
+
+
+    class Meta:
+        get_latest_by = 'created'
+
+
     def __str__(self):
         screen_name = None
         if hasattr(self.user, "profile"):

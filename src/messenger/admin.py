@@ -47,7 +47,8 @@ class ReceiptAdmin(admin.ModelAdmin):
         'campaign',
         'message',
         EventIdListFilter,
-        'error'
+        'error',
+        'user'
     ]
 
 

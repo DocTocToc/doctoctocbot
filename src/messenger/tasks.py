@@ -1,9 +1,11 @@
 from django.utils.formats import localize
-
+from django.conf import settings
 from doctocnet.celery import app
+from moderation.models import SocialUser
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
 from celery.utils.log import get_task_logger
+from moderation.social import followersids
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,12 +28,16 @@ def handle_campaign(name):
 
     messages = campaign.messages.all()
     categories = campaign.categories.all()
-    
+    bot_su = SocialUser.objects.get(user_id=settings.BOT_ID)
+    followersids(bot_su)
+    bot_followers = Follower.objects.filter(user=bot_su).latest().followers
+
     socialuser_lst = []
     for category in categories:
-        socialuser_lst.extend(category.socialuser_set.all()) 
+        cat_lst = category.socialuser_set.filter(user_id__in=bot_followers)
+        socialuser_lst.extend(list(cat_lst)) 
     
-    print(socialuser_lst)
+    logger.debug("socialuser_lst %s", socialuser_lst)
 
     campaign.recipients.set(socialuser_lst)
     campaign.save()

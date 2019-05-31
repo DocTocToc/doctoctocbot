@@ -14,6 +14,7 @@ import operator
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone, translation
+from tweepy import TweepError
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,8 @@ def followersids(user):
         pass
 
     followersids = _followersids(su.user_id)
+    if followersids is None:
+        return
     
     try:
         Follower.objects.create(
@@ -65,7 +68,11 @@ def followersids(user):
 
 def _followersids(user_id):
     api = get_api()
-    return api.followers_ids(user_id)
+    try:
+        return api.followers_ids(user_id)
+    except TweepError as e:
+        logger.error("Tweepy Error: %s", e)
+        
 
 def graph(user):
     with translation.override(settings.TRANSLATION_OVERRIDE):

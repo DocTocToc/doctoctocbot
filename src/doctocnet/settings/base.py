@@ -297,3 +297,6 @@ MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
 BOT_IMAGES_PATH = ""
 
 #CORS_ORIGIN_ALLOW_ALL = True
+
+# Messenger DM per task limit
+MESSENGER_DM_LIMIT = 15

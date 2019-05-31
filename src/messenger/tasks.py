@@ -19,7 +19,7 @@ def hoursago(hours):
     return datetime.datetime.now() - delta
 
 def randinterval():
-    return random.randint(10, 20)/10.0
+    return random.randint(20, 30)/10.0
 
 def _format(message, socialuser, campaign):
     d = {
@@ -43,7 +43,7 @@ def handle_campaign(name):
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
-    limit = 1000
+    limit = settings.MESSENGER_DM_LIMIT
     current_limit = limit - receipts.count()
 
     socialuser_lst = []

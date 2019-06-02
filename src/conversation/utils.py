@@ -76,8 +76,6 @@ def hashtag(statusid):
         logger.info(f"Status {statusid} does not exist in table Tweetdj."
                     f"Error message: {e}")
         return
-    if (status_mi.hashtag0 is not None) and (status_mi.hashtag1 is not None):
-        return
     
     # remove hashtag character (#)
     for idx, keyword in enumerate(keyword_lst):

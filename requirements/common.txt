@@ -30,3 +30,4 @@ matplotlib
 numpy
 dry-rest-permissions
 django-celery-beat
+django-admin-rangefilter

@@ -136,7 +136,7 @@ TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
 BOT_ID = config('BOT_ID', cast=int)
 BOT_SCREEN_NAME = config('BOT_SCREEN_NAME')
-KEYWORD_TRACK_LIST = ["#doctoctoc", "#docstoctoc"]
+KEYWORD_TRACK_LIST = ["doctoctoc", "docstoctoc"]
 KEYWORD_RETWEET_LIST = ["#doctoctoc",]
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""

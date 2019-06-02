@@ -30,7 +30,7 @@ def main():
     track_list = []
     hashtags = settings.KEYWORD_TRACK_LIST
     for hashtag in hashtags:
-        track_list.append(hashtag)
+        track_list.append(f"#{hashtag}")
     stream.filter(track = track_list)
 
 if __name__ == '__main__':

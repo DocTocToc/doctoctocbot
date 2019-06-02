@@ -77,9 +77,6 @@ def hashtag(statusid):
                     f"Error message: {e}")
         return
     
-    # remove hashtag character (#)
-    for idx, keyword in enumerate(keyword_lst):
-        keyword_lst[idx] = keyword[1:]
     jsn = status_mi.json
     key = "hashtags"
     contains_tag0 = False
@@ -125,13 +122,6 @@ def usertotalhashtagcount(userid: int) -> int:
     for idx in range(len(settings.KEYWORD_TRACK_LIST)):
         count += userhashtagcount(userid, idx)
     return count
-
-def gethashtag(idx):
-    keyword_lst = settings.KEYWORD_TRACK_LIST
-    try:
-        return keyword_lst[idx]
-    except IndexError:
-        logger.error(f'Index {idx} caused an IndexError')
         
 def getcount(statusid):
     """

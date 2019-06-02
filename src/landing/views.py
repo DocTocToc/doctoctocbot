@@ -70,6 +70,6 @@ class UserInfo(LoginRequiredMixin, TemplateView):
             context["hashtag1"] = None
             if track_list is not None:
                 for idx in range(len(track_list)):
-                    context[f"hashtag{idx}"] = track_list[idx]
+                    context[f"hashtag{idx}"] = f"#{track_list[idx]}"
                   
         return context

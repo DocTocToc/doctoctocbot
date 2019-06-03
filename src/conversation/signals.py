@@ -7,4 +7,5 @@ from .tasks import handle_normalize
 
 @receiver(post_save, sender=Tweetdj)
 def normalize(sender, instance, created, **kwargs):
-    handle_normalize.apply_async(args=(instance.statusid,))
+    if created:
+        handle_normalize.apply_async(args=(instance.statusid,))

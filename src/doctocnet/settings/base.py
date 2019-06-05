@@ -161,6 +161,12 @@ LANGUAGES = [
 ]
 
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
+# you have to generate the locales you will use on your GNU/Linux server:
+# $ locale-gen fr_FR.UTF-8
+# $ locale-gen en_US.UTF-8
+# To check the list of installed locales:
+# $ locale -a
+
 SORTING_LOCALE = 'fr_FR.UTF-8'
 
 TIME_ZONE = 'Europe/Paris'

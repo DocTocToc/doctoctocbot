@@ -6,8 +6,9 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from rangefilter.filter import DateTimeRangeFilter
 from moderation.models import Category, SocialUser
-import locale
 import logging
+from multiprocessing import Pool
+from common.utils import localized_tuple_list_sort
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,12 @@ class CategoryListFilter(admin.SimpleListFilter):
     parameter_name = 'category'
 
     def lookups(self, request, model_admin):
-        cat_tp = tuple(Category.objects.all().values_list('name', 'label'))
+        lst = list(Category.objects.all().values_list('name', 'label'))
         if hasattr(settings, "SORTING_LOCALE"):
-            locale.setlocale(locale.LC_ALL, settings.SORTING_LOCALE)
-
-        return sorted(cat_tp, key=lambda x: locale.strxfrm(x[1]))
+            pool = Pool()
+            return pool.apply(localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE])
+        else:
+            return localized_tuple_list_sort(lst, 1)
 
     def queryset(self, request, queryset):
         if self.value():

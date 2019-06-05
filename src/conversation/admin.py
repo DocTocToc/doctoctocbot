@@ -1,10 +1,41 @@
+from django.conf import settings
 from django.contrib import admin
+from django.utils.translation import gettext as _
 from mptt.admin import MPTTModelAdmin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from rangefilter.filter import DateTimeRangeFilter 
+from rangefilter.filter import DateTimeRangeFilter
+from moderation.models import Category, SocialUser
+import locale
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .models import Treedj, Tweetdj
+
+class CategoryListFilter(admin.SimpleListFilter):
+
+    title = _('Category')
+
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        cat_tp = tuple(Category.objects.all().values_list('name', 'label'))
+        if hasattr(settings, "SORTING_LOCALE"):
+            locale.setlocale(locale.LC_ALL, settings.SORTING_LOCALE)
+
+        return sorted(cat_tp, key=lambda x: locale.strxfrm(x[1]))
+
+    def queryset(self, request, queryset):
+        if self.value():
+            userids = (
+                SocialUser.objects.filter(
+                    category=Category.objects.get(name=self.value())).
+                values_list('user_id', flat=True)
+            )
+            return queryset.filter(userid__in=userids)
+        else:
+            return queryset
 
 
 class TweetdjAdmin(admin.ModelAdmin):
@@ -18,8 +49,8 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag1',
         'quotedstatus',
         'retweetedstatus',
-        'deleted'
-        
+        'deleted',
+        CategoryListFilter,
     )
 
     def status_link(self, obj):

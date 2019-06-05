@@ -160,6 +160,8 @@ LANGUAGES = [
 
 ]
 
+# use this locale to sort localized strings, default to 'en_US.UTF-8'
+SORTING_LOCALE = 'fr_FR.UTF-8'
 
 TIME_ZONE = 'Europe/Paris'
 

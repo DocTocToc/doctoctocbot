@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 from django.urls import reverse
 from django.utils.safestring import mark_safe

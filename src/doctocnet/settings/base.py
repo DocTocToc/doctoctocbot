@@ -35,6 +35,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.102']
 
 SITE_ID = 1
+WAGTAIL_SITE_NAME = 'DocTocToc.net'
 
 # Application definition
 
@@ -69,6 +70,24 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'messenger',
     'rangefilter',
+# wagtail start
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
+    
+    'modelcluster',
+    'taggit',
+# wagtail stop
+# wagtail blog
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +103,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+# wagtail start
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+# wagtail stop
 ]
 
 ROOT_URLCONF = 'doctocnet.urls'

@@ -18,6 +18,11 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
+# wagtail start
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.core import urls as wagtail_urls
+# wagtail stop
 
 urlpatterns = [
     path('', include('landing.urls')),
@@ -35,6 +40,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
+    
+    # wagtail
+    re_path(r'^cms/', include(wagtailadmin_urls)),
+    re_path(r'^documents/', include(wagtaildocs_urls)),
+#    re_path(r'^pages/', include(wagtail_urls)),
+    re_path(r'', include(wagtail_urls)),
+
 ]
 
 # Use static() to add url mappings to serve static files during development (only)

@@ -31,3 +31,4 @@ dry-rest-permissions
 django-celery-beat
 django-admin-rangefilter
 vine==1.3.0
+wagtail

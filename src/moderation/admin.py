@@ -3,6 +3,7 @@ from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+from rangefilter.filter import DateRangeFilter
 from .models import (
     SocialUser,
     UserCategoryRelationship,
@@ -234,6 +235,48 @@ class ModeratorAdmin(admin.ModelAdmin):
         'socialuser',
     )
 
+class DoNotRetweetAdmin(admin.ModelAdmin):
+    list_display = (
+        'socialuser',
+        'action',
+        'start',
+        'stop',
+        'moderator',
+        'created',
+        'updated',
+        'current',
+        'comment'
+    )
+    fields = (
+        'socialuser',
+        'action',
+        'start',
+        'stop',
+        'moderator',
+        'created',
+        'updated',
+        'current',
+        'comment'
+    )
+    readonly_fields = (
+        'created',
+        'updated',
+    )
+    list_filter = (
+        'current',
+        ('start', DateRangeFilter),
+        ('stop', DateRangeFilter),
+        ('created', DateRangeFilter),
+        ('updated', DateRangeFilter),
+        'socialuser',
+        'moderator',
+        'action',
+
+    )
+    search_fields = (
+        'comment',    
+    )
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 
@@ -245,4 +288,4 @@ admin.site.register(TwitterList, TwitterListAdmin)
 admin.site.register(Follower, FollowerAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
-admin.site.register(DoNotRetweet)
+admin.site.register(DoNotRetweet, DoNotRetweetAdmin)

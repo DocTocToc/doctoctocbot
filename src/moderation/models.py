@@ -1,7 +1,8 @@
 import logging
+from datetime import date
 from os.path import stat
 from sys import getprofile
-
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -533,15 +534,33 @@ class DoNotRetweet(models.Model):
         default=True,
         help_text="Is this row current?"
     )
-    duration = models.IntegerField(
-        blank=True,
-        null=True,
-        help_text="Duration in days, null means unlimited"
-    )
+    start = models.DateField(default=date.today)
+    stop = models.DateField(default=date.today)
     comment = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
-    updated =  models.DateTimeField(auto_now=True)
-    
+    updated =  models.DateTimeField(auto_now=True)   
+    WARN = 'W'
+    MODERATE = 'M'
+    BAN = 'B'
+    DNR_CHOICES = [
+        (WARN, _('Warn')),
+        (MODERATE, _('Moderate')),
+        (BAN, _('Ban')),
+    ]
+    action = models.CharField(
+        max_length=1,
+        choices=DNR_CHOICES,
+        default=WARN,
+    )
+    moderator = models.ForeignKey(
+        SocialUser,
+        verbose_name='Moderator',
+        on_delete=models.CASCADE,
+        related_name='donotretweet_moderations',
+        default=1
+    )
+
+
     def __str__(self):
         return "{} {}".format(self.socialuser, self.current)
     

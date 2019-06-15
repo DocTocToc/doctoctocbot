@@ -88,6 +88,8 @@ INSTALLED_APPS = [
 # wagtail stop
 # wagtail blog
     'blog',
+    'meta',
+    'wagtailmetadata',
 ]
 
 MIDDLEWARE = [
@@ -332,3 +334,8 @@ BOT_IMAGES_PATH = ""
 
 # Messenger DM per task limit
 MESSENGER_DM_LIMIT = 15
+
+# django-meta
+META_SITE_PROTOCOL = 'https'
+META_USE_SITES = True
+META_USE_TWITTER_PROPERTIES = True

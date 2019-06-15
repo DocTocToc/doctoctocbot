@@ -1,11 +1,14 @@
+from django.utils import six
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Page, Orderable, PageBase
 from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 from django.utils.translation import ugettext_lazy as _
+
+from wagtailmetadata.models import MetadataPageMixin
 
 
 class BlogIndexPage(Page):
@@ -22,7 +25,8 @@ class BlogIndexPage(Page):
         context['blogpages'] = blogpages
         return context
     
-class BlogPage(Page):
+class BlogPage(six.with_metaclass(PageBase, MetadataPageMixin, Page)):
+    promote_panels = Page.promote_panels + MetadataPageMixin.panels
     date = models.DateField(_("Post date"))
     intro = RichTextField(max_length=500)
     body = RichTextField(blank=True)

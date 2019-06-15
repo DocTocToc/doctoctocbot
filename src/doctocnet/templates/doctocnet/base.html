@@ -1,8 +1,16 @@
 {% load i18n %}
+
+<!-- django-meta & wagtail-metadata-mixin -->
+{% load meta %}
+
 {# HTML5 declaration #}
 <!DOCTYPE html>
 <html>
-<head>
+
+<!-- django-meta & wagtail-metadata-mixin -->
+<head {% meta_namespaces %}>
+{% include 'meta/meta.html' %}
+
 <link rel="icon" data-emoji="🤖" type="image/png">
 
 {% load static %}
@@ -70,6 +78,7 @@ $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
 {% block header_javascript %}
 <!--  add your scripts here -->
 {% endblock header_javascript %}
+
 </head>
 
 <body>

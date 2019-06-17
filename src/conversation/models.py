@@ -111,9 +111,9 @@ class Treedj(MPTTModel):
         return "https://twitter.com/statuses/" +  str(self.statusid)
     
     def status_url_tag(self):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">🔗</a>' % (self.statusid))
+        return mark_safe('<a href="https://twitter.com/statuses/%s">🐦</a>' % (self.statusid))
 
-    status_url_tag.short_description = "url"
+    status_url_tag.short_description = "Tweet"
 
     def status_text_tag(self):
         try:

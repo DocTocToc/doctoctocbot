@@ -4,6 +4,7 @@ from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from rangefilter.filter import DateRangeFilter
+from conversation.models import Tweetdj
 from .models import (
     SocialUser,
     UserCategoryRelationship,
@@ -17,6 +18,26 @@ from .models import (
     Image,
     DoNotRetweet
 )
+
+
+def tweetdj_link(self, obj):
+    """
+    Return a link to the corresponding Tweetdj object admin page
+    """
+    if type(obj) is Queue:
+        _statusid = obj.status_id
+    elif type(obj) is Moderation:
+        _statusid = obj.queue.status_id
+
+    if Tweetdj.objects.filter(statusid=_statusid).exists():
+        return mark_safe(
+            '<a href="{}">🗃️</a>'
+            .format(
+                reverse("admin:conversation_tweetdj_change", args=(_statusid,))
+            )
+        )
+    else:
+        return "❌"
 
 
 class CategoryRelationshipInline(admin.TabularInline):
@@ -92,8 +113,24 @@ class CategoryAdmin(admin.ModelAdmin):
     readonly_fields = ('name', 'show_relationships_count',)
     
 class QueueAdmin(VersionedAdmin):
-    list_display = ('mini_image_tag', 'screen_name_link', 'name_tag', 'user_id', 'status_tag', 'status_link',)
-    readonly_fields = ('mini_image_tag', 'screen_name_link', 'name_tag', 'user_id', 'status_tag','status_link',)
+    list_display = (
+        'mini_image_tag',
+        'screen_name_link',
+        'name_tag',
+        'user_id',
+        'status_tag',
+        'tweet_link',
+        'status_object',
+    )
+    readonly_fields = (
+        'mini_image_tag',
+        'screen_name_link',
+        'name_tag',
+        'user_id',
+        'status_tag',
+        'tweet_link',
+        'status_object',    
+    )
     list_display_show_identity = False
     list_display_show_end_date = False
     list_display_show_start_date = True
@@ -113,13 +150,21 @@ class QueueAdmin(VersionedAdmin):
     screen_name_link.short_description = 'SocialUser'
     
 
-    def status_link(self, obj):
+    def tweet_link(self, obj):
         return mark_safe(
-            '<a href="https://twitter.com/{screen_name}/status/{status_id}" target="_blank">{status_id}</a>'.format(
+            '<a href="https://twitter.com/{screen_name}/status/{status_id}" target="_blank"alt="{status_id}">🐦</a>'.format(
                 screen_name = obj.screen_name_tag(),
                 status_id = obj.status_id
             )
         )
+    
+    tweet_link.short_description = "Tweet"
+
+    def status_object(self, obj):
+        return tweetdj_link(self, obj)
+    
+    status_object.short_description = "Status"
+
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
@@ -129,17 +174,34 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class ModerationAdmin(VersionedAdmin):
     pass
-    list_display = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'screen_name_link', 'status_tag', 'status_link',)
+    list_display = (
+        'moderator_mini_image_tag',
+        'moderator_screen_name_tag',
+        'moderated_mini_image_tag',
+        'screen_name_link',
+        'status_tag',
+        'tweet_link',
+        'status_object',
+    )
     fields = ('moderator_mini_image_tag',
               'moderator_screen_name_tag',
               'moderated_mini_image_tag',
               'screen_name_link',
               'status_tag',
-              'status_link',
+              'tweet_link',
+              'status_object',
               'id',
               'identity',
               )
-    readonly_fields = ('moderator_mini_image_tag', 'moderator_screen_name_tag', 'moderated_mini_image_tag', 'screen_name_link', 'status_tag', 'status_link',)
+    readonly_fields = (
+        'moderator_mini_image_tag',
+        'moderator_screen_name_tag',
+        'moderated_mini_image_tag',
+        'screen_name_link',
+        'status_tag',
+        'tweet_link',
+        'status_object',    
+    )
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
@@ -158,13 +220,19 @@ class ModerationAdmin(VersionedAdmin):
     
     screen_name_link.short_description = 'Moderated screen_name'
     
-    def status_link(self, obj):
+    def status_object(self, obj):
+        return tweetdj_link(self, obj)
+    
+    status_object.short_description = "Status"
+    
+    def tweet_link(self, obj):
         return mark_safe(
             '<a href="https://twitter.com/{screen_name}/status/{status_id}" target="_blank">🐦</a>'.format(
                 screen_name = obj.moderated_screen_name_tag(),
                 status_id = obj.queue.status_id
             )
         )
+    tweet_link.short_description = "Tweet"
 
 class TwitterListAdmin(admin.ModelAdmin):
     list_display = (

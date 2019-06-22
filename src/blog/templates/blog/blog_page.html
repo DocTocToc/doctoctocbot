@@ -10,17 +10,22 @@
 {% block content %}
     <h1>{{ page.title }}</h1>
     <p class="meta">{{ page.date }}</p>
+    {% if page.authors %}
+      <p>{% trans "By" %}
+      {% for author in page.authors.all %}@{{author.socialuser.screen_name_tag}}{% if page.authors.count > 1 and not forloop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
 
-    <div class="intro">{{ page.intro|richtext }}</div>
-
-    {{ page.body|richtext }}
-    
     {% for item in page.gallery_images.all %}
         <div style="float: left; margin: 10px">
             {% image item.image fill-240x240 %}
             <p>{{ item.caption }}</p>
         </div>
     {% endfor %}
+
+    <div class="intro">{{ page.intro|richtext }}</div>
+
+    {{ page.body|richtext }}
+    
+
     
     <p><a href="{{ page.get_parent.url }}">{% trans "Return to blog" %}</a></p>
 

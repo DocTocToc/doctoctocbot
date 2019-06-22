@@ -8,6 +8,7 @@ from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, connection
 from django.db.models import Q
+from django.db.utils import DatabaseError
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
@@ -149,9 +150,9 @@ class SocialUser(models.Model):
     
     def __str__(self):
         try:
-            return str("%s %i " % (self.profile.json["screen_name"], self.user_id))
+            return str("%i | %s | %i " % (self.pk, self.profile.json["screen_name"], self.user_id))
         except:
-            return str("%i %s " % (self.user_id, self.social_media))
+            return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
 
     def normal_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.profile.normalavatar.url))
@@ -214,11 +215,19 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     
+def limit_user_category_relationship_moderator():
+    return {'category__name': 'moderator'}
 
 class UserCategoryRelationship(models.Model):
     social_user = models.ForeignKey('SocialUser', on_delete=models.CASCADE, related_name="categoryrelationships")
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name="relationships")
-    moderator = models.ForeignKey('SocialUser', on_delete=models.CASCADE, related_name='moderated', null=True)
+    moderator = models.ForeignKey(
+        'SocialUser',
+        on_delete=models.CASCADE,
+        related_name='moderated',
+        null=True,
+        limit_choices_to = limit_user_category_relationship_moderator    
+    )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
 
@@ -564,3 +573,22 @@ class DoNotRetweet(models.Model):
     def __str__(self):
         return "{} {}".format(self.socialuser, self.current)
     
+def addsocialuser(tweetdj_instance):
+    try:
+        su = SocialUser.objects.get(user_id=tweetdj_instance.userid)
+    except SocialUser.DoesNotExist:    
+        try:
+            sm, _ = SocialMedia.objects.get_or_create(name="twitter")
+        except DatabaseError as e:
+            logger.error(e)
+            return
+        try:
+            su, _ = SocialUser.objects.get_or_create(
+                user_id=tweetdj_instance.userid,
+                social_media = sm
+            )
+        except DatabaseError as e:
+            logger.error(e)
+            return
+    tweetdj_instance.socialuser=su
+    tweetdj_instance.save()

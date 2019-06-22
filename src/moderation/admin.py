@@ -66,13 +66,8 @@ class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
     extra = 10
     fk_name = 'social_user'
+
     
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "moderator":
-            kwargs["queryset"] = SocialUser.objects.filter(id=request.user.socialuser.id)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media_profile', )

@@ -8,7 +8,7 @@ class UserLookup(LookupChannel):
     model = get_user_model()
 
     def get_query(self, q, request):
-        return self.model.objects.filter(username=q)
+        return self.model.objects.filter(username__icontains=q).order_by('username')
 
-    #def format_item_display(self, item):
-    #    return u"<span class='tag'>%s</span>" % item.name
+    def format_item_display(self, item):
+        return u"<span class='tag'>%s</span>" % item.username

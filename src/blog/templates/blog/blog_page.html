@@ -1,4 +1,5 @@
 {% extends "doctocnet/base.html" %}
+{% load i18n %}
 
 {% load wagtailcore_tags wagtailimages_tags %}
 
@@ -21,6 +22,6 @@
         </div>
     {% endfor %}
     
-    <p><a href="{{ page.get_parent.url }}">Return to blog</a></p>
+    <p><a href="{{ page.get_parent.url }}">{% trans "Return to blog" %}</a></p>
 
 {% endblock %}

@@ -23,6 +23,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.core import urls as wagtail_urls
 # wagtail stop
+from ajax_select import urls as ajax_select_urls
 
 urlpatterns = [
     path('', include('landing.urls')),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('oauth/', include('social_django.urls', namespace='social')),
 
     path('conversation/', include('conversation.urls')),
+    re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),

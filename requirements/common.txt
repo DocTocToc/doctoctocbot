@@ -34,3 +34,4 @@ vine==1.3.0
 wagtail
 django-meta
 wagtail-metadata-mixin
+django-ajax-selects

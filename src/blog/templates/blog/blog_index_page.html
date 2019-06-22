@@ -1,5 +1,5 @@
 {% extends "doctocnet/base.html" %}
-
+{% load i18n %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block title %}{{ page.title }}{% endblock title %}
@@ -14,7 +14,10 @@
     {% for post in blogpages %}
         {% with post=post.specific %}
             <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
-        
+            <p class="meta">{{ post.date }}</p>
+            {% if post.authors %}
+            <p>{% trans "By" %}
+              {% for author in post.authors.all %}@{{author.socialuser.screen_name_tag}}{% if post.authors.count > 1 and not forloop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
             {% with post.main_image as main_image %}
             {% if main_image %}{% image main_image fill-120x120 %}{% endif %}
             {% endwith %}

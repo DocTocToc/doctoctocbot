@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import BlogPage
 
-# Register your models here.
+
+class BlogPageAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['authors']
+
+admin.site.register(BlogPage, BlogPageAdmin)

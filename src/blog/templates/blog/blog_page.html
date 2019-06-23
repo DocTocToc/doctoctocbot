@@ -15,7 +15,7 @@
       {% for author in page.authors.all %}@{{author.socialuser.screen_name_tag}}{% if page.authors.count > 1 and not forloop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
 
     {% for item in page.gallery_images.all %}
-        <div style="float: left; margin: 10px">
+        <div class="mr mb" style="float: left; margin: 1.5em">
             {% image item.image fill-240x240 %}
             <p>{{ item.caption }}</p>
         </div>

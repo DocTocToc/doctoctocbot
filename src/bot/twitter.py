@@ -3,25 +3,40 @@
 
 import logging
 import tweepy
+from bot.models import Account
 
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-def getAuth():
+def getAuth(username=None):
     "get Tweepy OAuthHandler authentication object"
-    auth = tweepy.OAuthHandler(
-        settings.TWITTER_CONSUMER_KEY,
-        settings.TWITTER_CONSUMER_SECRET
-    )
-    auth.set_access_token(
-        settings.TWITTER_ACCESS_TOKEN,
-        settings.TWITTER_ACCESS_TOKEN_SECRET
-    )
+    if username:
+        try:
+            account = Account.objects.get(username=username)
+        except Account.DoesNotExist:
+            return getAuth()
+        auth = tweepy.OAuthHandler(
+            account.twitter_consumer_key,
+            account.twitter_consumer_secret
+        )
+        auth.set_access_token(
+            account.twitter_access_token,
+            account.twitter_access_token_secret
+        )
+    else:
+        auth = tweepy.OAuthHandler(
+            settings.TWITTER_CONSUMER_KEY,
+            settings.TWITTER_CONSUMER_SECRET
+        )
+        auth.set_access_token(
+            settings.TWITTER_ACCESS_TOKEN,
+            settings.TWITTER_ACCESS_TOKEN_SECRET
+        )
     return auth
 
-def get_api():
-    return tweepy.API(getAuth(), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+def get_api(username=None):
+    return tweepy.API(getAuth(username), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.

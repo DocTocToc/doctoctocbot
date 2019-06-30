@@ -7,7 +7,8 @@ from bot.doctoctocbot import (
     isknown,
     has_greenlight,
     has_retweet_hashtag,
-    isselfstatus
+    isselfstatus,
+    is_follower
 )
 from bot.lib.statusdb import Addstatus
 from bot.twitter import getAuth
@@ -36,7 +37,11 @@ def triage(statusid):
         triage_user(sjson)
     elif is_following_rules(sjson):
         create_tree(statusid)
-        if has_greenlight(sjson) and has_retweet_hashtag(sjson):
+        if (
+            has_greenlight(sjson) and
+            has_retweet_hashtag(sjson) and
+            is_follower(sjson['user']['id'])    
+        ):
             logger.info("Retweeting status %s: %s ", status.id, status.full_text)
             retweet(status.id)
 
@@ -47,11 +52,14 @@ def triage_status(status_id):
         triage(status_id)
         return
     
-    if (is_following_rules(sjson) and
+    if (
+        is_following_rules(sjson) and
         has_greenlight(sjson) and
-        has_retweet_hashtag(sjson)):
-            logger.info("Retweeting status %s: %s ", sjson["id"], sjson["full_text"])
-            retweet(sjson["id"])
+        has_retweet_hashtag(sjson) and
+        is_follower(sjson['user']['id'])
+    ):
+        logger.info("Retweeting status %s: %s ", sjson["id"], sjson["full_text"])
+        retweet(sjson["id"])
        
 def triage_user(sjson):
     if (has_retweet_hashtag(sjson) and

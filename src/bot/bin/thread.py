@@ -9,7 +9,13 @@ from moderation.models import SocialUser
 from django.conf import settings
 
 from ..addstatusdj import addstatus
-from ..doctoctocbot import retweet, isquestion, has_greenlight, has_retweet_hashtag
+from ..doctoctocbot import (
+    retweet,
+    isquestion,
+    has_greenlight,
+    has_retweet_hashtag,
+    is_follower
+)
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +62,11 @@ def retweetroot(statusid: int):
         if parent_mi.parentid is None:
             add_root_to_tree(parent_mi.statusid)
             if hasquestionmark:
-                if has_rt_hashtag and has_greenlight(parent_mi.json):
+                if (
+                    has_rt_hashtag and
+                    has_greenlight(parent_mi.json) and 
+                    is_follower(parent_mi.json['user']['id'])
+                ):
                     retweet(parent_mi.statusid)
                 break
             else:
@@ -66,10 +76,6 @@ def retweetroot(statusid: int):
         current_mi = parent_mi
         
     return
-
-#def question(statusid):
-#    raw_html = simple_get(f'https://twitter.com/statuses/{statusid}')
-#    return raw_html
 
 def add_root_to_tree(statusid):
     try:
@@ -119,12 +125,20 @@ def question(statusid: int) -> bool:
             if has_questionmark(tweet) and is_same_author(hashtag_tweet, tweet):
                 if hashtag_tweet.statusid == tweet.conversationid:
                     add_root_to_tree(hashtag_tweet.statusid)
-                    if _isauthorized(hashtag_tweet) and has_rt_hashtag:
+                    if (
+                        _isauthorized(hashtag_tweet) and
+                        has_rt_hashtag and
+                        is_follower(hashtag_tweet.userid)
+                    ):
                         retweet(hashtag_tweet.statusid)
                     return True
                 elif is_same_author(hashtag_tweet, start_tweet):
                     add_root_to_tree(start_tweet.statusid)
-                    if _isauthorized(start_tweet) and has_rt_hashtag:
+                    if (
+                        _isauthorized(start_tweet) and
+                        has_rt_hashtag and
+                        is_follower(start_tweet.userid)
+                    ):
                         retweet(start_tweet.statusid)
                     return True
     return False

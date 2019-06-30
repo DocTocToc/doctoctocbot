@@ -4,7 +4,7 @@ from tweepy.streaming import StreamListener
 
 from django.conf import settings
 from bot.twitter import getAuth
-
+from conversation.models import Hashtag
 from .tasks import handle_on_status
 from bot.lib.status import status_json_log
 
@@ -28,7 +28,7 @@ def main():
     stream = tweepy.Stream(getAuth(), l)
     #This line filter Twitter Streams to capture data by the keywords
     track_list = []
-    hashtags = settings.KEYWORD_TRACK_LIST
+    hashtags = Hashtag.objects.values_list("hashtag", flat=True)
     for hashtag in hashtags:
         track_list.append(f"#{hashtag}")
     stream.filter(track = track_list)

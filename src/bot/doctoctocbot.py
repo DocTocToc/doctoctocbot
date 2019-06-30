@@ -25,6 +25,7 @@ from django.conf import settings
 
 from bot.twitter import getAuth
 from moderation.models import SocialUser
+from moderation.social import update_followersids
 
 from .addstatusdj import addstatus_if_not_exist
 from .tasks import handle_retweetroot, handle_question
@@ -167,7 +168,12 @@ def isreplacement( status ):
                      bool(wordlist.intersection(remplacantbadlist)))
     logger.debug("bool(replacement) == %s", bool(replacement))
     return bool(replacement)
-    
+
+def is_follower(userid):
+    is_follower = userid in update_followersids(settings.BOT_ID)
+    logger.info(f"5° is_follower: {is_follower}")
+    return is_follower
+
 def retweet(status_id) -> bool:
     api = tweepy.API(getAuth())
     try:

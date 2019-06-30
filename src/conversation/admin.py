@@ -13,7 +13,11 @@ from moderation.models import SocialUser
 
 logger = logging.getLogger(__name__)
 
-from .models import Treedj, Tweetdj
+from .models import (
+    Treedj,
+    Tweetdj,
+    Hashtag,
+)
 
 
 def screen_name_link(self, obj):
@@ -74,10 +78,48 @@ class CategoryListFilter(admin.SimpleListFilter):
 
 
 class TweetdjAdmin(admin.ModelAdmin):
-    list_display = ('statusid', 'userid', 'screen_name', 'status_text_tag', 'status_link', 'hashtag0', 'hashtag1', 'created_at', 'quotedstatus', 'retweetedstatus', 'deleted',)
+    list_display = (
+        'statusid',
+        'userid',
+        'socialuser',
+        'screen_name',
+        'status_text_tag',
+        'status_link',
+        'hashtag0',
+        'hashtag1',
+        'created_at',
+        'quotedstatus',
+        'retweetedstatus',
+        'deleted',    
+    )
     search_fields = ['statusid', 'userid', 'json',]
-    fields = ('statusid', 'userid', 'screen_name', 'status_text_tag', 'status_url_tag', 'json', 'hashtag0', 'hashtag1', 'created_at', 'quotedstatus', 'retweetedstatus',)
-    readonly_fields = ('statusid', 'userid', 'screen_name', 'status_text_tag', 'status_url_tag', 'json', 'created_at', 'quotedstatus', 'retweetedstatus',)
+    fields = (
+        'statusid',
+        'userid',
+        'socialuser',
+        'screen_name',
+        'status_text_tag',
+        'status_url_tag',
+        'json',
+        'hashtag0',
+        'hashtag1',
+        'created_at',
+        'quotedstatus',
+        'retweetedstatus',
+        'hashtag',
+    )
+    readonly_fields = (
+        'statusid',
+        'userid',
+        'socialuser',
+        'screen_name',
+        'status_text_tag',
+        'status_url_tag',
+        'json',
+        'created_at',
+        'quotedstatus',
+        'retweetedstatus',
+    )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
         'hashtag0',
@@ -86,6 +128,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'retweetedstatus',
         'deleted',
         CategoryListFilter,
+        'hashtag',
     )
     
     def screen_name(self, obj):
@@ -126,3 +169,9 @@ class TreedjAdmin(MPTTModelAdmin):
     screen_name.short_description = "Screen name"
 
 admin.site.register(Treedj, TreedjAdmin)
+
+class HashtagAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Hashtag, HashtagAdmin)
+

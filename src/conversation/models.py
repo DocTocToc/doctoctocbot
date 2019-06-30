@@ -10,9 +10,34 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 logger = logging.getLogger(__name__)
 
+class Hashtag(models.Model):
+    hashtag = models.CharField(max_length=101, unique=True)
+    
+    def __str__(self):
+        return self.hashtag
+
+    @staticmethod
+    def has_read_permission(self):
+        return True
+
+    def has_write_permission(self):
+        return False
+    
+    def has_update_permission(self):
+        return False
+
+
 class Tweetdj(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
     userid = models.BigIntegerField()
+    socialuser = models.ForeignKey(
+        'moderation.SocialUser',
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="tweets"
+    )
     json = JSONField()
     created_at = models.DateTimeField()
     reply = models.PositiveIntegerField(null=True)
@@ -24,6 +49,7 @@ class Tweetdj(models.Model):
     quotedstatus = models.NullBooleanField(default=None, help_text="Is quoted_status")
     retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
     deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
+    hashtag = models.ManyToManyField(Hashtag)
     
     class Meta:
         get_latest_by = "statusid"

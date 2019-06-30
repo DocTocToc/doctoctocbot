@@ -28,7 +28,7 @@ def get_socialuser(user):
             return
 
 
-def followersids(user):
+def update_followersids(user):
     su = get_socialuser(user)
     if not su:
         return
@@ -54,7 +54,11 @@ def followersids(user):
     followersids = _followersids(su.user_id)
     if followersids is None:
         return
-    
+
+    record_followersids(su, followersids)
+    return followersids
+
+def record_followersids(su, followersids):
     try:
         Follower.objects.create(
             user = su,
@@ -62,9 +66,6 @@ def followersids(user):
         )
     except DatabaseError as e:
         logger.error(f"Database error while saving Followers of user.user_id: {e}")
-        return
-    
-    return followersids
 
 def _followersids(user_id):
     api = get_api()
@@ -82,7 +83,7 @@ def graph(user):
             logger.error(f"No category set to appear on social graph. Exception:{e}")
             return
     
-        followers = followersids(user)
+        followers = update_followersids(user)
         if not followers:
             return
     

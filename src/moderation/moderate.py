@@ -4,12 +4,12 @@ from django.db.utils import IntegrityError
 from django.conf import settings
 
 from moderation.models import Queue
-from moderation.social import followersids
+from moderation.social import update_followersids
 
 logger = logging.getLogger(__name__)
 
 def process_unknown_user(user_id, status_id):
-    if user_id in followersids(settings.BOT_ID):
+    if user_id in update_followersids(settings.BOT_ID):
         addtoqueue(user_id, status_id)
 
 def addtoqueue(user_id, status_id):

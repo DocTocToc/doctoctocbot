@@ -572,10 +572,17 @@ class DoNotRetweet(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.socialuser, self.current)
-    
+
 def addsocialuser(tweetdj_instance):
+    su = addsocialuser_from_userid(tweetdj_instance.userid)
+    if not su:
+        return
+    tweetdj_instance.socialuser=su
+    tweetdj_instance.save()
+
+def addsocialuser_from_userid(userid: int):
     try:
-        su = SocialUser.objects.get(user_id=tweetdj_instance.userid)
+        su = SocialUser.objects.get(user_id=userid)
     except SocialUser.DoesNotExist:    
         try:
             sm, _ = SocialMedia.objects.get_or_create(name="twitter")
@@ -584,11 +591,10 @@ def addsocialuser(tweetdj_instance):
             return
         try:
             su, _ = SocialUser.objects.get_or_create(
-                user_id=tweetdj_instance.userid,
+                user_id=userid,
                 social_media = sm
             )
         except DatabaseError as e:
             logger.error(e)
             return
-    tweetdj_instance.socialuser=su
-    tweetdj_instance.save()
+    return su

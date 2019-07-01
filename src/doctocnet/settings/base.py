@@ -35,7 +35,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.102']
 
 SITE_ID = 1
+
+# WAGTAIL
 WAGTAIL_SITE_NAME = 'DocTocToc.net'
+WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 
 # Application definition
 
@@ -70,6 +73,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'messenger',
     'rangefilter',
+    'dashboard',
 # wagtail start
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -90,6 +94,8 @@ INSTALLED_APPS = [
     'blog',
     'meta',
     'wagtailmetadata',
+    'ajax_select',
+# wagtail blog stop
 ]
 
 MIDDLEWARE = [
@@ -105,6 +111,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
 # wagtail start
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -124,8 +131,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.debug',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',

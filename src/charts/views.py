@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.conf import settings
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models.functions import TruncMonth, TruncYear
@@ -7,11 +8,23 @@ from django.shortcuts import render
 import logging
 import time
 
-from conversation.models import Tweetdj
+from conversation.models import Tweetdj, Hashtag
 from moderation.models import SocialUser
 
 
 logger = logging.getLogger(__name__)
+
+def filter_hashtag(qs):
+    dct = dict()
+    for h in Hashtag.objects.all():
+        dct[h.hashtag]= h
+    h = settings.KEYWORD_TRACK_LIST
+    h0_OR_h1 = qs.filter(Q(hashtag=dct[h[0]]) | Q(hashtag=dct[h[1]]))
+    h0_AND_h1 =   qs.filter(hashtag=dct[h[0]]).filter(hashtag=dct[h[1]])
+    h0 = qs.filter(hashtag=dct[h[0]])
+    h1 = qs.filter(hashtag=dct[h[1]])
+    
+    return [h0_OR_h1, h0_AND_h1, h0, h1]    
 
 def daily(request):
     return render(request, 'charts/daily.html')
@@ -34,12 +47,9 @@ def questions_daily_data(request):
         .extra({'date' : "date(created_at)"})
         .values('date')
         .annotate(count=Count('statusid')))
-    qsd0or1 = qsd.filter(Q(hashtag0=True) | Q(hashtag1=True))  
-    qsd0 = qsd.filter(hashtag0=True)
-    qsd1 = qsd.filter(hashtag1=True)
     
     series_lst = []
-    qs_lst = [qsd0, qsd1, qsd0or1]
+    qs_lst = filter_hashtag(qsd)
     
     if request.user.is_authenticated and request.user.socialuser is not None:
         qs_user_lst = []
@@ -67,19 +77,26 @@ def questions_daily_data(request):
         'xAxis': {'type': 'datetime' },
         'yAxis': {'title': {'text': 'Number of tweets'}},
         'series': [
-            {
-            'name': 'Daily questions hashtag0 DocTocToc',
-            'data': series_lst[0],
-            },
-            {
-            'name': 'Daily questions hashtag1 DocsTocToc',
-            'data': series_lst[1],
-            },
-            {
-            'name': 'Daily questions hashtag0 DocTocToc and/or hashtag1 DocsTocToc',
-            'data': series_lst[2],
-            },
-            
+                {
+                'name': 'Dayly tweets #DocTocToc or #DocsTocToc',
+                'data': series_lst[0],
+                'color': 'rgba(51, 133, 55)'
+                },
+                                {
+                'name': 'Dayly tweets #DocTocToc and #DocsTocToc',
+                'data': series_lst[1],
+                'color': 'rgba(192, 192, 192)'
+                },
+                                                {
+                'name': 'Daily tweets #DocTocToc',
+                'data': series_lst[2],
+                'color': 'rgba(0, 0, 255)'
+                },
+                {
+                'name': 'Daily tweets #DocsTocToc',
+                'data': series_lst[3],
+                'color': 'rgba(255, 0, 0)'
+                }
         ]
     }
     if len(series_lst)==6:
@@ -112,11 +129,8 @@ def questions_monthly_data(request):
         .values('date')
         .annotate(count=Count('statusid'))
         .order_by('date'))
-    qsm0or1 = qsm.filter(Q(hashtag0=True) | Q(hashtag1=True))    
-    qsm0 = qsm.filter(hashtag0=True)
-    qsm1 = qsm.filter(hashtag1=True)
     
-    qs_lst = [qsm0, qsm1, qsm0or1]
+    qs_lst = filter_hashtag(qsm)
     
     series_lst = []
     for qs in qs_lst:
@@ -136,19 +150,24 @@ def questions_monthly_data(request):
         'yAxis': {'title': {'text': 'Number of tweets'}},
         'series': [
                 {
-                'name': 'Monthly tweets #DocTocToc',
+                'name': 'Monthly tweets #DocTocToc or #DocsTocToc',
                 'data': series_lst[0],
-                'color': 'rgba(51, 133, 255)'
+                'color': 'rgba(51, 133, 55)'
                 },
                                 {
-                'name': 'Monthly tweets #DocsTocToc',
+                'name': 'Monthly tweets #DocTocToc and #DocsTocToc',
                 'data': series_lst[1],
-                'color': 'rgba(255, 77, 77)'
+                'color': 'rgba(192, 192, 192)'
                 },
                                                 {
-                'name': 'Monthly tweets #DocTocToc and/or #DocsTocToc',
+                'name': 'Monthly tweets #DocTocToc',
                 'data': series_lst[2],
-                'color': 'rgba(105, 105, 105)'
+                'color': 'rgba(0, 0, 255)'
+                },
+                {
+                'name': 'Monthly tweets #DocsTocToc',
+                'data': series_lst[3],
+                'color': 'rgba(255, 0, 0)'
                 }
             ]
         }
@@ -173,12 +192,9 @@ def questions_yearly_data(request):
         .values('date')
         .annotate(count=Count('statusid'))
         .order_by('date'))
-    qsy0or1 = qsy.filter(Q(hashtag0=True) | Q(hashtag1=True))    
-    qsy0 = qsy.filter(hashtag0=True)
-    qsy1 = qsy.filter(hashtag1=True)
     
-    qs_lst = [qsy0, qsy1, qsy0or1]
-    
+    qs_lst = filter_hashtag(qsy)
+
     series_lst = []
     for qs in qs_lst:
         series = []
@@ -197,19 +213,24 @@ def questions_yearly_data(request):
         'yAxis': {'title': {'text': 'Number of tweets'}},
         'series': [
                 {
-                'name': 'Yearly tweets #DocTocToc',
+                'name': 'Yearly tweets #DocTocToc or #DocsTocToc',
                 'data': series_lst[0],
-                'color': 'rgba(51, 133, 255)'
+                'color': 'rgba(51, 133, 55)'
                 },
                                 {
-                'name': 'Yearly tweets #DocsTocToc',
+                'name': 'Yearly tweets #DocTocToc and #DocsTocToc',
                 'data': series_lst[1],
-                'color': 'rgba(255, 77, 77)'
+                'color': 'rgba(192, 192, 192)'
                 },
                                                 {
-                'name': 'Yearly tweets #DocTocToc and/or #DocsTocToc',
+                'name': 'Yearly tweets #DocTocToc',
                 'data': series_lst[2],
-                'color': 'rgba(105, 105, 105)'
+                'color': 'rgba(0, 0, 255)'
+                },
+                {
+                'name': 'Yearly tweets #DocsTocToc',
+                'data': series_lst[3],
+                'color': 'rgba(255, 0, 0)'
                 }
             ]
         }

@@ -2,6 +2,7 @@ from typing import List
 import time
 #from lxml.html import HtmlElement
 from bs4 import BeautifulSoup
+from common.soup import doc_from_raw_html
 import logging
 logger = logging.getLogger(__name__)
 
@@ -163,7 +164,7 @@ def parse_tweets_from_conversation_html(raw_html: bytes) -> TweetContext:
     """
     Given an API response with a conversation continuation, parse and return the TweetContext.
     """
-    soup = extract_doc_from_conversation_response(raw_html)
+    soup = doc_from_raw_html(raw_html)
 
     context = TweetContext();
     context.descendants = parse_descendants(soup.find('body'))
@@ -175,7 +176,7 @@ def parse_tweets_from_html(raw_html: bytes) -> TweetContext:
     Given an API response about a particular tweet, parse and return the 
     TweetContext.
     """
-    soup = extract_doc_from_response(raw_html)
+    soup = doc_from_raw_html(raw_html)
     if not soup:
         return
     
@@ -242,16 +243,6 @@ def parse_descendants(soup: BeautifulSoup) -> List[List[Tweet]]:
     for child in descendants:
         result.append(parse_tweets_from_stream(child))
     return result
-
-def extract_doc_from_response(raw_html: bytes) -> BeautifulSoup:
-    soup = BeautifulSoup(raw_html, 'lxml', from_encoding="utf-8")
-    return soup
-
-def extract_doc_from_conversation_response(raw_html: bytes) -> BeautifulSoup:
-    """
-    I don't think this is necessary in this Python - BeautifulSoup implementation
-    """
-    return extract_doc_from_response(raw_html)
 
 def parse_tweets_from_stream(soup: BeautifulSoup) -> List[Tweet]:
     tweetStream = []

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 20:04+0200\n"
+"POT-Creation-Date: 2019-06-21 21:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,98 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: messenger/admin.py:19
+msgid "Has event Id"
+msgstr ""
+
+#: messenger/admin.py:26
+msgid "Yes"
+msgstr ""
+
+#: messenger/admin.py:27
+msgid "No"
+msgstr ""
+
+#: messenger/models.py:19 messenger/models.py:76 messenger/models.py:120
+msgid "Message"
+msgstr ""
+
+#: messenger/models.py:20 messenger/models.py:51
+msgid "Messages"
+msgstr ""
+
+#: messenger/models.py:52
+msgid "Messages from this Campaign"
+msgstr ""
+
+#: messenger/models.py:58 messenger/models.py:68 messenger/models.py:114
+msgid "Campaign"
+msgstr ""
+
+#: messenger/models.py:59
+msgid "Campaigns"
+msgstr ""
+
+#: messenger/models.py:69
+msgid "Campaign linked to this receipt."
+msgstr ""
+
+#: messenger/models.py:77
+msgid "Receipt for this message."
+msgstr ""
+
+#: messenger/models.py:82
+msgid "User"
+msgstr ""
+
+#: messenger/models.py:83
+msgid "Receipt for a message sent to this user"
+msgstr ""
+
+#: messenger/models.py:87
+msgid "DM event id"
+msgstr ""
+
+#: messenger/models.py:88
+msgid "DM event id created if the message was successfully sent."
+msgstr ""
+
+#: messenger/models.py:93
+msgid "Error message"
+msgstr ""
+
+#: messenger/models.py:94
+msgid "Error message recorded if the message was not successfully sent."
+msgstr ""
+
+#: messenger/models.py:102
+msgid "Receipt"
+msgstr ""
+
+#: messenger/models.py:103
+msgid "Receipts"
+msgstr ""
+
+#: messenger/models.py:115 messenger/models.py:121
+msgid "Messages are part of this campaign."
+msgstr ""
+
+#: messenger/models.py:125
+msgid "Order"
+msgstr ""
+
+#: messenger/models.py:126
+msgid "What order to display this person within the department."
+msgstr ""
+
+#: messenger/models.py:130
+msgid "Campaign Message"
+msgstr ""
+
+#: messenger/models.py:131
+msgid "Campaign Messages"
+msgstr ""
 
 #: registration/forms.py:113
 msgid "I have read and agree to the Terms of Service"

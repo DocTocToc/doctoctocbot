@@ -66,8 +66,6 @@ class UserInfo(LoginRequiredMixin, TemplateView):
             context['pp_url'] = json.get("profile_image_url_https", None)
             
             track_list = settings.KEYWORD_TRACK_LIST
-            context["hashtag0"] = None
-            context["hashtag1"] = None
             if track_list is not None:
                 for idx in range(len(track_list)):
                     context[f"hashtag{idx}"] = f"#{track_list[idx]}"

@@ -1,11 +1,11 @@
 from django.utils.formats import localize
 from django.conf import settings
 from doctocnet.celery import app
-from moderation.models import SocialUser, Follower
+from moderation.models import SocialUser, Follower, addsocialuser_from_userid
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
 from celery.utils.log import get_task_logger
-from moderation.social import followersids
+from moderation.social import update_followersids
 import logging
 import random
 import time
@@ -28,7 +28,7 @@ def _format(message, socialuser, campaign):
     return message.content.format(**d)
 
 @app.task
-def handle_campaign(name):
+def handle_campaign(name, userid_lst=None):
     celery_logger.debug("Task launched for campaign %s", name)
     logger.debug("Task launched for campaign %s", name)
     try:
@@ -39,7 +39,7 @@ def handle_campaign(name):
     messages = campaign.messages.all()
     categories = campaign.categories.all()
     bot_su = SocialUser.objects.get(user_id=settings.BOT_ID)
-    followersids(bot_su)
+    update_followersids(bot_su)
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
@@ -51,7 +51,15 @@ def handle_campaign(name):
     socialuser_lst = []
     for category in categories:
         cat_lst = category.socialuser_set.filter(user_id__in=bot_followers)
-        socialuser_lst.extend(list(cat_lst)) 
+        socialuser_lst.extend(list(cat_lst))
+    
+    if userid_lst:
+        su_lst = []
+        for userid in userid_lst:
+            su = addsocialuser_from_userid(userid)
+            if su:
+                su_lst.append(su)
+        socialuser_lst.extend(su_lst) 
     
     logger.debug("socialuser_lst %s", socialuser_lst)
 

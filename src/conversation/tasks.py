@@ -17,5 +17,12 @@ def handle_allnormalize():
 def handle_update_trees(hourdelta):
     from .utils import update_trees
     update_trees(hourdelta)
+    
+@app.task
+def handle_addsocialuser():
+    from moderation.models import addsocialuser
+    from conversation.models import Tweetdj
+    for instance in Tweetdj.objects.all():
+        addsocialuser(instance)
 
         

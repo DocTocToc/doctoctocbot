@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 20:04+0200\n"
+"POT-Creation-Date: 2019-06-21 21:40+0200\n"
 "PO-Revision-Date: 2019-05-17 04:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings/base.py:155
+#: doctocnet/settings/base.py:184
 msgid "French"
 msgstr "Français"
 
@@ -111,7 +111,11 @@ msgstr "Progression"
 msgid "Funders"
 msgstr "Financeurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:73
+#: doctocnet/templates/doctocnet/navbar.html:62
+msgid "Blog"
+msgstr ""
+
+#: doctocnet/templates/doctocnet/navbar.html:74
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 

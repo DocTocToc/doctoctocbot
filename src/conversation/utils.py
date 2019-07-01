@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 def normalize(statusid):
     hashtag(statusid)
+    hashtag_m2m(statusid)
     retweetedstatus(statusid)
     quotedstatus(statusid)
     
@@ -30,7 +31,11 @@ def retweetedstatus(statusid):
     from .models import Tweetdj
     
     key = "retweeted_status"
-    status_mi = Tweetdj.objects.get(pk=statusid)
+    try:
+        status_mi = Tweetdj.objects.get(pk=statusid)
+    except Tweetdj.DoesNotExist as e:
+        logger.error(e)
+        return
     if status_mi.retweetedstatus is not None:
         return status_mi.retweetedstatus
     
@@ -48,7 +53,11 @@ def quotedstatus(statusid):
     from .models import Tweetdj
     
     key = "quoted_status"
-    status_mi = Tweetdj.objects.get(pk=statusid)
+    try:
+        status_mi = Tweetdj.objects.get(pk=statusid)
+    except Tweetdj.DoesNotExist as e:
+        logger.error(e)
+        return
     if status_mi.quotedstatus is not None:
         return status_mi.quotedstatus
     
@@ -90,12 +99,48 @@ def hashtag(statusid):
     status_mi.hashtag1 = contains_tag1
     status_mi.save()
 
+def hashtag_m2m(statusid):
+    from conversation.models import Tweetdj, Hashtag
+    from common.utils import dictextract
+
+    logger = logging.getLogger(__name__)
+    try:
+        status_mi = Tweetdj.objects.get(pk=statusid)
+    except Tweetdj.DoesNotExist as e:
+        logger.info(f"Status {statusid} does not exist in table Tweetdj."
+                    f"Error message: {e}")
+        return
+    
+    jsn = status_mi.json
+    key = "hashtags"
+
+    keyword_lst = Hashtag.objects.values_list("hashtag", flat=True)
+    if not keyword_lst:
+        return
+
+    keyword_lst_lower = [keyword.lower() for keyword in keyword_lst]
+
+    hash_dct = dict()
+    for h in Hashtag.objects.all():
+        hash_dct[h.hashtag.lower()]= h
+
+    hashtag_mi_lst = []
+ 
+    for hashtags in dictextract(key, jsn):
+        for hashtag in hashtags:
+            status_hashtag = hashtag["text"].lower()
+            if status_hashtag in keyword_lst_lower:
+                hashtag_mi = hash_dct[status_hashtag]
+                hashtag_mi_lst.append(hashtag_mi)
+
+    status_mi.hashtag.set(set(hashtag_mi_lst))
 
                         
 def allhashtag():
-    from .models import Tweetdj
+    from conversation.models import Tweetdj
     for status_mi in Tweetdj.objects.all():
         hashtag(status_mi.statusid)
+        hashtag_m2m(status_mi.statusid)
         
 def userhashtagcount(userid: int, idx: int) -> int:
     """
@@ -118,10 +163,12 @@ def usertotalhashtagcount(userid: int) -> int:
     """
     if userid is None:
         return
-    count = 0
+    total_count = 0
     for idx in range(len(settings.KEYWORD_TRACK_LIST)):
-        count += userhashtagcount(userid, idx)
-    return count
+        count = userhashtagcount(userid, idx)
+        if count:
+            total_count += count
+    return total_count
         
 def getcount(statusid):
     """
@@ -344,3 +391,4 @@ def screen_name(statusid):
         row = cursor.fetchone()
     if row:
         return row[0]
+    

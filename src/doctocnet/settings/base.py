@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.sites',
     'django.contrib.staticfiles',
     'rest_framework',
     'doctocnet',
@@ -96,6 +95,7 @@ INSTALLED_APPS = [
     'wagtailmetadata',
     'ajax_select',
 # wagtail blog stop
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +111,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-    'django.contrib.sites.middleware.CurrentSiteMiddleware',
 # wagtail start
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -139,6 +138,7 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.media',
                 'django.template.context_processors.i18n',
+                'doctocnet.context_processors.site',
             ],
         },
     },

@@ -70,9 +70,9 @@ class UserRelationshipInline(admin.TabularInline):
     
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag',  'social_media_profile', )
-    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
-    readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'social_media_profile', 'category', 'category_moderator_lst')
+    list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag', 'profile_link',  'social_media_profile', )
+    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
+    readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
     search_fields = ('user_id', 'profile__json',)
     
     def category_moderator_lst(self, obj):
@@ -88,7 +88,19 @@ class SocialUserAdmin(admin.ModelAdmin):
                 tag = obj.social_media
             )
         )
+    def profile_link(self, obj):
+        try:
+            su = Profile.objects.get(socialuser=obj.pk)
+            return mark_safe(
+                '<a href="{link}">{tag}</a>'.format(
+                    link = reverse("admin:moderation_profile_change", args=(su.pk,)),
+                    tag = obj.screen_name_tag()
+                )
+            )
+        except Profile.DoesNotExist:
+            return "🚫"
 
+    profile_link.short_description = 'Profile'
     
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'description', 'show_relationships_count',
@@ -162,10 +174,24 @@ class QueueAdmin(VersionedAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser',)
-    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json', 'updated', 'normalavatar',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser', 'json', 'updated', 'normalavatar',)
+    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link',)
+    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar',)
+    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar',)
+    search_fields = ('json',)
+    
+    def socialuser_link(self, obj):
+        try:
+            su = SocialUser.objects.get(pk=obj.socialuser.pk)
+            return mark_safe(
+                '<a href="{link}">{tag}</a>'.format(
+                    link = reverse("admin:moderation_socialuser_change", args=(su.pk,)),
+                    tag = obj.screen_name_tag()
+                )
+            )
+        except SocialUser.DoesNotExist:
+            return "🚫"
 
+    socialuser_link.short_description = 'SocialUser'
 
 class ModerationAdmin(VersionedAdmin):
     pass

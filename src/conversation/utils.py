@@ -22,9 +22,7 @@ def allnormalize():
     for page_idx in paginator.page_range:
         for row in paginator.page(page_idx).object_list:
             statusid = row.statusid
-            hashtag(statusid)
-            retweetedstatus(statusid)
-            quotedstatus(statusid)
+            normalize(statusid)
 
 def retweetedstatus(statusid):
     from common.utils import dictextract

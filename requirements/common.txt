@@ -1,9 +1,9 @@
+Django==2.2.3
 tweepy==3.7.0
 amqp==2.5.0
 configparser==3.7.3
 unidecode==1.0.23
 psycopg2-binary
-Django==2.2.3
 django-mptt
 pytz
 social-auth-app-django

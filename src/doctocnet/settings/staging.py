@@ -117,12 +117,6 @@ POSTGRESQL = {
     "database":"status"
 }
 
-# Braintree
-#BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account
-#BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID', default='')
-#BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY', default='')
-#BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY', default='')
-
 STRIPE_PUBLIC_KEY = config("STRIPE_TEST_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_TEST_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False

@@ -135,12 +135,6 @@ POSTGRESQL = {
 #PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
 #PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
 
-# Braintree
-#BRAINTREE_PRODUCTION = False  # We'll need this later to switch between the sandbox and live account
-#BRAINTREE_MERCHANT_ID = config('BRAINTREE_MERCHANT_ID')
-#BRAINTREE_PUBLIC_KEY = config('BRAINTREE_PUBLIC_KEY')
-#BRAINTREE_PRIVATE_KEY = config('BRAINTREE_PRIVATE_KEY')
-
 # Stripe
 #STRIPE_LIVE_PUBLIC_KEY = config("STRIPE_LIVE_PUBLIC_KEY")
 #STRIPE_LIVE_SECRET_KEY = config("STRIPE_LIVE_SECRET_KEY")

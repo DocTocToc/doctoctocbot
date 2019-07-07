@@ -20,7 +20,7 @@ class Project(models.Model):
         return "{}:{}".format(self.id, self.name)
 
 class ProjectInvestment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         'Project',
         on_delete=models.CASCADE

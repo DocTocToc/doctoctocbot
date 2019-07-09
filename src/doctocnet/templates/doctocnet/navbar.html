@@ -43,6 +43,7 @@
           {% if user|is_moderator %}
           <a class="dropdown-item" href="{% url 'landing:moderator' %}">{% trans "Moderator guide" %}</a>
           {% endif %}
+          <a class="dropdown-item" href="{% url 'landing:spamtoctoc' %}">{% trans "SpamTocToc" %}</a>
           <a class="dropdown-item" href="{% url 'gpgcontact:contact-form' %}">{% trans "Contact" %}</a>
         </div>
       </li>

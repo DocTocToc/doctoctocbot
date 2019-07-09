@@ -21,5 +21,7 @@ urlpatterns = [
     path('moderation/', TemplateView.as_view(template_name='landing/moderation/index.html'), name='moderation'),
     path('moderation/moderator', TemplateView.as_view(template_name='landing/moderator/index.html'), name='moderator'),
     path('faq/', TemplateView.as_view(template_name='landing/faq/index.html'), name='faq'),
+    path('spamtoctoc/', TemplateView.as_view(template_name='landing/spamtoctoc/index.html'), name='spamtoctoc'),
+
 
 ]

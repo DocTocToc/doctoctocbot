@@ -78,8 +78,8 @@ def handle_campaign(name, userid_lst=None):
                 for r in receipts:
                     receipt_info = (f"Tried sending this on {localize(r.created)} "
                                     f"Error: {r.error} ID: {r.event_id}")
-                    logger.info(receipt_info)
-                    celery_logger.info(receipt_info)
+                    logger.debug(receipt_info)
+                    celery_logger.debug(receipt_info)
                     code = None
                     if r.error:
                         try:

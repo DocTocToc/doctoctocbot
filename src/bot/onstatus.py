@@ -20,7 +20,12 @@ from moderation.moderate import process_unknown_user
 logger = logging.getLogger(__name__)
 
 def triage(statusid):
-    status = tweepy.API(getAuth()).get_status(statusid, tweet_mode='extended')
+    try:
+        status = tweepy.API(getAuth()).get_status(statusid, tweet_mode='extended')
+    except tweepy.TweepError as e:
+        logger.error(e)
+        return
+        
     sjson = status._json
     logger.debug(f'extended status: {sjson["user"]["screen_name"]} {sjson["full_text"]}')
 

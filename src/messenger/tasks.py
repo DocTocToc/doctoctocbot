@@ -43,11 +43,10 @@ def handle_campaign(name, userid_lst=None):
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
-    limit = settings.MESSENGER_DM_LIMIT
-    #current_limit = limit - receipts.count()
-    current_limit = limit
-
-
+    try:
+        current_limit = settings.MESSENGER_DM_LIMIT
+    except:
+        current_limit = 100
     socialuser_lst = []
     for category in categories:
         cat_lst = category.socialuser_set.filter(user_id__in=bot_followers)

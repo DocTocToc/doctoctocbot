@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from contextlib import closing
-from requests import get
+from requests import get, RequestException
 import logging
 logger = logging.getLogger(__name__)
 

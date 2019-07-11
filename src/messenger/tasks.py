@@ -45,7 +45,8 @@ def handle_campaign(name, userid_lst=None):
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
     try:
         current_limit = settings.MESSENGER_DM_LIMIT
-    except:
+    except AttributeError as e:
+        celery_logger.error("MESSENGER_DM_LIMIT not set", e)
         current_limit = 100
     socialuser_lst = []
     for category in categories:

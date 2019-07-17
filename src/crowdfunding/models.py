@@ -38,7 +38,7 @@ class ProjectInvestment(models.Model):
     public = models.BooleanField(default=False)
     
     def __str__(self):
-        return "{}:{} user:{} pledged:{} paid:{}".format(self.id, self.project, self.user, self.pledged, self.paid)
+        return "{}:{} user:{} pledged:{} paid:{}".format(self.uuid, self.project, self.user, self.pledged, self.paid)
     
 class Tier(models.Model):
     project = models.ForeignKey(

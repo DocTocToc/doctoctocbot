@@ -53,6 +53,7 @@ class Tweetdj(models.Model):
     
     class Meta:
         get_latest_by = "statusid"
+        ordering = ('-statusid',)
 
     def __str__(self):
         return str(self.statusid)
@@ -135,7 +136,7 @@ class Treedj(MPTTModel):
 
     def __str__(self):
         return "https://twitter.com/statuses/" +  str(self.statusid)
-    
+
     def status_url_tag(self):
         return mark_safe('<a href="https://twitter.com/statuses/%s">🐦</a>' % (self.statusid))
 

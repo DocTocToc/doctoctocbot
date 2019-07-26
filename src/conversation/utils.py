@@ -212,8 +212,8 @@ def add_leaves(statusid):
     from django.db import transaction
     from .tree.tweet_server import request_context, request_tweets
     from .models import Treedj, create_leaf
-    username = screen_name(statusid)
-    context = request_context(statusid, username)
+    screen_name = screen_name(statusid)
+    context = request_context(statusid, screen_name)
     if not context:
         return
     for lst in context.descendants:

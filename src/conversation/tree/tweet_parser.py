@@ -18,7 +18,7 @@ class Tweet:
                 conversationid = 0,
                 in_reply_to_status_id: int = None,
                 userid = 0,
-                username = "",
+                screen_name = "",
                 name = "",
                 bodyhtml = "",
                 bodytext = "",
@@ -44,7 +44,7 @@ class Tweet:
         # user_id (int)
         self.userid = userid
         # Handle of user who posted tweet.
-        self.username = username
+        self.screen_name = screen_name
         # Screen name of user who posted tweet.
         self.name = name
         # HTML body of the tweet content.
@@ -71,13 +71,13 @@ class Tweet:
         """
         Returns a URL to this tweet on Twitter.
         """
-        return f'https://twitter.com/{self.username}/status/{self.id}'
+        return f'https://twitter.com/{self.screen_name}/status/{self.id}'
 
     def get_user_url(self) -> str:
         """
         Returns a URL to the profile that posted this tweet on Twitter.
         """
-        return f'https://twitter.com/{self.username}'
+        return f'https://twitter.com/{self.screen_name}'
     
     def setcount(self, tweet_element: BeautifulSoup):
         
@@ -253,7 +253,7 @@ def parse_tweets_from_stream(soup: BeautifulSoup) -> List[Tweet]:
         
         tweet.userid = int(tweetElement['data-user-id'])
         
-        tweet.username = tweetElement['data-screen-name']
+        tweet.screen_name = tweetElement['data-screen-name']
         
         tweet.name = tweetElement.find_all(attrs={'class':'fullname'})[0].text
         

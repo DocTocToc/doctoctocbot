@@ -4,13 +4,13 @@ from .models import WebTweet
 
 
 class WebTweetAdmin(admin.ModelAdmin):
-    list_display = ('statusid', 'conversationid', 'username', 'text',
+    list_display = ('statusid', 'conversationid', 'screen_name', 'text',
                     'reply', 'answer', 'like', 'retweet', 'parentid')
-    search_fields = ['statusid', 'username', 'text', 'conversationid', 'parentid']
+    search_fields = ['statusid', 'screen_name', 'text', 'conversationid', 'parentid']
     fields = ('statusid',
                         'conversationid',
                         'userid',
-                        'username',
+                        'screen_name',
                         'name',
                         'time',
                         'html',
@@ -32,7 +32,7 @@ class WebTweetAdmin(admin.ModelAdmin):
     readonly_fields = ('statusid',
                         'conversationid',
                         'userid',
-                        'username',
+                        'screen_name',
                         'name',
                         'time',
                         'html',

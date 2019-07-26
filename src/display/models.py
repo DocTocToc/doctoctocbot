@@ -10,7 +10,7 @@ class WebTweet(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
     conversationid = models.BigIntegerField()
     userid = models.BigIntegerField()
-    username = models.CharField(max_length=15)
+    screen_name = models.CharField(max_length=15)
     name = models.CharField(max_length=50)
     time = models.PositiveIntegerField(help_text="time in seconds since epoch")
     html = models.TextField()
@@ -61,7 +61,7 @@ def createwebtweet(tweet: Tweet):
             tweet_mi = WebTweet(statusid=tweet.statusid,
                                     conversationid=tweet.conversationid,
                                     userid=tweet.userid,
-                                    username=tweet.username,
+                                    screen_name=tweet.screen_name,
                                     name=tweet.name,
                                     time=tweet.time,
                                     html=tweet.bodyhtml,

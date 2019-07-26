@@ -27,7 +27,7 @@ def display(statusid):
         print(f"statusid: {tweet.statusid}\n"
         f"conversation id: {tweet.conversationid}\n"
         f"user_id: {tweet.userid}\n"
-        f"username: {tweet.username}\n"
+        f"screen_name: {tweet.screen_name}\n"
         f"name: {tweet.name}\n"
         f"text: {tweet.bodytext}\n"
         f"html: {tweet.bodyhtml}\n"

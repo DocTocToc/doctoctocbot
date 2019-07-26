@@ -17,8 +17,8 @@ def request_tweets(tweet: Tweet) -> TweetContext:
         return
     return parse_tweets_from_html(raw)
 
-def request_context(statusid: int, username: str = None) -> TweetContext:
-    return request_tweets(Tweet(statusid=statusid, username=username))
+def request_context(statusid: int, screen_name: str = None) -> TweetContext:
+    return request_tweets(Tweet(statusid=statusid, screen_name=screen_name))
 
 def request_continuation(tweet, continuation) -> TweetContext:
         url = get_url_for_conversation(tweet, continuation);
@@ -26,13 +26,13 @@ def request_continuation(tweet, continuation) -> TweetContext:
         return parse_tweets_from_conversation_html(raw_html)
     
 def get_url_for_tweet(tweet: Tweet) -> str:
-        if tweet.username:
-            return f'https://twitter.com/{tweet.username}/status/{tweet.statusid}'
+        if tweet.screen_name:
+            return f'https://twitter.com/{tweet.screen_name}/status/{tweet.statusid}'
         else:
             return f'https://twitter.com/statuses/{tweet.statusid}'
     
 def get_url_for_conversation(tweet: Tweet, continuation: str) -> str:
-        return f'https://twitter.com/i/{tweet.username}/conversation/{tweet.statusid}?max_position=${continuation}'
+        return f'https://twitter.com/i/{tweet.screen_name}/conversation/{tweet.statusid}?max_position=${continuation}'
     
 def get_tweet(statusid: int) -> Tweet:
     tweet = Tweet(statusid)

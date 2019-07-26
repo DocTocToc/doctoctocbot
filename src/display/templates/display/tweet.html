@@ -14,19 +14,19 @@
     style="position: relative;">
     <div
       class="EmbeddedTweet EmbeddedTweet--cta js-clickToOpenTarget tweet-InformationCircle-widgetParent"
-      data-click-to-open-target="https://twitter.com/{{ tweet.username }}/status/{{ tweet.statusid }}"
+      data-click-to-open-target="https://twitter.com/{{ tweet.screen_name }}/status/{{ tweet.statusid }}"
       data-iframe-title="Twitter Tweet" data-scribe="page:tweet"
       id="twitter-widget-0" data-twitter-event-id="1" lang="en">
       <div class="EmbeddedTweet-tweetContainer">
         <div class="EmbeddedTweet-tweet">
           <blockquote class="Tweet h-entry js-tweetIdInfo subject expanded"
-            cite="https://twitter.com/{{ tweet.username }}/status/{{ tweet.statusid }}"
+            cite="https://twitter.com/{{ tweet.screen_name }}/status/{{ tweet.statusid }}"
             data-tweet-id="{{ tweet.statusid }}" data-scribe="section:subject">
             <div class="Tweet-header">
               <a class="TweetAuthor-avatar  Identity-avatar u-linkBlend"
                 data-scribe="element:user_link"
-                href="https://twitter.com/{{ tweet.username }}"
-                aria-label="{{ tweet.name }} (screen name: {{ tweet.username }})"><img
+                href="https://twitter.com/{{ tweet.screen_name }}"
+                aria-label="{{ tweet.name }} (screen name: {{ tweet.screen_name }})"><img
                 class="Avatar" data-scribe="element:avatar"
                 data-src-2x="{{ tweet.biggeravatar }}"
                 alt=""
@@ -36,21 +36,21 @@
                 data-scribe="component:author">
                 <a class="TweetAuthor-link Identity u-linkBlend"
                   data-scribe="element:user_link"
-                  href="https://twitter.com/{{ tweet.username }}"
-                  aria-label="{{ tweet.name }} (screen name: {{ tweet.username }})">
+                  href="https://twitter.com/{{ tweet.screen_name }}"
+                  aria-label="{{ tweet.name }} (screen name: {{ tweet.screen_name }})">
                   <div class="TweetAuthor-nameScreenNameContainer">
                     <span class="TweetAuthor-decoratedName"> <span
                       class="TweetAuthor-name Identity-name customisable-highlight"
                       title="{{ tweet.name }}" data-scribe="element:name">{{ tweet.name }}</span>
                     </span> <span class="TweetAuthor-screenName Identity-screenName"
-                      title="@{{ tweet.username }}" data-scribe="element:screen_name"
-                      dir="ltr">@{{ tweet.username }}</span>
+                      title="@{{ tweet.screen_name }}" data-scribe="element:screen_name"
+                      dir="ltr">@{{ tweet.screen_name }}</span>
                   </div>
                 </a>
               </div>
               <div class="Tweet-brand">
                 <a
-                  href="https://twitter.com/{{ tweet.username }}/status/{{ tweet.statusid }}"
+                  href="https://twitter.com/{{ tweet.screen_name }}/status/{{ tweet.statusid }}"
                   data-scribe="element:logo"><span class="FollowButton-bird"><div
                       class="Icon Icon--twitter " aria-label="View on Twitter"
                       title="View on Twitter" role="presentation"></div> </span></a>
@@ -112,7 +112,7 @@
                     class="u-linkBlend u-url customisable-highlight long-permalink"
                     data-datetime="1970-01-01T00:00:00+0000"
                     data-scribe="element:full_timestamp"
-                    href="https://twitter.com/{{ tweet.username }}/status/{{ tweet.statusid }}">
+                    href="https://twitter.com/{{ tweet.screen_name }}/status/{{ tweet.statusid }}">
                     <time class="dt-updated" datetime="1970-01-01T00:00:00+0000"
                       pubdate=""
                       title="Time posted: {{ tweet.utcdatetime }} (UTC)">{{ tweet.localdatetime }}</time>
@@ -132,7 +132,7 @@
         </div>
         <a class="CallToAction"
           title="View {{ tweet.name }}'s profile on Twitter"
-          href="https://twitter.com/{{ tweet.username }}"
+          href="https://twitter.com/{{ tweet.screen_name }}"
           data-scribe="section:cta component:news">
           <div class="CallToAction-icon" data-scribe="element:profile_icon">
             <div class="Icon Icon--profileCTA "

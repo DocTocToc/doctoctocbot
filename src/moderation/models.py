@@ -189,6 +189,9 @@ class AuthorizedCategoryManager(models.Manager):
 
 
 class Category(models.Model):
+    """
+    TODO: link to future community fk, make (label, community) unique together
+    """
     name = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)

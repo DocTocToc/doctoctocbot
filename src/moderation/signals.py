@@ -92,6 +92,13 @@ def createupdatemoderatorprofile(sender, instance, created, **kwargs):
             logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
             handle_create_update_profile.apply_async(args=(instance.moderator.user_id,))
 
+@receiver(post_save, sender=SocialUser)
+def create_update_socialuser_profile(sender, instance, created, **kwargs):
+    if created:
+        if not hasattr(instance.moderator, 'profile'):
+            logger.debug(f"instance.user_id: {instance.user_id}")
+            handle_create_update_profile.apply_async(args=(instance.user_id,))
+
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):
     if created:

@@ -86,7 +86,7 @@ class InvestViewDjango(BaseRegistrationView):
 
         pi.project = Project.objects.get(name=settings.PROJECT_NAME)        
         pi.save()
-        self.request.session['custom'] = str(pi.id)
+        self.request.session['custom'] = str(pi.uuid)
         return
     
     def get_form_class(self):
@@ -202,7 +202,7 @@ class InvestViewAuthenticated(FormView):
         pi.user = self.request.user
         pi.project = Project.objects.get(name=settings.PROJECT_NAME)
         pi.save()
-        self.request.session['custom'] = str(pi.id)
+        self.request.session['custom'] = str(pi.uuid)
         return super().form_valid(form)
 
     def get_initial(self, *args, **kwargs):

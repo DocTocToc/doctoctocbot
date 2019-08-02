@@ -1,0 +1,75 @@
+---
+- name: git pull, migrate, collectstatic and restart
+  hosts: "{{ variable_host | default('staging') }}"
+  become: true
+  gather_facts: yes
+  become_user: root
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+  - debug: msg="Host is {{ ansible_fqdn }}"
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400 #One day
+      force_apt_get: yes
+
+  - name: git pull
+    git:
+      repo: https://github.com/DocTocToc/doctoctocbot.git
+      dest: "{{git_dir}}"
+      version: "{{ git_branch }}"
+    notify:
+      - check
+      - collectstatic
+      - migrate
+      - restart doctoctocbot
+      - restart doctoctocbot-stream
+      - restart celery
+      - restart celery-beat
+
+  handlers:
+    - name: check
+      django_manage:
+        command: check
+        app_path: "{{django_dir}}"
+        virtualenv: "{{virtualenv}}"
+        pythonpath: "{{pythonpath}}"
+        settings: "{{settings}}"
+    - name: collectstatic                     
+      django_manage:                                                              
+        command: collectstatic                                                 
+        app_path: "{{django_dir}}"                                                
+        virtualenv: "{{virtualenv}}"                                              
+        pythonpath: "{{pythonpath}}"                                              
+        settings: "{{settings}}"
+    - name: migrate                     
+      django_manage:                                                              
+        command: migrate                                                 
+        app_path: "{{django_dir}}"                                                
+        virtualenv: "{{virtualenv}}"                                              
+        pythonpath: "{{pythonpath}}"                                              
+        settings: "{{settings}}"
+    - name: restart doctoctocbot
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: doctoctocbot
+    - name: restart doctoctocbot-stream                                                
+      systemd:                                           
+        state: restarted                                                            
+        daemon_reload: yes                                                          
+        name: doctoctocbot-stream
+    - name: restart celery                                              
+      systemd:                                                        
+        state: restarted                                                            
+        daemon_reload: yes                                                          
+        name: celery
+    - name: restart celery-beat                                                 
+      systemd:                                                                      
+        state: restarted                                                            
+        daemon_reload: yes                                                          
+        name: celery-beat

@@ -1,0 +1,5 @@
+git_dir: /opt/doctoctocbot
+django_dir: /opt/doctoctocbot/src
+virtualenv: /opt/doctoctocbot/venv
+pythonpath: /etc/opt/doctocnet
+settings: settings

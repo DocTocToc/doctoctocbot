@@ -1,0 +1,28 @@
+---
+- name: stop all services
+  hosts: "{{ variable_host | default('staging') }}"
+  become: true
+  gather_facts: yes
+  become_user: root
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+  - debug: msg="Host is {{ ansible_fqdn }}"
+  - name: stop doctoctocbot
+    systemd:
+      state: stopped
+      name: doctoctocbot
+  - name: stop doctoctocbot-stream                                                
+    systemd:                                           
+      state: stopped                                                            
+      name: doctoctocbot-stream
+  - name: stop celery                                              
+    systemd:                                                        
+      state: stopped                                                            
+      name: celery
+  - name: stop celery-beat                                                 
+    systemd:                                                                      
+      state: stopped                                                            
+      name: celery-beat

@@ -45,7 +45,6 @@
         chdir: "/opt/doctoctocbot/venv/bin"
         requirements: "/opt/doctoctocbot/requirements/common.txt"
         virtualenv: "/opt/doctoctocbot/venv"
-        executable: pip3
     - name: collectstatic                     
       django_manage:                                                              
         command: collectstatic                                                 

@@ -27,7 +27,6 @@ from bot.twitter import getAuth
 from moderation.models import SocialUser
 from moderation.social import update_followersids
 
-from .addstatusdj import addstatus_if_not_exist
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 
@@ -117,7 +116,7 @@ def is_following_rules(status):
 
 def isrt( status ):
     "is this status a RT?"
-    isrt = "retweeted_status" in status
+    isrt = "retweeted_status" in status.keys()
     logger.debug("is this status a retweet? %s" , isrt)
     return isrt
 
@@ -229,33 +228,6 @@ def main():
     current_sid = None
     for tweet in timelineIterator:
         triage(tweet.id)
-        #current_sid = tweet.id
-        #addstatus_if_not_exist(tweet.id)
-        #status = api.get_status(tweet.id,  tweet_mode='extended')
-        #status_json = status._json
-        #logger.debug(" raw_status: %s", status._json)
-        #user = tweet.user
-        #screenname = user.screen_name
-        #logger.debug("screen name: %s", screenname)
-        #logger.debug("text: %s", tweet.full_text.encode('utf-8'))
-        #logger.debug("Is user authorized? %s", isauthorized(status_json))
-        #logger.debug("isrt: %s", isrt(status_json))
-        #logger.debug("status 'retweeted': %s", status_json['retweeted'])
-        #logger.debug("is this a question? %s", isquestion(status_json))
-        #if okrt(status_json) and is_following_rules(status_json):
-        #    oklist.append(tweet)
-        #    logger.debug(":) OK for RT")
-        #else:
-        #    logger.debug(":( not ok for RT")
-    
-    #if current_sid is not None:
-    #    last_tweet_id = current_sid
-    #else:
-    #    last_tweet_id = save_point()
-    
-    # write last retweeted tweet id to file
-    #with open(last_id_file(), "w") as f:
-    #    f.write(str(last_tweet_id))
 
 def retweet_lst(lst):
     api = get_api()

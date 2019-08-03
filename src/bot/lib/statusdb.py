@@ -10,6 +10,9 @@ from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, transaction
 from django.conf import settings
 from bot.tasks import handle_image
+from bot.doctoctocbot import isrt
+from moderation.models import addsocialuser_from_userid
+from conversation.utils import hashtag_m2m_tweetdj
 
 
 """
@@ -51,17 +54,27 @@ class Addstatus:
                 status = Tweetdj.objects.create(
                     statusid = self.id(),
                     userid = self.userid(),
+                    socialuser = addsocialuser_from_userid(self.userid()),
                     json = self.json,
                     created_at = get_datetime_tz(self.json),
-                    reply = 0,
+                    reply = None,
                     like = self.like(),
                     retweet = self.retweet(),
-                    parentid = self.parentid()
-                    )
+                    parentid = self.parentid(),
+                    quotedstatus = self.json['is_quote_status'],
+                    retweetedstatus = isrt(self.json),
+                    deleted = None
+                )
         except IntegrityError as e:
-            logger.debug("Status %s already exists in database: %s" % (self.id, e))
+            logger.warn("Status %s already exists in database: %s" % (self.id, e))
             return False
         logger.debug("function addtweetdj added status %s", status)
+        try:
+            hashtag_m2m_tweetdj(status)
+        except DatabaseError as e:
+            logger.error("database error %s", e)
+            return False
+        logger.debug("added m2m hashtag relationship to %s", status)
         return True
 
     def userid(self):
@@ -69,9 +82,6 @@ class Addstatus:
 
     def id(self):
         return self.json["id"]
-
-    def reply(self):
-        return
 
     def like(self):
         return self.json["favorite_count"]

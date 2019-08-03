@@ -107,6 +107,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quotedstatus',
         'retweetedstatus',
         'hashtag',
+        'parentid',
     )
     readonly_fields = (
         'statusid',
@@ -119,6 +120,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'created_at',
         'quotedstatus',
         'retweetedstatus',
+        'parentid',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),

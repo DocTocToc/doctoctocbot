@@ -3,6 +3,7 @@ import logging
 from django.core.paginator import Paginator
 from django.db import connection, Error
 from django.conf import settings
+from conversation.models import Tweetdj, Hashtag
 
 from conversation.constants import HOURS
 
@@ -97,10 +98,7 @@ def hashtag(statusid):
     status_mi.hashtag1 = contains_tag1
     status_mi.save()
 
-def hashtag_m2m(statusid):
-    from conversation.models import Tweetdj, Hashtag
-    from common.utils import dictextract
-
+def hashtag_m2m(statusid: int):
     logger = logging.getLogger(__name__)
     try:
         status_mi = Tweetdj.objects.get(pk=statusid)
@@ -109,6 +107,10 @@ def hashtag_m2m(statusid):
                     f"Error message: {e}")
         return
     
+    hashtag_m2m_tweetdj(status_mi) 
+
+def hashtag_m2m_tweetdj(status_mi: Tweetdj):
+    from common.utils import dictextract
     jsn = status_mi.json
     key = "hashtags"
 

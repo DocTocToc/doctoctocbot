@@ -24,6 +24,7 @@
       version: "{{ git_branch }}"
     notify:
       - check
+      - pip common
       - collectstatic
       - migrate
       - restart doctoctocbot
@@ -39,6 +40,11 @@
         virtualenv: "{{virtualenv}}"
         pythonpath: "{{pythonpath}}"
         settings: "{{settings}}"
+    - name: pip common
+      pip:
+        chdir: "/opt/doctoctocbot/venv/bin"
+        requirements: "/opt/doctoctocbot/requirements/common.txt"
+        virtualenv: "/opt/doctoctocbot/venv"
     - name: collectstatic                     
       django_manage:                                                              
         command: collectstatic                                                 

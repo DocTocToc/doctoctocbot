@@ -25,4 +25,12 @@ def handle_addsocialuser():
     for instance in Tweetdj.objects.all():
         addsocialuser(instance)
 
+@app.task        
+def handle_get_physician_timeline():
+    from bot.bin.timeline import record_user_timeline
+    from moderation.models import SocialUser
+    for user_id in SocialUser.objects.physician_users():
+        record_user_timeline(user_id)
+        
+
         

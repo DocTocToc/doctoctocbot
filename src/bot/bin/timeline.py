@@ -38,7 +38,7 @@ def record_user_timeline(user_id, count=200, force=False):
         if not force:
             new_tweets = False
         try:
-            status_lst = api.user_timeline(user_id=user_id, count=count, max_id=max_statusid)
+            status_lst = api.user_timeline(user_id=user_id, count=count, max_id=max_statusid, tweet_mode="extended")
             if not status_lst:
                 logger.warn("request is empty")
                 break

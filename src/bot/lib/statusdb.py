@@ -13,17 +13,6 @@ from bot.tasks import handle_image
 from bot.doctoctocbot import isrt
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
-
-
-"""
-    import os
-    import django
-    import sys
-    sys.path.append('.')
-    sys.path.append('django')
-    os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
-    django.setup()
-"""
 from conversation.models import Tweetdj
 
 

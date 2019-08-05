@@ -35,3 +35,4 @@ wagtail
 django-meta
 wagtail-metadata-mixin
 django-ajax-selects
+furl

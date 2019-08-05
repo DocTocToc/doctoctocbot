@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     'ajax_select',
 # wagtail blog stop
     'django.contrib.sites',
+    'link',
 ]
 
 MIDDLEWARE = [

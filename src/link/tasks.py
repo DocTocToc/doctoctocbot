@@ -1,20 +1,23 @@
 import logging
+from furl import furl
+
+from django.core.paginator import Paginator
+from django.db import IntegrityError, DatabaseError, transaction
+
 from doctocnet.celery import app
-from urllib.parse import urlparse
-from urllib.parse import urldefrag
 from conversation.models import Tweetdj
 from moderation.models import SocialUser
 from link.models import Website, Link
-from furl import furl
-from django.db import IntegrityError, DatabaseError, transaction
-
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 @app.task
 def normalize_link_all():
-    for tweet_mi in Tweetdj.objects.filter(link=None):
-        normalize_link(tweet_mi)
+    paginator = Paginator(Tweetdj.objects.filter(link=None), settings.PAGINATION)
+    for page_idx in paginator.page_range:
+        for tweet_mi in paginator.page(page_idx).object_list:
+            normalize_link(tweet_mi)
 
 def normalize_link(tweet_mi):
     if tweet_mi.link_set.exists():

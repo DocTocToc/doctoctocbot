@@ -20,6 +20,7 @@ class Link(models.Model):
     website = models.ForeignKey(
         Website,
         on_delete=models.PROTECT,
+        related_name = 'links',
     )
     status = models.ManyToManyField(Tweetdj)
     socialuser = models.ManyToManyField(SocialUser)

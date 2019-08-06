@@ -1,4 +1,4 @@
-Django==2.2.3
+Django==2.2.4
 tweepy==3.8.0
 amqp==2.5.0
 configparser==3.7.3

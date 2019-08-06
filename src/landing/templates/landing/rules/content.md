@@ -1,11 +1,19 @@
-Version du 23/05/2019.
+Version du 06/08/2019.
 
 Ces règles de fonctionnement sont inscrites dans le code source et s'appliquent au robot Twitter [DocTocTocBot][bot].
 
-Vous pouvez aussi lire nos recommandations de bonnes pratiques à l'usage des utilisateurs: la [Charte](/guidelines) des utilisateurs du bot.
+Vous pouvez aussi lire nos recommandations de bonnes pratiques à l'usage des utilisateurs: la [Charte][guidelines] des utilisateurs du bot.
 
 ## Hashtag
-Je retweete les tweets contenant le hashtag #DocTocToc
+Je retweete les questions contenant le hashtag #DocTocToc.
+
+## Threads (fils)
+Une question peut être contenue dans un seul tweet, ou bien elle peut s'étaler
+sur plusieurs tweets (un fil ou thread).
+Si je détecte le hashtag et un point d'interrogation dans 1 fil, je retweete le 1er tweet du fil.
+Il suffit d'écrire le hashtag #DocTocToc une seule fois dans le fil.
+Le hashtag peut être dans le premier tweet, dans le dernier tweet ou dans un
+tweet intermédiaire.
 
 ## Catégories professionnelles
 
@@ -17,9 +25,9 @@ Je retweete exclusivement les comptes Twitter qui, selon mes modérateurs humain
 D'autres professions de santé pourront être ajoutées ultérieurement après référendum.
 
 ## Followers
-A partir du 24 mai 2019, si un utilisateur de Twitter pose une question #DocTocToc pour la première fois, je transmets sa question aux modérateurs uniquement s'il me suit.
-Je retweete les anciens utilisateurs qui ne me suivent pas (ceux qui ont déjà été verifiés et retweetés) jusqu'au 30/06/2019.
-A partir du 01/07/2019, je retweeterai uniquement mes followers.
+Depuis le 01/07/2019, je retweete uniquement mes followers.
+Le billet de blog [Suivre le bot pour être retweeté·e](https://doctoctoc.net/blog/suivre-bot-retweet/)
+explique les raisons de ce changement.
 
 ## Thèmes
 J'essaie de retweeter uniquement les questions qui se rapportent à ces thèmes constatés et largement admis par la communauté DocTocToc:
@@ -46,8 +54,8 @@ Je ne retweete pas les réponses.
 ## Questions ou affirmations?
 Je retweete uniquement les questions. Une question doit comporter un point d'interrogation. 
 
-## Threads (fils)
-Une question peut être étalée sur plusieurs tweets dans le même fil (thread). Si je détecte le hashtag et un point d'interrogation dans 1 fil, je retweete le 1er tweet du fil. Il suffit d'écrire le hahstag #DocTocToc une seule fois dans le fil.
+
 
 
 [bot]: https://twitter.com/doctoctocbot "@DocTocTocBot"
+[guidelines]: https://doctoctoc.net/guidelines

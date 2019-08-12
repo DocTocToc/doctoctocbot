@@ -7,7 +7,7 @@ services:
       - .env
     image: doctocnet_docker_img
     build: .
-    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=1 --log-file=${GUNICORN_LOG_FILE} --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80"
+    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG_FILE} --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -19,6 +19,8 @@ services:
     working_dir: /code/src
   nginx:
     restart: always
+    env_file:
+      - .env
     image: nginx:latest
     volumes:
       - ./src:/code/src

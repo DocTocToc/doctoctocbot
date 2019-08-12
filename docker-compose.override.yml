@@ -7,7 +7,7 @@ services:
       - .env
     image: doctocnet_docker_img
     build: .
-    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/code/src
       - /var/cache/doctoctocbot/development/staticfiles:/var/cache/doctoctocbot/development/staticfiles

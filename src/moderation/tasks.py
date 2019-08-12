@@ -82,7 +82,6 @@ def handle_create_all_profiles():
             for user_jsn in user_jsn_lst:
                 twitterprofile(user_jsn)
 
-(bind=True, max_retries=5)
 @shared_task
 def handle_sendmoderationdm(self, mod_instance_id):
     from .moderate import quickreply

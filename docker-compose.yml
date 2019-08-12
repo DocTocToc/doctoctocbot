@@ -73,7 +73,7 @@ services:
     env_file:
       - .env
     image: doctocnet_docker_img
-    command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=
     volumes:
       - .:/code
     depends_on:

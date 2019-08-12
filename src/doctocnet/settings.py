@@ -465,7 +465,6 @@ BOT_ID = config('BOT_ID', cast=int)
 BOT_SCREEN_NAME = config('BOT_SCREEN_NAME')
 KEYWORD_TRACK_LIST = config('KEYWORD_TRACK_LIST', cast=Csv())
 KEYWORD_RETWEET_LIST = config('KEYWORD_RETWEET_LIST', cast=Csv())
-logger.debug("Keyword retweet list: %s", KEYWORD_RETWEET_LIST)
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""
 

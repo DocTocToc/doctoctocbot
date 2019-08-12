@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  django:
+    restart: always
+    env_file:
+      - .env
+    image: doctocnet_docker_img
+    build: .
+    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=1 --log-file=${GUNICORN_LOG_FILE} --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${CELERY_LOG_FILE}:${CELERY_LOG_FILE}
+      - ${GUNICORN_LOG_FILE}:${GUNICORN_LOG_FILE}
+    links:
+      - redis:redis
+    working_dir: /code/src
+  nginx:
+    restart: always
+    image: nginx:latest
+    volumes:
+      - ./src:/code/src
+      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - django
+    links:
+      - django
+    ports:
+      - "80:80"

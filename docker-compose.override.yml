@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  django:
+    restart: always
+    env_file:
+      - .env
+    image: doctocnet_docker_img
+    build: .
+    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./src:/code/src
+      - /var/cache/doctoctocbot/development/staticfiles:/var/cache/doctoctocbot/development/staticfiles
+    links:
+      - redis:redis
+    ports:
+      - "8007:8000"
+    working_dir: /code/src

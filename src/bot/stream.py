@@ -2,10 +2,9 @@ import logging
 import tweepy
 from tweepy.streaming import StreamListener
 
-from django.conf import settings
 from bot.twitter import getAuth
 from conversation.models import Hashtag
-from .tasks import handle_on_status
+from bot.tasks import handle_on_status
 from bot.lib.status import status_json_log
 
 logger = logging.getLogger(__name__)
@@ -14,7 +13,7 @@ class StdOutListener(StreamListener):
 
     def on_status(self, status):
         logger.info("%s", status_json_log(status._json))
-        handle_on_status.apply_async(args=(status.id,))
+        handle_on_status.apply_async(args=(status.id,), ignore_result=True)
         return True
 
     def on_error(self, status_code):

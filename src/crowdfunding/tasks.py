@@ -1,9 +1,10 @@
 from bot.twitter import get_api
-from doctocnet.celery import app
+from celery import shared_task
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 
-@app.task
+@shared_task
 def handle_tweet_investment(userid: int,
                             rank: int,
                             public: bool):

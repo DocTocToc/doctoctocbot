@@ -1,11 +1,12 @@
-from doctocnet.celery import app
+from celery import shared_task
 from .constants import HOURS
 from conversation.utils import last_authorized_statusid_lst
 from conversation.tree.tweet_server import get_tweet
 from .models import create_or_update_webtweet
 from timeline.models import last_retweeted_statusid_lst
 
-@app.task
+
+@shared_task
 def handle_scrape_web_roots(hourdelta=None):
     """
     TODO: scrap this task 
@@ -21,7 +22,8 @@ def handle_scrape_web_roots(hourdelta=None):
             continue
         create_or_update_webtweet(tweet)
         
-@app.task
+
+@shared_task
 def handle_scrape_web_timeline(hourdelta=None):
     if hourdelta is None:
         hourdelta = HOURS    
@@ -30,6 +32,3 @@ def handle_scrape_web_timeline(hourdelta=None):
         if tweet is None:
             continue
         create_or_update_webtweet(tweet)
-        
-    
-    

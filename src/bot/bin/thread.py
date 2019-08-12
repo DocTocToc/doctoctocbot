@@ -153,8 +153,11 @@ def _has_retweet_hashtag(tweet: tweet_parser.Tweet) -> bool:
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
     Returns False otherwise.
     """
+    logger.debug("Keyword retweet list: %s", settings.KEYWORD_RETWEET_LIST)
     ismatch = False
-    for keyword in settings.KEYWORD_RETWEET_LIST:
+    hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
+    logger.debug("hashtag retweet list: %s", hashtag_retweet_list)
+    for keyword in hashtag_retweet_list:
         logger.debug(f"keyword.lower():{keyword.lower()} txt.lower():{tweet.bodytext.lower()}")
         if keyword.lower() in tweet.bodytext.lower():
             ismatch = True

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=Tweetdj)
 def normalize(sender, instance, created, **kwargs):
     if created:
-        handle_normalize.apply_async(args=(instance.statusid,))
+        handle_normalize.apply_async(args=(instance.statusid,), ignore_result=True)
         
 @receiver(post_save, sender=Tweetdj)
 def socialuser(sender, instance, created, **kwargs):

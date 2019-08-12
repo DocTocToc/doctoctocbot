@@ -1,6 +1,6 @@
 from django.utils.formats import localize
 from django.conf import settings
-from doctocnet.celery import app
+from celery import shared_task
 from moderation.models import SocialUser, Follower, addsocialuser_from_userid
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
@@ -27,7 +27,8 @@ def _format(message, socialuser, campaign):
     }
     return message.content.format(**d)
 
-@app.task
+
+@shared_task
 def handle_campaign(name, userid_lst=None):
     celery_logger.debug("Task launched for campaign %s", name)
     logger.debug("Task launched for campaign %s", name)

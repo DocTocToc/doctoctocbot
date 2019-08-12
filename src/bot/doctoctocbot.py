@@ -50,9 +50,10 @@ def has_retweet_hashtag( status ):
         status = status['extended_tweet']
     #logger.debug("status in has_retweet_hashtag: %s", status)
     hashtags = status["entities"]["hashtags"]
+    hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
     ismatch = False
     for hashtag in hashtags:
-        for keyword in settings.KEYWORD_RETWEET_LIST:
+        for keyword in hashtag_retweet_list:
             if keyword[1:].lower() == hashtag["text"].lower():
                 ismatch = True
     return ismatch

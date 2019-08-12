@@ -125,6 +125,7 @@ def poll_lists_members():
 
         # TODO: remove from twitter list users that are not in the category
 
+"""
 def backup_lists():
     lists = get_twitter_lists()
     if not lists:
@@ -148,6 +149,7 @@ def backup_lists():
         id_lst = [member.id for member in cursor]
         with open(file, 'xb') as f:
             pickle.dump(id_lst, f)
+"""
 
 def create_update_lists():
     lists = get_twitter_lists()

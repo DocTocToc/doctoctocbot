@@ -95,7 +95,7 @@ class Addstatus:
                 url = photo["media_url_https"]
                 filename = url.rsplit('/', 1)[1]
                 filepath = settings.BOT_IMAGES_PATH + "/" + filename
-                handle_image.apply_async(args=(url, filepath))
+                handle_image.apply_async(args=(url, filepath), ignore_result=True)
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]

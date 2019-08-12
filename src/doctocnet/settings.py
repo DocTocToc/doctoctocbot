@@ -10,29 +10,106 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-from django.conf.global_settings import AUTH_USER_MODEL
 from django.utils.translation import gettext_lazy as _
 import os
-import sys
-
-from decouple import AutoConfig
+import logging
+from django.utils.log import DEFAULT_LOGGING
+from decouple import AutoConfig, Csv
 from pathlib import Path
+from dj_database_url import parse as db_url
 
+mpl_logger = logging.getLogger('matplotlib')
+mpl_logger.setLevel(logging.WARNING) 
 
-CONFIG_DIR = Path("/home/elkcloner/.doctocnet/base")
-config = AutoConfig(search_path = CONFIG_DIR)
+logger = logging.getLogger(__name__)
+
+LOG_LEVEL = "DEBUG"
+
+DICT_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s %(name)s %(pathname)s:%(lineno)s:%(funcName)s %(levelname)s %(message)s",
+        },
+        "django.server": DEFAULT_LOGGING['formatters']['django.server'],
+    },
+
+    "handlers": {
+        'console': {
+            'level': (LOG_LEVEL or "DEBUG"),
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+            'filters': ['require_debug_true'],
+    },
+
+        "console_debug_false": {
+            "level": (LOG_LEVEL or "INFO"),
+            "filters": ["require_debug_false"],
+            "class": "logging.StreamHandler",
+        },
+
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler"
+        },
+        
+        "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
+
+    },
+
+    "loggers": {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        "django": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
+        "bot.stream": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
+        "bot.tasks": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": 'INFO',
+        },
+        "messenger.tasks": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],#            "level": 'INFO',
+        },
+        "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
+    },
+}
+logging.config.dictConfig(DICT_CONFIG)
 
 #sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+CONFIG_DIR = Path(BASE_DIR + "/..")
+config = AutoConfig(search_path = CONFIG_DIR)
+
+DEBUG = config('DEBUG', default=True, cast=bool)
+
+
+SECRET_KEY = config('SECRET_KEY')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.102']
+ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
 
@@ -97,6 +174,7 @@ INSTALLED_APPS = [
 # wagtail blog stop
     'django.contrib.sites',
     'link',
+    'gpgcontact',
 ]
 
 MIDDLEWARE = [
@@ -126,7 +204,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            'templates',     
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -147,20 +227,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'doctocnet.wsgi.application'
 
+DATABASES = {
+    'default': config(
+        'DATABASE_URL',
+        cast=db_url
+    ),
+}
 
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'doctocnet',
-#        'HOST': 'localhost',
-#        'USER': 'doctocnet',
-#        'PASSWORD': 'doctocnet',
-#    }
-#}
-
+STATIC_ROOT = config('STATIC_ROOT')
+STATIC_URL = '/static/'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -200,7 +275,7 @@ LANGUAGES = [
 # To check the list of installed locales:
 # $ locale -a
 
-SORTING_LOCALE = 'fr_FR.UTF-8'
+#SORTING_LOCALE = 'fr_FR.UTF-8'
 
 TIME_ZONE = 'Europe/Paris'
 
@@ -251,14 +326,14 @@ SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
-#MEDIA_ROOT = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = config('MEDIA_ROOT')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 # Redis & Celery
-REDIS_HOST = 'localhost'
+REDIS_HOST = 'redis'
 REDIS_PORT = '6379'
-BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {
     'visibility_timeout': 3600,
     'fanout_prefix': True,
@@ -266,15 +341,19 @@ BROKER_TRANSPORT_OPTIONS = {
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_TASK_SOFT_TIME_LIMIT = 1010
 CELERY_TASK_TIME_LIMIT = 1020
+CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
+CELERY_TASK_ROUTES = {
+    'bot.tasks.handle_on_status': {'queue': 'retweet'},
+    'conversation.tasks.handle_update_trees': {'queue': 'tree'},
+}
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            #'PASSWORD': 'a_better_password_please',
         }
     }
 }
@@ -288,7 +367,7 @@ REST_FRAMEWORK = {
 }
 
 #Default time delta in hours for all functions related to scraping web tweets
-SCRAPING_HOUR_DELTA = 24
+SCRAPING_HOUR_DELTA = config('SCRAPING_HOUR_DELTA', cast=int)
 
 # crispy_forms options
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -333,7 +412,7 @@ BEAT_PERIOD = {
 
 LISTS_BACKUP_PATH = ""
 
-MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
+MODERATION_AUTHORIZED_CATEGORIES = config('MODERATION_AUTHORIZED_CATEGORIES', cast=Csv())
 
 # Path on disk where images are saved
 BOT_IMAGES_PATH = ""
@@ -347,3 +426,67 @@ MESSENGER_DM_LIMIT = 15
 META_SITE_PROTOCOL = 'https'
 META_USE_SITES = True
 META_USE_TWITTER_PROPERTIES = True
+
+# Stripe
+STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY", default="")
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
+STRIPE_LIVE_MODE = False
+
+SERVER_EMAIL = config('SERVER_EMAIL', default='noreply@example.com')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@example.com')
+ADMIN_FIRST_NAME = config('ADMIN_FIRST_NAME', default='admin')
+ADMIN_LAST_NAME = config('ADMIN_LAST_NAME', default='admin')
+ADMIN_NAME = " ".join([ADMIN_FIRST_NAME, ADMIN_LAST_NAME])
+ADMIN_EMAIL_ADDRESS = config('ADMIN_EMAIL_ADDRESS', default='admin@example.com')
+ADMINS=[
+(ADMIN_NAME, ADMIN_EMAIL_ADDRESS),
+]
+MANAGERS=ADMINS
+EMAIL_BACKEND='django_sendmail_backend.backends.EmailBackend'
+
+# investment
+PROJECT_NAME = 'doctoctocbot'
+
+# django-registration
+REGISTRATION_SALT = config('REGISTRATION_SALT')
+ACCOUNT_ACTIVATION_DAYS = config('ACCOUNT_ACTIVATION_DAYS', default=1, cast=int)
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/css", ".scss", True)
+
+# main bot Twitter account
+TWITTER_CONSUMER_KEY = config('TWITTER_CONSUMER_KEY')
+TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
+TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
+TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
+BOT_IMAGES_PATH = config('BOT_IMAGES_PATH', default = "~/Pictures")
+BOT_ID = config('BOT_ID', cast=int)
+BOT_SCREEN_NAME = config('BOT_SCREEN_NAME')
+KEYWORD_TRACK_LIST = config('KEYWORD_TRACK_LIST', cast=Csv())
+KEYWORD_RETWEET_LIST = config('KEYWORD_RETWEET_LIST', cast=Csv())
+logger.debug("Keyword retweet list: %s", KEYWORD_RETWEET_LIST)
+NUMBER_OF_RT = 20
+TWEET_LANGUAGE = ""
+
+# backend bot Twitter API credentials (same as main credentials for dev settings)
+BACKEND_TWITTER_CONSUMER_KEY = config('TWITTER_CONSUMER_KEY')
+BACKEND_TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
+BACKEND_TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
+BACKEND_TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
+
+# Twitter key (social-auth-app-django)
+SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
+SOCIAL_AUTH_TWITTER_SECRET = config('TWITTER_CONSUMER_SECRET')
+
+# gpgcontact
+GNUPGHOME = config('GNUPGHOME')
+GNUPG_PUBLIC_KEYS = config('GNUPG_PUBLIC_KEYS', cast=Csv())
+
+PROFILE_TIMEDELTA_DAYS = config('PROFILE_TIMEDELTA_DAYS', default=0, cast=int)
+FOLLOWER_TIMEDELTA_HOUR = config('FOLLOWER_TIMEDELTA_HOUR', default=24, cast=int)
+
+TRANSLATION_OVERRIDE='fr'
+
+# django-meta
+META_SITE_PROTOCOL = 'http'

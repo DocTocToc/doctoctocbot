@@ -79,7 +79,7 @@ logging.config.dictConfig(DICT_CONFIG)
 CONFIG_DIR = Path("/home/elkcloner/.doctocnet/development")
 config = AutoConfig(search_path = CONFIG_DIR)
 
-CELERY_LOG_FILE = config('CELERY_LOG_FILE')
+#CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 SECRET_KEY = config('SECRET_KEY')
 
@@ -90,24 +90,20 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS += [
-    'debug_toolbar',
+#    'django_debug_toolbar',
     'status',
-    'django_extensions',
+#    'django_extensions',
     'gpgcontact',
 ]
 
+"""
 MIDDLEWARE += [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
-
+"""
 DATABASES = {
     'default': config(
         'DATABASE_URL',
-        #default='',
-        cast=db_url
-    ),
-    'status': config(
-        'DATABASE_URL_PRODSTATUS',
         cast=db_url
     ),
 }
@@ -118,26 +114,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = config('STATIC_ROOT')
 STATIC_URL = '/static/'
 
-# Postgres
-POSTGRESQL = {
-    "username":"doctoctoctest",
-    "password":"doctoctoctest",
-    "host":"127.0.0.1",
-    "port":"5432",
-    "database":"status"
-}
-
-# django-paypal
-#PAYPAL_RECEIVER_EMAIL = 'jerome-facilitator@jerome.cc'
-#PAYPAL_TEST = True
-#PAYPAL_PRIVATE_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
-#PAYPAL_PUBLIC_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/my-prvkey.pem'
-#PAYPAL_CERT = '/home/elkcloner/doctoctocbot/paypal/sandbox/paypal_cert.pem'
-#PAYPAL_CERT_ID = 'KHSHGAPVMJ42U'
-
 # Stripe
-#STRIPE_LIVE_PUBLIC_KEY = config("STRIPE_LIVE_PUBLIC_KEY")
-#STRIPE_LIVE_SECRET_KEY = config("STRIPE_LIVE_SECRET_KEY")
 STRIPE_PUBLIC_KEY = config("STRIPE_TEST_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_TEST_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False
@@ -173,7 +150,7 @@ BEAT_PERIOD = {
     'poll_lists_members': 900.0,
 }
 
-LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')
+#LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')
 
 # django-registration
 REGISTRATION_SALT = 'YYrwXggvsquEMiZ45BA3CyAtxthUdbR45PZ'

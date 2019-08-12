@@ -4,7 +4,7 @@ from furl import furl
 from django.core.paginator import Paginator
 from django.db import IntegrityError, DatabaseError, transaction
 
-from doctocnet.celery import app
+from celery import shared_task
 from conversation.models import Tweetdj
 from moderation.models import SocialUser
 from link.models import Website, Link
@@ -12,7 +12,8 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-@app.task
+
+@shared_task
 def normalize_link_all():
     paginator = Paginator(Tweetdj.objects.filter(link=None), settings.PAGINATION)
     for page_idx in paginator.page_range:

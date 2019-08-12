@@ -1,7 +1,8 @@
 from dm.retrieve import savedm
-from doctocnet.celery import app
+from celery import shared_task
 
 
-@app.task
+
+@shared_task
 def directmessages():
     savedm()

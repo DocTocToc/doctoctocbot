@@ -1,6 +1,8 @@
-from doctocnet.celery import app
+from celery import shared_task
+
 from bot.bin.timeline import record_timeline
 
-@app.task
+
+@shared_task
 def handle_record_timeline():
     record_timeline()

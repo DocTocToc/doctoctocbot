@@ -2,7 +2,7 @@ from unicodedata import category
 
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
-from doctocnet.celery import app
+from celery import shared_task
 from bot.tasks import handle_retweet
 from bot.bin.user import getuser_lst
 from .profile import twitterprofile
@@ -22,22 +22,26 @@ from bot.onstatus import triage_status
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
-@app.task
+
+@shared_task
 def handle_backup_lists():
-    from .lists.poll import backup_lists
+    from moderation.lists.poll import backup_lists
     backup_lists()
 
-@app.task
+
+@shared_task
 def handle_poll_lists_members():
     poll_lists_members()
     
-@app.task
+
+@shared_task
 def handle_create_update_lists():
     create_update_lists()
 
 
 
-@app.task
+
+@shared_task
 def handle_create_update_profile(userid_int):
     from conversation.models import Tweetdj
 
@@ -78,7 +82,8 @@ def handle_create_all_profiles():
             for user_jsn in user_jsn_lst:
                 twitterprofile(user_jsn)
 
-@app.task(bind=True, max_retries=5)
+(bind=True, max_retries=5)
+@shared_task
 def handle_sendmoderationdm(self, mod_instance_id):
     from .moderate import quickreply
     from .models import Moderation
@@ -111,7 +116,8 @@ def handle_sendmoderationdm(self, mod_instance_id):
     if not ok:
         self.retry(countdown= 2 ** self.request.retries)
 
-@app.task
+
+@shared_task
 def poll_moderation_dm():
     def delete_moderation_queue(mod_mi):
         with transaction.atomic():

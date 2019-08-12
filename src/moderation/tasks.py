@@ -24,12 +24,6 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def handle_backup_lists():
-    from moderation.lists.poll import backup_lists
-    backup_lists()
-
-
-@shared_task
 def handle_poll_lists_members():
     poll_lists_members()
     

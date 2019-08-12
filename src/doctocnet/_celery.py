@@ -90,11 +90,6 @@ app.conf.beat_schedule = {
         'schedule': settings.BEAT_PERIOD.get('poll_lists_members', 900),
         'args': None,
         },
-    'backup-lists': {
-        'task': 'moderation.tasks.handle_backup_lists',
-        'schedule': crontab(hour=4, minute=0),
-        'args': None,
-        },
     'create-update-lists': {
         'task': 'moderation.tasks.handle_create_update_lists',
         'schedule': crontab(hour=4, minute=0),

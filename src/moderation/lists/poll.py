@@ -125,32 +125,6 @@ def poll_lists_members():
 
         # TODO: remove from twitter list users that are not in the category
 
-"""
-def backup_lists():
-    lists = get_twitter_lists()
-    if not lists:
-        return
-    dir = settings.LISTS_BACKUP_PATH
-    if not os.path.isdir(dir):
-        return
-    datetime_str = datetime.now().isoformat(timespec='seconds')
-    date_str = datetime.now().date().isoformat()
-    dir_date = dir + "/" + date_str
-    os.makedirs(dir_date, exist_ok=True)
-    for list in lists:
-        file = (dir_date
-                + "/"
-                + list.slug
-                + "_"
-                + str(list.member_count)
-                + "_"
-                + datetime_str)
-        cursor = tweepy.Cursor(get_api().list_members, settings.BOT_SCREEN_NAME, list.slug).items(noi)
-        id_lst = [member.id for member in cursor]
-        with open(file, 'xb') as f:
-            pickle.dump(id_lst, f)
-"""
-
 def create_update_lists():
     lists = get_twitter_lists()
     for list in lists:

@@ -442,7 +442,7 @@ ADMINS=[
 (ADMIN_NAME, ADMIN_EMAIL_ADDRESS),
 ]
 MANAGERS=ADMINS
-EMAIL_BACKEND='django_sendmail_backend.backends.EmailBackend'
+EMAIL_BACKEND=config('EMAIL_BACKEND')
 
 # investment
 PROJECT_NAME = 'doctoctocbot'

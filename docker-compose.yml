@@ -24,6 +24,8 @@ services:
   redis:
     restart: always
     image: redis:latest
+    sysctls:
+      net.core.somaxconn: 1024
     expose:
       - "6379"
   celery_retweet_worker:

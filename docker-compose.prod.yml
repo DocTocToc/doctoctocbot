@@ -28,10 +28,11 @@ services:
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - /var/log/nginx:/var/log/nginx
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - django
     links:
       - django
     ports:
       - "80:80"
+      - "443:443"

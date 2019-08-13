@@ -10,7 +10,7 @@ services:
     command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/code/src
-      - /var/cache/doctoctocbot/development/staticfiles:/var/cache/doctoctocbot/development/staticfiles
+      - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${celery_base_dir}:${celery_base_dir}
     links:
@@ -57,7 +57,7 @@ services:
       - redis
     working_dir: /code/src
   celery_celery_worker:
-    restart: on-failure
+    restart: always
     env_file:
       - .env
     image: doctocnet_docker_img

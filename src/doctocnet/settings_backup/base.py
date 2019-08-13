@@ -330,7 +330,6 @@ BEAT_PERIOD = {
     'poll_lists_members': 900.0,
 }
 
-LISTS_BACKUP_PATH = ""
 
 MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
 

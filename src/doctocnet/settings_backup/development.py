@@ -150,8 +150,6 @@ BEAT_PERIOD = {
     'poll_lists_members': 900.0,
 }
 
-#LISTS_BACKUP_PATH = config('LISTS_BACKUP_PATH', default='/tmp')
-
 # django-registration
 REGISTRATION_SALT = 'YYrwXggvsquEMiZ45BA3CyAtxthUdbR45PZ'
 ACCOUNT_ACTIVATION_DAYS = 42

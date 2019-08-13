@@ -332,7 +332,7 @@ MEDIA_URL = '/media/'
 
 # Redis & Celery
 REDIS_HOST = config('REDIS_HOST', default='redis')
-REDIS_PORT = config('REDIS_PORT', cast=int, default=6379)
+REDIS_PORT = config('REDIS_PORT', cast=str, default='6379')
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {
     'visibility_timeout': 3600,

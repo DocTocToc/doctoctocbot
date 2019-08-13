@@ -14,6 +14,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG_FILE}:${GUNICORN_LOG_FILE}
+      - ${GNUPGHOME}:${GNUPGHOME}
     links:
       - redis:redis
     working_dir: /code/src

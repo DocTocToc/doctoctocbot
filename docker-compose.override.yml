@@ -13,6 +13,7 @@ services:
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GNUPGHOME}:${GNUPGHOME}
     links:
       - redis:redis
     ports:

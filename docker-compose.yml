@@ -13,13 +13,12 @@ services:
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GNUPGHOME}:${GNUPGHOME}
     links:
       - redis:redis
     depends_on:
       - redis
       - celery_celery_worker
-    ports:
-      - "8007:8000"
     working_dir: /code/src
   redis:
     restart: always

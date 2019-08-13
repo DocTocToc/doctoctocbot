@@ -12,7 +12,7 @@ services:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${celery_base_dir}:${celery_base_dir}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
     links:
       - redis:redis
     depends_on:
@@ -35,7 +35,10 @@ services:
     image: doctocnet_docker_img
     command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=2 -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL}"
     volumes:
-      - .:/code
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
@@ -49,7 +52,10 @@ services:
     image: doctocnet_docker_img
     command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=2 -n tree_worker2@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
-      - .:/code
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
@@ -63,7 +69,10 @@ services:
     image: doctocnet_docker_img
     command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=2 -n celery_worker2@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
-      - .:/code
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
@@ -77,7 +86,11 @@ services:
     image: doctocnet_docker_img
     command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=
     volumes:
-      - .:/code
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
       - celery_retweet_worker
@@ -94,6 +107,10 @@ services:
     command: bash -c "python manage.py run_bot_stream --settings=settings"
     volumes:
       - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
     links:
       - redis:redis
     working_dir: /code/src

@@ -12,7 +12,7 @@ services:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${CELERY_LOG_FILE}:${CELERY_LOG_FILE}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG_FILE}:${GUNICORN_LOG_FILE}
     links:
       - redis:redis
@@ -27,6 +27,7 @@ services:
       - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - /var/log/nginx:/var/log/nginx
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:

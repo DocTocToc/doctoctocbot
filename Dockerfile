@@ -22,8 +22,8 @@ COPY ./requirements /code/requirements
 RUN pip install --upgrade pip
 RUN pip install --upgrade -r /code/requirements/common.txt
 
-RUN mkdir var/log/celery && touch /var/log/celery/celery.log
-RUN mkdir var/log/gunicorn && touch /var/log/gunicorn/gunicorn.log
+RUN mkdir /var/log/celery && touch /var/log/celery/celery.log
+RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/gunicorn.log
 
 
 COPY ./src /code/src

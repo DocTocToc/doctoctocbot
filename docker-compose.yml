@@ -32,7 +32,7 @@ services:
     env_file:
       - .env
     image: doctocnet_docker_img
-    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=2 -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=2 -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -49,7 +49,7 @@ services:
     env_file:
       - .env
     image: doctocnet_docker_img
-    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=2 -n tree_worker2@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=2 -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -66,7 +66,7 @@ services:
     env_file:
       - .env
     image: doctocnet_docker_img
-    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=2 -n celery_worker2@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=2 -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -111,5 +111,5 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
     links:
-      - redis:redis
+      - redis
     working_dir: /code/src

@@ -88,7 +88,7 @@ services:
     restart: always
     env_file:
       - .env
-    build: .
+    image: doctocnet_docker_img
     command: bash -c "python manage.py run_bot_stream --settings=settings"
     volumes:
       - ./src:/code/src

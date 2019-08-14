@@ -111,7 +111,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = ['*']
 
-SITE_ID = 1
+SITE_ID = config('SITE_ID')
 
 # WAGTAIL
 WAGTAIL_SITE_NAME = 'DocTocToc.net'

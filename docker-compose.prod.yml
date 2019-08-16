@@ -43,7 +43,7 @@ services:
   letsencrypt:
     restart: always
     build:
-      context: ./docker/letsencrypt
+      context: .
       dockerfile: ./docker/letsencrypt/Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro

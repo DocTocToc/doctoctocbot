@@ -15,7 +15,7 @@ services:
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
-      - ${GUNICORN_LOG_FILE}:${GUNICORN_LOG_FILE}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
     depends_on:
       - database

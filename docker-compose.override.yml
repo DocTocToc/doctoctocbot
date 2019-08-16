@@ -5,8 +5,10 @@ services:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    image: django:doctocnet
     command: bash -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/code/src
@@ -14,8 +16,10 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GNUPGHOME}:${GNUPGHOME}
-    links:
-      - redis:redis
+    depends_on:
+      - redis
+      - database
+      - celery_celery_worker
     ports:
       - "8007:8000"
     working_dir: /code/src

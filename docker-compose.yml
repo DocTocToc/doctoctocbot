@@ -1,25 +1,12 @@
 version: '3'
 
 services:
-  django:
-    restart: always
-    env_file:
-      - .env
-    image: doctocnet_docker_img
-    build: .
-    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./src:/code/src
-      - ${STATIC_ROOT}:${STATIC_ROOT}
-      - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
-      - ${GNUPGHOME}:${GNUPGHOME}
-    links:
-      - redis:redis
-    depends_on:
-      - redis
-      - celery_celery_worker
-    working_dir: /code/src
+          
+  database:
+    restart: always                                                                       
+    image: postgres:10.5                                                        
+    volumes:                                                                    
+      - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data" 
   redis:
     restart: always
     image: redis:latest
@@ -31,7 +18,7 @@ services:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
+    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=2 -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
@@ -41,14 +28,12 @@ services:
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
-    links:
-      - redis
     working_dir: /code/src
   celery_tree_worker:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
+    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=2 -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
@@ -65,7 +50,7 @@ services:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
+    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=2 -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
@@ -82,7 +67,7 @@ services:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
+    image: django:doctocnet
     command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=
     volumes:
       - ./src:/code/src
@@ -91,18 +76,17 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
+      - database
       - redis
       - celery_retweet_worker
       - celery_tree_worker
       - celery_celery_worker
-    links:
-      - redis
     working_dir: /code/src
   stream:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
+    image: django:doctocnet
     command: bash -c "python manage.py run_bot_stream --settings=settings"
     volumes:
       - ./src:/code/src
@@ -110,6 +94,8 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
-    links:
+    depends_on:
       - redis
+      - database
+      - celery_retweet_worker
     working_dir: /code/src

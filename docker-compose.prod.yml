@@ -5,8 +5,7 @@ services:
     restart: always
     env_file:
       - .env
-    image: doctocnet_docker_img
-    build: .
+    image: django:doctocnet
     command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG_FILE} --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80"
     volumes:
       - ./src:/code/src
@@ -15,8 +14,9 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG_FILE}:${GUNICORN_LOG_FILE}
       - ${GNUPGHOME}:${GNUPGHOME}
-    links:
-      - redis:redis
+    depends_on:
+      - database
+      - redis
     working_dir: /code/src
   nginx:
     restart: always
@@ -29,12 +29,29 @@ services:
       - ${STATIC_ROOT}:${STATIC_ROOT}
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
-      - /var/log/nginx:/var/log/nginx
-      - /etc/letsencrypt:/etc/letsencrypt
+      - ${NGINX_LOG_DIR}:/var/log/nginx
+      - ${LETSENCRYPT_CONF}:/etc/letsencrypt
+      - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     depends_on:
-      - django
-    links:
       - django
     ports:
       - "80:80"
       - "443:443"
+  letsencrypt:
+    restart: always
+      build: ./docker/letsencrypt
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ${LETSENCRYPT_CONF}:/etc/letsencrypt
+        - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
+      depends_on:
+        - nginx
+      environment:
+        - DOMAINS=${DOMAINS}
+        - EMAIL=${EMAIL}
+        - WEBROOT_PATH=/tmp/letsencrypt
+        - EXP_LIMIT=30
+        - CHECK_FREQ=${CHECK_FREQ}
+        - CHICKENEGG=${CHICKENEGG}
+        - STAGING=${STAGING}

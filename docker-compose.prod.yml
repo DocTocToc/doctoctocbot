@@ -48,6 +48,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - ${LETSENCRYPT_LOG}:/var/log/letsencrypt
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     depends_on:

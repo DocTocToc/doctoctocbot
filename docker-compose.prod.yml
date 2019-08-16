@@ -5,6 +5,9 @@ services:
     restart: always
     env_file:
       - .env
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
     image: django:doctocnet
     command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG_FILE} --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80"
     volumes:

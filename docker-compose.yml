@@ -28,7 +28,6 @@ services:
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
-      - django
     working_dir: /code/src
   celery_tree_worker:
     restart: always
@@ -44,7 +43,6 @@ services:
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
-      - django
     links:
       - redis
     working_dir: /code/src
@@ -62,7 +60,6 @@ services:
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
-      - django
     links:
       - redis
     working_dir: /code/src
@@ -81,7 +78,6 @@ services:
     depends_on:
       - database
       - redis
-      - django
       - celery_retweet_worker
       - celery_tree_worker
       - celery_celery_worker
@@ -100,7 +96,6 @@ services:
       - ${celery_base_dir}:${celery_base_dir}
     depends_on:
       - redis
-      - django
       - database
       - celery_retweet_worker
     working_dir: /code/src

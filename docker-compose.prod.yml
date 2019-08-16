@@ -22,7 +22,7 @@ services:
       - redis
     working_dir: /code/src
   nginx:
-    restart: always
+    restart: on-failure
     env_file:
       - .env
     image: nginx:latest

@@ -29,9 +29,9 @@ services:
     volumes:
       - ./src:/code/src
       - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
-      - ${STATIC_ROOT}:${STATIC_ROOT}
-      - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
+      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
+      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
       - ${NGINX_LOG_DIR}:/var/log/nginx
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt

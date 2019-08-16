@@ -16,7 +16,6 @@ import logging
 from django.utils.log import DEFAULT_LOGGING
 from decouple import AutoConfig, Csv
 from pathlib import Path
-from dj_database_url import parse as db_url
 
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING) 
@@ -109,12 +108,14 @@ SECRET_KEY = config('SECRET_KEY')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['*'])
 
-SITE_ID = config('SITE_ID')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SITE_ID = config('SITE_ID', cast=int, default=1)
 
 # WAGTAIL
-WAGTAIL_SITE_NAME = 'DocTocToc.net'
+WAGTAIL_SITE_NAME = config('WAGTAIL_SITE_NAME')
 WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 
 # Application definition
@@ -228,10 +229,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'doctocnet.wsgi.application'
 
 DATABASES = {
-    'default': config(
-        'DATABASE_URL',
-        cast=db_url
-    ),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DATABASE_NAME', default='postgres'),
+        'USER': config('DATABASE_USER', default='postgres'),
+        'PASSWORD': config('DATABASE_PASSWORD', default=''),
+        'HOST': config('DATABASE_HOST', default='database'),
+        'PORT': config('DATABASE_PORT', cast=int, default=5432),
+    }
 }
 
 STATIC_ROOT = config('STATIC_ROOT')
@@ -379,8 +384,8 @@ MIGRATION_MODULES = {
     'sites': 'doctocnet.data_migrations.sites_migrations',
 }
 
-PAGINATION = 1000
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+PAGINATION = config('PAGINATION', cast=int, default=1000)
+DATA_UPLOAD_MAX_NUMBER_FIELDS = config('DATA_UPLOAD_MAX_NUMBER_FIELDS', cast=int, default=5000)
 
 MODERATION = {
     "dev": False,

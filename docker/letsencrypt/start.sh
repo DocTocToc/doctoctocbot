@@ -109,6 +109,7 @@ le_check() {
       echo "[INFO] certificate file not found for domain $DARRAYS. Starting webroot initial certificate request script..."
       if [[ $CHICKENEGG -eq 1 ]] ; then
         echo "Making a temporary self signed certificate to prevent chicken and egg problems"
+        mkdir -p /etc/letsencrypt/live/$DARRAYS
         openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout "/etc/letsencrypt/live/$DARRAYS/privkey.pem" -out "${cert_file}" -subj "/CN=example.com" -days 1
       fi
       le_renew

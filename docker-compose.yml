@@ -4,7 +4,7 @@ services:
           
   database:
     restart: always                                                                       
-    image: postgres:10.5                                                        
+    image: postgres:10.10                                                        
     volumes:                                                                    
       - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data" 
   redis:

@@ -35,8 +35,6 @@ services:
       - ${NGINX_LOG_DIR}:/var/log/nginx
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
-    depends_on:
-      - django
     ports:
       - "80:80"
       - "443:443"

@@ -136,7 +136,7 @@ def hashtag_m2m_tweetdj(status_mi: Tweetdj):
     
     for h in hashtag_mi_lst:
         try:
-            status_mi.hashtag.set(h)
+            status_mi.hashtag.add(h)
         except IntegrityError:
             continue
                       

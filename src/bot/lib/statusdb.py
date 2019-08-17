@@ -7,7 +7,7 @@ Add tweets to databases.
 import logging
 
 from bot.lib.datetime import get_datetime_tz
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, DatabaseError, transaction
 from django.conf import settings
 from bot.tasks import handle_image
 from bot.doctoctocbot import isrt

@@ -22,7 +22,13 @@ mpl_logger.setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-LOG_LEVEL = "DEBUG"
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+CONFIG_DIR = Path(BASE_DIR + "/..")
+config = AutoConfig(search_path = CONFIG_DIR)
+
+LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
 
 DICT_CONFIG = {
     "version": 1,
@@ -44,14 +50,14 @@ DICT_CONFIG = {
 
     "handlers": {
         'console': {
-            'level': (LOG_LEVEL or "DEBUG"),
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'default',
             'filters': ['require_debug_true'],
     },
 
         "console_debug_false": {
-            "level": (LOG_LEVEL or "INFO"),
+            "level": LOG_LEVEL,
             "filters": ["require_debug_false"],
             "class": "logging.StreamHandler",
         },
@@ -68,24 +74,25 @@ DICT_CONFIG = {
 
     "loggers": {
         '': {
-            'level': 'DEBUG',
+            'level': LOG_LEVEL,
             'handlers': ['console'],
             'propagate': False,
         },
         "django": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
-            "level": 'INFO',
+            "level": LOG_LEVEL,
         },
         "bot.stream": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
-            "level": 'INFO',
+            "level": LOG_LEVEL,
         },
         "bot.tasks": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
-            "level": 'INFO',
+            "level": LOG_LEVEL,
         },
         "messenger.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],#            "level": 'INFO',
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
         },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
@@ -94,11 +101,7 @@ logging.config.dictConfig(DICT_CONFIG)
 
 #sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-CONFIG_DIR = Path(BASE_DIR + "/..")
-config = AutoConfig(search_path = CONFIG_DIR)
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 

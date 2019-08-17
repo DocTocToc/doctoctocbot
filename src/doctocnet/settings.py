@@ -357,7 +357,7 @@ CELERY_TASK_ROUTES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/1",
+        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

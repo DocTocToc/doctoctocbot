@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 
 from bot.bin.timeline import get_timeline_id_lst
 from timeline.models import last_retweeted_statusid_lst
@@ -21,17 +21,13 @@ from moderation.tasks import handle_create_update_profile
 from moderation.profile import is_profile_uptodate
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
-
 from moderation.models import SocialUser
-
-from .constants import DISPLAY_CACHE
 from .models import WebTweet, create_or_update_webtweet
 
 
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
 class Status(TemplateView):
     title = _("Status")
     template_name = "display/display.html"
@@ -45,9 +41,14 @@ class Status(TemplateView):
         logger.debug(f"type: {type(tweet)}")
         logger.debug(f"type: {type(tweet)}")
         context['tweet_lst'] = [tweet]
-        context['display_cache'] = DISPLAY_CACHE
+        try:
+            cache = settings.DISPLAY_CACHE
+        except ImproperlyConfigured as e:
+            cache = 60
+            logger.error("DISPLAY_CACHE improperly configured in settings", e)
+        context['display_cache'] = cache
         return context
-        #return render(request, 'display/display.html', context)
+
 
 class Last(TemplateView):
     """

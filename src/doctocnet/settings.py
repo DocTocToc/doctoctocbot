@@ -353,6 +353,7 @@ CELERY_TASK_ROUTES = {
     'conversation.tasks.handle_update_trees': {'queue': 'tree'},
 }
 
+# CACHE
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -362,6 +363,7 @@ CACHES = {
         }
     }
 }
+DISPLAY_CACHE=config('DISPLAY_CACHE', cast=int, default=60)
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

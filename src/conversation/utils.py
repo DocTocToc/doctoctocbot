@@ -2,6 +2,7 @@ import logging
 
 from django.core.paginator import Paginator
 from django.db import connection, Error
+from django.db.utils import IntegrityError
 from django.conf import settings
 from conversation.models import Tweetdj, Hashtag
 
@@ -132,10 +133,13 @@ def hashtag_m2m_tweetdj(status_mi: Tweetdj):
             if status_hashtag in keyword_lst_lower:
                 hashtag_mi = hash_dct[status_hashtag]
                 hashtag_mi_lst.append(hashtag_mi)
-
-    status_mi.hashtag.set(set(hashtag_mi_lst))
-
-                        
+    
+    for h in hashtag_mi_lst:
+        try:
+            status_mi.hashtag.set(h)
+        except IntegrityError:
+            continue
+                      
 def allhashtag():
     from conversation.models import Tweetdj
     for status_mi in Tweetdj.objects.all():

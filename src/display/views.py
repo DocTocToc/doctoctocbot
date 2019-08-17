@@ -27,6 +27,12 @@ from .models import WebTweet, create_or_update_webtweet
 
 logger = logging.getLogger(__name__)
 
+def get_display_cache():
+    try:
+        return settings.DISPLAY_CACHE
+    except ImproperlyConfigured as e:
+        return 60
+        logger.error("DISPLAY_CACHE improperly configured in settings", e)
 
 class Status(TemplateView):
     title = _("Status")
@@ -41,12 +47,8 @@ class Status(TemplateView):
         logger.debug(f"type: {type(tweet)}")
         logger.debug(f"type: {type(tweet)}")
         context['tweet_lst'] = [tweet]
-        try:
-            cache = settings.DISPLAY_CACHE
-        except ImproperlyConfigured as e:
-            cache = 60
-            logger.error("DISPLAY_CACHE improperly configured in settings", e)
-        context['display_cache'] = cache
+
+        context['display_cache'] = get_display_cache()
         return context
 
 
@@ -69,7 +71,7 @@ class Last(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
-        context['display_cache'] = DISPLAY_CACHE
+        context['display_cache'] = get_display_cache()
         return context
     
 class Top(TemplateView):
@@ -91,7 +93,7 @@ class Top(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
-        context['display_cache'] = DISPLAY_CACHE
+        context['display_cache'] = get_display_cache()
         return context
     
 class Help(TemplateView):
@@ -113,7 +115,7 @@ class Help(TemplateView):
             logger.debug(f"type: {type(sid)}")
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
-        context['display_cache'] = DISPLAY_CACHE
+        context['display_cache'] = get_display_cache()
         return context
 
 class All(TemplateView):
@@ -160,7 +162,7 @@ class All(TemplateView):
         tweet_lst_dic['top']=top_tweet_lst
         
         context['display'] = tweet_lst_dic
-        context['display_cache'] = DISPLAY_CACHE  
+        context['display_cache'] = get_display_cache() 
         return context
 
 def notfound(sid):

@@ -398,27 +398,17 @@ MODERATION = {
 }
 
 STATUS_DISPLAY_NUMBER = {
-    'all': 10,
-    'last': 10,
-    'help': 10,
-    'top': 10
+    'all': 20,
+    'last': 20,
+    'help': 20,
+    'top': 20
 }
 
 STATUS_DISPLAY_HOUR = {
-    'all': 48,
-    'last': 48,
-    'help': 48,
-    'top': 48
-}
-
-BEAT_PERIOD = {
-    'record_timeline': 60.0,
-    'scrape_web_timeline': 120.0,
-    'normalize': 600.0,
-    'poll_dm': 600.0,
-    'poll_moderation_dm': 600.0,
-    'update_trees': 300.0,
-    'poll_lists_members': 900.0,
+    'all': 72,
+    'last': 72,
+    'help': 72,
+    'top': 72
 }
 
 MODERATION_AUTHORIZED_CATEGORIES = config('MODERATION_AUTHORIZED_CATEGORIES', cast=Csv())

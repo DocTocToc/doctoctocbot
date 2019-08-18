@@ -140,16 +140,6 @@ EMAIL_BACKEND='django_sendmail_backend.backends.EmailBackend'
 # investment
 PROJECT_NAME = 'doctoctocbot'
 
-BEAT_PERIOD = {
-    'record_timeline': 600.0,
-    'scrape_web_timeline': 600.0,
-    'normalize': 600.0,
-    'poll_dm': 120.0,
-    'poll_moderation_dm': 30.0,
-    'update_trees': 3600.0,
-    'poll_lists_members': 900.0,
-}
-
 # django-registration
 REGISTRATION_SALT = 'YYrwXggvsquEMiZ45BA3CyAtxthUdbR45PZ'
 ACCOUNT_ACTIVATION_DAYS = 42

@@ -101,8 +101,8 @@ class Help(TemplateView):
     Return a template view of the n last statuses in the user timeline of the
     authenticated account, excluding replies.
     """
-    n = settings.STATUS_DISPLAY_NUMBER.get('help', 10)
-    hour = settings.STATUS_DISPLAY_HOUR.get('help', 48)
+    n = settings.STATUS_DISPLAY_NUMBER.get('help', 20)
+    hour = settings.STATUS_DISPLAY_HOUR.get('help', 72)
     title = _("Help tweets")
     template_name = "display/display.html"
     

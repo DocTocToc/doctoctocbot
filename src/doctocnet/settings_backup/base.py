@@ -320,17 +320,6 @@ STATUS_DISPLAY_HOUR = {
     'top': 48
 }
 
-BEAT_PERIOD = {
-    'record_timeline': 60.0,
-    'scrape_web_timeline': 120.0,
-    'normalize': 600.0,
-    'poll_dm': 600.0,
-    'poll_moderation_dm': 600.0,
-    'update_trees': 300.0,
-    'poll_lists_members': 900.0,
-}
-
-
 MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
 
 # Path on disk where images are saved

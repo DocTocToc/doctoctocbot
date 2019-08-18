@@ -1,6 +1,7 @@
 import logging
 from requests.exceptions import RequestException
 from common.soup import raw_html
+from common.twitter import status_url_from_id
 
 from .tweet_parser import Tweet, TweetContext, parse_tweets_from_conversation_html, parse_tweets_from_html
 
@@ -29,7 +30,7 @@ def get_url_for_tweet(tweet: Tweet) -> str:
         if tweet.screen_name:
             return f'https://twitter.com/{tweet.screen_name}/status/{tweet.statusid}'
         else:
-            return f'https://twitter.com/statuses/{tweet.statusid}'
+            return status_url_from_id(tweet.statusid)
     
 def get_url_for_conversation(tweet: Tweet, continuation: str) -> str:
         return f'https://twitter.com/i/{tweet.screen_name}/conversation/{tweet.statusid}?max_position=${continuation}'

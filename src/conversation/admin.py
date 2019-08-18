@@ -10,6 +10,7 @@ import logging
 from multiprocessing import Pool
 from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
+from common.twitter import status_url_from_id
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +140,7 @@ class TweetdjAdmin(admin.ModelAdmin):
     screen_name.short_description = "Screen name"
 
     def status_link(self, obj):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">🐦</a>' % (obj.statusid))
+        return mark_safe(f'<a href="{status_url_from_id(obj.statusid)}">🐦</a>')
 
     status_link.short_description = 'tweet'
 

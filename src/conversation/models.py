@@ -3,12 +3,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.utils import DatabaseError
 from django.utils.safestring import mark_safe
+from django.conf import settings
 import logging
-
 from mptt.models import MPTTModel, TreeForeignKey
-
+from common.twitter import status_url_from_id
 
 logger = logging.getLogger(__name__)
+
 
 class Hashtag(models.Model):
     hashtag = models.CharField(max_length=101, unique=True)
@@ -71,7 +72,8 @@ class Tweetdj(models.Model):
             return self.strftime("%s %s" % (DATE_FORMAT, TIME_FORMAT))
     
     def status_url_tag(self):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">Link</a>' % (self.statusid))
+        url = status_url_from_id(self.statusid)
+        return mark_safe(f'<a href="{url}">🐦</a>')
     
     status_url_tag.short_description = "Link"
 
@@ -135,10 +137,11 @@ class Treedj(MPTTModel):
                             related_name='children')
 
     def __str__(self):
-        return "https://twitter.com/statuses/" +  str(self.statusid)
+        return settings.TWITTER_STATUS_URL.format(id=self.statusid)
 
     def status_url_tag(self):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">🐦</a>' % (self.statusid))
+        url = status_url_from_id(self.statusid)
+        return mark_safe(f'<a href="{url}">🐦</a>')
 
     status_url_tag.short_description = "Tweet"
 

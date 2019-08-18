@@ -495,3 +495,7 @@ TRANSLATION_OVERRIDE='fr'
 
 # django-meta
 META_SITE_PROTOCOL = 'http'
+
+# Constants
+# url used to fetch a status from its status id
+TWITTER_STATUS_URL='https://twitter.com/i/web/status/{id}'

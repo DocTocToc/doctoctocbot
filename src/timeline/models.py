@@ -22,7 +22,7 @@ class Status(models.Model):
         verbose_name_plural = "statuses"
     
     def status_url_tag(self):
-        return mark_safe('<a href="https://twitter.com/statuses/%s">Link</a>' % (self.statusid))
+        return mark_safe('<a href="https://twitter.com/i/web/status/%s">Link</a>' % (self.statusid))
 
 def add_status_tl(status):
     """

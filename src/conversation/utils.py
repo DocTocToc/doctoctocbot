@@ -5,6 +5,7 @@ from django.db import connection, Error
 from django.db.utils import IntegrityError
 from django.conf import settings
 from conversation.models import Tweetdj, Hashtag
+from common.twitter import status_url_from_id
 
 from conversation.constants import HOURS
 
@@ -185,7 +186,7 @@ def getcount(statusid):
              "favorite": None}
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
         "Accept-Language": "en-US,en;q=0.5"}
-    page = requests.get(url=f'https://twitter.com/statuses/{statusid}', headers=headers)
+    page = requests.get(url=status_url_from_id(statusid), headers=headers)
     tree = html.fromstring(page.content)
     
     for k in count.keys():

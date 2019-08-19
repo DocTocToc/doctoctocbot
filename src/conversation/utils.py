@@ -218,9 +218,9 @@ def updatecount(statusid):
 def add_leaves(statusid):
     from django.db import transaction
     from .tree.tweet_server import request_context, request_tweets
-    from .models import Treedj, create_leaf
-    screen_name = screen_name(statusid)
-    context = request_context(statusid, screen_name)
+    from .models import Treedj
+    _screen_name = screen_name(statusid)
+    context = request_context(statusid, _screen_name)
     if not context:
         return
     for lst in context.descendants:
@@ -235,7 +235,7 @@ def add_leaves(statusid):
                     continue
                 if parent:
                     with transaction.atomic():
-                        leaf, created = Treedj.objects.get_or_create(statusid=tweet_context.tweet.statusid, parent=parent)
+                        _leaf, _created = Treedj.objects.get_or_create(statusid=tweet_context.tweet.statusid, parent=parent)
             if not tweet_context.descendants:
                 continue
             

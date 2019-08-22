@@ -19,9 +19,12 @@
 {% block content %}
 
 {% get_current_language as LANGUAGE_CODE %}
+<!-- outside display cache {% now "jS F Y H:i" %} -->
+<!-- LANGUAGE_CODE: {% LANGUAGE_CODE %} -->
 
 {% cache display_cache frontpage LANGUAGE_CODE %}
-
+<!-- inside display cache {% now "jS F Y H:i" %} -->
+<!-- TTL: {% display_cache %} -->
 <div class="container-fluid">
   {% include "landing/funding.html" %}
   <div class="row">

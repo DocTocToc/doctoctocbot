@@ -78,10 +78,9 @@ def handle_create_all_profiles():
 
 @shared_task
 def handle_sendmoderationdm(self, mod_instance_id):
-    from .moderate import quickreply
-    from .models import Moderation
+    from moderation.moderate import quickreply
+    from moderation.models import Moderation
     from dm.api import senddm
-    import time
     
     mod_mi = Moderation.objects.get(pk=mod_instance_id)
     qr = quickreply(mod_instance_id)

@@ -366,7 +366,7 @@ CACHES = {
         }
     }
 }
-DISPLAY_CACHE=config('DISPLAY_CACHE', cast=int, default=60)
+DISPLAY_CACHE = config('DISPLAY_CACHE', cast=int, default=60)
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

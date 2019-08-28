@@ -19,6 +19,10 @@ from django.utils.translation import gettext as _
 from moderation.social import send_graph_dm
 from bot.onstatus import triage_status
 
+from moderation.moderate import quickreply
+from moderation.models import Moderation
+from dm.api import senddm
+
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
@@ -76,12 +80,8 @@ def handle_create_all_profiles():
             for user_jsn in user_jsn_lst:
                 twitterprofile(user_jsn)
 
-@shared_task
+@shared_task(bind=True)
 def handle_sendmoderationdm(self, mod_instance_id):
-    from moderation.moderate import quickreply
-    from moderation.models import Moderation
-    from dm.api import senddm
-    
     mod_mi = Moderation.objects.get(pk=mod_instance_id)
     qr = quickreply(mod_instance_id)
     logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")

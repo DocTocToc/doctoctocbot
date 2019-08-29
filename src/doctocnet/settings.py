@@ -28,6 +28,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 CONFIG_DIR = Path(BASE_DIR + "/..")
 config = AutoConfig(search_path = CONFIG_DIR)
 
+DEBUG = config('DEBUG', default=True, cast=bool)
+
 LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
 
 DICT_CONFIG = {
@@ -103,7 +105,6 @@ logging.config.dictConfig(DICT_CONFIG)
 
 
 
-DEBUG = config('DEBUG', default=True, cast=bool)
 
 
 SECRET_KEY = config('SECRET_KEY')
@@ -428,6 +429,12 @@ STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False
 
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cat=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', default=30, cast=int)
 SERVER_EMAIL = config('SERVER_EMAIL', default='noreply@example.com')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@example.com')
 ADMIN_FIRST_NAME = config('ADMIN_FIRST_NAME', default='admin')

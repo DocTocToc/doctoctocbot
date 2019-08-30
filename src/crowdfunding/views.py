@@ -441,14 +441,14 @@ def charge(request):
             )
 
         else:
-            order = get_object_or_404(ProjectInvestment, id=uuid_str)
+            order = get_object_or_404(ProjectInvestment, uuid=uuid_str)
             if ((int(float(order.pledged * 100)) == charge["amount"])
-                and (str(order.id) == charge["metadata"]["uuid"])):
+                and (str(order.uuid) == charge["metadata"]["uuid"])):
                 # mark the order as paid
                 order.paid = True
                 order.save()
                 # count paid ProjectInvestments with date inf or equal this
-                # to invesment date
+                # to investment date
                 rank = (
                     ProjectInvestment.objects
                     .filter(paid=True)

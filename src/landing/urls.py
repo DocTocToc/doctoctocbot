@@ -3,7 +3,7 @@ from django.views.decorators.cache import cache_page
 from display.views import All
 from django.views.generic import TemplateView
 
-from . import views
+from landing import views
 
 app_name = 'landing'
 

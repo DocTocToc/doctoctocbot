@@ -42,7 +42,7 @@ class UserInfo(LoginRequiredMixin, TemplateView):
         if self.request.user.social_auth.exists():
             uid = self.request.user.social_auth.get(provider='twitter').uid
         else:
-            uid = None
+            uid = 0
         
         if self.request.user.socialuser is not None:
             json = self.request.user.socialuser.profile.json

@@ -153,21 +153,25 @@ def userhashtagcount(userid: int, idx: int) -> int:
     (according to its index in the configuration list) that are neither retweets nor quotes.
     """
     from .models import Tweetdj
-    if userid is None:
-        return
+    if not userid:
+        return 0
     mi_lst = Tweetdj.objects.filter(userid=userid, quotedstatus=False, retweetedstatus=False)
     if idx == 0:
-            return mi_lst.filter(hashtag0=True).count()
+        logger.debug("idx0: %s", mi_lst.filter(hashtag0=True).count())
+        return mi_lst.filter(hashtag0=True).count()
     elif idx == 1:
-            return mi_lst.filter(hashtag1=True).count()
+        logger.debug("idx0: %s", mi_lst.filter(hashtag1=True).count())
+        return mi_lst.filter(hashtag1=True).count()
+    else:
+        return 0
 
 def usertotalhashtagcount(userid: int) -> int:
     """
     Return the count of status posted by the user with this userid, including any hashtag
     from the keyword track list, that are neither retweets nor quotes.
     """
-    if userid is None:
-        return
+    if not userid:
+        return 0
     total_count = 0
     for idx in range(len(settings.KEYWORD_TRACK_LIST)):
         count = userhashtagcount(userid, idx)

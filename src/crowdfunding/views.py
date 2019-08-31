@@ -499,17 +499,25 @@ class ProjectInvestmentView(ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         #context['book_list'] = Book.objects.all()
+
         tier_lst = []
-        for t in Tier.objects.filter(project=Project.objects.get(name='doctoctocbot')):
-            tier = {}
-            tier['title']= t.title
-            tier['emoji']= t.emoji
-            tier['description']= t.description
-            tier['funder_lst'] = list(ProjectInvestment.objects.
-                                      filter(paid=True).
-                                      filter(public=True).
-                                      filter(pledged__gte=t.min, pledged__lte=t.max))
-            tier_lst.append(tier)
+        if Tier.objects.count():
+            for t in Tier.objects.filter(project=Project.objects.get(name='doctoctocbot')):
+                tier = {}
+                tier['title']= t.title
+                tier['emoji']= t.emoji
+                tier['description']= t.description
+                tier['funder_lst'] = list(ProjectInvestment.objects.
+                                          filter(paid=True).
+                                          filter(public=True).
+                                          filter(pledged__gte=t.min, pledged__lte=t.max))
+                tier_lst.append(tier)
+        else:
+            context['funder_lst'] = list(ProjectInvestment.objects.
+                                          filter(paid=True).
+                                          filter(public=True).
+                                          order_by('name').
+                                          distinct('name'))
         context['tier_lst'] = tier_lst
         context['investor_count'] = (ProjectInvestment
                                      .objects

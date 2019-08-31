@@ -18,6 +18,9 @@
           </ul>
       </li>
     {% endfor %}
+    {% for funder in funder_lst %}
+      <li>{{ funder.user.username }}</li>
+    {% endfor %}  
 </ul>
 {% else %}
 <p>{% blocktrans %}Be the first to invest in our project!{% endblocktrans %}<p>

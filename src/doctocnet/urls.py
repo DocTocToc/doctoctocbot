@@ -48,6 +48,8 @@ urlpatterns = [
     re_path(r'^documents/', include(wagtaildocs_urls)),
 #    re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'', include(wagtail_urls)),
+    
+    path('discourse/', include('discourse.urls', namespace='discourse')),
 
 ]
 

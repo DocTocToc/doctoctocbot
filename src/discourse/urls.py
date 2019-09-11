@@ -6,7 +6,7 @@ app_name = 'discourse'
 
 urlpatterns = [
     url(
-        '^discourse/sso/$',
+        '^discourse/sso$',
         views.discourse_sso,
         name= 'discourse-sso'
     ),

@@ -5,5 +5,5 @@ from discourse import views
 app_name = 'discourse'
 
 urlpatterns = [
-    path('sso/', views.discourse_sso),
+    path('discourse/sso/', views.discourse_sso),
 ]

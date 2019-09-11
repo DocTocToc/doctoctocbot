@@ -31,6 +31,7 @@ urlpatterns = [
     path('', include('registration.urls')),
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
+    path('', include('discourse.urls')),
     path('moderation/', include('moderation.urls')),
     path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
@@ -49,7 +50,6 @@ urlpatterns = [
 #    re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'', include(wagtail_urls)),
     
-    path('', include('discourse.urls')),
 
 ]
 

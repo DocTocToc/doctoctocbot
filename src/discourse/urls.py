@@ -1,9 +1,13 @@
-from django.urls import path
+from django.conf.urls import url
 
 from discourse import views
 
 app_name = 'discourse'
 
 urlpatterns = [
-    path('discourse/sso/', views.discourse_sso),
+    url(
+        '^discourse/sso/$',
+        views.discourse_sso,
+        name= 'discourse-sso'
+    ),
 ]

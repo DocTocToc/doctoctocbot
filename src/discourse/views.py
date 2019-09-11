@@ -15,8 +15,8 @@ def discourse_sso(request):
     '''
     Code adapted from https://meta.discourse.org/t/sso-example-for-django/14258
     '''
-    payload = request.GET.get('sso')
-    signature = request.GET.get('sig')
+    payload = request.GET.get('sso', None)
+    signature = request.GET.get('sig', None)
 
     if None in [payload, signature]:
         return HttpResponseBadRequest('No SSO payload or signature. Please contact support if this problem persists.')

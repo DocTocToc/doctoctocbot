@@ -1,15 +1,17 @@
 {% load static %}
+{% load landing_links %}
+{% load landing_tags %}
 <!-- First Container -->
 <div class="container-fluid bg-1">
   <h3 class="margin"><img src="{% static "/landing/images/brick_128x128.png" %}" class="float-right" alt="brick icon" width="128" height="128">Construisons ensemble un réseau social professionnel indépendant!</h3>
   <p>
-  Nous, professionnels de santé, participons bénévolement au réseau #DocTocToc
+  Nous, professionnels de santé, participons bénévolement au réseau {% hashtag_lst %}
   et souhaitons continuer à échanger et à nous entraider efficacement et en
   toute indépendance, sans publicité, ni spam.
   Nous voulons investir dans le développement de nos outils:
   <ul>
-  <li><a href="https://twitter.com/doctoctocbot">@DocTocTocBot</a></li>
-  <li>apps web <a href="/">DocTocToc.net</a></li>
+  <li>{% bot_link_text %}</li>
+  <li>applications web {% site_link_text %}</li>
   </ul>
   Pour télécharger votre facture, rendez-vous dans votre espace utilisateur après le règlement.
   </p>

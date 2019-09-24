@@ -39,7 +39,10 @@ def handle_campaign(name, userid_lst=None):
 
     messages = campaign.messages.all()
     categories = campaign.categories.all()
-    bot_su = SocialUser.objects.get(user_id=settings.BOT_ID)
+    bot_su = campaign.account
+    if not bot_su:
+        logger.debug(f"No account set for campaign {campaign.name}, aborting.")
+        return
     update_followersids(bot_su)
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
@@ -101,7 +104,8 @@ def handle_campaign(name, userid_lst=None):
             if current_limit>0:
                 response = senddm(
                     text,
-                    user_id=recipient.user_id
+                    user_id=recipient.user_id,
+                    screen_name=bot_su.screen_name_tag()
                 )
             else:
                 response = f"No remaining DM (limit={current_limit})"

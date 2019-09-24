@@ -21,24 +21,54 @@ import tweepy
 from tweepy.error import TweepError
 import unidecode
 
+from django.db.models import F
+from django.db.utils import DatabaseError
 from django.conf import settings
 
+from moderation.moderate import addtoqueue
 from bot.twitter import getAuth
-from moderation.models import SocialUser
+from moderation.models import SocialUser, Category
 from moderation.social import update_followersids
-
+from community.models import Community, Retweet
+from conversation.models import Hashtag
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 
-
 logger = logging.getLogger(__name__)
 
-def has_greenlight(status):
-        return isauthorized(status) \
-            and not isreplacement(status) \
-            and not isretweeted(status) \
-            and not isselfstatus(status) \
-            and not isquote(status)
+class HasRetweetHashtag(object):
+    hashtags = [ht.lower() for ht in Retweet.objects.filter(retweet=True).values_list('hashtag__hashtag', flat=True)]
+    def __init__(self, data=None):
+        self.hashtag_mi_lst = []
+        self.hashtag_lst = []
+        if data:
+            self.add(data)
+        
+    def __bool__(self):
+        return bool(len(self.hashtag_lst))
+    
+    def add(self, data):
+        if isinstance(data, str):
+            ht = data.lower()
+            if ht in self.hashtags:
+                self.hashtag_lst.append(ht)
+        elif isinstance(data, list):
+            for item in data:
+                if isinstance(item, str):
+                    ht = item.lower()
+                    if ht in self.hashtags:
+                        self.hashtag_lst.append(ht)
+        else:
+            return
+        self.add_hashtag_mi()
+        
+    def add_hashtag_mi(self):
+        try:
+            for hashtag_mi in Hashtag.objects.filter(hashtag__in=self.hashtag_lst):
+                self.hashtag_mi_lst.append(hashtag_mi)
+        except DatabaseError as e:
+            logger.error(e)
+
 
 def has_retweet_hashtag( status ):
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
@@ -49,14 +79,14 @@ def has_retweet_hashtag( status ):
     if 'extended_tweet' in status:
         status = status['extended_tweet']
     #logger.debug("status in has_retweet_hashtag: %s", status)
-    hashtags = status["entities"]["hashtags"]
-    hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
-    ismatch = False
-    for hashtag in hashtags:
-        for keyword in hashtag_retweet_list:
-            if keyword[1:].lower() == hashtag["text"].lower():
-                ismatch = True
-    return ismatch
+    hashtags = [hashtag["text"].lower() for hashtag in status["entities"]["hashtags"]]
+    #hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
+    #ismatch = False
+    #for hashtag in hashtags:
+    #    for keyword in hashtag_retweet_list:
+    #        if keyword[1:].lower() == hashtag["text"].lower():
+    #            ismatch = True
+    return HasRetweetHashtag(hashtags)
 
 def isreply( status ):
     "is status in reply to screen name or status or user?"
@@ -80,19 +110,8 @@ def isquestion ( status ):
     isquestion = '?' in status['full_text']
     return isquestion
 
-def okrt( status ):
-    """
-    Should the bot retweet this doc(s)toctoc question?
-    """
-    return has_retweet_hashtag(status) and isauthorized(status)
-
 def isretweeted(status):
     return status['retweeted']
-
-def isselfstatus(status):
-    isselfstatus = status['user']['id'] == settings.BOT_ID
-    logger.info("isselfstatus: {isselfstatus}")
-    return isselfstatus
 
 def is_following_rules(status):
     """
@@ -100,8 +119,7 @@ def is_following_rules(status):
     * Is Not a retweet
     * Is a question
     * Is not a reply
-    """
-    
+    """  
     if isrt(status):
         return False
 
@@ -136,10 +154,6 @@ def isknown( status ):
     logger.info(f"user {user_id} isknown: {isknown}")
     return isknown
 
-def isauthorized(status):
-    logger.debug(f"isauthorized(status): {status['user']['id'] in SocialUser.objects.authorized_users()}")
-    return status['user']['id'] in SocialUser.objects.authorized_users()
-
 def okbadlist( status ):
     "filter bad words"
     if 'extended_tweet' in status:
@@ -169,8 +183,8 @@ def isreplacement( status ):
     logger.debug("bool(replacement) == %s", bool(replacement))
     return bool(replacement)
 
-def is_follower(userid):
-    is_follower = userid in update_followersids(settings.BOT_ID)
+def is_follower(userid, bot_screen_name):
+    is_follower = userid in update_followersids(bot_screen_name)
     logger.info(f"5° is_follower: {is_follower}")
     return is_follower
 
@@ -183,7 +197,49 @@ def retweet(status_id) -> bool:
         return False
     return True
 
-
+def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
+    try:
+        social_user = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist as e:
+        logger.warn(f"SocialUser {userid} does not exist.", e)
+        return
+    category_qs = social_user.category.all()
+    if not category_qs:
+        return
+    dct_lst = Retweet.objects.filter(retweet=True) \
+                               .filter(category__in=category_qs) \
+                               .filter(hashtag__in=hrh.hashtag_mi_lst) \
+                               .values(
+                                   _community=F('community'),
+                                   _category=F('category'),
+                                   _bot_screen_name=F('community__account__username')
+                                ) \
+                               .distinct()
+    for dct in dct_lst:
+        logger.debug(
+            f'community: {dct["_community"]}'
+            f'category: {dct["_category"]}'
+            f'bot_screen_name: {dct["_bot_screen_name"]}'
+        )
+        if is_follower(userid, dct["_bot_screen_name"]):
+            category = Category.objects.get(pk=dct["_category"])
+            community = Community.objects.get(pk=dct['_community'])
+            trusted_community_qs = community.trust.filter(category=category)
+            trusted_community_lst = list(trusted_community_qs)
+            trusted_community_lst.append(community)
+            
+            trust = False
+            crs_lst = social_user.categoryrelationships.filter(category=category)
+            for crs in crs_lst:
+                if crs.community in trusted_community_lst:
+                    trust = True
+            
+            if trust:
+                get_api(username=dct["_bot_screen_name"]).retweet(statusid)
+            else:
+                addtoqueue(userid, statusid, community.name)
+    
+ 
 def get_search_string():
     keyword_list = settings.KEYWORD_RETWEET_LIST
     search_string = " OR ".join ( keyword_list )

@@ -1,24 +1,45 @@
 import logging
 
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, DatabaseError
+from django.db.models import F
 from django.conf import settings
 
 from moderation.models import Queue
 from moderation.social import update_followersids
+from community.models import Retweet
+from conversation.models import Hashtag
+from community.models import Community
 
 logger = logging.getLogger(__name__)
 
-def process_unknown_user(user_id, status_id):
-    if user_id in update_followersids(settings.BOT_ID):
-        addtoqueue(user_id, status_id)
+def process_unknown_user(user_id, status_id, hrh):
+    logger.debug("processing unknown user")
+    dct_lst = Retweet.objects.filter(retweet=True) \
+                                .filter(hashtag__in=hrh.hashtag_mi_lst) \
+                                .values(
+                                    community_name=F('community__name'),
+                                    username=F('community__account__username')
+                                ) \
+                                .distinct()
+    for dct in dct_lst:
+        follower_id_lst = update_followersids(dct['username'])
+        if not follower_id_lst:
+            logger.warn(f"{dct['username']} does not have any followers.")
+            continue
+        if user_id in follower_id_lst:
+            addtoqueue(user_id, status_id, dct['community_name'])
 
-def addtoqueue(user_id, status_id):
-    q = Queue.objects.create(user_id = user_id, status_id = status_id)
+def addtoqueue(user_id, status_id, community_name):
     try:
-        q.save()
-    except IntegrityError:
-        logging.exception('')
-        return
+        community = Community.objects.get(name=community_name)
+    except Community.DoesNotExist as e:
+        logger.error(e)   
+    try:
+        Queue.objects.create(user_id = user_id,
+                             status_id = status_id,
+                             community = community)
+    except DatabaseError as e:
+        logger.error(e)
 
 def quickreply(id):
     from .models import Category

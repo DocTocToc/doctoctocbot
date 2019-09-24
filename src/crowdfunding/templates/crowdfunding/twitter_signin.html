@@ -1,4 +1,5 @@
 {% load static %}
+{% load landing_tags %}
 {% if 'twitter' in backends.not_associated %}
 <div class="container-fluid bg-1">
   <p>Vous avez un compte Twitter? Merci de vous authentifier!
@@ -8,13 +9,13 @@
   {% if not user.is_authenticated %}
   <p>
   Vous n'avez pas de compte Twitter mais vous avez un compte sur
-  DocTocToc.net? Merci de vous
+  {% site_text %}? Merci de vous
   <a href="{% url 'login' %}?next={% url 'crowdfunding:start' %}">
   connecter!
   </a>
   </p>
   <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir 1 nom d'utilisateur.
-  <small>Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</small></p>
+  <p>⚠️ Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</p></p>
   {% endif %}
 </div>
 {% endif %}

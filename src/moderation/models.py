@@ -15,6 +15,7 @@ from django.conf import settings
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
+from community.models import Community
 
 import logging
 logger = logging.getLogger(__name__)
@@ -85,11 +86,12 @@ class AuthorizedManager(models.Manager):
         queryset = SocialUser.objects.filter(*(args,) ).exclude(donotretweet__current=True).values_list('user_id', flat=True)
         return list(queryset)
 
-    def active_moderators(self):
+    def active_moderators(self, community: Community):
         try:
             return SocialUser.objects.filter(
                 category=Category.objects.get(name="moderator"),
-                moderator__in=Moderator.objects.filter(active=True)
+                moderator__in=Moderator.objects.filter(active=True,
+                                                       community=community),
                 ).values_list('user_id', flat=True)
         except:
             return []
@@ -151,7 +153,7 @@ class SocialUser(models.Model):
     def __str__(self):
         try:
             return str("%i | %s | %i " % (self.pk, self.profile.json["screen_name"], self.user_id))
-        except:
+        except Profile.DoesNotExist:
             return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
 
     def normal_image_tag(self):
@@ -165,14 +167,22 @@ class SocialUser(models.Model):
     mini_image_tag.short_description = 'Image'
 
     def screen_name_tag(self):
-        screen_name = self.profile.json.get("screen_name", None)
-        return screen_name
+        try:
+            return self.profile.json.get("screen_name", None)
+        except Profile.DoesNotExist:
+            return
+        except AttributeError:
+            return
     
     screen_name_tag.short_description = 'Screen name'
     
     def name_tag(self):
-        name = self.profile.json.get("name", None)
-        return name
+        try:
+            return self.profile.json.get("name", None)
+        except Profile.DoesNotExist:
+            return
+        except AttributeError:
+            return
     
     name_tag.short_description = 'Name'
 
@@ -182,12 +192,6 @@ class SocialUser(models.Model):
         ordering = ('user_id',)
 
 
-class AuthorizedCategoryManager(models.Manager):
-    def get_queryset(self):
-        name_lst = settings.MODERATION_AUTHORIZED_CATEGORIES
-        return super().get_queryset().filter(name__in=name_lst)
-
-
 class Category(models.Model):
     """
     TODO: link to future community fk, make (label, community) unique together
@@ -195,23 +199,15 @@ class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    quickreply = models.BooleanField(default=False,
-                                         help_text="Include in DM quickreply?")
-    socialgraph = models.BooleanField(default=False,
-                                         help_text="Include in moderation social graph?")    
-    color = models.CharField(max_length=20, unique=True, null=True, blank=True)
-
-    objects = models.Manager()
-    authorized = AuthorizedCategoryManager()
     
     def __str__(self):
         return self.name
     
-    def clean(self):
-        if (self.quickreply and
-                Category.objects.filter(quickreply=True).count() > 20):
-            raise ValidationError(_('Maximum number of category instances '
-                                    ' that can be included in a quickreply is 20.'))
+    #def clean(self):
+    #    if (self.quickreply and
+    #            Category.objects.filter(quickreply=True).count() > 20):
+    #        raise ValidationError(_('Maximum number of category instances '
+    #                                ' that can be included in a quickreply is 20.'))
     
     class Meta:
         ordering = ('name',)
@@ -231,13 +227,24 @@ class UserCategoryRelationship(models.Model):
         null=True,
         limit_choices_to = limit_user_category_relationship_moderator    
     )
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.CASCADE,
+        null=True,
+    )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return (f"su:{self.social_user.screen_name_tag()} ,"
+                f"cat:{self.category.name} ,"
+                f"mod:{self.moderator.screen_name_tag()} ,"
+                f"com:{self.community}")
+
     
     class Meta:
-        unique_together = ("social_user", "category")
-    
+        unique_together = ("social_user", "category", "community")
+
     
 class SocialMedia(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -303,9 +310,20 @@ class Profile(models.Model):
         )
         return description
 
+def get_default_queue():
+    try:
+        return Community.objects.get(pk=1)
+    except Community.DoesNotExist as e:
+        logger.debug("Create a default Community object with pk equal to one.", e)
+
 class Queue(Versionable):
     user_id = models.BigIntegerField()
     status_id = models.BigIntegerField()
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.CASCADE,
+        null=True
+    )
     
     def __str__(self):
         return (f"{self.user_id} {self.status_id}")
@@ -416,7 +434,11 @@ class Moderation(Versionable):
     moderated_mini_image_tag.short_description = 'Moderated image'
     
     def moderator_screen_name_tag(self):
-        p = self.moderator.profile
+        try:
+            p = self.moderator.profile
+        except Profile.DoesNotExist as e:
+            logger.warn(e)
+            return
         logging.debug(f"profile: {p}")
         if p is not None:
             screen_name = p.json.get("screen_name", None)
@@ -448,6 +470,11 @@ class TwitterList(models.Model):
     label = models.CharField(max_length=50, blank=True, null=True)
     local_description = models.TextField(blank=True, null=True)
     json = JSONField(blank=True, null=True)
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.CASCADE,
+        null=True,
+    )
     
     def __str__(self):
         if self.uid:
@@ -481,24 +508,30 @@ class Follower(models.Model):
         return "followers of %s " % name
     
 class Moderator(models.Model):
-    socialuser = models.OneToOneField(SocialUser,
-                                      verbose_name='socialuser',
-                                      primary_key=True,
-                                      on_delete=models.CASCADE)
+    socialuser = models.OneToOneField(
+        SocialUser,
+        verbose_name='socialuser',
+        primary_key=True,
+        on_delete=models.CASCADE
+    )
     active = models.BooleanField(
         default=False,
         help_text="Is this moderator active?"
     )
-    
     public = models.BooleanField(
         default=True,
         help_text="Does this moderator want to appear on the public list?"
     )
+    community = models.ManyToManyField(
+        'community.Community',
+    )
+
     
     def __str__(self):
         try:
             return self.socialuser.profile.json["screen_name"]
-        except:
+        except Profile.DoesNotExist as e:
+            logger.warn(e)
             return str("%i %s " % (self.socialuser.user_id, self.socialuser.social_media))
     
     @staticmethod

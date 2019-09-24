@@ -320,8 +320,6 @@ STATUS_DISPLAY_HOUR = {
     'top': 48
 }
 
-MODERATION_AUTHORIZED_CATEGORIES = ['physician', 'midwife',]
-
 # Path on disk where images are saved
 BOT_IMAGES_PATH = ""
 

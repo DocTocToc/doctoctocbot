@@ -32,8 +32,7 @@ def create_moderation(sender, instance, created, **kwargs):
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
         moderatorid_int_lst = []
         if settings.MODERATION["moderator"]:
-            #moderatorid_int_lst.extend(SocialUser.objects.moderators())
-            moderatorid_int_lst.extend(SocialUser.objects.active_moderators())
+            moderatorid_int_lst.extend(SocialUser.objects.active_moderators(instance.community))
         elif settings.MODERATION["dev"]:
             logger.debug(f"SocialUser.objects.devs(): {SocialUser.objects.devs()}")
             moderatorid_int_lst.extend(SocialUser.objects.devs())

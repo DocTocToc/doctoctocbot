@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
           
@@ -16,7 +16,6 @@ services:
     restart: always
     env_file:
       - .env
-    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=2 -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
@@ -31,7 +30,6 @@ services:
     restart: always
     env_file:
       - .env
-    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=2 -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE} --time-limit=${CELERY_TREE_SOFT_TIME_LIMIT}"
     volumes:
       - ./src:/code/src
@@ -48,7 +46,6 @@ services:
     restart: always
     env_file:
       - .env
-    image: django:doctocnet
     command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=2 -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
@@ -65,7 +62,6 @@ services:
     restart: always
     env_file:
       - .env
-    image: django:doctocnet
     command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=
     volumes:
       - ./src:/code/src
@@ -84,7 +80,6 @@ services:
     restart: always
     env_file:
       - .env
-    image: django:doctocnet
     command: bash -c "python manage.py run_bot_stream --settings=settings"
     volumes:
       - ./src:/code/src

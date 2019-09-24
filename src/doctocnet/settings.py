@@ -88,6 +88,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "timeline": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }
@@ -172,9 +176,14 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'link',
     'gpgcontact',
-#    'community',
+    'community',
     'discourse',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        'django_extensions',
+    ]
 
 MIDDLEWARE = [
     # CORS
@@ -189,6 +198,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
 # wagtail start
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -406,7 +416,6 @@ STATUS_DISPLAY_HOUR = {
     'top': 72
 }
 
-MODERATION_AUTHORIZED_CATEGORIES = config('MODERATION_AUTHORIZED_CATEGORIES', cast=Csv())
 
 #CORS_ORIGIN_ALLOW_ALL = True
 
@@ -459,8 +468,6 @@ TWITTER_CONSUMER_SECRET = config('TWITTER_CONSUMER_SECRET')
 TWITTER_ACCESS_TOKEN = config('TWITTER_ACCESS_TOKEN')
 TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH')
-BOT_ID = config('BOT_ID', cast=int)
-BOT_SCREEN_NAME = config('BOT_SCREEN_NAME')
 KEYWORD_TRACK_LIST = config('KEYWORD_TRACK_LIST', cast=Csv())
 KEYWORD_RETWEET_LIST = config('KEYWORD_RETWEET_LIST', cast=Csv())
 NUMBER_OF_RT = 20

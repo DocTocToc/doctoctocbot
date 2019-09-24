@@ -1,0 +1,6 @@
+{% for category in category_lst %}
+    {% if forloop.first %}{{ category }}
+    {% elif forloop.last %}et {{ category }}
+    {% else %}, {{ category }}{% endif %}
+{% endfor %}
+ 

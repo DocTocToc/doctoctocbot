@@ -1,0 +1,10 @@
+{% for hashtag in hashtag_lst %}
+    {% if forloop.first %}
+        #{{ hashtag }}
+    {% elif forloop.last %}
+        et #{{ hashtag }}
+    {% else %}
+        , #{{ hashtag }}
+    {% endif %}
+{% endfor %}
+ 

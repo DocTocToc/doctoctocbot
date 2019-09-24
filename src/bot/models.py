@@ -13,7 +13,13 @@ class Account(models.Model):
         "conversation.Hashtag",
         blank=True    
     )
-    
+    launch = models.DateField(
+        help_text="Launch date of the account",
+        blank=True,
+        default=None,
+        null=True
+    )
+
     def __str__(self):
         return self.username
 

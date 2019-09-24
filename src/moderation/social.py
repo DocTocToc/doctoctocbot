@@ -1,5 +1,6 @@
 from moderation.models import SocialUser, Follower, Category
 from bot.twitter import get_api
+from bot.models import Account
 from django.db.utils import DatabaseError
 import logging
 import numpy as np
@@ -15,19 +16,31 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone, translation
 from tweepy import TweepError
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
 def get_socialuser(user):
+
     if isinstance(user, SocialUser):
         return user
     elif isinstance(user, int):
         try:
             return SocialUser.objects.get(user_id=user)
         except SocialUser.DoesNotExist:
+            pass
+    elif isinstance(user, str):
+        try:
+            account = Account.objects.get(username=user)
+            return SocialUser.objects.get(user_id=account.userid)
+        except ObjectDoesNotExist:
+            pass
+        try:
+            return SocialUser.objects.get(profile__json__screen_name=user)
+        except SocialUser.DoesNotExist:
             return
 
-
+# TODO: fix type to accept string for username
 def update_followersids(user):
     su = get_socialuser(user)
     if not su:
@@ -207,7 +220,7 @@ def get_dm_media_id(file):
     file.close()
     return res.media_id
     
-def send_graph_dm(user_id, dest_user_id, text=""):
+def send_graph_dm(user_id, dest_user_id, bot_screen_name, text=""):
     with translation.override(settings.TRANSLATION_OVERRIDE):
         user_screen_name = screen_name(user_id)
         file = pie_plot(graph(user_id))
@@ -226,6 +239,7 @@ def send_graph_dm(user_id, dest_user_id, text=""):
         )
         return senddm(dm_text,
                       user_id=dest_user_id,
+                      screen_name=bot_screen_name,
                       attachment=attachment)
         
 def order_dict(dct, reverse=False):

@@ -25,6 +25,7 @@ from moderation.models import SocialUser, SocialMedia, Category, UserCategoryRel
 
 from .constants import MODERATOR
 from moderation.models import TwitterList
+from community.models import Community
 from bot.lib.datetime import datetime_twitter_str
 
 #os.environ["DJANGO_SETTINGS_MODULE"] = 'doctocnet.settings'
@@ -61,14 +62,23 @@ def get_or_create_social_user(user_id, socialmedia_mi):
         socialuser.save()
     return socialuser
 
-def check_add_usercategoryrelationship(user, category, moderator_mi):
-    if not user or not category or not moderator_mi:
+def check_add_usercategoryrelationship(user, category, moderator_mi, community_mi):
+    if (not user
+        or not category
+        or not moderator_mi
+        or not community_mi):
         return
-    if category not in user.category.all():
+    crs_lst = user.categoryrelationships.filter(
+        category=category,
+        community=community_mi
+    )
+
+    if not crs_lst:
         user_category_relationship = UserCategoryRelationship(
             social_user = user,
             category = category,
-            moderator = moderator_mi
+            moderator = moderator_mi,
+            community = community_mi
         )
         try:
             user_category_relationship.save()
@@ -76,27 +86,52 @@ def check_add_usercategoryrelationship(user, category, moderator_mi):
             logger.error("Database error while trying to add a new "
                          "UserCategoryRelationship instance: %r", e)
         
-def remove_usercategoryrelationship(user_mis, category):
+def remove_usercategoryrelationship(user_mis, category, community):
+    """
+    This function is not currently used.
+    """
     for user_mi in user_mis:
-        if category in user_mi.category.all():
-            ucr = UserCategoryRelationship.objects.filter(social_user = user_mi,
-                                                      category = category)
+        ucr = UserCategoryRelationship.objects.filter(
+            social_user = user_mi,
+            category = category,
+            community = community
+        )
+        if ucr:
             ucr.delete()
 
-def get_twitter_lists():
-    bot_id = settings.BOT_ID
-    bot_screen_name = settings.BOT_SCREEN_NAME
-    api = get_api()
+def get_twitter_lists(community: Community):
+    bot_id = community.account.userid
+    if not bot_id:
+        logger.error(f"Community account id not set.")
+        return
+    bot_screen_name = community.account.username
+    if not bot_screen_name:
+        logger.error(f"Community account username not set.")
+    api = get_api(username=bot_screen_name)
     return api.lists_all(bot_screen_name, bot_id)
 
-def poll_lists_members():
+def poll_lists_members(community: str):
     # create some defaults if they don't exist
     socmedtwitter_mi, _ = SocialMedia.objects.get_or_create(name='twitter')
-    bot_socialuser_mi = get_or_create_social_user(settings.BOT_ID, socmedtwitter_mi)
+    bot_id: int = community.account.userid
+    if not bot_id:
+        logger.error(f"Community account id not set.")
+        return
+    bot_socialuser_mi = get_or_create_social_user(bot_id, socmedtwitter_mi)
     moderator_category_mi = get_or_create_category(MODERATOR)
-    check_add_usercategoryrelationship(bot_socialuser_mi, moderator_category_mi, bot_socialuser_mi)
-    
-    lists = get_twitter_lists()
+    try:
+        community_mi = Community.objects.get(name=community)
+    except Community.DoesNotExist as e:
+        logger.error(f"No Community with name '{community}' found.", e)
+        return
+    check_add_usercategoryrelationship(
+        bot_socialuser_mi,
+        moderator_category_mi,
+        bot_socialuser_mi,
+        community_mi
+    )
+
+    lists = get_twitter_lists(community_mi)
     
     for list in lists:
         try:
@@ -106,13 +141,19 @@ def poll_lists_members():
             continue
         category_name = twitter_list_mi.uid
         category_mi = get_or_create_category(category_name)
+        bot_screen_name = community.account.username
         users_id = []
         for member in tweepy.Cursor(
-            get_api().list_members,
-            settings.BOT_SCREEN_NAME,
+            get_api(username=bot_screen_name).list_members,
+            bot_screen_name,
             twitter_list_mi.slug).items(noi):
             socialuser_mi = get_or_create_social_user(user_id = member.id, socialmedia_mi = socmedtwitter_mi)
-            check_add_usercategoryrelationship(socialuser_mi, category_mi, bot_socialuser_mi)
+            check_add_usercategoryrelationship(
+                socialuser_mi,
+                category_mi,
+                bot_socialuser_mi,
+                community_mi
+            )
             users_id.append(member.id)
         
         # remove users that are not in the list users_id from category
@@ -125,8 +166,13 @@ def poll_lists_members():
 
         # TODO: remove from twitter list users that are not in the category
 
-def create_update_lists():
-    lists = get_twitter_lists()
+def create_update_lists(community: str):
+    try:
+        community_mi = Community.objects.get(name=community)
+    except Community.DoesNotExist as e:
+        logger.error(f"No Community with name '{community}' found.", e)
+        return
+    lists = get_twitter_lists(community_mi)
     for list in lists:
         create_update_list(list)
 

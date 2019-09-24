@@ -3,12 +3,10 @@ import tweepy
 
 from bot.doctoctocbot import (
     is_following_rules,
-    retweet,
-    isknown,
-    has_greenlight,
+    community_retweet,
+    isreplacement,
+    isquote,
     has_retweet_hashtag,
-    isselfstatus,
-    is_follower
 )
 from bot.lib.statusdb import Addstatus
 from bot.twitter import getAuth
@@ -33,22 +31,18 @@ def triage(statusid):
     dbstatus.addtweetdj()
     dbstatus.add_image()
 
-    logger.info(f"1° not isknown(sjson): {not isknown(sjson)}")
-    logger.info(f"2° has_retweet_hashtag(sjson): {has_retweet_hashtag(sjson)}")
-    logger.info(f"3° isselfstatus(sjson) {isselfstatus(sjson)}")
+    logger.info(f"2° has_retweet_hashtag(sjson): {bool(has_retweet_hashtag(sjson))}")
     logger.info(f"4° not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}")
 
-    if not isknown(sjson):
-        triage_user(sjson)
-    elif is_following_rules(sjson):
+    if is_following_rules(sjson):
         create_tree(statusid)
-        if (
-            has_greenlight(sjson) and
-            has_retweet_hashtag(sjson) and
-            is_follower(sjson['user']['id'])    
-        ):
+        hrh = has_retweet_hashtag(sjson)
+        userid = sjson['user']['id']
+        if (not isreplacement(sjson)
+            and not isquote(sjson)
+            and hrh):
             logger.info("Retweeting status %s: %s ", status.id, status.full_text)
-            retweet(status.id)
+            community_retweet(status.id, userid, hrh)
 
 def triage_status(status_id):
     try:
@@ -56,18 +50,19 @@ def triage_status(status_id):
     except Tweetdj.DoesNotExist:
         triage(status_id)
         return
-    
-    if (
-        is_following_rules(sjson) and
-        has_greenlight(sjson) and
-        has_retweet_hashtag(sjson) and
-        is_follower(sjson['user']['id'])
-    ):
-        logger.info("Retweeting status %s: %s ", sjson["id"], sjson["full_text"])
-        retweet(sjson["id"])
+    hrh = has_retweet_hashtag(sjson)
+    if (is_following_rules(sjson)
+        and not isreplacement(sjson)
+        and not isquote(sjson)
+        and hrh):
+        logger.info(
+            "Sending status %s: %s to function community_retweet()",
+            sjson["id"],
+            sjson["full_text"]
+        )
+        community_retweet(sjson["id"], sjson["user"]["id"], hrh)
        
 def triage_user(sjson):
-    if (has_retweet_hashtag(sjson) and
-        not isselfstatus(sjson) and
-        not ('retweeted_status' in sjson)):
-        process_unknown_user(sjson["user"]["id"], sjson["id"])
+    hrh = has_retweet_hashtag(sjson)
+    if (hrh and not ('retweeted_status' in sjson)):
+        process_unknown_user(sjson["user"]["id"], sjson["id"], hrh)

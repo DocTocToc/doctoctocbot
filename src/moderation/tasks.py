@@ -22,19 +22,20 @@ from bot.onstatus import triage_status
 from moderation.moderate import quickreply
 from moderation.models import Moderation
 from dm.api import senddm
+from community.models import Community
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 
 @shared_task
-def handle_poll_lists_members():
-    poll_lists_members()
+def handle_poll_lists_members(community_name: str):
+    poll_lists_members(community_name)
     
 
 @shared_task
-def handle_create_update_lists():
-    create_update_lists()
+def handle_create_update_lists(community_name: str):
+    create_update_lists(community_name)
 
 
 
@@ -97,12 +98,14 @@ def handle_sendmoderationdm(self, mod_instance_id):
     ok = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,
+        mod_mi.queue.community.account.username,
         _("You will soon receive a moderation request for this user.")
     )
     if not ok:
         self.retry(countdown= 2 ** self.request.retries)
     ok = senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
+           screen_name=mod_mi.queue.community.account.username,
            return_json=True,
            quick_reply=qr)
     if not ok:
@@ -122,6 +125,15 @@ def poll_moderation_dm():
             except DeletionOfNonCurrentVersionError as e:
                 logger.info(f"Moderation instance {mod_mi} was already moderated. %s" % e)
 
+    def get_moderation_metadata(dm):
+        return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
+    
+    def get_moderation_id(dm):
+        return get_moderation_metadata(dm)[10:46]
+    
+    def get_moderation_category_name(dm):
+        return get_moderation_metadata(dm)[46:]
+    
     
     current_mod_uuids = [str(mod.id) for mod in Moderation.objects.current.all()]
     logger.debug(f"current_mod_uuids: {current_mod_uuids}")
@@ -129,17 +141,17 @@ def poll_moderation_dm():
     if not current_mod_uuids:
         return
     
-    bot_id = settings.BOT_ID
+    bot_id_lst = Community.objects.values_list("account__userid", flat=True)
     #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
     dms = DirectMessage.objects\
-        .filter(recipient_id=bot_id)\
+        .filter(recipient_id__in=bot_id_lst)\
         .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation")
     logger.info(f"all moderation direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
     #dmsgs_current = [dmsg for dmsg in dmsgs if (dmsg.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] in current_moderations_uuid_str_lst)]
 
     dms_current = []
     for dm in dms:
-        uid = dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'][10:46]
+        uid = get_moderation_id(dm)
         logger.info(f"uid: {uid}")
         ok = uid in current_mod_uuids
         logger.info(f"ok = uid in current_mod_uuids: {ok}")
@@ -148,11 +160,10 @@ def poll_moderation_dm():
     
     #logger.info(f"current moderation direct messages answers: {len(dms_current)} {[dm.text + os.linesep for dm in dms_current]}")
     for dm in dms_current:
-        metadata = dm.jsn["kwargs"]["message_create"]["message_data"]["quick_reply_response"]["metadata"]
-        moderation_id = metadata[10:46]
-        mod_cat_name = metadata[46:]    
+        moderation_id = get_moderation_id(dm)
+        mod_cat_name = get_moderation_category_name(dm)
         logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
-        #retrieve moderaton instance
+        #retrieve moderation instance
         try:
             mod_mi = Moderation.objects.get(pk=moderation_id)
         except Moderation.DoesNotExist as e:
@@ -194,11 +205,17 @@ def poll_moderation_dm():
         except SocialUser.DoesNotExist:
             continue
         
-        #Check if relationship already exists
-        if cat_mi in moderated_su_mi.category.all():
-            logger.info(f"{moderated_su_mi} is already a {cat_mi}")
+        #Check if relationship already exists for the given community
+        #if cat_mi in moderated_su_mi.category.all():
+        if moderated_su_mi.categoryrelationships.filter(
+            community=mod_mi.queue.community,
+            category=cat_mi):
+            logger.info(f"{moderated_su_mi} is already a {cat_mi} for community {mod_mi.queue.community}")
             delete_moderation_queue(mod_mi)
             continue
+        
+        # TODO: check if there exists a categoryrelationship created by another
+        # community where cat_mi differs and warn both communities of the discrepancy
         
         # create UserCategoryRelationship
         ucr = None
@@ -207,21 +224,20 @@ def poll_moderation_dm():
                 ucr = UserCategoryRelationship.objects.create(
                     social_user = moderated_su_mi,
                     category = cat_mi,
-                    moderator = moderator_su_mi)
+                    moderator = moderator_su_mi,
+                    community = mod_mi.queue.community
+                )
             except DatabaseError as e:
                 logger.error(e)
                 continue
-
-        # retweet status if user category is among authorized categories  
+  
         if ucr:
             logger.info(f"ucr creation successful: {ucr}")
             status_id = mod_mi.queue.status_id
+            # delete queue object corresponding to this moderation
             delete_moderation_queue(mod_mi)
-            if cat_mi in Category.authorized.all():
-                triage_status(status_id)
+            # send status to triage, it will be retweeted according to retweet rules of communities
+            triage_status(status_id)
 
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM
-        
-
-        

@@ -1,9 +1,10 @@
-FROM python:3.6
+FROM python:3.6 AS prod
 
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
 
-RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN apt-get clean && apt-get update && apt-get install -y \
+  locales
 
 RUN echo "Europe/Paris" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -24,12 +25,17 @@ RUN pip install --upgrade -r /code/requirements/common.txt
 
 RUN mkdir /var/log/celery && touch /var/log/celery/celery.log
 RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/gunicorn.log
+RUN mkdir /code/src
 
-
-COPY ./src /code/src
 WORKDIR /code/src
 
 ENV PYTHONPATH "$PYTHONPATH:/code/src/doctocnet:/code/src"
 ENV DJANGO_SETTINGS_MODULE doctocnet.settings
 
-EXPOSE 80
+FROM prod AS dev
+
+RUN apt-get clean && apt-get update && apt-get install -y \
+  python-pygraphviz \
+  libgraphviz-dev
+
+RUN pip install --upgrade -r /code/requirements/development.txt

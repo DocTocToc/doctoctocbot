@@ -1,29 +1,22 @@
 from typing import List
 
-from ..twitter import get_api
+from community.models import Community
+from bot.twitter import get_api
 from bot.lib.statusdb import Addstatus
 from timeline.models import add_status_tl, Status
 import tweepy
 import logging
-import sys
 
 logger = logging.getLogger(__name__)
 
-def get_timeline_with_rts():
-    API = get_api()
+def get_timeline_with_rts(screen_name):
+    API = get_api(username=screen_name)
     return API.user_timeline(include_rts=True)
 
-def get_timeline_id_lst(n=None) -> List:
-    """
-    Return n last tweet from timeline as a list of statusid, excluding replies
-    """
-    return [status.statusid
-            for status
-            in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None})][:n]
-
 def record_timeline():
-    for status in get_timeline_with_rts():
-        add_status_tl(status)
+    for community in Community.objects.filter(active=True):
+        for status in get_timeline_with_rts(community.account.username):
+            add_status_tl(status, community)
         
         
 def record_user_timeline(user_id, count=200, force=False):
@@ -60,4 +53,10 @@ def record_user_timeline(user_id, count=200, force=False):
             logger.debug(e.response.text)
         max_statusid -= 1
             
-        
+def get_timeline_id_lst(n=None) -> List:
+    """
+    Return n last tweet from timeline as a list of statusid, excluding replies
+    """
+    return [status.statusid
+            for status
+            in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None})][:n]

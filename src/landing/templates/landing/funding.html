@@ -1,9 +1,13 @@
+{% load landing_links %}
+{% load landing_tags %}
 <p>
-{% include "landing/link/bot.html" %} est un compte Twitter qui retweete les questions
-#DocTocToc des professionnels de santé (médecins & sages-femmes) qui le suivent.
+{% bot_link_text %} est un compte Twitter qui retweete les questions
+{% hashtag_lst %} des professionnels de santé ({% category_lst %}) qui le suivent.
 </p>
 <p>
-{% include "landing/link/bot.html" %} est à votre service depuis juillet 2017.
+{% bot_link_text %} est à votre service depuis
+{% bot_launch_date "F Y" as ccd %}
+{{ ccd|lower }}.
 Il fonctionne sans pub ni sponsor.
 Il a besoin de votre soutien financier pour continuer à exister et à progresser.
 Investissez dans votre outil professionnel indépendant!

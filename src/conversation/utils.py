@@ -2,11 +2,12 @@ import logging
 
 from django.core.paginator import Paginator
 from django.db import connection, Error
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, DatabaseError
 from django.conf import settings
 from conversation.models import Tweetdj, Hashtag
 from common.twitter import status_url_from_id
 
+from timeline.models import last_retweeted_statusid_lst
 from conversation.constants import HOURS
 
 logger = logging.getLogger(__name__)
@@ -138,7 +139,8 @@ def hashtag_m2m_tweetdj(status_mi: Tweetdj):
     for h in hashtag_mi_lst:
         try:
             status_mi.hashtag.add(h)
-        except IntegrityError:
+        except DatabaseError as e:
+            logger.error(e)
             continue
                       
 def allhashtag():
@@ -313,7 +315,7 @@ def update_trees(hourdelta):
     for sid in sid_tree_lst:
         feed_tree(sid)
         
-def top_statusid_lst(hourdelta):
+def top_statusid_lst(hourdelta, community):
     """Return all tweets of the last hourdelta hours in order of most total replies.
     
     hourdelta -- int representing the number of hour(s)
@@ -321,19 +323,15 @@ def top_statusid_lst(hourdelta):
     from datetime import datetime, timedelta
     from .models import Tweetdj, Treedj
     from moderation.models import SocialUser
-    
-    since = datetime.utcnow() - timedelta(hours=hourdelta)
-    tweet_sid_lst = list(Tweetdj.objects.filter(created_at__gt=since)
-                         .filter(hashtag0=True)
-                         .filter(userid__in=SocialUser.objects.authorized_users())
-                         .values_list('statusid', flat=True))
+
+    tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
     qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
     qs = [mi for mi in qs if mi.is_root_node()]
     top_lst = [(mi.statusid, mi.get_descendant_count()) for mi in qs]
     top_lst = sorted(top_lst, key=lambda x: x[1], reverse=True)
     return [t[0] for t in top_lst]
 
-def help_statusid_lst(hourdelta):
+def help_statusid_lst(hourdelta, community):
     """Return all tweets of the last hourdelta hours in order of least other replies.
     
     number -- int
@@ -343,12 +341,7 @@ def help_statusid_lst(hourdelta):
     from .models import Tweetdj, Treedj
     from moderation.models import SocialUser
     
-    since = datetime.utcnow() - timedelta(hours=hourdelta)
-    tweet_sid_lst = list(Tweetdj.objects
-                         .filter(created_at__gt=since)
-                         .filter(hashtag0=True)
-                         .filter(userid__in=SocialUser.objects.authorized_users())
-                         .values_list('statusid', flat=True))
+    tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
     qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
     qs = [mi for mi in qs if mi.is_root_node()]
     help_lst = [(mi.statusid, count_replies_from_others(mi.statusid)) for mi in qs]

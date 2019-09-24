@@ -5,16 +5,17 @@ from bot.tasks import handle_question
 from conversation.models import Tweetdj, Treedj, create_tree
 from conversation.tree import tweet_parser, tweet_server
 from moderation.models import SocialUser
-
+from community.models import Retweet 
 from django.conf import settings
 
 from ..addstatusdj import addstatus
 from ..doctoctocbot import (
-    retweet,
+    community_retweet,
     isquestion,
-    has_greenlight,
+    isreplacement,
+    isquote,
     has_retweet_hashtag,
-    is_follower
+    HasRetweetHashtag
 )
 
 
@@ -34,7 +35,7 @@ def retweetroot(statusid: int):
     if status_mi.parentid is None:
         return
 
-    has_rt_hashtag: bool = has_retweet_hashtag(status_mi.json)
+    hrh = has_retweet_hashtag(status_mi.json)
     hasquestionmark: bool = isquestion(status_mi.json)
     logger.debug(f"hasquestionmark:{hasquestionmark}")
     authorid: int = status_mi.userid
@@ -62,13 +63,11 @@ def retweetroot(statusid: int):
         if parent_mi.parentid is None:
             add_root_to_tree(parent_mi.statusid)
             if hasquestionmark:
-                if (
-                    has_rt_hashtag and
-                    has_greenlight(parent_mi.json) and 
-                    is_follower(parent_mi.json['user']['id'])
-                ):
-                    retweet(parent_mi.statusid)
-                break
+                if (hrh \
+                    and not isreplacement(parent_mi.json) \
+                    and not isquote(parent_mi.json)):
+                    community_retweet(parent_mi.statusid, parent_mi.userid, hrh)
+                    break
             else:
                 handle_question.apply_async(args=(statusid,), countdown=10, expires=300)
                 break
@@ -106,7 +105,7 @@ def question(statusid: int) -> bool:
     logger.debug(f"Object:{tweet0}, statusid:{tweet0.statusid}")
     tweet_context = tweet_server.request_tweets(tweet0)
     hashtag_tweet = tweet_context.tweet
-    has_rt_hashtag = _has_retweet_hashtag(hashtag_tweet)
+    hrh = _has_retweet_hashtag(hashtag_tweet)
     
     start_tweet = tweet_parser.Tweet(hashtag_tweet.conversationid)
     start_tweet_context = tweet_server.request_tweets(start_tweet)
@@ -125,40 +124,26 @@ def question(statusid: int) -> bool:
             if has_questionmark(tweet) and is_same_author(hashtag_tweet, tweet):
                 if hashtag_tweet.statusid == tweet.conversationid:
                     add_root_to_tree(hashtag_tweet.statusid)
-                    if (
-                        _isauthorized(hashtag_tweet) and
-                        has_rt_hashtag and
-                        is_follower(hashtag_tweet.userid)
-                    ):
-                        retweet(hashtag_tweet.statusid)
+                    if hrh:
+                        community_retweet(hashtag_tweet.statusid, hashtag_tweet.userid, hrh)
                     return True
                 elif is_same_author(hashtag_tweet, start_tweet):
                     add_root_to_tree(start_tweet.statusid)
-                    if (
-                        _isauthorized(start_tweet) and
-                        has_rt_hashtag and
-                        is_follower(start_tweet.userid)
-                    ):
-                        retweet(start_tweet.statusid)
+                    if hrh:
+                        community_retweet(start_tweet.statusid, start_tweet.userid, hrh)
                     return True
     return False
-
-def _isauthorized(tweet: tweet_parser.Tweet) -> bool:
-    logger.debug(f"list: {SocialUser.objects.authorized_users()}")
-    logger.debug(f"userid: {tweet.userid}, type: {type(tweet.userid)}")
-    logger.debug(f"bool:{tweet.userid in SocialUser.objects.authorized_users()}")
-    return tweet.userid in SocialUser.objects.authorized_users()
 
 def _has_retweet_hashtag(tweet: tweet_parser.Tweet) -> bool:
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
     Returns False otherwise.
     """
-    logger.debug("Keyword retweet list: %s", settings.KEYWORD_RETWEET_LIST)
-    ismatch = False
-    hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
-    logger.debug("hashtag retweet list: %s", hashtag_retweet_list)
-    for keyword in hashtag_retweet_list:
-        logger.debug(f"keyword.lower():{keyword.lower()} txt.lower():{tweet.bodytext.lower()}")
-        if keyword.lower() in tweet.bodytext.lower():
-            ismatch = True
-    return ismatch
+    hrh = HasRetweetHashtag()
+    tags = Retweet.objects.filter(retweet=True).values_list('hashtag__hashtag', flat=True)
+    hashtags = [f"#{tag}" for tag in tags]
+    logger.debug("hashtag retweet list: %s", hashtags)
+    for hashtag in hashtags:
+        logger.debug(f"hashtag.lower():{hashtag.lower()} txt.lower():{tweet.bodytext.lower()}")
+        if hashtag.lower() in tweet.bodytext.lower():
+            hrh.add(hashtag[1:])
+    return hrh

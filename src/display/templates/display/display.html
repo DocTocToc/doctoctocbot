@@ -9,7 +9,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% cache display_cache display view.title LANGUAGE_CODE %}
+{% cache display_cache display cache_uid %}
 
 {% include "display/tweet.html" %}    
 

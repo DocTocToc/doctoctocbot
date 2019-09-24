@@ -1,16 +1,18 @@
 from django.core.management.base import  BaseCommand, CommandError
 from django.conf import settings
-from bot.doctoctocbot import isauthorized, isrt, isquestion, okrt
+from bot.doctoctocbot import isrt, isquestion
 import hashlib
 import os
 import tweepy
 from bot.twitter import getAuth
 import logging
 
+# TODO: refactor, could be useful if user tweeted again before being moderated
 class Command(BaseCommand):
-    help = 'Run bot search and retweet'
+    help = 'Run bot search and retweet [current status: NOOP, needs refactoring]'
     
     def handle(self, *args, **options):
+        return
         logger = logging.getLogger(__name__)
         # build savepoint path + file
         keyword_list = settings.KEYWORD_RETWEET_LIST
@@ -60,15 +62,14 @@ class Command(BaseCommand):
             logger.debug("useridstring: %s", useridstring)
             logger.debug("screen name: %s", screenname)
             logger.debug("text: %s", tweet.full_text.encode('utf-8'))
-            logger.debug("Is user authorized? %s", isauthorized(status_json))
             logger.debug("isrt: %s", isrt(status_json))
             logger.debug("status 'retweeted': %s", status_json['retweeted'])
             logger.debug("is this a question? %s", isquestion(status_json))
-            if okrt(status_json):
-                oklist.append(tweet)
-                logger.debug(":) OK for RT")
-            else:
-                logger.debug(":( not ok for RT")
+            #if okrt(status_json):
+            #    oklist.append(tweet)
+            #    logger.debug(":) OK for RT")
+            #else:
+            #    logger.debug(":( not ok for RT")
         
         try:
             last_tweet_id = oklist[0].id

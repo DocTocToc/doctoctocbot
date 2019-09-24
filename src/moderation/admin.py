@@ -1,3 +1,4 @@
+import logging
 from django.contrib import admin
 from django.db.models import Count
 from versions.admin import VersionedAdmin
@@ -5,6 +6,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
+from community.models import Community
 from .models import (
     SocialUser,
     UserCategoryRelationship,
@@ -18,6 +20,8 @@ from .models import (
     Image,
     DoNotRetweet
 )
+
+logger = logging.getLogger(__name__)
 
 
 def tweetdj_link(self, obj):
@@ -103,10 +107,19 @@ class SocialUserAdmin(admin.ModelAdmin):
     profile_link.short_description = 'Profile'
     
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'label', 'description', 'show_relationships_count',
-                    'quickreply', 'socialgraph', 'color',)
+    list_display = (
+        'name',
+        'label',
+        'description',
+        'show_relationships_count',
+    )
     inlines = (CategoryRelationshipInline,)
-    fields = ('name', 'label', 'quickreply', 'socialgraph', 'show_relationships_count', 'description','color',)
+    fields = (
+        'name',
+        'label',
+        'show_relationships_count',
+        'description',
+    )
     
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)
@@ -117,7 +130,10 @@ class CategoryAdmin(admin.ModelAdmin):
     
     show_relationships_count.admin_order_field = '-relationships_count'    
     show_relationships_count.short_description = 'Count'
-    readonly_fields = ('name', 'show_relationships_count',)
+    readonly_fields = (
+        'name',
+        'show_relationships_count',
+    )
     
 class QueueAdmin(VersionedAdmin):
     list_display = (
@@ -128,15 +144,18 @@ class QueueAdmin(VersionedAdmin):
         'status_tag',
         'tweet_link',
         'status_object',
+        'community',
     )
     readonly_fields = (
+        'status_id',
         'mini_image_tag',
         'screen_name_link',
         'name_tag',
         'user_id',
         'status_tag',
         'tweet_link',
-        'status_object',    
+        'status_object',
+        'community',    
     )
     list_display_show_identity = False
     list_display_show_end_date = False
@@ -196,6 +215,7 @@ class ProfileAdmin(admin.ModelAdmin):
 class ModerationAdmin(VersionedAdmin):
     pass
     list_display = (
+        'queue_link',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
         'moderated_mini_image_tag',
@@ -204,17 +224,20 @@ class ModerationAdmin(VersionedAdmin):
         'tweet_link',
         'status_object',
     )
-    fields = ('moderator_mini_image_tag',
-              'moderator_screen_name_tag',
-              'moderated_mini_image_tag',
-              'screen_name_link',
-              'status_tag',
-              'tweet_link',
-              'status_object',
-              'id',
-              'identity',
-              )
+    fields = (
+        'queue_link',
+        'moderator_mini_image_tag',
+        'moderator_screen_name_tag',
+        'moderated_mini_image_tag',
+        'screen_name_link',
+        'status_tag',
+        'tweet_link',
+        'status_object',
+        'id',
+        'identity',
+    )
     readonly_fields = (
+        'queue_link',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
         'moderated_mini_image_tag',
@@ -240,6 +263,20 @@ class ModerationAdmin(VersionedAdmin):
             return obj.moderated_screen_name_tag()
     
     screen_name_link.short_description = 'Moderated screen_name'
+
+    def queue_link(self, obj):
+        try:
+            q = Queue.objects.get(id=obj.queue.id)
+            return mark_safe(
+                '<a href="{link}">Q</a>'.format(
+                    link = reverse("admin:moderation_queue_change", args=(q.id,))
+                )
+            )
+        except Queue.DoesNotExist as e:
+            logger.error("Queue does not exist.", e)
+            return "🚫"
+    
+    queue_link.short_description = 'Queue'
     
     def status_object(self, obj):
         return tweetdj_link(self, obj)
@@ -265,6 +302,7 @@ class TwitterListAdmin(admin.ModelAdmin):
         'label',
         'local_description',
         'member_count_tag',
+        'community',
     )
     fields = (
         'list_id',
@@ -276,6 +314,7 @@ class TwitterListAdmin(admin.ModelAdmin):
         'label',
         'local_description',
         'json',
+        'community',
 
     )
     readonly_fields = (
@@ -306,7 +345,14 @@ class FollowerAdmin(admin.ModelAdmin):
         'created'
     )
 
+class CommunityInline(admin.TabularInline):
+    model = Moderator.community.through
+    extra = 5
+
 class ModeratorAdmin(admin.ModelAdmin):
+    inlines = [
+        CommunityInline,  
+    ]
     list_display = (
         'pk',
         'socialuser',

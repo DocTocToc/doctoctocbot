@@ -53,9 +53,4 @@ class DirectMessage(models.Model):
         get_latest_by = "-created_timestamp"
     
     def __str__(self):
-        if settings.BOT_ID == self.sender_id:
-            direction = "Sent"
-        else:
-            direction = "Received"
-            
-        return "{direction}: '{text}'".format(direction=direction, text=self.text[:140])
+        return "DM {id}: '{text}'".format(id=self.id, text=self.text[:140])

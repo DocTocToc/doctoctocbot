@@ -10,8 +10,8 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.contrib.sites.shortcuts import get_current_site
 
-from bot.bin.timeline import get_timeline_id_lst
 from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
@@ -20,10 +20,12 @@ from conversation.models import Treedj
 from moderation.tasks import handle_create_update_profile
 from moderation.profile import is_profile_uptodate
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.utils.translation import get_language_from_request
+from django.utils.text import slugify
 
 from moderation.models import SocialUser
-from .models import WebTweet, create_or_update_webtweet
-
+from display.models import WebTweet, create_or_update_webtweet
+from community.models import Community
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,34 @@ def get_display_cache():
     except ImproperlyConfigured as e:
         return 60
         logger.error("DISPLAY_CACHE improperly configured in settings", e)
+
+def cache_uid(title, request):
+    """
+    Unique identifier for cache
+    """
+    language = get_language_from_request(request)
+    site = get_current_site(request)
+    _cache_uid = f"{slugify(title)}_{language}_{site.id}"
+    logger.debug(_cache_uid)
+    return _cache_uid
+    
+
+def get_community(request):
+    """
+    Return a Community object or None given the request.
+    """
+    site = get_current_site(request)
+    if not site:
+        return
+    try:
+        return Community.objects.get(site=site.id)
+    except Community.DoesNotExist as e:
+        logger.warn(e)
+        try:
+            return Community.objects.get(site=1)
+        except Community.DoesNotExist as e:
+            logger.warn("Create at least one community.", e)
+
 
 class Status(TemplateView):
     title = _("Status")
@@ -64,7 +94,10 @@ class Last(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Last, self).get_context_data(*args, **kwargs)
-        sid_lst = last_retweeted_statusid_lst(self.hour)[:self.n]
+        community = get_community(self.request)
+        if not community:
+            return context
+        sid_lst = last_retweeted_statusid_lst(hourdelta=self.hour, community=community)[:self.n]
         tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -72,6 +105,7 @@ class Last(TemplateView):
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
         context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title,self.request)
         return context
     
 class Top(TemplateView):
@@ -86,7 +120,10 @@ class Top(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Top, self).get_context_data(*args, **kwargs)
-        sid_lst = top_statusid_lst(self.hour)[:self.n]
+        community = get_community(self.request)
+        if not community:
+            return context
+        sid_lst = top_statusid_lst(self.hour, community)[:self.n]
         tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -94,6 +131,7 @@ class Top(TemplateView):
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
         context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title,self.request)
         return context
     
 class Help(TemplateView):
@@ -108,7 +146,10 @@ class Help(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Help, self).get_context_data(*args, **kwargs)
-        sid_lst = help_statusid_lst(self.hour)[:self.n]
+        community = get_community(self.request)
+        if not community:
+            return context
+        sid_lst = help_statusid_lst(self.hour, community)[:self.n]
         tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -116,6 +157,7 @@ class Help(TemplateView):
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
         context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title, self.request)
         return context
 
 class All(TemplateView):
@@ -130,11 +172,14 @@ class All(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(All, self).get_context_data(*args, **kwargs)
-        
+        community = get_community(self.request)
+        logger.debug(f"community id: {community.id}, name: {community.name}")
+        if not community:
+            return context
         tweet_lst_dic = {}
-        
+
         #last
-        sid_lst = last_retweeted_statusid_lst(self.hour)[:self.n]
+        sid_lst = last_retweeted_statusid_lst(self.hour, community)[:self.n]
         last_tweet_lst = []
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -144,7 +189,7 @@ class All(TemplateView):
         tweet_lst_dic['last']= last_tweet_lst
         
         #help
-        sid_lst = help_statusid_lst(self.hour)[:self.n]
+        sid_lst = help_statusid_lst(self.hour, community)[:self.n]
         help_tweet_lst = []
         #logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -153,7 +198,7 @@ class All(TemplateView):
         tweet_lst_dic['help'] = help_tweet_lst
         
         #top
-        sid_lst = top_statusid_lst(self.hour)[:self.n]
+        sid_lst = top_statusid_lst(self.hour, community)[:self.n]
         top_tweet_lst = []
         #logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
@@ -162,7 +207,8 @@ class All(TemplateView):
         tweet_lst_dic['top']=top_tweet_lst
         
         context['display'] = tweet_lst_dic
-        context['display_cache'] = get_display_cache() 
+        context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title,self.request)
         return context
 
 def notfound(sid):

@@ -15,7 +15,12 @@ logger = logging.getLogger(__name__)
 class Status(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
     json = JSONField()
-    
+    community = models.ForeignKey(
+        "community.Community",
+        on_delete=models.CASCADE,
+        null=True
+    )
+
     class Meta:
         ordering = ["-statusid"]
         get_latest_by = "-statusid"
@@ -24,19 +29,23 @@ class Status(models.Model):
     def status_url_tag(self):
         return mark_safe('<a href="https://twitter.com/i/web/status/%s">Link</a>' % (self.statusid))
 
-def add_status_tl(status):
+
+def add_status_tl(status, community):
     """
     Add a tweepy status object to the timeline table.
     """
     try:
         with transaction.atomic():
-            status_mi = Status(statusid=status.id,
-                               json=status._json)
+            status_mi = Status(
+                statusid=status.id,
+                json=status._json,
+                community=community
+            )
             status_mi.save()
     except IntegrityError:
         pass
     
-def last_tl_statusid_lst(hourdelta=None):
+def last_tl_statusid_lst(hourdelta=None, community=None):
     """Return tweets of interest (that are not replies) from the timeline
     created in the last hourdelta hours
     """
@@ -45,14 +54,17 @@ def last_tl_statusid_lst(hourdelta=None):
     
     since = datetime.utcnow() - timedelta(hours=hourdelta)
     sid_lst = []
-    for status in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None}):
+    for status in Status.objects.all().filter(
+        json__contains={'in_reply_to_status_id': None},
+        commmunity=community
+        ):
         dt = get_datetime(status.json)
         logger.debug(f"dt: {dt}")
         if dt > since:
             sid_lst.append(status.statusid)
     return sid_lst
         
-def last_retweeted_statusid_lst(hourdelta=None):
+def last_retweeted_statusid_lst(hourdelta=None, community=None):
     """Return a list of statusid of tweets that were retweeted by the bot and
     that were created less than hourdelta hours ago.
     """
@@ -69,7 +81,9 @@ def last_retweeted_statusid_lst(hourdelta=None):
         "FROM "
         "timeline_status "
         "WHERE "
-        "(((json->'retweeted_status'->>'id')::bigint) >> 22) + 1288834974657 > %s",
-        [since_ts_ms]
+        "(((json->'retweeted_status'->>'id')::bigint) >> 22) + 1288834974657 > %s "
+        " AND "
+        "timeline_status.community_id = %s",
+        [since_ts_ms, community.id]
     )
     return sorted([row.json['retweeted_status']['id'] for row in rqs], reverse=True)

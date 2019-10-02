@@ -1,4 +1,6 @@
 {% load static %}
+{% load landing_tags %}
+{% load landing_links %}
 <div class="container-fluid bg-2 text-left">
   <h4>
   Moteur de recherche
@@ -7,15 +9,15 @@
   </h4>
   <details>
   <summary>
-  <b>Explorer la richesse du corpus DocTocToc.</b>
+  <b>Explorer la richesse du corpus {% hashtag_lst %}.</b>
   </summary>
   <p>Les tweets ne font que passer, pourtant les dizaines de milliers de
-  réponses aux questions #DocTocToc fourmillent d'informations utiles qui ne
+  réponses aux questions {% hashtag_lst %} fourmillent d'informations utiles qui ne
   périment pas en quelques jours. L'interface de recherche de Twitter n'est pas
-  pratique et elle ne filtre pas le SpamTocToc. Nous souhaitons donc construire
+  pratique et elle ne filtre pas le spam. Nous souhaitons donc construire
   un véritable moteur de recherche pour retrouver des informations pertinentes
   dans le corpus. Si vous le souhaitez, le bot pourra vous informer qu'une
-  question similaire à la votre a déjà été posée en vous envoyant 1 lien vers
+  question similaire à la votre a déjà été posée en vous envoyant un lien vers
   les réponses les plus pertinentes déjà apportées par la communauté.
   </p>
   </details>
@@ -29,7 +31,7 @@
   </h4>
   <details>
   <summary>
-  <b>Préserver le secret médical et faciliter l'accès à l'entraide pour tous les
+  <b>Préserver le secret professionnel et faciliter l'accès à l'entraide pour tous les
   professionnels de santé.</b>
   </summary>
   <p>
@@ -41,7 +43,7 @@
   leur permettre de poser une question par l'intermédiaire du bot ou du site.
   Le bot, après vérification de la profession, transmettra les questions et les
   réponses, servant d'intermédiaire de confiance entre ces professionnels et la
-  communauté DocTocToc.
+  communauté {% hashtag_lst %}.
   Nous espérons aussi qu'après avoir bénéficié de l'aide de la communauté via
   cet outil, certains soignants réticents finiront par franchir le pas et nous
   rejoindre!
@@ -66,8 +68,8 @@
   <p>
   Certains professionnels de santé ont choisi de protéger leurs tweets. Leurs
   messages sont donc accessibles uniquement à leurs followers.
-  @DocTocTocBot ne peut pas retweeter leurs questions. Nous pouvons écrire du
-  code pour relayer leurs tweets #DocTocToc, selon une technique similaire à
+  {% bot_link_text %} ne peut pas retweeter leurs questions. Nous pouvons écrire du
+  code pour relayer leurs tweets {% hashtag_lst %}, selon une technique similaire à
   celle du développement des questions anonymes.
   </p>
   </details>
@@ -103,12 +105,12 @@
   </h4>
   <details>
   <summary>
-  <b>Médecine et réseaux sociaux: construire des outils open source innovants pour
+  <b>{% membership_field_lst_plain %} et réseaux sociaux: construire des outils open source innovants pour
   la recherche.</b>
   </summary>
   <p>
   Le bot pourra proposer aux professionnels de santé de participer à des
-  études scientifiques d'intérêt général ou à des thèses de médecine.
+  études scientifiques d'intérêt général ou à des thèses.
   Seuls les projets de recherche publics ou dont la majorité du financement est
   indépendant des firmes pourront proposer des études. Pour les thèses, nous
   accepterons tout projet qui s'engage à publier l'article ou la thèse et les
@@ -123,15 +125,14 @@
   les bibliothèques de visualisation des données et nos algorithmes open source
   d'analyse des données. La plupart des thésards n'ont pas accès à des développeurs
   pour leur thèse. Nous serons là pour leur apporter notre expertise.
-  Aidez-nous à promouvoir la recherche indépendante en médecine et notamment en
-  médecine générale!
+  Aidez-nous à promouvoir la recherche indépendante!
   </p>
   </details>
   <a href="#donate" class="btn btn-outline-primary">Je soutiens!</a>
 </div>
 <div class="container-fluid bg-1 text-left">
   <h4>
-  Hébergement bot <a href="https://twitter.com/doctoctocbot">@DocTocTocBot</a> & site web <a href="https://doctoctoc.net">docotoctoc.net</a>
+  Hébergement bot {% bot_link_text %} & site {% site_link_text %}
   <span class="badge badge-pill badge-primary">600€</span>
   </h4>
   <details>
@@ -141,8 +142,8 @@
   Si nous repartissons ce coût entre tous les utilisateurs, il devient modique!
   </b>
   </summary>
-  <p>Ce site et le code du bot sont hébergés sur des serveurs, dans 1 datacenter
-  de la région parisienne. Il y a 2 serveurs: 1 pour la version de test
+  <p>Ce site et le code du bot sont hébergés sur des serveurs, dans 1 datacenter.
+  Il y a 2 serveurs: 1 pour la version de test
   (staging) et 1 pour cette version (production). Nous réalisons également des
   sauvegardes chiffrées de la base de données PostgreSQL qui ont 1 coût.
   Nos serveurs recherchent des données sur le web, requêtent les API Twitter et
@@ -150,7 +151,7 @@
   Les applications web du site s'adaptent à chaque visiteur
   connecté, calculent des données et affichent des pages personnalisées.
   Nos serveurs sont gourmands en mémoire et en bande passante.
-  Le coût total initial est d'environ 50€ par mois. Le coût exact sera publié chaque
+  Le coût total actuel est d'environ 50€ par mois. Le coût exact sera publié chaque
   mois.
   Il pourrait augmenter en fonction de la popularité du hashtag et du site.
   Merci de nous aider à payer les factures!
@@ -160,7 +161,7 @@
 </div>
 <div class="container-fluid bg-2 text-left">
   <h4>
-  Suivi d'1 question DocTocToc
+  Suivi d'une question {% hashtag_lst %}
   <span class="badge badge-info">4h</span>
   <span class="badge badge-pill badge-primary">240€</span>
   </h4>
@@ -172,15 +173,16 @@
   </b>
   </summary>
   <p>
-  Si les échanges DocTocToc sont utiles pour la personne qui pose la question,
+  Si les échanges {% hashtag_lst %} sont utiles pour la personne qui pose la question,
   ils le sont également pour les personnes qui apportent des réponses ou lisent
-  les échanges. Ces situations cliniques sont autant d'occasions d'apprendre et
-  de se former. Il est utile de connaître l'évolution d'1 démarche diagnostique
-  ou thérapeutique et d'avoir un retour à distance qui confirme ou infirme les
-  suggestions de la communauté. Nous proposons de coder un algorithme qui
+  les échanges. Les cas rapportés sont autant d'occasions d'apprendre et
+  de se former. Il est utile de connaître l'évolution de la situation
+  et d'avoir un retour à distance qui confirme ou infirme les
+  suggestions ou les hypothèses de la communauté.
+  Nous proposons de coder un algorithme qui
   tentera de déterminer si un retour a été fait par l'auteur de la question. Si
-  ce n'est pas le cas et si l'utilisateur donne son accord, il recevra une
-  semaine après la publication initiale un message privé l'invitant à le faire.
+  ce n'est pas le cas et si l'utilisateur donne son accord, il recevra 
+  après la publication initiale un message privé l'invitant à le faire.
   </p>
   </details>
   <a href="#donate" class="btn btn-outline-primary">Je soutiens!</a>
@@ -238,17 +240,15 @@
     <p>
     La modération ne se fait pas au niveau de chaque tweet mais au niveau du
     compte Twitter. Le modérateur détermine si l'auteur d'1 tweet est
-    1 professionnel de santé exerçant 1 profession admise à être retweetée
-    (pour l'instant, sages-femme et médecins et dès que possible, pharmaciens).
+    un professionnel de santé exerçant une profession admise à être retweetée.
     Ensuite, nous comptons sur le professionnalisme de chacun pour
     une utilisation raisonnée du hashtag si possible conforme aux usages admis
     tels qu'ils sont décrits dans nos recommandations de bonne pratique.
     </p>
   <h5>Qui modère?</h5>
    <p>
-   Depuis juillet 2017, un seul modérateur (Jérôme Pinguet alias @MedecineLibre)
-   a vérifié la qualité de médecin ou de sage-femme de chaque compte Twitter
-   utilisant le #DocTocToc.
+   Depuis juillet 2017 à avril 2019, un seul modérateur (Jérôme Pinguet alias @MedecineLibre)
+   a vérifié la profession de chaque compte Twitter utilisant #DocTocToc.
    Il a vérifié 730 médecins, 22 sages-femmes et 32 pharmaciens.
    Il a déterminé que 463 comptes Twitter avaient tenté d'obtenir
    un ou plusieurs conseils médicaux et que 11 comptes utilisaient le hashtag
@@ -260,18 +260,19 @@
    (comptes avec peu d'activité, peu de followers, tweetant peu de sujets médicaux).
    Le travail de modération accompli depuis la création du bot a occupé
    son créateur entre 30 et 40 heures.
-   Ce modèle de modération centralisée sur 1 seule personne est chronophage
+   Ce modèle de modération centralisée sur une seule personne est chronophage
    et n'est pas pérenne. Il n'est pas non plus conforme à la tradition
    d'auto-organisation et de décentralisation de la communauté DocTocToc.
-   Nous avons donc commencé à développer 1 système de modération collective.
+   Nous avons donc commencé à développer un système de modération collective.
    </p>
   <h5>Vers la modération collective</h5>
   <p>
-  Depuis mai 2018 un groupe d'une dizaine de professionnels de santé volontaires
-  réfléchit à la mise en place de la modération collective.
+  De mai 2018 à avril 2019 un groupe d'une dizaine de professionnels de santé volontaires
+  a réfléchi à la mise en place de la modération collective.
   Nous avons formalisé nos règles de modération.
-  Techniquement, le code du bot détectera toute question provenant
-  d'1 utilisateur qui n'a pas été modéré et le bot enverra 1 DM à l'un des
+  La modération collective est devenue une réalité depuis mai 2019.
+  Techniquement, le code du bot détecte toute question provenant
+  d'un utilisateur qui n'a pas été modéré et le bot envoie un DM à l'un des
   modérateurs. Voici le prototype d'un tel DM (Direct Message).
   </p>
   <a href="#" data-toggle="modal" data-target="#pop-up-moderation">
@@ -291,13 +292,15 @@
   </div><!-- /.modal mixer image -->
   
   <p>
-  Dans la version finale, le DM sera accompagné d'1 lien vers une page créée à
-  la volée sur le site doctoctoc.net comportant des aides à la modération.
+  Ce DM est accompagné d'un graphique indiquant le nombre de followers vérifiés et le pourcentage
+  de chaque profession.
+  </p>
+  <p>
+  Dans une prochaine version, le DM sera accompagné d'un lien vers une page créée à
+  la volée sur le site {% site_link_text %} comportant des aides à la modération.
   Par exemple, une sélection de tweets de l'utilisateur comportant
-  des mots-clefs tels que "médecine", "patient", "médecin", où la fréquence
-  de termes techniques médicaux relevée dans ses derniers tweets publics.
-  Cette page indiquera aussi le nombre de followers ou de followés exerçant
-  chaque profession.
+  des mots-clefs où la fréquence
+  des termes techniques correspondant à chaque profession relevée dans ses derniers tweets publics.
   </p>
   <p>
   Le modérateur pourra temporiser s'il n'a pas de temps à consacrer à
@@ -309,15 +312,15 @@
   Comment participer à la modération collective?
   </h5>
   <p>
-  Envoyez 1 DM au bot qui vous ajoutera au DM collectif des modérateurs.
+  Envoyez 1 DM à {% bot_link_text %}.
+  Un modérateur vous invitera à rejoindre la discussion collective des modérateurs.
   </p>
-  <h5>Lancement</h5>
+  <h5>Futur</h5>
   <p>
-  La modération collective est bien avancée, 90% du travail a déjà été accompli.
-  Elle deviendra bientôt une réalité grace à votre participation et aussi grâce
-  à votre contribution financière.
+  La modération collective fonctionne déjà. Grace à votre participation et aussi grâce
+  à votre contribution financière, 90% des objectifs ont été accomplis.
   Votre investissement permettra au développeur de consacrer encore plus
-  de temps à la programmation de cette nouvelle fonctionnalité de @DocTocTocBot.
+  de temps de travail à la programmation des améliorations.
   Merci.
   </p>
   </details>

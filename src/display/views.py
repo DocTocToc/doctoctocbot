@@ -25,7 +25,7 @@ from django.utils.text import slugify
 
 from moderation.models import SocialUser
 from display.models import WebTweet, create_or_update_webtweet
-from community.models import Community
+from community.helpers import get_community
 
 logger = logging.getLogger(__name__)
 
@@ -46,23 +46,6 @@ def cache_uid(title, request):
     logger.debug(_cache_uid)
     return _cache_uid
     
-
-def get_community(request):
-    """
-    Return a Community object or None given the request.
-    """
-    site = get_current_site(request)
-    if not site:
-        return
-    try:
-        return Community.objects.get(site=site.id)
-    except Community.DoesNotExist as e:
-        logger.warn(e)
-        try:
-            return Community.objects.get(site=1)
-        except Community.DoesNotExist as e:
-            logger.warn("Create at least one community.", e)
-
 
 class Status(TemplateView):
     title = _("Status")
@@ -120,7 +103,7 @@ class Top(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Top, self).get_context_data(*args, **kwargs)
-        community = get_community(self.request)
+        community = get(self.request)
         if not community:
             return context
         sid_lst = top_statusid_lst(self.hour, community)[:self.n]

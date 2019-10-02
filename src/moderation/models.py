@@ -199,6 +199,20 @@ class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     label = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
+    mesh = models.ForeignKey(
+        'mesh.Mesh',
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Category as a MeSH heading",
+        related_name="category"
+    ) 
+    field = models.ForeignKey(
+        'mesh.Mesh',
+        on_delete=models.CASCADE,
+        null=True,
+        help_text="Field as a MeSH heading",
+        related_name="category_field",
+    )
     
     def __str__(self):
         return self.name
@@ -508,11 +522,9 @@ class Follower(models.Model):
         return "followers of %s " % name
     
 class Moderator(models.Model):
-    socialuser = models.OneToOneField(
-        SocialUser,
-        verbose_name='socialuser',
-        primary_key=True,
-        on_delete=models.CASCADE
+    socialuser = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.CASCADE,
     )
     active = models.BooleanField(
         default=False,
@@ -522,11 +534,15 @@ class Moderator(models.Model):
         default=True,
         help_text="Does this moderator want to appear on the public list?"
     )
-    community = models.ManyToManyField(
+    community = models.ForeignKey(
         'community.Community',
+        on_delete=models.CASCADE,
     )
 
-    
+    class Meta:
+        unique_together = ("socialuser", "community")
+
+
     def __str__(self):
         try:
             return self.socialuser.profile.json["screen_name"]

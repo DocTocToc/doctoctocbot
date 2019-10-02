@@ -1,11 +1,13 @@
 {% load l10n %}
 {% load i18n %}
-<div class="container">
-  <h3>{% trans "Goal" %} <span class="badge badge-secondary">{{ goal }} €</span></h2>
-
-  <h3>{% trans "Current amount" %} <span class="badge badge-primary">{{ current }} €</span></h2>
-  <hr>
-  <div class="progress">
-    <div class="progress-bar" style="width:{{ percentage|unlocalize }}%">{{ percentage }}%</div>
+<div class="card w-50">
+  <div class="card-body">
+    <h5 class="card-title">Progression</h5>
+    <p class="card-text">{% trans "Goal" %} <span class="badge badge-secondary">{{ goal }} €</span></p>
+    <p class="card-text">{% trans "Current amount" %} <span class="badge badge-primary">{{ current }} €</span></p>
+    <hr>
+    <div class="progress">
+      <div class="progress-bar" style="width:{{ percentage|unlocalize }}%">{{ percentage }}%</div>
+    </div>
   </div>
 </div>

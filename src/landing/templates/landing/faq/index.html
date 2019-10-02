@@ -1,5 +1,7 @@
 {% extends "doctocnet/base.html" %}
- {% load i18n %}
+{% load i18n %}
+{% load landing_tags %}
+{% load landing_links %}
 {% block title %}Foire aux Questions{% endblock title %} 
 {% block content %}
 <h2>Foire aux questions</h2>
@@ -8,17 +10,18 @@
   <summary>
   <b>Comment être retweeté par le bot?</b>
   </summary>
-  4 conditions:
   <ol>
-  <li>Être médecin ou sage-femme</li>
-  <li>Suivre le bot</li>
+  <li>Être {% retweeted_category_or %}</li>
+  <li>Suivre {% bot_link_text %}</li>
+  <li>Inclure le hashtag {% hashtag_lst %}</li>
   <li>Poser une question (avec un point d'interrogation)</li>
+  <li>Ne pas mentionner un compte au tout début du tweet (ceci est considéré par Twitter comme une réponse).</li>
   <li>Suivre les <a href="{% url 'landing:guidelines' %}">recommandations de bonne pratique</a></li>
   </ol>
   Si vous pensez que votre tweet aurait dû être retweeté ou que ces conditions
   ou les recommandations de bonne pratique doivent évoluer, n'hésitez pas à
   nous contacter via DM ou via notre formulaire de contact. Nos règles tentent
-  de reflêter au mieux les usages de la communauté DocTocToc et de défendre ses intérêts.
+  de refléter au mieux les usages de la communauté {% hashtag_lst %} et de défendre ses intérêts.
   Elles sont décidées collectivement et doivent évoluer selon les souhaits de la communauté.
   </details>
 </div>
@@ -32,12 +35,12 @@
   <p>
   Le compte du bot est mentionné plus d'une centaine de fois par jour car chaque
   réponse à une question retweetée par le bot entraîne une mention. Il est impossible
-  de vérifier chaque mention pour savoir si c'est une réponse à une question DocTocToc
-  ou bien si c'est une question posée à l'équipe @DocTocTocBot.
-  Nous vous invitons donc à envoyer un DM à @DocTocTocBot.
+  de vérifier chaque mention pour savoir si c'est une réponse à une question {% hashtag_lst %}
+  ou bien si c'est une question posée à l'équipe {% bot_link_text %}.
+  Nous vous invitons donc à envoyer un DM à {% bot_link_text %}.
   Si vous souhaitez discuter avec nous publiquement sur votre TL, il suffit
   d'envoyer un DM avec le lien vers votre question publique.
-  Nous répondrons avec plaisir... si nous savons qu'une question nous a été posée!
+  Nous vous répondrons avec plaisir... si nous savons qu'une question nous a été posée!
   </p>
   </details>
 </div>

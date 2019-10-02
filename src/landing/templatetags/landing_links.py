@@ -4,7 +4,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.contrib.sites.shortcuts import get_current_site
 
-from landing.templatetags.helpers import get_community
+from community.helpers import get_community
 
 logger = logging.getLogger(__name__)
 

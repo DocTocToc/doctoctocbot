@@ -1,0 +1,13 @@
+{% load l10n %}
+{% load i18n %}
+<div class="card w-50">
+  <div class="card-body">
+    <h5 class="card-title">Participation</h5>
+    <p class="card-text">{% trans "Active members" %} <span class="badge badge-secondary">{{ active_member_count }}</span></p>
+    <p class="card-text">{% trans "Investors" %} <span class="badge badge-primary">{{ investor_count }}</span></p>
+    <hr>
+    <div class="progress">
+      <div class="progress-bar" style="width:{{ percentage|unlocalize }}%">{{ percentage }}%</div>
+    </div>
+  </div>
+</div>

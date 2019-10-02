@@ -75,7 +75,7 @@ class UserRelationshipInline(admin.TabularInline):
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag', 'profile_link',  'social_media_profile', )
-    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
+    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst',)
     readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
     search_fields = ('user_id', 'profile__json',)
     
@@ -119,7 +119,10 @@ class CategoryAdmin(admin.ModelAdmin):
         'label',
         'show_relationships_count',
         'description',
+        'field',
     )
+    search_fields = ['field',]
+    autocomplete_fields = ['field',]
     
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)
@@ -345,30 +348,38 @@ class FollowerAdmin(admin.ModelAdmin):
         'created'
     )
 
-class CommunityInline(admin.TabularInline):
-    model = Moderator.community.through
-    extra = 5
+#class CommunityInline(admin.TabularInline):
+#    model = Moderator.community.through
+#    extra = 5
 
 class ModeratorAdmin(admin.ModelAdmin):
-    inlines = [
-        CommunityInline,  
-    ]
+#    inlines = [
+#        CommunityInline,  
+#    ]
     list_display = (
         'pk',
         'socialuser',
         'active',
         'public',
+        'community',
     )
     fields = (
         'pk',
         'socialuser',
         'active',
         'public',
+        'community',
     )
     readonly_fields = (
         'pk',
         'socialuser',
     )
+"""    
+    def community_tag(self, obj):
+        return list(obj.community.values_list('name', flat=True))
+    
+    community_tag.short_description = "Community"
+"""
 
 class DoNotRetweetAdmin(admin.ModelAdmin):
     list_display = (

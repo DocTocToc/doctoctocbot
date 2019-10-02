@@ -178,6 +178,7 @@ INSTALLED_APPS = [
     'gpgcontact',
     'community',
     'discourse',
+    'mesh',
 ]
 
 if DEBUG:
@@ -451,8 +452,8 @@ ADMINS=[
 MANAGERS=ADMINS
 EMAIL_BACKEND=config('EMAIL_BACKEND')
 
-# investment
-PROJECT_NAME = 'doctoctocbot'
+# investment: this setting was used before community feature
+#PROJECT_NAME = 'doctoctocbot'
 
 # django-registration
 REGISTRATION_SALT = config('REGISTRATION_SALT')

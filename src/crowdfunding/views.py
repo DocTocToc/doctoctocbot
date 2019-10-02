@@ -1,7 +1,4 @@
 from decimal import *
-
-
-
 from uuid import UUID
 
 from django.core import signing
@@ -19,6 +16,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.db import DatabaseError
 
 import stripe
 #from paypal.standard.forms import PayPalPaymentsForm
@@ -30,8 +28,9 @@ from django_registration import signals
 
 from .constants import ITEM_NAME, HOURLY_RATE_EUR
 from .forms import CrowdfundingHomeAuthenticatedForm, CrowdfundingHomeDjangoUserForm
-from .models import Project, ProjectInvestment, Tier
+from .models import ProjectInvestment, Tier
 from .tasks import handle_tweet_investment
+from crowdfunding.project import get_project
 
 import logging
 logger = logging.getLogger(__name__)
@@ -84,8 +83,11 @@ class InvestViewDjango(BaseRegistrationView):
         except User.DoesNotExist:
             raise SuspiciousOperation("Invalid request; see documentation for correct paramaters")
 
-        pi.project = Project.objects.get(name=settings.PROJECT_NAME)        
-        pi.save()
+        pi.project = get_project(self.request)        
+        try:
+            pi.save()
+        except DatabaseError:
+            return
         self.request.session['custom'] = str(pi.uuid)
         return
     
@@ -200,8 +202,11 @@ class InvestViewAuthenticated(FormView):
         self.request.session['public'] = public
         pi.public = public
         pi.user = self.request.user
-        pi.project = Project.objects.get(name=settings.PROJECT_NAME)
-        pi.save()
+        pi.project = get_project(self.request)
+        try:
+            pi.save()
+        except DatabaseError:
+            return
         self.request.session['custom'] = str(pi.uuid)
         return super().form_valid(form)
 
@@ -298,7 +303,6 @@ def process_payment(request):
 def stripe_checkout(request):
     if request.session.test_cookie_worked():
         request.session.delete_test_cookie()
-        host = request.get_host()
         amount_int = request.session.get('amount')
         amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
         amount_str = "{:.2f}".format(amount_dec)
@@ -442,6 +446,7 @@ def charge(request):
 
         else:
             order = get_object_or_404(ProjectInvestment, uuid=uuid_str)
+            project = get_project(request)
             if ((int(float(order.pledged * 100)) == charge["amount"])
                 and (str(order.uuid) == charge["metadata"]["uuid"])):
                 # mark the order as paid
@@ -452,6 +457,7 @@ def charge(request):
                 rank = (
                     ProjectInvestment.objects
                     .filter(paid=True)
+                    .filter(project=project)
                     .filter(datetime__lte=order.datetime)
                     .count()
                 )
@@ -463,6 +469,7 @@ def charge(request):
                         userid,
                         rank,
                         order.public,
+                        project
                     )
                 )
                 return render(
@@ -498,11 +505,12 @@ class ProjectInvestmentView(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        #context['book_list'] = Book.objects.all()
-
+        project = get_project(self.request)
+        if not project:
+            return
         tier_lst = []
-        if Tier.objects.count():
-            for t in Tier.objects.filter(project=Project.objects.get(name='doctoctocbot')):
+        if Tier.objects.filter(project=project).count():
+            for t in Tier.objects.filter(project=project):
                 tier = {}
                 tier['title']= t.title
                 tier['emoji']= t.emoji
@@ -510,18 +518,23 @@ class ProjectInvestmentView(ListView):
                 tier['funder_lst'] = list(ProjectInvestment.objects.
                                           filter(paid=True).
                                           filter(public=True).
+                                          filter(project=project).
                                           filter(pledged__gte=t.min, pledged__lte=t.max))
                 tier_lst.append(tier)
         else:
             context['funder_lst'] = list(ProjectInvestment.objects.
                                           filter(paid=True).
                                           filter(public=True).
+                                          filter(project=project).
                                           order_by('name').
                                           distinct('name'))
         context['tier_lst'] = tier_lst
-        context['investor_count'] = (ProjectInvestment
-                                     .objects
-                                     .filter(paid=True)
-                                     .distinct('user')
-                                     .count())   
+        
+        # Replaced by custom templatetag
+        #context['investor_count'] = (ProjectInvestment
+        #                             .objects
+        #                             .filter(paid=True)
+        #                             .filter(project=project)
+        #                             .distinct('user')
+        #                             .count())   
         return context

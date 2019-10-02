@@ -11,6 +11,7 @@ from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import F
 from django.conf import settings
 from django.core.paginator import Paginator
+from community.helpers import get_community
 from moderation.thumbnail import get_thumbnail_url
 import logging
 
@@ -49,14 +50,20 @@ class ModeratorPublicList(TemplateView):
                 yield l[i:i + n] 
         
         context = super(ModeratorPublicList, self).get_context_data(*args, **kwargs)
+        community = get_community(context)
         moderators_qs = (
-            Moderator.objects.filter(public=True)
+            Moderator.objects
+            .filter(
+                public=True,
+                community=community
+            )
             .annotate(
                 screen_name=KeyTextTransform('screen_name', 'socialuser__profile__json'),
                 name=KeyTextTransform('name', 'socialuser__profile__json'),
                 user_id=KeyTextTransform('id', 'socialuser__profile__json'),
                 avatar=F('socialuser__profile__biggeravatar')
-            ).values(
+            )
+            .values(
                 'screen_name',
                 'name',
                 #'socialuser__profile__normalavatar'

@@ -1,12 +1,18 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
 {% load crowdfunding_progress %}
+{% load landing_investors %}
 {% block content %}
-<h2> {% block title %} {% trans 'Funding' %} {% endblock %} </h2>
+<h2> {% block title %} {% trans 'Funding' %} {% project_name %} {% endblock %} </h2>
 {% now "SHORT_DATETIME_FORMAT" as now %}
 {% progress_bar %}
-{% if investor_count %}
-<p>{% blocktrans count investor_cnt=investor_count %}{{ investor_cnt }} person invested in our project. Thank you!{% plural %}{{ investor_cnt }} persons invested in our project. Thank you!{% endblocktrans %}<p>
+{% investor_progress_bar %}
+{% total_investor_count as tic %}
+{% public_investor_count as pic %}
+{% if tic %}
+<p>{% blocktrans count investor_cnt=tic %}{{ investor_cnt }} person invested in our project. Thank you!{% plural %}{{ investor_cnt }} persons invested in our project. Thank you!{% endblocktrans %}<p>
+{% if pic %}
+<p>{% blocktrans count public_investor_cnt=pic %}{{ public_investor_cnt }} person accepted to appear on this list.{% plural %}{{ public_investor_cnt }} persons accepted to appear on this list.{% endblocktrans %}<p>
 <ul>
     {% for tier in tier_lst %}
       <li><h2>{{ tier.title }} {{ tier.emoji}}</h2>
@@ -22,6 +28,7 @@
       <li>{{ funder.user.username }}</li>
     {% endfor %}  
 </ul>
+{% endif %}
 {% else %}
 <p>{% blocktrans %}Be the first to invest in our project!{% endblocktrans %}<p>
  <a href="{% url 'crowdfunding:start' %}" role="button" class="btn btn-outline-primary">{% trans "I want to fund!" %}</a>

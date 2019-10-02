@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Project, ProjectInvestment, Tier
 
 class ProjectInvestmentAdmin(admin.ModelAdmin):
-    list_display = ('uuid', 'user', 'name', 'email', 'pledged', 'paid', 'datetime', 'public',)
+    list_display = ('uuid', 'project', 'user', 'name', 'email', 'pledged', 'paid', 'datetime', 'public',)
     search_fields = ['user', 'name', 'email',]
     list_filter = ['paid', 'datetime', 'public',]
     ordering = ['-datetime',]

@@ -43,6 +43,7 @@ class Community(models.Model):
         'crowdfunding.Project',
         on_delete=models.CASCADE,
         null=True,
+        related_name="community",
     )
 
     def __str__(self):

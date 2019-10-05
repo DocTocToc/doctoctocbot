@@ -37,6 +37,7 @@ FROM prod AS dev
 RUN apt-get clean && apt-get update && apt-get install -y \
   python-pygraphviz \
   libgraphviz-dev \
-  postgresql-client
+  postgresql-client \
+  gettext
 
 RUN pip install --upgrade -r /code/requirements/development.txt

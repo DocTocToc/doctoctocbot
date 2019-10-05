@@ -15,7 +15,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
-from conversation.utils import top_statusid_lst, help_statusid_lst, last_authorized_statusid_lst
+from conversation.utils import top_statusid_lst, help_statusid_lst
 from conversation.models import Treedj
 from moderation.tasks import handle_create_update_profile
 from moderation.profile import is_profile_uptodate
@@ -103,7 +103,7 @@ class Top(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(Top, self).get_context_data(*args, **kwargs)
-        community = get(self.request)
+        community = get_community(self.request)
         if not community:
             return context
         sid_lst = top_statusid_lst(self.hour, community)[:self.n]

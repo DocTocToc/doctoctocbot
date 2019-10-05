@@ -1,128 +1,178 @@
 from datetime import datetime
+import logging
+import time
+
+from django.utils import translation
 from django.conf import settings
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models.functions import TruncMonth, TruncYear
 from django.http import JsonResponse
 from django.shortcuts import render
-import logging
-import time
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy, ngettext_lazy
+from django.utils.text import format_lazy
 
 from conversation.models import Tweetdj, Hashtag
-from moderation.models import SocialUser
-
+from moderation.models import SocialUser, UserCategoryRelationship
+from community.helpers import get_community
+from moderation.profile import screen_name
 
 logger = logging.getLogger(__name__)
 
-def filter_hashtag(qs):
-    dct = dict()
-    for h in Hashtag.objects.all():
-        dct[h.hashtag]= h
-    h = settings.KEYWORD_TRACK_LIST
-    h0_OR_h1 = qs.filter(Q(hashtag=dct[h[0]]) | Q(hashtag=dct[h[1]]))
-    h0_AND_h1 =   qs.filter(hashtag=dct[h[0]]).filter(hashtag=dct[h[1]])
-    h0 = qs.filter(hashtag=dct[h[0]])
-    h1 = qs.filter(hashtag=dct[h[1]])
-    
-    return [h0_OR_h1, h0_AND_h1, h0, h1]    
+color_dct = {
+    "h0": "rgba(0, 0, 128)", #Navy
+    "h1": "rgba(230, 25, 75)", #Red
+    "or": "rgba(145, 30, 180)", #Purple
+    "and": "rgba(60, 180, 75)", #Green
+    "h0_user": "rgba(0, 130, 200)", #Blue
+    "h1_user": "rgba(250, 190, 190)", #Pink
+    "or_user": "rgba(230, 190, 255)", #Lavender
+    "and_user": "rgba(170, 255, 195)", #Mint
+}
+
+by = gettext_lazy("by")
+
+def authenticated_socialuser_userid(request):
+    if request.user.is_authenticated:
+        if request.user.socialuser is not None:
+            return request.user.socialuser.user_id
+
+def get_userid_lst(request):
+    community = get_community(request)
+    categories = community.membership.all()
+    return UserCategoryRelationship.objects.filter(
+        category__in = categories,
+        community = community
+        ).values_list('social_user__user_id', flat=True)
+
+def get_chart(period, request, series):
+    """
+    Get HighCharts json chart corresponding to given attributes
+    """
+    with translation.override('en'):
+        period_en = str(period)
+        logger.debug(f"period_en: {period_en}")
+    categories = get_community(request).membership.all()
+    categories_str = ", ".join([cat.label for cat in categories])
+    return {
+        'chart': {'type': 'column'}, 
+        'title': {'text': _('Number of questions per {period} ({categories_str})').format(
+            period=period,
+            categories_str=categories_str)
+        },
+        'xAxis': {
+            'type': 'datetime',
+#            'minTickInterval': moment.duration(1, 'month').asMiliseconds()
+        },
+        'yAxis': {
+            'title': {'text': _('Number of tweets')},
+            'allowDecimals': False,
+        },
+        'series': series
+    }
+
+def filter_hashtag(qs, request):
+    """
+    Filter tweets by presence of community's hashtag(s).
+    """
+    community = get_community(request)
+    h_lst = community.hashtag.all()
+    logger.debug(f"all hahstags: {h_lst}")
+    if not h_lst:
+        return
+    if len(h_lst)==1:
+        h0_label = h_lst[0].hashtag
+        return {
+            "h0": {
+                "label": h0_label,
+                "qs": qs.filter(hashtag__hashtag = h0_label)
+            }
+        }
+    elif len(h_lst)>1:
+        or_txt = gettext_lazy("or")
+        and_txt = gettext_lazy("and")
+        h1_label = h_lst[1].hashtag
+        h0_label = h_lst[0].hashtag
+        return {
+            "h0": {
+                "label": h0_label,
+                "qs": qs.filter(hashtag__hashtag = h0_label)
+            },
+            "h1": {
+                "label": h1_label,
+                "qs": qs.filter(hashtag__hashtag = h1_label)
+            },
+            "or": {
+                "label": format_lazy('{h0} {or_txt} {h1}',
+                                     h0=h0_label,
+                                     or_txt=or_txt,
+                                     h1=h1_label),
+                "qs": qs.filter(Q(hashtag=h_lst[0]) | Q(hashtag=h_lst[1]))
+            },
+            "and": {
+                "label": format_lazy('{h0} {and_txt} {h1}',
+                                     h0=h0_label,
+                                     and_txt=and_txt,
+                                     h1=h1_label),
+                "qs": qs.filter(hashtag=h_lst[0]).filter(hashtag=h_lst[1])
+            }
+        }
 
 def daily(request):
     return render(request, 'charts/daily.html')
 
 def questions_daily_data(request):
-    if request.user.is_authenticated:
-        user = request.user
-        logger.debug(user.username)
-        if user.socialuser is not None:
-            logger.debug(user.socialuser.user_id)
-    else:
-        logger.debug("No authenticated user.")
-    
-    physicians = SocialUser.objects.physician_users()
-    #logger.debug(physicians)
+    period = gettext_lazy("day")
+    member_userid_lst = get_userid_lst(request)        
+
     qsd = (Tweetdj.objects
-        .filter(userid__in=physicians)
+        .filter(userid__in=member_userid_lst)
         .filter(retweetedstatus=False)
         .filter(quotedstatus=False)
         .extra({'date' : "date(created_at)"})
         .values('date')
         .annotate(count=Count('statusid')))
-    
-    series_lst = []
-    qs_lst = filter_hashtag(qsd)
-    
-    if request.user.is_authenticated and request.user.socialuser is not None:
-        qs_user_lst = []
-        uid = request.user.socialuser.user_id
-        for qs in qs_lst:
-            qs = qs.filter(userid=uid)
-            qs_user_lst.append(qs)
-        qs_lst.extend(qs_user_lst)
-        
-    for qs in qs_lst:
-        series = []
-        for data in qs:
-            d = data["date"]
-            timestamp = time.mktime(d.timetuple())*1000
-            count = data["count"]
-            plot = [timestamp, count]
-            series.append(plot)
-        series_lst.append(series)
-        
-    #logger.debug(series)
 
-    chart = {
-        'chart': {'type': 'column'},
-        'title': {'text': 'Number of questions per day'},
-        'xAxis': {'type': 'datetime' },
-        'yAxis': {'title': {'text': 'Number of tweets'}},
-        'series': [
-                {
-                'name': 'Dayly tweets #DocTocToc or #DocsTocToc',
-                'data': series_lst[0],
-                'color': 'rgba(51, 133, 55)'
-                },
-                                {
-                'name': 'Dayly tweets #DocTocToc and #DocsTocToc',
-                'data': series_lst[1],
-                'color': 'rgba(192, 192, 192)'
-                },
-                                                {
-                'name': 'Daily tweets #DocTocToc',
-                'data': series_lst[2],
-                'color': 'rgba(0, 0, 255)'
-                },
-                {
-                'name': 'Daily tweets #DocsTocToc',
-                'data': series_lst[3],
-                'color': 'rgba(255, 0, 0)'
+    qs_dct = filter_hashtag(qsd, request) # qs_dct was 'qs_lst'
+    
+    uid = authenticated_socialuser_userid(request)
+    qs_dct_copy = dict(qs_dct)
+    if uid:
+        for key in qs_dct_copy.keys():
+            qs_dct.update(
+                {f"{key}_user": {
+                    "label": f'{qs_dct_copy[key]["label"]} {by} {screen_name(uid)}',
+                    "qs": qs_dct_copy[key]["qs"].filter(userid=uid)
+                    }
                 }
-        ]
-    }
-    if len(series_lst)==6:
-        dict3 = {'name': 'Your daily #DocTocToc tweets', 'data': series_lst[3]}
-        dict4 = {'name': 'Your daily #DocsTocToc tweets', 'data': series_lst[4]}
-        dict5 = {'name': 'Your daily #DocsTocToc and/or #DocsTocToc tweets', 'data': series_lst[5]}
-        chart['series'].extend([dict3, dict4, dict5])
-        
+            )
+
+    series = list()
+    for key, dct in qs_dct.items():
+        serie = dict()
+        serie.update({"name": f'{dct["label"]}'})
+        serie.update({"color": color_dct[key]})                      
+        data = []
+        for values in dct["qs"]:
+            d = values["date"]
+            timestamp = int(time.mktime(d.timetuple())*1000)
+            count = values["count"]
+            data.append([timestamp, count])
+        serie.update({"data": data})
+        series.append(serie)
+    chart = get_chart(period, request, series)
     return JsonResponse(chart)
 
 def monthly(request):
     return render(request, 'charts/monthly.html')
 
 def questions_monthly_data(request):
-    physicians = SocialUser.objects.physician_users()
-    '''
-    qsm0or1 = Tweetdj.objects \
-        .filter(userid__in=physicians) \
-        .annotate(year = ExtractYear('created_at'), month = ExtractMonth('created_at')) \
-        .values('year', 'month') \
-        .annotate(count=Count('statusid')) \
-        .values('year', 'month', 'count') \
-        .order_by('year', 'month')
-    '''    
+    period = gettext_lazy("month")
+    member_userid_lst = get_userid_lst(request)        
+ 
     qsm = (Tweetdj.objects
-        .filter(userid__in=physicians)
+        .filter(userid__in=member_userid_lst)
         .filter(retweetedstatus=False)
         .filter(quotedstatus=False)
         .annotate(date = TruncMonth('created_at'))
@@ -130,62 +180,45 @@ def questions_monthly_data(request):
         .annotate(count=Count('statusid'))
         .order_by('date'))
     
-    qs_lst = filter_hashtag(qsm)
+    qs_dct = filter_hashtag(qsm, request)
     
-    series_lst = []
-    for qs in qs_lst:
-        series = []
-        for data in qs:
-            d = data["date"]
-            timestamp = time.mktime(d.timetuple())*1000
-            count = data["count"]
-            plot = [timestamp, count]
-            series.append(plot)
-        series_lst.append(series)
-    
-    chart = {
-        'chart': {'type': 'column'},
-        'title': {'text': 'Number of tweets per month (verified physicians only)'},
-        'xAxis': {'type': 'datetime'},
-        'yAxis': {'title': {'text': 'Number of tweets'}},
-        'series': [
-                {
-                'name': 'Monthly tweets #DocTocToc or #DocsTocToc',
-                'data': series_lst[0],
-                'color': 'rgba(51, 133, 55)'
-                },
-                                {
-                'name': 'Monthly tweets #DocTocToc and #DocsTocToc',
-                'data': series_lst[1],
-                'color': 'rgba(192, 192, 192)'
-                },
-                                                {
-                'name': 'Monthly tweets #DocTocToc',
-                'data': series_lst[2],
-                'color': 'rgba(0, 0, 255)'
-                },
-                {
-                'name': 'Monthly tweets #DocsTocToc',
-                'data': series_lst[3],
-                'color': 'rgba(255, 0, 0)'
+    uid = authenticated_socialuser_userid(request)
+    qs_dct_copy = dict(qs_dct)
+    if uid:
+        for key in qs_dct_copy.keys():
+            qs_dct.update(
+                {f"{key}_user": {
+                    "label": f'{qs_dct_copy[key]["label"]} {by} {screen_name(uid)}',
+                    "qs": qs_dct_copy[key]["qs"].filter(userid=uid)
+                    }
                 }
-            ]
-        }
+            )
+    
+    series = list()
+    for key, dct in qs_dct.items():
+        serie = dict()
+        serie.update({"name": f'{dct["label"]}'})
+        serie.update({"color": color_dct[key]})                      
+        data = []
+        for values in dct["qs"]:
+            d = values["date"]
+            timestamp = int(time.mktime(d.timetuple())*1000)
+            count = values["count"]
+            data.append([timestamp, count])
+        serie.update({"data": data})
+        series.append(serie)
+    chart = get_chart(period, request, series)
     return JsonResponse(chart)
 
+def yearly(request):
+    return render(request, 'charts/yearly.html')
+
 def questions_yearly_data(request):
-    physicians = SocialUser.objects.physician_users()
-    '''
-    qsm0or1 = Tweetdj.objects \
-        .filter(userid__in=physicians) \
-        .annotate(year = ExtractYear('created_at'), month = ExtractMonth('created_at')) \
-        .values('year', 'month') \
-        .annotate(count=Count('statusid')) \
-        .values('year', 'month', 'count') \
-        .order_by('year', 'month')
-    '''    
+    period = gettext_lazy("year")
+    member_userid_lst = get_userid_lst(request)        
+    
     qsy = (Tweetdj.objects
-        .filter(userid__in=physicians)
+        .filter(userid__in=member_userid_lst)
         .filter(retweetedstatus=False)
         .filter(quotedstatus=False)
         .annotate(date = TruncYear('created_at'))
@@ -193,48 +226,31 @@ def questions_yearly_data(request):
         .annotate(count=Count('statusid'))
         .order_by('date'))
     
-    qs_lst = filter_hashtag(qsy)
+    qs_dct = filter_hashtag(qsy, request)
 
-    series_lst = []
-    for qs in qs_lst:
-        series = []
-        for data in qs:
-            d = data["date"]
-            timestamp = time.mktime(d.timetuple())*1000
-            count = data["count"]
-            plot = [timestamp, count]
-            series.append(plot)
-        series_lst.append(series)
-    
-    chart = {
-        'chart': {'type': 'column'},
-        'title': {'text': 'Number of tweets per year (verified physicians only)'},
-        'xAxis': {'type': 'datetime'},
-        'yAxis': {'title': {'text': 'Number of tweets'}},
-        'series': [
-                {
-                'name': 'Yearly tweets #DocTocToc or #DocsTocToc',
-                'data': series_lst[0],
-                'color': 'rgba(51, 133, 55)'
-                },
-                                {
-                'name': 'Yearly tweets #DocTocToc and #DocsTocToc',
-                'data': series_lst[1],
-                'color': 'rgba(192, 192, 192)'
-                },
-                                                {
-                'name': 'Yearly tweets #DocTocToc',
-                'data': series_lst[2],
-                'color': 'rgba(0, 0, 255)'
-                },
-                {
-                'name': 'Yearly tweets #DocsTocToc',
-                'data': series_lst[3],
-                'color': 'rgba(255, 0, 0)'
+    uid = authenticated_socialuser_userid(request)
+    qs_dct_copy = dict(qs_dct)
+    if uid:
+        for key in qs_dct_copy.keys():
+            qs_dct.update(
+                {f"{key}_user": {
+                    "label": f'{qs_dct_copy[key]["label"]} {by} {screen_name(uid)}',
+                    "qs": qs_dct_copy[key]["qs"].filter(userid=uid)
+                    }
                 }
-            ]
-        }
+            )
+    series = list()
+    for key, dct in qs_dct.items():
+        serie = dict()
+        serie.update({"name": f'{dct["label"]}'})
+        serie.update({"color": color_dct[key]})                      
+        data = []
+        for values in dct["qs"]:
+            d = values["date"]
+            timestamp = int(time.mktime(d.timetuple())*1000)
+            count = values["count"]
+            data.append([timestamp, count])
+        serie.update({"data": data})
+        series.append(serie)
+    chart = get_chart(period, request, series)
     return JsonResponse(chart)
-
-def yearly(request):
-    return render(request, 'charts/yearly.html')

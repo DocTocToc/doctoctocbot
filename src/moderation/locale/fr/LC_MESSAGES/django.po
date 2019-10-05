@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-21 21:40+0200\n"
+"POT-Creation-Date: 2019-10-05 02:46+0200\n"
 "PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,61 +18,53 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:210
-msgid ""
-"Maximum number of category instances  that can be included in a quickreply "
-"is 20."
-msgstr ""
-"Le nombre maximal de catégories pouvant être ajoutées à un DM QuickReply est "
-"20."
-
-#: moderation/models.py:547
+#: moderation/models.py:607
 msgid "Warn"
 msgstr ""
 
-#: moderation/models.py:548
+#: moderation/models.py:608
 #, fuzzy
 #| msgid "Moderators"
 msgid "Moderate"
 msgstr "Modérateurs"
 
-#: moderation/models.py:549
+#: moderation/models.py:609
 msgid "Ban"
 msgstr ""
 
-#: moderation/social.py:93
+#: moderation/social.py:107
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:110
+#: moderation/social.py:124
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:110
+#: moderation/social.py:124
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:176
+#: moderation/social.py:190
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:179
+#: moderation/social.py:193
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:183
+#: moderation/social.py:197
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:223
+#: moderation/social.py:237
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:97
+#: moderation/tasks.py:95
 #, python-brace-format
 msgid ""
 "Please moderate this user: @{screen_name} Tweet: https://twitter.com/"
@@ -81,10 +73,17 @@ msgstr ""
 "Merci de modérer ce compte: @{screen_name} Tweet: https://twitter.com/"
 "{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:103
+#: moderation/tasks.py:102
 msgid "You will soon receive a moderation request for this user."
 msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."
 
-#: moderation/views.py:40
+#: moderation/views.py:41
 msgid "Moderators"
 msgstr "Modérateurs"
+
+#~ msgid ""
+#~ "Maximum number of category instances  that can be included in a "
+#~ "quickreply is 20."
+#~ msgstr ""
+#~ "Le nombre maximal de catégories pouvant être ajoutées à un DM QuickReply "
+#~ "est 20."

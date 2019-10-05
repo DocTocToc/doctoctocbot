@@ -1,6 +1,5 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
-{% load userstats %}
 {% load auth_extras %}
 {% load static %}
 
@@ -64,9 +63,14 @@
                             <h6>{% trans "Recent badges" %}</h6>
                             <a href="#" class="badge badge-dark badge-pill">user</a>
                             <hr>
-                            <span class="badge badge-primary"><i class="fa fa-user"></i> {{ uid|total_hashtag_count }} {% trans "Question(s)" %}</span>
-                            <span class="badge badge-success"><i class="fa fa-cog"></i> {{ uid|hashtag_count:0 }} {{ hashtag0 }}</span>
-                            <span class="badge badge-danger"><i class="fa fa-eye"></i> {{ uid|hashtag_count:1 }} {{ hashtag1 }}</span>
+                            {% trans "Question(s)" %}
+                            <ul class="list-group">
+                            {% for label, count in hashtag.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            #{{ label }}<span class="badge badge-pill badge-secondary">{{ count }}</span>
+                            </li>
+                            {% endfor %}
+                            </ul>
                         </div>
                         <div class="col-md-12">
                             <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span> Recent Activity</h5>

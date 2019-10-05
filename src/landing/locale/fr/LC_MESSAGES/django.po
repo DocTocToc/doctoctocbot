@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-21 21:40+0200\n"
+"POT-Creation-Date: 2019-10-05 02:46+0200\n"
 "PO-Revision-Date: 2019-05-16 20:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -21,6 +21,14 @@ msgstr ""
 #: landing/templates/landing/index.html:6
 msgid "Home"
 msgstr "Accueil"
+
+#: landing/templates/landing/investor_progress_bar.html:6
+msgid "Active members"
+msgstr ""
+
+#: landing/templates/landing/investor_progress_bar.html:7
+msgid "Investors"
+msgstr ""
 
 #: landing/templates/landing/user.html:31
 msgid "Profile"

@@ -4,22 +4,21 @@ from django.core.paginator import Paginator
 from django.db import connection, Error
 from django.db.utils import IntegrityError, DatabaseError
 from django.conf import settings
-from conversation.models import Tweetdj, Hashtag
+from conversation.models import Tweetdj, Hashtag, Treedj
 from common.twitter import status_url_from_id
-
+from common.utils import dictextract
 from timeline.models import last_retweeted_statusid_lst
 from conversation.constants import HOURS
+from community.helpers import get_community
 
 logger = logging.getLogger(__name__)
 
 def normalize(statusid):
-    hashtag(statusid)
     hashtag_m2m(statusid)
     retweetedstatus(statusid)
     quotedstatus(statusid)
     
 def allnormalize():
-    from .models import Tweetdj
     from .constants import TWEETDJ_PAGINATION
     paginator = Paginator(Tweetdj.objects.all(), TWEETDJ_PAGINATION)
     
@@ -29,9 +28,6 @@ def allnormalize():
             normalize(statusid)
 
 def retweetedstatus(statusid):
-    from common.utils import dictextract
-    from .models import Tweetdj
-    
     key = "retweeted_status"
     try:
         status_mi = Tweetdj.objects.get(pk=statusid)
@@ -46,14 +42,10 @@ def retweetedstatus(statusid):
     return status_mi.retweetedstatus
         
 def allretweetedstatus():
-    from .models import Tweetdj
     for status_mi in Tweetdj.objects.all():
         quotedstatus(status_mi.statusid)
 
 def quotedstatus(statusid):
-    from common.utils import dictextract
-    from .models import Tweetdj
-    
     key = "quoted_status"
     try:
         status_mi = Tweetdj.objects.get(pk=statusid)
@@ -68,38 +60,8 @@ def quotedstatus(statusid):
     return status_mi.quotedstatus
         
 def allquotedstatus():
-    from .models import Tweetdj
     for status_mi in Tweetdj.objects.all():
         quotedstatus(status_mi.statusid)    
-
-def hashtag(statusid):
-    from .models import Tweetdj
-    from common.utils import dictextract
-
-    logger = logging.getLogger(__name__)
-    
-    keyword_lst = settings.KEYWORD_TRACK_LIST
-    if not keyword_lst:
-        return
-    try:
-        status_mi = Tweetdj.objects.get(pk=statusid)
-    except Tweetdj.DoesNotExist as e:
-        logger.info(f"Status {statusid} does not exist in table Tweetdj."
-                    f"Error message: {e}")
-        return
-    
-    jsn = status_mi.json
-    key = "hashtags"
-    contains_tag0 = False
-    contains_tag1 = False
-    for hashtags in dictextract(key, jsn):
-        for hashtag in hashtags:
-            contains_tag0 = contains_tag0 or bool(hashtag["text"].lower() == keyword_lst[0])
-            if len(keyword_lst) > 1:
-                contains_tag1 =  contains_tag1 or bool(hashtag["text"].lower() == keyword_lst[1])
-    status_mi.hashtag0 = contains_tag0
-    status_mi.hashtag1 = contains_tag1
-    status_mi.save()
 
 def hashtag_m2m(statusid: int):
     logger = logging.getLogger(__name__)
@@ -113,29 +75,22 @@ def hashtag_m2m(statusid: int):
     hashtag_m2m_tweetdj(status_mi) 
 
 def hashtag_m2m_tweetdj(status_mi: Tweetdj):
-    from common.utils import dictextract
     jsn = status_mi.json
     key = "hashtags"
-
     keyword_lst = Hashtag.objects.values_list("hashtag", flat=True)
     if not keyword_lst:
         return
-
     keyword_lst_lower = [keyword.lower() for keyword in keyword_lst]
-
     hash_dct = dict()
     for h in Hashtag.objects.all():
         hash_dct[h.hashtag.lower()]= h
-
     hashtag_mi_lst = []
- 
     for hashtags in dictextract(key, jsn):
         for hashtag in hashtags:
             status_hashtag = hashtag["text"].lower()
             if status_hashtag in keyword_lst_lower:
                 hashtag_mi = hash_dct[status_hashtag]
                 hashtag_mi_lst.append(hashtag_mi)
-    
     for h in hashtag_mi_lst:
         try:
             status_mi.hashtag.add(h)
@@ -144,43 +99,35 @@ def hashtag_m2m_tweetdj(status_mi: Tweetdj):
             continue
                       
 def allhashtag():
-    from conversation.models import Tweetdj
     for status_mi in Tweetdj.objects.all():
-        hashtag(status_mi.statusid)
         hashtag_m2m(status_mi.statusid)
         
-def userhashtagcount(userid: int, idx: int) -> int:
+def userhashtagcount(userid: int, context) -> dict:
     """
-    Return the count of status posted by the user with this userid including a given hashtag
-    (according to its index in the configuration list) that are neither retweets nor quotes.
+    Return the count of status posted by the user with this userid for the following hashtags:
+     - community hashtags
+     - trusted communities hashtags
+    that are neither retweets nor quotes.
     """
-    from .models import Tweetdj
-    if not userid:
-        return 0
+    if not userid or not context:
+        return
     mi_lst = Tweetdj.objects.filter(userid=userid, quotedstatus=False, retweetedstatus=False)
-    if idx == 0:
-        logger.debug("idx0: %s", mi_lst.filter(hashtag0=True).count())
-        return mi_lst.filter(hashtag0=True).count()
-    elif idx == 1:
-        logger.debug("idx0: %s", mi_lst.filter(hashtag1=True).count())
-        return mi_lst.filter(hashtag1=True).count()
-    else:
-        return 0
+    community = get_community(context)
+    hashtag_lst = []
+    hashtag_lst.extend(list(community.hashtag.all()))
+    trusted_community_lst = community.trust.all()
+    for community in trusted_community_lst:
+        hashtag_lst.extend(community.hashtag.all())
+    hashtag_lst = set(hashtag_lst)
+    hashtag_dct = dict()
+    for hashtag in hashtag_lst:
+        hashtag_dct.update(
+            {
+                hashtag.hashtag: mi_lst.filter(hashtag=hashtag).count()
+            }
+        )
+    return hashtag_dct
 
-def usertotalhashtagcount(userid: int) -> int:
-    """
-    Return the count of status posted by the user with this userid, including any hashtag
-    from the keyword track list, that are neither retweets nor quotes.
-    """
-    if not userid:
-        return 0
-    total_count = 0
-    for idx in range(len(settings.KEYWORD_TRACK_LIST)):
-        count = userhashtagcount(userid, idx)
-        if count:
-            total_count += count
-    return total_count
-        
 def getcount(statusid):
     """
     Return a dictionary with reply, retweet and likes (favorite) counts from the web API.
@@ -210,7 +157,6 @@ def updatecount(statusid):
     """
     Update Tweetdj status reply, retweet and like count with data collected from the web API.
     """
-    from .models import Tweetdj
     try:
         mi = Tweetdj.objects.get(pk=statusid)
     except Tweetdj.DoesNotExist:
@@ -224,7 +170,6 @@ def updatecount(statusid):
 def add_leaves(statusid):
     from django.db import transaction
     from .tree.tweet_server import request_context, request_tweets
-    from .models import Treedj
     _screen_name = screen_name(statusid)
     context = request_context(statusid, _screen_name)
     if not context:
@@ -246,7 +191,6 @@ def add_leaves(statusid):
                 continue
             
 def feed_tree(statusid):
-    from .models import Treedj
     from django.db.models import F
     try:
         root = Treedj.objects.get(statusid=statusid)
@@ -261,7 +205,6 @@ def feed_tree(statusid):
         add_leaves(leaf.statusid)
 
 def count_replies(statusid):
-    from .models import Treedj
     try:
         root = Treedj.objects.get(statusid=statusid)
     except Treedj.DoesNotExist:
@@ -269,7 +212,6 @@ def count_replies(statusid):
     return root.get_descendant_count()
     
 def count_replies_from_others(statusid):
-    from .models import Treedj, Tweetdj
     from bot.addstatusdj import addstatus_if_not_exist, addstatus
     
     try:
@@ -301,7 +243,6 @@ def update_trees(hourdelta):
     timedelta -- int representing a time delta in hours
     """
     from datetime import datetime, timedelta
-    from .models import Tweetdj, Treedj
     
     since = datetime.utcnow() - timedelta(hours=hourdelta)
     sid_status_lst = list(Tweetdj.objects.filter(created_at__gt=since).values_list('statusid', flat=True))
@@ -321,7 +262,6 @@ def top_statusid_lst(hourdelta, community):
     hourdelta -- int representing the number of hour(s)
     """
     from datetime import datetime, timedelta
-    from .models import Tweetdj, Treedj
     from moderation.models import SocialUser
 
     tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
@@ -338,7 +278,6 @@ def help_statusid_lst(hourdelta, community):
     hourdelta -- int representing the number of hour(s)
     """
     from datetime import datetime, timedelta
-    from .models import Tweetdj, Treedj
     from moderation.models import SocialUser
     
     tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
@@ -347,33 +286,6 @@ def help_statusid_lst(hourdelta, community):
     help_lst = [(mi.statusid, count_replies_from_others(mi.statusid)) for mi in qs]
     help_lst = sorted(help_lst, key=lambda x: x[1])
     return [t[0] for t in help_lst]
-
-def last_authorized_statusid_lst(hourdelta=None):
-    """Return all tweets of interest (that contain hashtag0 & are root nodes)
-    from the import last hourdelta hours
-    TODO: scrap this
-    selects statuses that contain hashtag0 but some
-    root tweets don't contain the hashtag, which can be further down in the
-    thread
-    """
-    from datetime import datetime, timedelta
-    from .models import Tweetdj, Treedj
-    from moderation.models import SocialUser
-    
-    if hourdelta is None:
-        hourdelta = HOURS
-    
-    since = datetime.utcnow() - timedelta(hours=hourdelta)
-    tweet_sid_lst = list(Tweetdj.objects
-                         .filter(created_at__gt=since)
-                         .filter(hashtag0=True)
-                         .filter(userid__in=SocialUser.objects.authorized_users())
-                         .values_list('statusid', flat=True))
-    qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
-    qs = [mi for mi in qs if mi.is_root_node()]
-    last_lst = [mi.statusid for mi in qs]
-    last_lst = sorted(last_lst, reverse=True)
-    return last_lst
 
 def screen_name(statusid):
     """

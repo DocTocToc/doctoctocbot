@@ -86,8 +86,6 @@ class TweetdjAdmin(admin.ModelAdmin):
         'screen_name',
         'status_text_tag',
         'status_link',
-        'hashtag0',
-        'hashtag1',
         'created_at',
         'quotedstatus',
         'retweetedstatus',
@@ -102,8 +100,6 @@ class TweetdjAdmin(admin.ModelAdmin):
         'status_text_tag',
         'status_url_tag',
         'json',
-        'hashtag0',
-        'hashtag1',
         'created_at',
         'quotedstatus',
         'retweetedstatus',
@@ -125,8 +121,6 @@ class TweetdjAdmin(admin.ModelAdmin):
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
-        'hashtag0',
-        'hashtag1',
         'quotedstatus',
         'retweetedstatus',
         'deleted',

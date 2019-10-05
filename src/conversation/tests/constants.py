@@ -224,8 +224,6 @@ status1 = {
     'like': 1, 
     'retweet' : 0,
     'parentid' : None,
-    'hashtag0': False,
-    'hashtag1' : True,
     'quotedstatus' : False,
     'retweetedstatus' : False,
     'deleted' : False

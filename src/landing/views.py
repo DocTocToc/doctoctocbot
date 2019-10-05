@@ -12,7 +12,6 @@ from django.conf import settings
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
 
-
 logger = logging.getLogger(__name__)
 
 def index(request):
@@ -46,10 +45,11 @@ class UserInfo(LoginRequiredMixin, TemplateView):
         
         if self.request.user.socialuser is not None:
             json = self.request.user.socialuser.profile.json
+            userid= self.request.user.socialuser.user_id
             context['name'] = json.get("name", None)
             context['screen_name'] = json.get("screen_name", None)
             context['location'] = json.get("location", None)
-        
+            context['hashtag'] = userhashtagcount(userid, self.request)    
             try:
                 expanded_url = json["entities"]["url"]["urls"][0]["expanded_url"]
             except KeyError:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-21 21:40+0200\n"
+"POT-Creation-Date: 2019-10-05 02:46+0200\n"
 "PO-Revision-Date: 2019-03-19 18:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -56,30 +56,39 @@ msgstr "Montant prédéfini"
 msgid "You must choose a preset amount or a custom amount. Thank you."
 msgstr "Vous devez choisir 1 montant. Merci."
 
-#: crowdfunding/templates/crowdfunding/fund.html:5
+#: crowdfunding/templates/crowdfunding/fund.html:6
 msgid "Funding"
 msgstr "Financement"
 
-#: crowdfunding/templates/crowdfunding/fund.html:9
+#: crowdfunding/templates/crowdfunding/fund.html:13
 #, python-format
 msgid "%(investor_cnt)s person invested in our project. Thank you!"
 msgid_plural "%(investor_cnt)s persons invested in our project. Thank you!"
 msgstr[0] "%(investor_cnt)s personne a investi dans notre projet. Merci!"
 msgstr[1] "%(investor_cnt)s personnes ont investi dans notre projet. Merci!"
 
-#: crowdfunding/templates/crowdfunding/fund.html:23
+#: crowdfunding/templates/crowdfunding/fund.html:15
+#, fuzzy, python-format
+#| msgid "%(investor_cnt)s person invested in our project. Thank you!"
+#| msgid_plural "%(investor_cnt)s persons invested in our project. Thank you!"
+msgid "%(public_investor_cnt)s person accepted to appear on this list."
+msgid_plural "%(public_investor_cnt)s persons accepted to appear on this list."
+msgstr[0] "%(investor_cnt)s personne a investi dans notre projet. Merci!"
+msgstr[1] "%(investor_cnt)s personnes ont investi dans notre projet. Merci!"
+
+#: crowdfunding/templates/crowdfunding/fund.html:33
 msgid "Be the first to invest in our project!"
 msgstr "Soyez la première ou le premier à investir dans notre projet!"
 
-#: crowdfunding/templates/crowdfunding/fund.html:24
+#: crowdfunding/templates/crowdfunding/fund.html:34
 msgid "I want to fund!"
 msgstr "Je veux financer!"
 
-#: crowdfunding/templates/crowdfunding/progress.html:4
+#: crowdfunding/templates/crowdfunding/progress.html:6
 msgid "Goal"
 msgstr "Objectif"
 
-#: crowdfunding/templates/crowdfunding/progress.html:6
+#: crowdfunding/templates/crowdfunding/progress.html:7
 msgid "Current amount"
 msgstr "Somme récoltée"
 
@@ -87,15 +96,15 @@ msgstr "Somme récoltée"
 msgid "Progress"
 msgstr "Progression"
 
-#: crowdfunding/views.py:306
+#: crowdfunding/views.py:310
 msgid "Pay with card"
 msgstr "Payez par carte"
 
-#: crowdfunding/views.py:340
+#: crowdfunding/views.py:344
 msgid "UUID verification error."
 msgstr ""
 
-#: crowdfunding/views.py:377
+#: crowdfunding/views.py:381
 msgid ""
 "You payment card was not authorized.Pleace try again with this card or "
 "another. {}"
@@ -103,24 +112,24 @@ msgstr ""
 "Votre carte de paiement n'a pas été autorisée. Merci de recommencer avec "
 "cette carte ou une autre. {}"
 
-#: crowdfunding/views.py:386
+#: crowdfunding/views.py:390
 msgid "Too many requests made to the API too quickly"
 msgstr ""
 
-#: crowdfunding/views.py:394
+#: crowdfunding/views.py:398
 msgid "Invalid parameters were supplied to Stripe's API"
 msgstr ""
 
-#: crowdfunding/views.py:403
+#: crowdfunding/views.py:407
 msgid ""
 "Authentication with Stripe's API failed(maybe you changed API keys recently)"
 msgstr ""
 
-#: crowdfunding/views.py:413
+#: crowdfunding/views.py:417
 msgid "Network communication with Stripe failed"
 msgstr ""
 
-#: crowdfunding/views.py:422
+#: crowdfunding/views.py:426
 #, fuzzy
 #| msgid ""
 #| "Ann error occurred during the processing of your payment.You will not be "
@@ -132,7 +141,7 @@ msgstr ""
 "Une erreur est survenue pendant le traitement de la transaction. Votre carte "
 "de sera pas débitée. Merci d'essayer à nouveau."
 
-#: crowdfunding/views.py:434
+#: crowdfunding/views.py:438
 msgid ""
 "Ann error occurred during the processing of your payment.You will not be "
 "charged. Please try again."

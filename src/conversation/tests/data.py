@@ -21,8 +21,6 @@ def userhashtagcount_db(data):
                                like = d["like"], 
                                retweet = d["retweet"],
                                parentid = d["parentid"],
-                               hashtag0 = d["hashtag0"],
-                               hashtag1 = d["hashtag1"],
                                quotedstatus = d["quotedstatus"],
                                retweetedstatus = d["retweetedstatus"],
                                deleted = d["deleted"] 

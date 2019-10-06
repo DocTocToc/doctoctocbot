@@ -29,7 +29,6 @@ class CommunityAdmin(admin.ModelAdmin):
         'name',
         'active',
         'account',
-        'domain',
         'created',
         'site',
     )
@@ -39,7 +38,6 @@ class CommunityAdmin(admin.ModelAdmin):
         'account',
         'hashtag',
         'membership',
-        'domain',
         'created',
         'site',
         'crowdfunding',

@@ -10,15 +10,12 @@ class Community(models.Model):
         'moderation.Category',
         related_name='member_of',
     )
-    domain = models.CharField(max_length=253, unique=True, help_text="Domain name")
     created =  models.DateTimeField(auto_now_add=True)
-    #site = models.ForeignKey(
-    #    Site,
-    #    on_delete=models.CASCADE,
-    #)
-    site = models.IntegerField(
-        help_text='Site ID',
-        unique=True
+    site = models.ForeignKey(
+        Site,
+        on_delete=models.PROTECT,
+        null=True,
+        related_name="community",
     )
     trust = models.ManyToManyField(
         'self',

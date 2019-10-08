@@ -15,7 +15,7 @@ from django.conf import settings
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
-from community.models import Community
+from community.models import Community, get_default_community
 
 import logging
 logger = logging.getLogger(__name__)
@@ -244,7 +244,7 @@ class UserCategoryRelationship(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        null=True,
+        default=get_default_community,
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
@@ -324,11 +324,7 @@ class Profile(models.Model):
         )
         return description
 
-def get_default_queue():
-    try:
-        return Community.objects.get(pk=1)
-    except Community.DoesNotExist as e:
-        logger.debug("Create a default Community object with pk equal to one.", e)
+
 
 class Queue(Versionable):
     user_id = models.BigIntegerField()
@@ -336,7 +332,7 @@ class Queue(Versionable):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        null=True
+        default=get_default_community
     )
     
     def __str__(self):
@@ -487,7 +483,7 @@ class TwitterList(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        null=True,
+        default=get_default_community,
     )
     
     def __str__(self):
@@ -537,6 +533,7 @@ class Moderator(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
+        default=get_default_community,
     )
 
     class Meta:

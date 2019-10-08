@@ -10,15 +10,13 @@ status = {
     'like': , 
     'retweet' : ,
     'parentid' : ,
-    'hashtag0': ,
-    'hashtag1' : ,
     'quotedstatus' : ,
     'retweetedstatus' : ,
     'deleted' : 
 }
 """
 
-# Hashtag0, quote False, RT False
+# quote False, RT False
 status0 = {
     'statusid': 888649724424847360,
     'userid': 359830743,
@@ -121,8 +119,6 @@ status0 = {
     'like': 2, 
     'retweet' : 1,
     'parentid' : None,
-    'hashtag0': True,
-    'hashtag1' : False,
     'quotedstatus' : False,
     'retweetedstatus' : False,
     'deleted' : False

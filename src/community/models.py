@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.sites.models import Site
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Community(models.Model):
     name = models.CharField(max_length=101, unique=True)
@@ -48,6 +52,13 @@ class Community(models.Model):
     
     class Meta:
         verbose_name_plural = "communities"
+
+
+def get_default_community():
+    try:
+        return Community.objects.get(pk=1).pk
+    except Community.DoesNotExist as e:
+        logger.debug("Create a default Community object with pk equal to one.", e)
 
 
 class Retweet(models.Model):

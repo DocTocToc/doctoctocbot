@@ -45,8 +45,6 @@ class Tweetdj(models.Model):
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    hashtag0 = models.NullBooleanField(default=None, help_text="doctoctoc(test)")
-    hashtag1 = models.NullBooleanField(default=None, help_text="docstoctoc(test)")
     quotedstatus = models.NullBooleanField(default=None, help_text="Is quoted_status")
     retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
     deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")

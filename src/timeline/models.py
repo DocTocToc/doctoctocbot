@@ -1,14 +1,15 @@
 from datetime import datetime, timedelta
-from bot.lib.datetime import get_datetime
-from bot.lib.snowflake import snowflake2utc
+import logging
 
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.utils.safestring import mark_safe
 from django.db import IntegrityError, transaction
 from django.db import models
-import logging
 
+from community.models import get_default_community
+from bot.lib.datetime import get_datetime
+from bot.lib.snowflake import snowflake2utc
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class Status(models.Model):
     community = models.ForeignKey(
         "community.Community",
         on_delete=models.CASCADE,
-        null=True
+        default=get_default_community,
     )
 
     class Meta:

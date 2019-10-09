@@ -15,7 +15,7 @@ class Command(BaseCommand):
         return
         logger = logging.getLogger(__name__)
         # build savepoint path + file
-        keyword_list = settings.KEYWORD_RETWEET_LIST
+        keyword_list = []
         search_string = " OR ".join(keyword_list)
         search_string = search_string + u" -filter:retweets"
         logger.debug("search_string: %s" % (search_string))

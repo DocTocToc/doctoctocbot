@@ -72,20 +72,6 @@ class AuthorizedManager(models.Manager):
             result = cursor.fetchall()
         return [row[0] for row in result]
 
-
-    def authorized_users(self):
-        """
-        Return list of authorized users bigint user_id.
-        """
-        cat_names = settings.MODERATION_AUTHORIZED_CATEGORIES
-        cat_instances = [Category.objects.get(name=cat) for cat in cat_names]
-        args_list = [Q(**{'category':cat_instance}) for cat_instance in cat_instances]
-        args = Q()  #defining args as empty Q class object to handle empty args_list
-        for each_args in args_list :
-            args = args | each_args
-        queryset = SocialUser.objects.filter(*(args,) ).exclude(donotretweet__current=True).values_list('user_id', flat=True)
-        return list(queryset)
-
     def active_moderators(self, community: Community):
         try:
             return SocialUser.objects.filter(

@@ -112,7 +112,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['*'])
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SITE_ID = config('SITE_ID', cast=int, default=1)
+SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
 # WAGTAIL
 WAGTAIL_SITE_NAME = config('WAGTAIL_SITE_NAME')

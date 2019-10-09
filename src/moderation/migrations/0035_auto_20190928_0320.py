@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-#        ('community', '0008_auto_20190925_0421'),
+        ('community', '0008_auto_20190925_0421'),
         ('moderation', '0034_auto_20190928_0313'),
     ]
 

@@ -56,7 +56,9 @@ class Community(models.Model):
 
 def get_default_community():
     try:
-        return Community.objects.get(pk=1).pk
+        community = Community.objects.first()
+        if community:
+            return community.pk
     except Community.DoesNotExist as e:
         logger.debug("Create a default Community object with pk equal to one.", e)
 

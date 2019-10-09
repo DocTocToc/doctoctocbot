@@ -7,14 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-#        ('community', '0011_auto_20191006_0534'),
         ('moderation', '0024_auto_20190909_2308'),
     ]
 
     operations = [
+        #migrations.AddField(
+        #    model_name='usercategoryrelationship',
+        #    name='community',
+        #    field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
+        #),
         migrations.AddField(
             model_name='usercategoryrelationship',
             name='community',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
+            field=models.IntegerField(default=1),
         ),
     ]

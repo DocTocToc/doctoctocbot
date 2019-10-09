@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('community', '0003_auto_20190909_0306'),
+        ('community', '0011_auto_20191006_0534'),
         ('moderation', '0024_auto_20190909_2308'),
     ]
 
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='usercategoryrelationship',
             name='community',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
         ),
     ]

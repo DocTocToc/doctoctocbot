@@ -14,7 +14,7 @@ def create_first_community(apps, schema_editor):
         return
     Account = apps.get_model('bot', 'Account')
     Hashtag = apps.get_model('conversation', 'Hashtag')
-    Category = apps.get_model('conversation', 'Category')
+    Category = apps.get_model('moderation', 'Category')
     Project = apps.get_model('crowdfunding', 'Project')
     Site = apps.get_model('sites', 'Site')
     

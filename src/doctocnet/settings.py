@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'doctocnet',
     'landing',
@@ -173,7 +174,6 @@ INSTALLED_APPS = [
     'wagtailmetadata',
     'ajax_select',
 # wagtail blog stop
-    'django.contrib.sites',
     'link',
     'gpgcontact',
     'community',

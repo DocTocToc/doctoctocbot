@@ -155,10 +155,12 @@ class All(TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super(All, self).get_context_data(*args, **kwargs)
+        context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title,self.request)
         community = get_community(self.request)
-        logger.debug(f"community id: {community.id}, name: {community.name}")
         if not community:
             return context
+        logger.debug(f"community id: {community.id}, name: {community.name}")
         tweet_lst_dic = {}
 
         #last
@@ -188,10 +190,7 @@ class All(TemplateView):
             #logger.debug(f"type: {type(sid)}")
             top_tweet_lst.append(statuscontext(sid))
         tweet_lst_dic['top']=top_tweet_lst
-        
         context['display'] = tweet_lst_dic
-        context['display_cache'] = get_display_cache()
-        context['cache_uid'] = cache_uid(self.title,self.request)
         return context
 
 def notfound(sid):

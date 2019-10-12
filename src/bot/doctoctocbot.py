@@ -40,7 +40,7 @@ class HasRetweetHashtag(object):
     try:
         hashtags = [ht.lower() for ht in Retweet.objects.filter(retweet=True).values_list('hashtag__hashtag', flat=True)]
     except DatabaseError as e:
-        logger.error(e)
+        logger.warn(e)
         hashtags= list()
 
     def __init__(self, data=None):

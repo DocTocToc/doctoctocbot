@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
+from django.db.utils import DatabaseError
 
 from community.models import Community
 
@@ -16,9 +17,12 @@ def get_community(request):
         return
     try:
         return Community.objects.get(site=site.id)
-    except Community.DoesNotExist as e:
-        logger.warn(e)
+    except DatabaseError:
+        return
+    except Community.DoesNotExist:
         try:
-            return Community.objects.get(site=1)
+            site = Site.objects.first()
+            if site:
+                return Community.objects.get(site=site.id)
         except Community.DoesNotExist as e:
-            logger.warn("Create at least one community.", e)
+            logger.warn("Create at least one community. %s", e)

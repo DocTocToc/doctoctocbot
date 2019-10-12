@@ -5,6 +5,9 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.formats import date_format
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import DatabaseError
+
 
 from community.helpers import get_community
 from community.models import Retweet
@@ -22,13 +25,16 @@ def site_text(context):
 @register.inclusion_tag('landing/hashtag_lst.html', takes_context=True)
 def hashtag_lst(context):
     community = get_community(context)
-    return {
-        'hashtag_lst': list(
-            Retweet.objects.filter(
-                community=community,
-                retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
-        )
-    }
+    try:
+        return {
+            'hashtag_lst': list(
+                Retweet.objects.filter(
+                    community=community,
+                    retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
+            )
+        }
+    except DatabaseError:
+        return
 
 @register.inclusion_tag('landing/category_and_lst.html', takes_context=True)
 def membership_category_and(context):
@@ -52,13 +58,16 @@ def retweeted_category_or(context):
 @register.inclusion_tag('landing/category_and_lst.html', takes_context=True)
 def retweeted_category_and(context):
     community = get_community(context)
-    return {
-        'category_lst': list(
-            Retweet.objects.filter(
-                community=community,
-                retweet=True).values_list('category__label', flat=True).distinct().order_by()
-        )
-    }
+    try:
+        return {
+            'category_lst': list(
+                Retweet.objects.filter(
+                    community=community,
+                    retweet=True).values_list('category__label', flat=True).distinct().order_by()
+            )
+        }
+    except DatabaseError:
+        return
     
 @register.inclusion_tag('landing/category_lst.html', takes_context=True)
 def membership_field_lst_formatted(context):
@@ -120,7 +129,7 @@ def community_creation_date(context, format_string):
         logger.debug(f"{community} \n {community.created}")
         datetime = community.created
     except:
-        pass
+        return
     return date_format(datetime.date(), format_string)
 
 @register.simple_tag(takes_context=True)
@@ -129,7 +138,14 @@ def bot_launch_date(context, format_string):
     Return launch date of the bot
     """
     community = get_community(context)
-    launch_date = community.account.launch
+    if not community:
+        logger.warn("Create a community first.")
+        return
+    try:
+        launch_date = community.account.launch
+    except ObjectDoesNotExist as e:
+        logger.warn(e)
+    
     if launch_date:
         return date_format(launch_date, format_string)
     else:

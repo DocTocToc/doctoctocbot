@@ -9,20 +9,22 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 def get_api_dict(__screen_name: typing.Optional[str]=None):
-    if __screen_name:
-        try:
-            account = Account.objects.get(username=__screen_name)
-            consumer_key = account.twitter_consumer_key
-            consumer_secret = account.twitter_consumer_secret
-            access_token = account.twitter_access_token
-            access_token_secret = account.twitter_access_token_secret
-        except Account.DoesNotExist:
-            return get_api_dict()
-    else:
-        consumer_key = settings.BACKEND_TWITTER_CONSUMER_KEY
-        consumer_secret = settings.BACKEND_TWITTER_CONSUMER_SECRET
-        access_token = settings.BACKEND_TWITTER_ACCESS_TOKEN
-        access_token_secret = settings.BACKEND_TWITTER_ACCESS_TOKEN_SECRET
+    if not __screen_name:
+        return
+    try:
+        account = Account.objects.get(username=__screen_name)
+        consumer_key = account.backend_twitter_consumer_key
+        consumer_secret = account.backend_twitter_consumer_secret
+        access_token = account.backend_twitter_access_token
+        access_token_secret = account.backend_twitter_access_token_secret
+    except Account.DoesNotExist:
+        return
+
+    if (not consumer_key
+        or not consumer_secret
+        or not access_token
+        or not access_token_secret):
+        return
 
     api_dict = {'sleep_on_rate_limit': True}                                                      
     api_dict['consumer_key'] = consumer_key
@@ -41,6 +43,8 @@ def getdm(dmid, screen_name):
     count = 49
     cursor = -1
     api_ = getapi(screen_name)
+    if not api_:
+        return
     while True:
         logger.debug('client cursor:{}'.format(cursor))
         dms = api_.GetAllDirectMessages(count=count, cursor=cursor)

@@ -19,6 +19,10 @@ class Account(models.Model):
         default=None,
         null=True
     )
+    backend_twitter_consumer_key = models.CharField(max_length=100)
+    backend_twitter_consumer_secret = models.CharField(max_length=100)
+    backend_twitter_access_token = models.CharField(max_length=100)
+    backend_twitter_access_token_secret = models.CharField(max_length=100)
 
     def __str__(self):
         return self.username

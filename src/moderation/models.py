@@ -236,9 +236,13 @@ class UserCategoryRelationship(models.Model):
     updated =  models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        if self.moderator:
+            screen_name = self.moderator.screen_name_tag()
+        else:
+            screen_name = None
         return (f"su:{self.social_user.screen_name_tag()} ,"
                 f"cat:{self.category.name} ,"
-                f"mod:{self.moderator.screen_name_tag()} ,"
+                f"mod:{screen_name} ,"
                 f"com:{self.community}")
 
     

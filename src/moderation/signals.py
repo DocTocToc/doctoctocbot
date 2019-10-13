@@ -60,7 +60,8 @@ def createprofile_queue(sender, instance, created, **kwargs):
 def log_usercategoryrelationship(sender, instance, created, **kwargs):
     logger.debug(f"ucr saved: sender: {sender}; instance: {instance}; created: {created}")
     logger.debug(f"instance.social_user.user_id: {instance.social_user.user_id}")
-    logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
+    if instance.moderator:
+        logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
     logger.debug(f"instance.category: {instance.category}")
     
 @receiver(post_save, sender=UserCategoryRelationship)

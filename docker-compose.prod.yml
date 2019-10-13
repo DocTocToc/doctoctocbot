@@ -38,7 +38,6 @@ services:
     depends_on:
       - database
       - redis
-      - django_1
     working_dir: /code/src
   nginx:
     restart: on-failure

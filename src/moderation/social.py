@@ -20,29 +20,34 @@ from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
-def get_socialuser(user):
+def get_socialuser_from_id(id):
+    try:
+        return SocialUser.objects.get(user_id=id)
+    except SocialUser.DoesNotExist:
+        return
+    
+def get_socialuser_from_screen_name(screen_name):
+    try:
+        return SocialUser.objects.get(profile__json__screen_name=screen_name)
+    except SocialUser.DoesNotExist:
+        return
 
+def get_socialuser(user):
     if isinstance(user, SocialUser):
+        logger.debug("user is a SocialUser")
         return user
     elif isinstance(user, int):
-        try:
-            return SocialUser.objects.get(user_id=user)
-        except SocialUser.DoesNotExist:
-            pass
+        logger.debug("user is a int")
+        return get_socialuser_from_id(user)
     elif isinstance(user, str):
-        try:
-            account = Account.objects.get(username=user)
-            return SocialUser.objects.get(user_id=account.userid)
-        except ObjectDoesNotExist:
-            pass
-        try:
-            return SocialUser.objects.get(profile__json__screen_name=user)
-        except SocialUser.DoesNotExist:
-            return
+        logger.debug("user is a string")
+        return get_socialuser_from_screen_name(user)
+
 
 # TODO: fix type to accept string for username
 def update_followersids(user, cached=False, bot_screen_name=None):
     su = get_socialuser(user)
+    logger.debug("SocialUser: {su}")
     if not su:
         return
     hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR

@@ -41,6 +41,7 @@ def investor_progress_bar(context):
     logger.info(f"members_userid_lst: {members_userid_lst}")
     bot_userid = community.account.userid
     bot_screen_name = community.account.username
+    logger.info(f"bot_screen_name {bot_screen_name}")
     logger.info(f"bot_userid {bot_userid}")
     followers_userid_lst = update_followersids(bot_userid, cached=True, bot_screen_name=bot_screen_name)
     logger.info(f"followers_userid_lst {followers_userid_lst}")

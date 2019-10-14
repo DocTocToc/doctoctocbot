@@ -77,6 +77,8 @@ def membership_field_lst_formatted(context):
 def membership_field_lst_plain(context):
     field_lst = membership_category_field_lst(context)
     logger.debug(field_lst)
+    if not field_lst:
+        return
     if isinstance(field_lst, list) and len(field_lst)>1:
         return ", ".join(field_lst)
     elif isinstance(field_lst, list) and len(field_lst)>0:

@@ -50,6 +50,6 @@ def investor_progress_bar(context):
         percentage = 0
     return {
         "investor_count": investor_count,
-        "active_member_count": _active_member_count,
+        "active_member_count": active_member_count,
         "percentage": percentage
     }

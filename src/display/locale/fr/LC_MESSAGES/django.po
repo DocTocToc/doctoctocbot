@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-05 02:46+0200\n"
+"POT-Creation-Date: 2019-10-14 18:21+0200\n"
 "PO-Revision-Date: 2019-05-23 20:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: display/templates/display/all.html:17
+#: display/templates/display/all.html:16
 msgid "Home"
 msgstr "Accueil"
 

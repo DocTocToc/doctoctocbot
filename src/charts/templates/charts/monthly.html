@@ -1,5 +1,5 @@
 {% extends "charts/charts.html" %}
-{% block title %}Daily tweets{% endblock %}
+{% block title %}{% trans "Monthly tweets" %}{% endblock %}
 {% block container %}
   <div id="container" data-url="{% url 'charts:questions_monthly_data' %}"></div>
 {% endblock %}

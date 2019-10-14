@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-05 02:46+0200\n"
+"POT-Creation-Date: 2019-10-14 18:21+0200\n"
 "PO-Revision-Date: 2019-05-16 20:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,59 +30,59 @@ msgstr ""
 msgid "Investors"
 msgstr ""
 
-#: landing/templates/landing/user.html:31
+#: landing/templates/landing/user.html:30
 msgid "Profile"
 msgstr "Profil"
 
-#: landing/templates/landing/user.html:34
+#: landing/templates/landing/user.html:33
 msgid "Contact info"
 msgstr "Info de contact"
 
-#: landing/templates/landing/user.html:37
+#: landing/templates/landing/user.html:36
 msgid "Other info"
 msgstr "Autres infos"
 
-#: landing/templates/landing/user.html:40
+#: landing/templates/landing/user.html:39
 msgid "Social authentication"
 msgstr "Authentification sociale (Twitter)"
 
-#: landing/templates/landing/user.html:43
+#: landing/templates/landing/user.html:42
 msgid "Receipt"
 msgstr "Facture"
 
-#: landing/templates/landing/user.html:47
+#: landing/templates/landing/user.html:46
 msgid "Moderation"
 msgstr "Modération"
 
-#: landing/templates/landing/user.html:53
+#: landing/templates/landing/user.html:52
 msgid "User Profile"
 msgstr "Profil utilisateur"
 
-#: landing/templates/landing/user.html:56
+#: landing/templates/landing/user.html:55
 msgid "Twitter screen name:"
 msgstr "Nom d'utilisateur Twitter:"
 
-#: landing/templates/landing/user.html:58
+#: landing/templates/landing/user.html:57
 msgid "Profession:"
 msgstr "Profession:"
 
-#: landing/templates/landing/user.html:64
+#: landing/templates/landing/user.html:63
 msgid "Recent badges"
 msgstr "Badges récents"
 
-#: landing/templates/landing/user.html:67
+#: landing/templates/landing/user.html:66
 msgid "Question(s)"
 msgstr "Question(s)"
 
-#: landing/templates/landing/user.html:211
+#: landing/templates/landing/user.html:215
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 
-#: landing/templates/landing/user.html:221
+#: landing/templates/landing/user.html:225
 msgid "Collective moderation"
 msgstr "Modération collective"
 
-#: landing/templates/landing/user.html:223
+#: landing/templates/landing/user.html:227
 msgid ""
 "You can suspend or resume your participation to collective moderation "
 "through the on/off switch."
@@ -90,7 +90,7 @@ msgstr ""
 "Vous pouvez suspendre ou reprendre votre participation à la modération "
 "collective via l'interrupteur on/off."
 
-#: landing/templates/landing/user.html:224
+#: landing/templates/landing/user.html:228
 msgid ""
 "Set if you want to appear on the public list of moderators with the public/"
 "private switch."
@@ -98,7 +98,7 @@ msgstr ""
 "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
 "modérateurs via l'interrupteur public / private."
 
-#: landing/views.py:37
+#: landing/views.py:36
 msgid "User"
 msgstr "Utilisateur"
 

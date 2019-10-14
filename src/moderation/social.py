@@ -47,7 +47,7 @@ def get_socialuser(user):
 # TODO: fix type to accept string for username
 def update_followersids(user, cached=False, bot_screen_name=None):
     su = get_socialuser(user)
-    logger.debug("SocialUser: {su}")
+    logger.debug(f"SocialUser: {su}")
     if not su:
         return
     hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR

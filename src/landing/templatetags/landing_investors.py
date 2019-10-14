@@ -43,7 +43,7 @@ def investor_progress_bar(context):
     bot_screen_name = community.account.username
     logger.info(f"bot_screen_name {bot_screen_name}")
     logger.info(f"bot_userid {bot_userid}")
-    followers_userid_lst = update_followersids(bot_userid, cached=True, bot_screen_name=bot_screen_name)
+    followers_userid_lst = update_followersids(bot_screen_name, cached=True, bot_screen_name=bot_screen_name)
     logger.info(f"followers_userid_lst {followers_userid_lst}")
     active_member_count = get_active_member_count(members_userid_lst, followers_userid_lst)
     try:

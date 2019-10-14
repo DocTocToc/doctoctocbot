@@ -87,6 +87,8 @@ def membership_field_lst_plain(context):
 def membership_category_field_lst(context):
     """
     TODO: return in the language adapted to context or community
+    This function will return None if Mesh model is empty.
+    Please apply mesh app fixture mesh_fr_en.json first.
     """
     community = get_community(context)
     try:

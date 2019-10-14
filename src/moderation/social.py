@@ -41,11 +41,11 @@ def get_socialuser(user):
             return
 
 # TODO: fix type to accept string for username
-def update_followersids(user):
+def update_followersids(user, cached=False):
     su = get_socialuser(user)
     if not su:
         return
-    hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR or 24
+    hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
     datetime_limit = timezone.now() - timedelta(hours=hourdelta)
     try:
         fi = Follower.objects.filter(user=su).last()
@@ -57,12 +57,16 @@ def update_followersids(user):
     except Category.DoesNotExist:
         return 
 
-    try:
-        ok = fi.created > datetime_limit and not (bot_cat in user.category.all())
-        if ok:
-            return fi.followers
-    except AttributeError:
-        pass
+    if cached:
+        ok = True 
+    else:
+        try:
+            ok = fi.created > datetime_limit and not (bot_cat in user.category.all())
+        except AttributeError:
+            ok = False
+    if ok:
+        return fi.followers
+
 
     followersids = _followersids(su.user_id)
     if followersids is None:

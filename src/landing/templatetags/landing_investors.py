@@ -32,7 +32,7 @@ def investor_progress_bar(context):
         ).distinct('social_user').values_list('social_user__user_id', flat=True)
     logger.info(f"members_userid_lst: {members_userid_lst}")
     bot_userid = community.account.userid
-    followers_userid_lst = update_followersids(bot_userid)
+    followers_userid_lst = update_followersids(bot_userid, cached=True)
     logger.info(f"followers_userid_lst {followers_userid_lst}")
     active_member_count = len(set(list(members_userid_lst)) & set(followers_userid_lst))
     try:

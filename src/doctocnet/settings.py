@@ -65,7 +65,7 @@ DICT_CONFIG = {
     "loggers": {
         '': {
             'level': LOG_LEVEL,
-            'handlers': ['console'],
+            'handlers': ['console', 'console_debug_false'],
             'propagate': False,
         },
         "django": {

@@ -43,7 +43,8 @@ def handle_campaign(name, userid_lst=None):
     if not bot_su:
         logger.debug(f"No account set for campaign {campaign.name}, aborting.")
         return
-    update_followersids(bot_su)
+    bot_screen_name = bot_su.screen_name_tag()
+    update_followersids(bot_su, bot_screen_name=bot_screen_name)
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))

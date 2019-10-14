@@ -31,6 +31,7 @@ def investor_progress_bar(context):
     percentage of investors / active members?
     """
     community = get_community(context)
+    logger.info(f"community: {community}")
     investor_count: int = get_total_investor_count(context)
     members_userid_qs = UserCategoryRelationship.objects.filter(
         community__in=community.trust.all(),
@@ -39,7 +40,9 @@ def investor_progress_bar(context):
     members_userid_lst = list(members_userid_qs)
     logger.info(f"members_userid_lst: {members_userid_lst}")
     bot_userid = community.account.userid
-    followers_userid_lst = update_followersids(bot_userid, cached=True)
+    bot_screen_name = community.account.username
+    logger.info(f"bot_userid {bot_userid}")
+    followers_userid_lst = update_followersids(bot_userid, cached=True, bot_screen_name=bot_screen_name)
     logger.info(f"followers_userid_lst {followers_userid_lst}")
     active_member_count = get_active_member_count(members_userid_lst, followers_userid_lst)
     try:

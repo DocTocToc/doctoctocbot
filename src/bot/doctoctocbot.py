@@ -189,7 +189,7 @@ def isreplacement( status ):
     return bool(replacement)
 
 def is_follower(userid, bot_screen_name):
-    is_follower = userid in update_followersids(bot_screen_name)
+    is_follower = userid in update_followersids(bot_screen_name, bot_screen_name=bot_screen_name)
     logger.info(f"5° is_follower: {is_follower}")
     return is_follower
 

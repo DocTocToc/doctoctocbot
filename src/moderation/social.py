@@ -41,7 +41,7 @@ def get_socialuser(user):
             return
 
 # TODO: fix type to accept string for username
-def update_followersids(user, cached=False):
+def update_followersids(user, cached=False, bot_screen_name=None):
     su = get_socialuser(user)
     if not su:
         return
@@ -68,7 +68,7 @@ def update_followersids(user, cached=False):
         return fi.followers
 
 
-    followersids = _followersids(su.user_id)
+    followersids = _followersids(su.user_id, bot_screen_name)
     if followersids is None:
         return
 
@@ -84,8 +84,8 @@ def record_followersids(su, followersids):
     except DatabaseError as e:
         logger.error(f"Database error while saving Followers of user.user_id: {e}")
 
-def _followersids(user_id):
-    api = get_api()
+def _followersids(user_id, bot_screen_name):
+    api = get_api(bot_screen_name)
     try:
         return api.followers_ids(user_id)
     except TweepError as e:

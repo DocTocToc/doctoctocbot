@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-14 18:21+0200\n"
-"PO-Revision-Date: 2019-03-19 18:36+0100\n"
+"PO-Revision-Date: 2019-10-15 00:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -68,13 +68,13 @@ msgstr[0] "%(investor_cnt)s personne a investi dans notre projet. Merci!"
 msgstr[1] "%(investor_cnt)s personnes ont investi dans notre projet. Merci!"
 
 #: crowdfunding/templates/crowdfunding/fund.html:15
-#, fuzzy, python-format
-#| msgid "%(investor_cnt)s person invested in our project. Thank you!"
-#| msgid_plural "%(investor_cnt)s persons invested in our project. Thank you!"
+#, python-format
 msgid "%(public_investor_cnt)s person accepted to appear on this list."
 msgid_plural "%(public_investor_cnt)s persons accepted to appear on this list."
-msgstr[0] "%(investor_cnt)s personne a investi dans notre projet. Merci!"
-msgstr[1] "%(investor_cnt)s personnes ont investi dans notre projet. Merci!"
+msgstr[0] ""
+"%(public_investor_cnt)s personne a accepté d'apparaître dans cette liste."
+msgstr[1] ""
+"%(public_investor_cnt)s personnes ont accepté d'apparaître dans cette liste."
 
 #: crowdfunding/templates/crowdfunding/fund.html:33
 msgid "Be the first to invest in our project!"

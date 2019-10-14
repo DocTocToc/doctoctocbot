@@ -79,6 +79,9 @@ def membership_field_lst_plain(context):
     logger.debug(field_lst)
     if not field_lst:
         return
+    for field in field_lst:
+        if not field:
+            return
     if isinstance(field_lst, list) and len(field_lst)>1:
         return ", ".join(field_lst)
     elif isinstance(field_lst, list) and len(field_lst)>0:

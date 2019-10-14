@@ -25,15 +25,16 @@ def investor_progress_bar(context):
     percentage of investors / active members?
     """
     community = get_community(context)
-    project = get_project(context)
     investor_count: int = get_total_investor_count(context)
     members_userid_lst = UserCategoryRelationship.objects.filter(
         community__in=community.trust.all(),
         category__in=community.membership.all()
         ).distinct('social_user').values_list('social_user__user_id', flat=True)
+    logger.info(f"members_userid_lst: {members_userid_lst}")
     bot_userid = community.account.userid
     followers_userid_lst = update_followersids(bot_userid)
-    active_member_count = len(set(members_userid_lst) & set(followers_userid_lst))
+    logger.info(f"followers_userid_lst {followers_userid_lst}")
+    active_member_count = len(set(list(members_userid_lst)) & set(followers_userid_lst))
     try:
         percentage = Decimal(investor_count / active_member_count * 100)
         percentage = percentage.quantize(Decimal('.01'), rounding=ROUND_DOWN)

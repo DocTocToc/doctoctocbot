@@ -372,7 +372,6 @@ class ModeratorAdmin(admin.ModelAdmin):
     )
     readonly_fields = (
         'pk',
-        'socialuser',
     )
 """    
     def community_tag(self, obj):

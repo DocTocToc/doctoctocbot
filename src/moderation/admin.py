@@ -373,6 +373,8 @@ class ModeratorAdmin(admin.ModelAdmin):
     readonly_fields = (
         'pk',
     )
+    search_fields = ['socialuser',]
+    autocomplete_fields = ['socialuser',]
 """    
     def community_tag(self, obj):
         return list(obj.community.values_list('name', flat=True))

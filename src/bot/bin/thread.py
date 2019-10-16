@@ -109,6 +109,8 @@ def question(statusid: int) -> bool:
     
     start_tweet = tweet_parser.Tweet(hashtag_tweet.conversationid)
     start_tweet_context = tweet_server.request_tweets(start_tweet)
+    if not start_tweet_context:
+        return False
     start_tweet = start_tweet_context.tweet
     
     logger.debug(f"Object:{hashtag_tweet}, statusid: {hashtag_tweet.statusid}, bodytext: {hashtag_tweet.bodytext}")

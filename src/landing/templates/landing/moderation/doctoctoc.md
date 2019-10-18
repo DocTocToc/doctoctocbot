@@ -1,5 +1,9 @@
+{% load landing_links %}
+{% load landing_tags %}
+{% load moderator %}
+
 ## Pourquoi modérer?
-La communauté DocTocToc est composée de professionnels de santé qui souhaitent s'entraider en se posant des questions. Parmi ces professionnels, une immense majorité ne souhaite pas répondre aux demandes de conseils médicaux en provenance de non professionnels de santé et ne souhaite pas lire de tweets promotionnels ou publicitaires utilisant le hashtag #DocTocToc ou répondant à 1 thread initié par une question #DocTocToc.
+La communauté {% hashtag_lst %} est composée de professionnels de santé qui souhaitent s'entraider en se posant des questions. Parmi ces professionnels, une immense majorité ne souhaite pas répondre aux demandes de conseils médicaux en provenance de non professionnels de santé et ne souhaite pas lire de tweets promotionnels ou publicitaires utilisant le hashtag #DocTocToc ou répondant à 1 thread initié par une question #DocTocToc.
 Un des objectifs du projet @DocTocTocBot est de filtrer ces messages hors-sujet ou indésirables.
 
 ## Qu'est-ce qui fait l'objet d'une modération?
@@ -22,7 +26,7 @@ La modération est désormais effectuée collectivement par une équipe d'une qu
 Un logiciel libre et open source a été spécifiquement développé pour la modération par @medecinelibre. Le bot détecte 1 question #DocTocToc envoyée par un utilisateur de Twitter qui n'a jamais été modéré. Il envoie un DM spécial (QuickReply) à 1 modérateur disponible. Le modérateur tente de déterminer si l'utilisateur est un professionnel de santé et si sa profession fait partie de celles qui sont retweetées par le bot. Le modérateur répond au DM en cliquant sur le bouton correspondant à sa modération. Le bot détecte la réponse et, en fonction des règles en vigueur, retweete ou pas le tweet initial.
 
 ## Puis-je vous aider à modérer les questions #DocTocToc?
-Oui! Volontiers! Si vous êtes médecin, sage-femme ou pharmacien, et que avez pris part à des conversations DocTocToc depuis quelques mois, vous pouvez rejoindre l'équipe de modération. Il suffit de suivre @DocTocTocBot et de lui envoyer 1 DM indiquant "Je souhaite participer à la modération collective". Il est possible de faire une pause à tout moment et de reprendre la modération quand vous le souhaitez. Si vous avez un peu l'habitude de Twitter et des conversations DocTocToc, ça reste simple et rapide. Nous sommes déjà 15 et il y a rarement plus de 3 ou 4 modérations par jour. La "charge de travail de modération" est donc plutôt légère.
+Oui! Volontiers! Si vous êtes médecin, sage-femme ou pharmacien, et que avez pris part à des conversations DocTocToc depuis quelques mois, vous pouvez rejoindre l'équipe de modération. Il suffit de suivre @DocTocTocBot et de lui envoyer 1 DM indiquant "Je souhaite participer à la modération collective". Il est possible de faire une pause à tout moment et de reprendre la modération quand vous le souhaitez. Si vous avez un peu l'habitude de Twitter et des conversations DocTocToc, ça reste simple et rapide. Nous sommes {% moderator_count %} et il y a rarement plus de 3 ou 4 modérations par jour. La "charge de travail de modération" est donc plutôt légère.
 
 
 [guidelines]: /guidelines/ "Recommandations de bonnes pratiques"

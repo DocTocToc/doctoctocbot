@@ -1,3 +1,6 @@
+{% load landing_links %}
+{% load landing_tags %}
+
 Version du 15/05/2019.
 
 ## Catégories
@@ -74,11 +77,11 @@ Vous pouvez dès maintenant effectuer une recherche parmi tous les tweets passé
 
 ```from:@nomducompte médecin```
 
-@nomducompte ici est le login Twitter (exemple: @doctoctocbot). Ce n'est pas le nom de fantaisie (exemple: #DocTocToc Bot  ) qui s'affiche en grands caractères dans le profil.
+@nomducompte ici est le login Twitter (exemple: @doctoctocbot). Ce n'est pas le nom de fantaisie (exemple: "#DocTocToc?") qui s'affiche en grands caractères dans le profil.
 Souvent un twitto dit lui-même quelle est ou quelle n'est pas sa profession: "je ne suis pas médecin mais (insérer le contenu de la recherche Google)", "je suis kiné", etc.
 
 ## Liens sociaux
-Nous vous fournissons un graphique qui rend compte de l'analyse du réseau social de l'auteur d'un tweet #DocTocToc.
+Nous vous fournissons un graphique qui rend compte de l'analyse du réseau social de l'auteur d'un tweet {% hashtag_lst %}.
 
 ### Followers
 
@@ -95,7 +98,7 @@ Notez que les personnes qui suivent beaucoup de médecins mais qui ne sont pas s
 ## Je passe
 Un bouton "Je passe" sera ajouté. Utilisez le pour indiquer que vous ne pensez pas avoir de temps à consacrer à cette modération dans l'heure qui suit. Nous transmettrons à un autre modérateur.
 
-En attendant merci d'écrire "Je passe". Les DM Twitter ont une fonctionnalité anti-spam peu connnue: si votre interlocuteur envoie 5 messages et que vous ne répondez pas, il ne peut plus envoyer de message supplémentaire tant que vous n'avez pas répondu. Il suffit d'envoyer au moins 1 caractère ou 1 emoji au hasard, n'importe lequel, mais il faut 1 réponse, sinon @DocTocTocBot ne peut plus vous envoyer de modération et la modération reste en suspens. Merci.
+En attendant merci d'écrire "Je passe". Les DM Twitter ont une fonctionnalité anti-spam peu connnue: si votre interlocuteur envoie 5 messages et que vous ne répondez pas, il ne peut plus envoyer de message supplémentaire tant que vous n'avez pas répondu. Il suffit d'envoyer au moins 1 caractère ou 1 emoji au hasard, n'importe lequel, mais il faut 1 réponse, sinon {% bot_screen_name %} ne peut plus vous envoyer de modération et la modération reste en suspens. Merci.
 
 ## Pause
 
@@ -115,4 +118,4 @@ Dans le futur il sera possible de choisir votre planning de modération à la ca
 En cas de doute, posez votre question dans le DM collectif des modérateurs.
 
 ## Urgence
-En cas de tweet ou de conversation DocTocToc qui vous semble très problématique, en plus d'en parler sur le DM collectif, merci de prévenir @medecinelibre par DM ou via le formulaire de contact du site. Nous vous fournirons des outils de modération des tweets (annulation d'1 RT) dès que possible.
+En cas de tweet ou de conversation qui vous semble très problématique, en plus d'en parler sur le DM collectif, merci de prévenir @medecinelibre par DM ou via le formulaire de contact du site. Nous vous fournirons des outils de modération des tweets (annulation d'1 RT) dès que possible.

@@ -1,5 +1,5 @@
 from django import template
-from moderation.models import Category 
+from moderation.models import Category
 
 register = template.Library()
 

@@ -22,19 +22,22 @@ def site_text(context):
     site = get_current_site(context)
     return site.name
 
+@register.simple_tag(takes_context=True)
+def community_name(context):
+    site = get_current_site(context)
+    return site.community.get().name
+
 @register.inclusion_tag('landing/hashtag_lst.html', takes_context=True)
 def hashtag_lst(context):
     community = get_community(context)
     try:
-        return {
-            'hashtag_lst': list(
-                Retweet.objects.filter(
+        hashtag_lst= Retweet.objects.filter(
                     community=community,
                     retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
-            )
-        }
     except DatabaseError:
-        return
+        hashtag_lst=None
+    logger.debug(f"hashtag_lst: {hashtag_lst}")
+    return {'hashtag_lst': hashtag_lst}
 
 @register.inclusion_tag('landing/category_and_lst.html', takes_context=True)
 def membership_category_and(context):
@@ -43,28 +46,37 @@ def membership_category_and(context):
 @register.inclusion_tag('landing/category_or_lst.html', takes_context=True)
 def membership_category_or(context):
     return {'category_lst': membership_category_label_lst(context)}
+
+
+def retweeted_category_values_list(context):
+    community = get_community(context)
+    lst = list(Retweet.objects.filter(
+                community=community,
+                retweet=True).values_list('category__label', flat=True).distinct().order_by()
+    )
+    logger.debug(lst)
+    return lst
     
 @register.inclusion_tag('landing/category_or_lst.html', takes_context=True)
 def retweeted_category_or(context):
-    community = get_community(context)
     return {
-        'category_lst': list(
-            Retweet.objects.filter(
-                community=community,
-                retweet=True).values_list('category__label', flat=True).distinct().order_by()
-        )
+        'category_lst': retweeted_category_values_list(context)
     }
 
 @register.inclusion_tag('landing/category_and_lst.html', takes_context=True)
 def retweeted_category_and(context):
-    community = get_community(context)
     try:
         return {
-            'category_lst': list(
-                Retweet.objects.filter(
-                    community=community,
-                    retweet=True).values_list('category__label', flat=True).distinct().order_by()
-            )
+            'category_lst': retweeted_category_values_list(context)
+        }
+    except DatabaseError:
+        return
+    
+@register.inclusion_tag('landing/category_ul.html', takes_context=True)
+def retweeted_category_ul(context):
+    try:
+        return {
+            'category_lst': retweeted_category_values_list(context)
         }
     except DatabaseError:
         return
@@ -110,6 +122,7 @@ def membership_category_label_lst(context):
     """
     community = get_community(context)
     return list(community.membership.values_list("label", flat=True))
+
     
 def retweeted_category_field_lst(context):
     """

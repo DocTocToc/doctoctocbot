@@ -1,6 +1,7 @@
 {% extends "doctocnet/base.html" %}
 {% load static %}
-
+{% load landing_links %}
+{% load landing_tags %}
 {% block head_meta %}
 {% static "doctocnet/bot_logo_400x400.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
@@ -17,7 +18,14 @@
 
 <h1>{% block title %} Modération {% endblock title %}</h1>
 
-{% include "landing/moderation/content.html" %}
+{% community_name as community %}
+{% with community|cut:"test" as community_root %}
+  {% if community_root == "doctoctoc" %}
+    {% include "landing/moderation/doctoctoc.html" %}
+  {% elif community_root == "pharmatoctoc" %}
+    {% include "landing/moderation/pharmatoctoc.html" %}
+  {% endif %}
+{% endwith %}
 
 {% endblock content %}
 

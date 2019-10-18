@@ -18,6 +18,10 @@ def bot_screen_name(context):
     except AttributeError:
         return
 
+@register.simple_tag(takes_context=True) 
+def bot_screen_name_arobase(context):
+    return f"@{bot_screen_name(context)}"
+    
 @register.simple_tag(takes_context=True)
 def bot_link_text(context):
     screen_name = bot_screen_name(context)

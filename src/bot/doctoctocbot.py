@@ -33,6 +33,7 @@ from community.models import Community, Retweet
 from conversation.models import Hashtag
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
+from moderation.moderate import process_unknown_user
 
 logger = logging.getLogger(__name__)
 
@@ -210,6 +211,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
         return
     category_qs = social_user.category.all()
     if not category_qs:
+        process_unknown_user(userid, statusid, hrh)
         return
     dct_lst = Retweet.objects.filter(retweet=True) \
                                .filter(category__in=category_qs) \

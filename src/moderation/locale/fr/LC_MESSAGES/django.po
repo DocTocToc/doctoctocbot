@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-14 18:21+0200\n"
+"POT-Creation-Date: 2019-10-18 23:03+0200\n"
 "PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,34 +32,34 @@ msgstr "Modérateurs"
 msgid "Ban"
 msgstr ""
 
-#: moderation/social.py:107
+#: moderation/social.py:116
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:124
+#: moderation/social.py:133
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:124
+#: moderation/social.py:133
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:190
+#: moderation/social.py:199
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:193
+#: moderation/social.py:202
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:197
+#: moderation/social.py:206
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:237
+#: moderation/social.py:246
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"

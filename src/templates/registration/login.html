@@ -5,7 +5,6 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% load i18n %}
 
 <div class="container">
 
@@ -17,11 +16,11 @@
   {% if user.is_authenticated %}
     <p>{% trans "Your account doesn't have access to this page. To proceed, please login with an account that has access." %}</p>
   {% else %}
-    <p>{% trans 'Please login' %}</p>
+    <p>{% trans "Please login" %}</p>
   {% endif %}
 {% endif %}
 
-{% if 'twitter' in backends.not_associated %}
+{% if "twitter" in backends.not_associated %}
 <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}">
 <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
 </a>

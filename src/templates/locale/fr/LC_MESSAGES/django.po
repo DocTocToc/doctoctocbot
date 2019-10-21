@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-14 18:21+0200\n"
-"PO-Revision-Date: 2019-03-17 20:18+0100\n"
+"POT-Creation-Date: 2019-10-18 23:03+0200\n"
+"PO-Revision-Date: 2019-10-18 23:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -39,6 +39,8 @@ msgid ""
 "Your account doesn't have access to this page. To proceed, please login with "
 "an account that has access."
 msgstr ""
+"Votre compte n'a pas accès à cette page. Pour continuer, vous devez être "
+"connecté avec un compte qui a un accès."
 
 #: templates/registration/login.html:20
 msgid "Please login"
@@ -54,11 +56,11 @@ msgstr "Réinitialiser votre mot de passe"
 
 #: templates/registration/password_reset_complete.html:4
 msgid "The password has been changed!"
-msgstr ""
+msgstr "Votre mot de passe a été mis à jour!"
 
 #: templates/registration/password_reset_complete.html:5
 msgid "Log in again?"
-msgstr ""
+msgstr "Se connecter à nouveau?"
 
 #: templates/registration/password_reset_done.html:4
 msgid ""

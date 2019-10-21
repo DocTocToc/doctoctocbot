@@ -1,7 +1,8 @@
 {% extends "doctocnet/base.html" %}
 
-{% block title %}Registration closed{% endblock %}
+{% block title %}Lien d'inscription périmé{% endblock %}
 
 {% block content %}
-  <p>Please try <a href="{% url registration_register %}">registering again</a>.</p>
+  <p>La tentative de validation de votre inscription survient trop tardivement. Le lien d'inscription est périmé.</p>
+  <p>Merci de renouveler votre <a href="{% url registration_register %}">inscription</a>.</p>
 {% endblock %}

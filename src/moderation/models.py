@@ -75,7 +75,6 @@ class AuthorizedManager(models.Manager):
     def active_moderators(self, community: Community):
         try:
             return SocialUser.objects.filter(
-                category=Category.objects.get(name="moderator"),
                 moderator__in=Moderator.objects.filter(active=True,
                                                        community=community),
                 ).values_list('user_id', flat=True)

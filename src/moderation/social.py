@@ -9,6 +9,7 @@ import io
 import tempfile
 from dm.api import senddm
 from moderation.profile import screen_name
+from community.models import CommunityCategoryRelationship
 from django.utils.translation import gettext as _
 from collections import OrderedDict
 import operator
@@ -97,11 +98,14 @@ def _followersids(user_id, bot_screen_name):
         logger.error("Tweepy Error: %s", e)
         
 
-def graph(user):
+def graph(user, community):
     with translation.override(settings.TRANSLATION_OVERRIDE):
         try:
-            categories = Category.objects.filter(socialgraph=True).values_list('name', 'color')
-        except Category.DoesNotExist as e:
+            categories = CommunityCategoryRelationship.objects.filter(
+                socialgraph=True,
+                community=community
+            ).values_list('category__name', 'color')
+        except CommunityCategoryRelationship.DoesNotExist as e:
             logger.error(f"No category set to appear on social graph. Exception:{e}")
             return
     
@@ -229,10 +233,10 @@ def get_dm_media_id(file):
     file.close()
     return res.media_id
     
-def send_graph_dm(user_id, dest_user_id, bot_screen_name, text=""):
+def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
     with translation.override(settings.TRANSLATION_OVERRIDE):
         user_screen_name = screen_name(user_id)
-        file = pie_plot(graph(user_id))
+        file = pie_plot(graph(user_id, community))
         if not file:
             return False
         media_id = get_dm_media_id(file)

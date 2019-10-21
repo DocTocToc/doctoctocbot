@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-18 23:03+0200\n"
+"POT-Creation-Date: 2019-10-21 19:56+0200\n"
 "PO-Revision-Date: 2019-10-18 23:00+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,13 +28,13 @@ msgstr ""
 "<h1>4🧐4 Page non trouvée</h1>\n"
 "<p>Cette page n'existe pas encore!</p>\n"
 
-#: templates/registration/login.html:13
+#: templates/registration/login.html:12
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Votre nom d'utilisateur et votre mot de passe ne correspondent à aucun "
 "compte connu. Merci de réessayer."
 
-#: templates/registration/login.html:18
+#: templates/registration/login.html:17
 msgid ""
 "Your account doesn't have access to this page. To proceed, please login with "
 "an account that has access."
@@ -42,15 +42,15 @@ msgstr ""
 "Votre compte n'a pas accès à cette page. Pour continuer, vous devez être "
 "connecté avec un compte qui a un accès."
 
-#: templates/registration/login.html:20
+#: templates/registration/login.html:19
 msgid "Please login"
 msgstr "Connectez-vous s'il vous plaît"
 
-#: templates/registration/login.html:26
+#: templates/registration/login.html:25
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
-#: templates/registration/login.html:46
+#: templates/registration/login.html:45
 msgid "Reset your password"
 msgstr "Réinitialiser votre mot de passe"
 

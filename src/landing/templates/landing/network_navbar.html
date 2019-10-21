@@ -1,0 +1,13 @@
+    {% load i18n %}
+    {% if network %}  
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownNetwork" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {% trans "Network" %} SantéTocToc
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAbout">
+          {% for node in network %}
+            <a class="dropdown-item" href="{{ node.site__domain }}">{{ node.name }}</a>
+          {% endfor %}
+        </div>
+      </li>
+    {% endif %}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-18 23:03+0200\n"
-"PO-Revision-Date: 2019-05-16 20:43+0200\n"
+"POT-Creation-Date: 2019-10-21 19:56+0200\n"
+"PO-Revision-Date: 2019-10-21 19:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -24,11 +24,15 @@ msgstr "Accueil"
 
 #: landing/templates/landing/investor_progress_bar.html:6
 msgid "Active members"
-msgstr ""
+msgstr "Membres actifs"
 
 #: landing/templates/landing/investor_progress_bar.html:7
 msgid "Investors"
-msgstr ""
+msgstr "Investisseurs"
+
+#: landing/templates/landing/network_navbar.html:5
+msgid "Network"
+msgstr "Réseau"
 
 #: landing/templates/landing/user.html:30
 msgid "Profile"

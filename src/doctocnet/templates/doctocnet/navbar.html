@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load auth_extras %}
 {% load landing_links %}
+{% load landing_tags %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="/">{{ site.name }}</a>
@@ -91,6 +92,8 @@
         </a>
         </li>
         </ul>
+        <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
+        {% network_navbar %}
       <!--li class="navbar-brand"><a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">
 <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-link.png" %}" width="141" height="16">
 </a></li-->

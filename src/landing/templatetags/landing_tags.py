@@ -7,6 +7,8 @@ from django.utils.formats import date_format
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
+from community.models import Community
+from django.conf import settings
 
 
 from community.helpers import get_community
@@ -170,3 +172,23 @@ def bot_launch_date(context, format_string):
         return date_format(launch_date, format_string)
     else:
         return community_creation_date(context, format_string)
+
+@register.inclusion_tag('landing/network_navbar.html', takes_context=True)    
+def network_navbar(context):
+    community = get_community(context)
+    if not community:
+        logger.warn("Create a community first.")
+        return
+    network_lst = Community.objects.exclude(id=community.id).values('name', 'site__domain')
+    logger.debug(network_lst)
+    if settings.DEBUG:
+        protocol="http://"
+    else:
+        protocol="https://"
+    for node in network_lst:
+        logger.debug(node)
+        url = mark_safe(f"{protocol}{node['site__domain']}")
+        node['site__domain']= url
+        logger.debug(node)
+    logger.debug(network_lst)
+    return {'network': network_lst}

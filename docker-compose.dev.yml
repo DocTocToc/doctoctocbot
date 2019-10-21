@@ -64,5 +64,7 @@ services:
     image: dtn_dev
   celery-beat:
     image: dtn_dev
-  stream:
+  stream_1:
+    image: dtn_dev
+  stream_2:
     image: dtn_dev

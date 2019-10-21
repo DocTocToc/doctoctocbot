@@ -79,11 +79,27 @@ services:
       - celery_tree_worker
       - celery_celery_worker
     working_dir: /code/src
-  stream:
+  stream_1:
     restart: always
     env_file:
       - .env
-    command: bash -c "python manage.py run_bot_stream --settings=settings"
+    command: bash -c "python manage.py run_bot_stream $STREAM_1 --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  stream_2:
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "python manage.py run_bot_stream $STREAM_2 --settings=settings"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}

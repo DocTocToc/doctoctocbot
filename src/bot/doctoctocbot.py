@@ -191,7 +191,9 @@ def isreplacement( status ):
 
 def is_follower(userid, bot_screen_name):
     try:
-        return userid in update_followersids(userid, cached=False, bot_screen_name=bot_screen_name)
+        _is_follower = userid in update_followersids(bot_screen_name, cached=False, bot_screen_name=bot_screen_name)
+        logger.debug(f"_is_follower: {_is_follower}")
+        return _is_follower
     except TypeError:
         return False
 
@@ -225,8 +227,8 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                                .distinct()
     for dct in dct_lst:
         logger.debug(
-            f'community: {dct["_community"]}'
-            f'category: {dct["_category"]}'
+            f'community: {dct["_community"]}, '
+            f'category: {dct["_category"]}, '
             f'bot_screen_name: {dct["_bot_screen_name"]}'
         )
         if is_follower(userid, dct["_bot_screen_name"]):

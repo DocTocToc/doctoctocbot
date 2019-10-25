@@ -18,7 +18,8 @@ from .models import (
     Follower,
     Moderator,
     Image,
-    DoNotRetweet
+    DoNotRetweet,
+    SocialMedia
 )
 
 logger = logging.getLogger(__name__)
@@ -436,3 +437,4 @@ admin.site.register(Follower, FollowerAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
 admin.site.register(DoNotRetweet, DoNotRetweetAdmin)
+admin.site.register(SocialMedia)

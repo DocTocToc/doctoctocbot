@@ -179,6 +179,7 @@ INSTALLED_APPS = [
     'community',
     'discourse',
     'mesh',
+    'tagging',
 ]
 
 if DEBUG:
@@ -503,3 +504,6 @@ COMMUNITY_HASHTAG_LIST = config('COMMUNITY_HASHTAG_LIST', cast=Csv())
 COMMUNITY_MEMBERSHIP_LIST = config('COMMUNITY_MEMBERSHIP_LIST', cast=Csv())
 COMMUNITY_SITE_ID = config('COMMUNITY_SITE_ID', cast=int)
 COMMUNITY_CROWDFUNDING = config('COMMUNITY_CROWDFUNDING')
+
+# django-taggit
+TAGGIT_CASE_INSENSITIVE = True

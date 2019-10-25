@@ -258,6 +258,15 @@ class SocialMedia(models.Model):
     class Meta:
         ordering = ('name',)
         
+def get_default_socialmedia():
+    try:
+        socialmedia = SocialMedia.objects.order_by('id').first()
+        if socialmedia:
+            return socialmedia.pk
+    except SocialMedia.DoesNotExist as e:
+        logger.debug("Create at least one SocialMedia object.", e)
+
+     
 class Profile(models.Model):
     socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
     json = JSONField()

@@ -7,6 +7,7 @@ from django.conf import settings
 import logging
 from mptt.models import MPTTModel, TreeForeignKey
 from common.twitter import status_url_from_id
+from taggit.managers import TaggableManager
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,8 @@ class Tweetdj(models.Model):
     retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
     deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
     hashtag = models.ManyToManyField(Hashtag)
+    tags = TaggableManager()
+    
     
     class Meta:
         get_latest_by = "statusid"

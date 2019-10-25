@@ -1,0 +1,22 @@
+[
+  {
+    "model": "tagging.category",
+    "pk": 1,
+    "fields": {
+      "name": "",
+      "tag": "",
+      "description": "",
+      "community": null,
+    }
+  },
+  {
+    "model": "tagging.category",
+    "pk": 2,
+    "fields": {
+      "name": "",
+      "tag": "",
+      "description": "",
+      "community": null,
+    }
+  }
+]

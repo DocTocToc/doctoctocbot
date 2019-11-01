@@ -77,7 +77,7 @@ def senddm(text,
                            attachment=attachment)
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
-        return str(e)
+        response = str(e)
     
     logger.debug(response)
 
@@ -95,12 +95,12 @@ def senddm(text,
         logger.error(error_msg)
         return error_msg
 
-    id = response["event"]["message_create"]["target"]["recipient_id"]
+    userid = response["event"]["message_create"]["target"]["recipient_id"]
     txt = response["event"]["message_create"]["message_data"]["text"]
     if screen_name:
         account = f"@{screen_name}"
     else:
         account =  "default account"
-    msg = f"Sending DM '{txt}' to user_id {id} from {account} was successful"
+    msg = f"Sending DM '{txt}' to user_id {userid} from {account} was successful"
     logger.info(msg)
     return response

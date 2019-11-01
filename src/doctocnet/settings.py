@@ -88,6 +88,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "tagging.tasks": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "timeline": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
@@ -110,7 +114,8 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['*'])
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
@@ -180,6 +185,7 @@ INSTALLED_APPS = [
     'discourse',
     'mesh',
     'tagging',
+    'markdownify',
 ]
 
 if DEBUG:
@@ -425,7 +431,10 @@ STATUS_DISPLAY_HOUR = {
 MESSENGER_DM_LIMIT = 15
 
 # django-meta
-META_SITE_PROTOCOL = 'https'
+if DEBUG:
+    META_SITE_PROTOCOL = 'http'
+else:
+    META_SITE_PROTOCOL = 'https'
 META_USE_SITES = True
 META_USE_TWITTER_PROPERTIES = True
 
@@ -485,9 +494,6 @@ PROFILE_TIMEDELTA_DAYS = config('PROFILE_TIMEDELTA_DAYS', default=0, cast=int)
 FOLLOWER_TIMEDELTA_HOUR = config('FOLLOWER_TIMEDELTA_HOUR', default=24, cast=int)
 
 TRANSLATION_OVERRIDE='fr'
-
-# django-meta
-META_SITE_PROTOCOL = 'http'
 
 # Constants
 # url used to fetch a status from its status id

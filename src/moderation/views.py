@@ -1,3 +1,6 @@
+import json
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Moderator
@@ -9,10 +12,12 @@ from django.views.generic import TemplateView
 from django.utils.translation import gettext as _
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import F
+from django.db.utils import DatabaseError
 from django.conf import settings
 from django.core.paginator import Paginator
 from community.helpers import get_community
 from moderation.thumbnail import get_thumbnail_url
+from django.contrib.sites.shortcuts import get_current_site
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,17 +29,20 @@ class ModeratorFilterBackend(DRYPermissionFiltersBase):
         """
         Limits all list requests to only be seen by the moderator.
         """
-        return queryset.filter(socialuser=request.user.socialuser)
+        return queryset.filter(
+            socialuser=request.user.socialuser,
+            community__in=get_current_site(request).community.all(),
+        )
 
 class ModeratorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows moderators objects to be viewed or edited.
     """
-    #permission_classes = (IsAuthenticated, DRYPermissions,)
-    permission_classes = (AllowAny, DRYPermissions,)
+    permission_classes = (IsAuthenticated, DRYPermissions,)
+    #permission_classes = (AllowAny, DRYPermissions,)
     queryset = Moderator.objects.all()
     serializer_class = ModeratorSerializer
-    #filter_backends = (ModeratorFilterBackend,)
+    filter_backends = (ModeratorFilterBackend,)
 
 
 class ModeratorPublicList(TemplateView):
@@ -83,3 +91,17 @@ class ModeratorPublicList(TemplateView):
         logger.debug(context)
         return context
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def moderator_id_view(request):
+        try:
+            socialuser = request.user.socialuser
+        except DatabaseError:
+            return Response({"moderator_id": None})
+
+        moderator = Moderator.objects.filter(
+            socialuser=socialuser,
+            community__in=get_current_site(request).community.all()
+            ).first()
+        return Response({"id": moderator.id})

@@ -37,3 +37,4 @@ wagtail-metadata-mixin
 django-ajax-selects
 furl
 gunicorn==19.9.0
+django-markdownify

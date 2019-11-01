@@ -3,6 +3,8 @@ import logging
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
 from django.db.utils import DatabaseError
+from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from community.models import Community
 
@@ -26,3 +28,12 @@ def get_community(request):
                 return Community.objects.get(site=site.id)
         except Community.DoesNotExist as e:
             logger.warn("Create at least one community. %s", e)
+            
+def site_url(community):
+    if not community:
+        return
+    if settings.DEBUG:
+        protocol="http://"
+    else:
+        protocol="https://"
+    return mark_safe(f"{protocol}{community.site.domain}")

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator 
 
 from versions.models import Versionable
 from versions.fields import VersionedForeignKey
@@ -35,18 +36,40 @@ class Process(Versionable):
                                   related_name='%(app_label)s_%(class)s')
     
     class Meta:
-        unique_together: ('queue', 'processor')
+        unique_together = ('queue', 'processor')
+        verbose_name_plural = "processes"
 
+
+def max_value():
+    return Category.objects.count()
       
 class Category(models.Model):
     tag = models.CharField(
         max_length=36,
         unique=True,
     )
-    description = models.CharField(max_length=72)
+    summary = models.CharField(max_length=72)
+    description = models.TextField()
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
         default=get_default_community,
         related_name='%(app_label)s_%(class)s'
     )
+    order = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(max_value)
+        ],
+        blank=True,
+        null=True
+    )
+    hashtag = models.BooleanField(
+        default=False,
+        null=True
+    )
+    
+    class Meta:
+        verbose_name_plural = "categories"
+        ordering = ["order", "tag"]
+

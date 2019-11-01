@@ -27,13 +27,15 @@ from django.conf import settings
 
 from moderation.moderate import addtoqueue
 from bot.twitter import getAuth
-from moderation.models import SocialUser, Category
+from moderation.models import SocialUser, Category, SocialMedia
 from moderation.social import update_followersids
 from community.models import Community, Retweet
 from conversation.models import Hashtag
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 from moderation.moderate import process_unknown_user
+
+from tagging.tasks import handle_create_tag_queue
 
 logger = logging.getLogger(__name__)
 
@@ -206,6 +208,15 @@ def retweet(status_id) -> bool:
         return False
     return True
 
+def tag(statusid, community):
+    logger.debug("tag()")
+    try:
+        socialmedia = SocialMedia.objects.get(name='twitter')
+    except SocialMedia.DoesNotExist:
+        logger.info("Create a twitter SocialMedia object first.")
+        return
+    handle_create_tag_queue.apply_async(args=(statusid, socialmedia.id, community.id))
+
 def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
     try:
         social_user = SocialUser.objects.get(user_id=userid)
@@ -246,6 +257,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             
             if trust:
                 get_api(username=dct["_bot_screen_name"]).retweet(statusid)
+                tag(statusid, community)
             else:
                 addtoqueue(userid, statusid, community.name)
     

@@ -6,8 +6,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
-from community.models import Community
-from .models import (
+from moderation.models import (
     SocialUser,
     UserCategoryRelationship,
     Category,
@@ -198,8 +197,8 @@ class QueueAdmin(VersionedAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link',)
-    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar',)
+    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
+    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
     search_fields = ('json',)
     
     def socialuser_link(self, obj):

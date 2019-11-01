@@ -105,6 +105,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'retweetedstatus',
         'hashtag',
         'parentid',
+        'tags',
     )
     readonly_fields = (
         'statusid',

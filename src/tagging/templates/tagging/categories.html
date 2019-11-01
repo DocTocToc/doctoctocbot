@@ -1,0 +1,21 @@
+{% load markdownify %}
+<div class="d-flex">
+<ul class="nav nav-pills mb-3">
+{% for category in category_dct_lst %}
+  <li class="nav-item mb-2 mr-2">
+    <a class="nav-link active" href="#{{ category.tag }}">#{{ category.tag }}</a>
+  </li>
+{% endfor %}
+</ul>
+</div>
+{% for category in category_dct_lst %}
+  <div class="card mb-3" id="{{ category.tag }}">
+    <div class="card-header">
+      #{{ category.tag }}
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">{{ category.summary }}</h5>
+      <p class="card-text">{{ category.description|markdownify }}</p>
+    </div>
+  </div>
+{% endfor %}

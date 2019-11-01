@@ -26,13 +26,13 @@ from wagtail.core import urls as wagtail_urls
 from ajax_select import urls as ajax_select_urls
 
 urlpatterns = [
+    path('moderation/', include('moderation.urls')),
     path('', include('landing.urls')),
     path('', include('users.urls')),
     path('', include('registration.urls')),
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
-    path('moderation/', include('moderation.urls')),
     path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
     path('accounts/', include('django.contrib.auth.urls')),

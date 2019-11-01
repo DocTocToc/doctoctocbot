@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 19:56+0200\n"
-"PO-Revision-Date: 2019-10-21 19:57+0200\n"
+"POT-Creation-Date: 2019-10-31 00:39+0100\n"
+"PO-Revision-Date: 2019-10-30 19:58+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,6 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
+
+#: landing/templates/landing/categories/index.html:9
+#: landing/templates/landing/categories/index.html:25
+msgid "Categories"
+msgstr "Catégories"
+
+#: landing/templates/landing/categories/index.html:10
+msgid "Description of categories."
+msgstr "Description des catégories."
 
 #: landing/templates/landing/index.html:6
 msgid "Home"

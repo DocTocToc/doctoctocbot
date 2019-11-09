@@ -1,0 +1,46 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load categories %}
+
+{% block head_meta %}
+{% trans "Categories" as categories %}
+{% trans "Description of categories." as description %}
+{% bot_screen_name_arobase as bot %}
+{% static "landing/images/mind_palace.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
+{% with request.build_absolute_uri as og_url %}
+{% with twitter_site=bot twitter_creator="@MedecineLibre" og_title=categories og_description=description %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} {% trans "Categories" %} {% endblock title %}</h1>
+
+<p>Après avoir retweeté votre {% hashtag_lst %}, {% bot_link_text %} vous envoie un DM vous invitant à choisir la catégorie qui correspond le mieux à votre question.</p>
+
+<div class="card mb-3 border-info" style="width: 61.8%;">
+  <div class="card-header">
+    Objectifs
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Statistiques pour travaux de recherche.</li>
+    <li class="list-group-item">Permettre à une thèse de s'intéresser uniquement à une catégorie.</li>
+    <li class="list-group-item">Créer des métadonnées pour le futur moteur de recherche (critère de recherche).</li>
+    <li class="list-group-item">Proposer de consulter des conversations antérieures similaires.</li>
+    <li class="list-group-item">Pour les catégories cliniques, faire préciser la spécialité concernée.</li>
+    <li class="list-group-item">Inscription à des alertes (DM, mail) par catégorie ou spécialité.</li>
+    <li class="list-group-item">Visualiser les questions sur le site par catégorie ou spécialité.</li>
+  </ul>
+</div>
+
+{% categories %}
+
+{% endblock content %}

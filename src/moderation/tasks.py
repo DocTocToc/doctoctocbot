@@ -23,6 +23,7 @@ from moderation.moderate import quickreply
 from moderation.models import Moderation
 from dm.api import senddm
 from community.models import Community
+from moderation.profile import check_profile_pictures
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -80,6 +81,12 @@ def handle_create_all_profiles():
                 continue
             for user_jsn in user_jsn_lst:
                 twitterprofile(user_jsn)
+
+@shared_task
+def handle_check_all_profile_pictures():
+    userid_lst = SocialUser.objects.values_list('user_id', flat=True)
+    for userid in userid_lst:
+        check_profile_pictures(userid)
 
 @shared_task(bind=True)
 def handle_sendmoderationdm(self, mod_instance_id):

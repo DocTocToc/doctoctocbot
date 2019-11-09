@@ -7,6 +7,8 @@
 
 {% block head_css %}
 {{ block.super }}
+<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
+<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
 {% endblock head_css %}
 
 {% block head_javascript %}
@@ -40,6 +42,9 @@
                 </li>
                 <li class="nav-item">
                     <a href="" data-target="#receipt" data-toggle="tab" class="nav-link">{% trans "Receipt" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" data-target="#options" data-toggle="tab" class="nav-link">{% trans "Options" %}</a>
                 </li>
                 {% if user|is_moderator %}
                 <li class="nav-item">
@@ -219,22 +224,22 @@
                 Vos factures pourront être éditées et téléchargées à partir du 1er juin 2019. Nous vous prions de nous excuser pour ce délai. Merci de votre patience.
                 </p>
                 </div>
-                {% if user|is_moderator %}
+                {% if user|is_moderator is True %}
                 <div class="tab-pane" id="moderation">
                 <!-- input id="checkSwitch" type="checkbox" data-toggle="switchbutton" checked-->
                 <h5 class="mb-3">{% trans "Collective moderation" %}</h5>
                 <main></main>
                 <p>{% trans "You can suspend or resume your participation to collective moderation through the on/off switch." %}</p>
                 <p>{% trans "Set if you want to appear on the public list of moderators with the public/private switch." %}</p>
-                {% comment %}
-                <p>{{ request.user.username }}</p>
-                <p>request.user.id: {{ request.user.id }}</p>
-                <p>request.user.socialuser.id: {{ request.user.socialuser.id }}</p>
-                {% endcomment %}
-                <div id="socialuserid" class="invisible">{{ request.user.socialuser.id }}</div>
                 <script type="text/javascript" src="{% static "moderation/moderator-api/app.js" %}"></script>
                 </div>
                 {% endif %}
+                <div class="tab-pane" id="options">
+                {% if user.socialuser %}
+                <category></category>
+                <script type="text/javascript" src="{% static "optin/optin-api/bundle.js" %}"></script>
+                {% endif %}
+                </div>
             </div>
         </div>
 

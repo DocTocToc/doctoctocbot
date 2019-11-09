@@ -88,6 +88,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "tagging.tasks": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "timeline": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
@@ -110,7 +114,8 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['*'])
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
@@ -179,16 +184,19 @@ INSTALLED_APPS = [
     'community',
     'discourse',
     'mesh',
+    'tagging',
+    'markdownify',
+    'optin',
 ]
 
 if DEBUG:
     INSTALLED_APPS += [
         'django_extensions',
+        'corsheaders',
     ]
 
 MIDDLEWARE = [
-    # CORS
-    #'corsheaders.middleware.CorsMiddleware',
+
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -205,6 +213,11 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 # wagtail stop
 ]
+
+if DEBUG:
+    MIDDLEWARE += [
+        'corsheaders.middleware.CorsMiddleware',
+    ]
 
 ROOT_URLCONF = 'doctocnet.urls'
 
@@ -424,7 +437,10 @@ STATUS_DISPLAY_HOUR = {
 MESSENGER_DM_LIMIT = 15
 
 # django-meta
-META_SITE_PROTOCOL = 'https'
+if DEBUG:
+    META_SITE_PROTOCOL = 'http'
+else:
+    META_SITE_PROTOCOL = 'https'
 META_USE_SITES = True
 META_USE_TWITTER_PROPERTIES = True
 
@@ -485,9 +501,6 @@ FOLLOWER_TIMEDELTA_HOUR = config('FOLLOWER_TIMEDELTA_HOUR', default=24, cast=int
 
 TRANSLATION_OVERRIDE='fr'
 
-# django-meta
-META_SITE_PROTOCOL = 'http'
-
 # Constants
 # url used to fetch a status from its status id
 TWITTER_STATUS_URL='https://twitter.com/i/web/status/{id}'
@@ -503,3 +516,11 @@ COMMUNITY_HASHTAG_LIST = config('COMMUNITY_HASHTAG_LIST', cast=Csv())
 COMMUNITY_MEMBERSHIP_LIST = config('COMMUNITY_MEMBERSHIP_LIST', cast=Csv())
 COMMUNITY_SITE_ID = config('COMMUNITY_SITE_ID', cast=int)
 COMMUNITY_CROWDFUNDING = config('COMMUNITY_CROWDFUNDING')
+
+# django-taggit
+TAGGIT_CASE_INSENSITIVE = True
+
+if DEBUG:
+    # CORS
+    CORS_ORIGIN_ALLOW_ALL = config('CORS_ORIGIN_ALLOW_ALL', default=False, cast=bool)
+    CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', cast=Csv())

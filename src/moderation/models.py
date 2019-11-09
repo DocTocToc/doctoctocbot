@@ -16,6 +16,7 @@ from django.conf import settings
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
 from community.models import Community, get_default_community
+from django.contrib.sites.shortcuts import get_current_site
 
 import logging
 logger = logging.getLogger(__name__)
@@ -258,6 +259,15 @@ class SocialMedia(models.Model):
     class Meta:
         ordering = ('name',)
         
+def get_default_socialmedia():
+    try:
+        socialmedia = SocialMedia.objects.order_by('id').first()
+        if socialmedia:
+            return socialmedia.pk
+    except SocialMedia.DoesNotExist as e:
+        logger.debug("Create at least one SocialMedia object.", e)
+
+     
 class Profile(models.Model):
     socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
     json = JSONField()
@@ -510,6 +520,7 @@ class Moderator(models.Model):
     socialuser = models.ForeignKey(
         'moderation.SocialUser',
         on_delete=models.CASCADE,
+        related_name='moderator',
     )
     active = models.BooleanField(
         default=False,
@@ -547,8 +558,13 @@ class Moderator(models.Model):
         return True
     
     def has_object_read_permission(self, request):
+        logger.debug(f"request.user.socialuser: {request.user.socialuser}")
+        logger.debug(f"self.socialuser: {self.socialuser}")
         try:
-            return request.user.socialuser == self.socialuser
+            return (
+                request.user.socialuser == self.socialuser and
+                self.community in get_current_site(request).community.all()
+            )
         except:
             return False
 
@@ -558,7 +574,10 @@ class Moderator(models.Model):
     def has_object_update_permission(self, request):
         logger.debug("(request.user.socialuser == self.socialuser) = %s" % (request.user.socialuser == self.socialuser))
         try:
-            return request.user.socialuser == self.socialuser
+            return (
+                request.user.socialuser == self.socialuser and
+                self.community in get_current_site(request).community.all()
+            )
         except:
             return False
 

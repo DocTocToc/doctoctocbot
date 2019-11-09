@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 19:56+0200\n"
+"POT-Creation-Date: 2019-10-31 00:39+0100\n"
 "PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,48 +18,48 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:594
+#: moderation/models.py:602
 msgid "Warn"
 msgstr ""
 
-#: moderation/models.py:595
+#: moderation/models.py:603
 #, fuzzy
 #| msgid "Moderators"
 msgid "Moderate"
 msgstr "Modérateurs"
 
-#: moderation/models.py:596
+#: moderation/models.py:604
 msgid "Ban"
 msgstr ""
 
-#: moderation/social.py:116
+#: moderation/social.py:120
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:133
+#: moderation/social.py:137
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:133
+#: moderation/social.py:137
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:199
+#: moderation/social.py:203
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:202
+#: moderation/social.py:206
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:206
+#: moderation/social.py:210
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:246
+#: moderation/social.py:250
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"

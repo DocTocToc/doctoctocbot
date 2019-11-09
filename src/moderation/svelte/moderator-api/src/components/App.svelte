@@ -1,42 +1,38 @@
-<div id="app">
-  {{#if (jsn == null)}}
-      <p>Data loading...</p>
-      {{else}}
-  <div>
-    <!--p class="invisible">SocialUser: {{jsn.socialuser}} Active: {{jsn.active}}</p-->
-    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="activeswitch" checked={{jsn.active}} on:change=patch()>
-        <label class="onoffswitch-label" for="activeswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-        </label>
-    </div>
-    <div class="onoffswitch publicprivateswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="publicprivateswitch" checked={{jsn.public}} on:change=patch()>
-        <label class="onoffswitch-label" for="publicprivateswitch">
-            <span class="onoffswitch-inner publicprivateswitch-inner"></span>
-            <span class="onoffswitch-switch publicprivateswitch-switch"></span>
-        </label>
-    </div> 
- 
-  </div>
-  {{/if}}
-  
-</div>
+
 
 <script type="text/javascript">
   var Cookies = require('js-cookie');
   var csrftoken = Cookies.get('csrftoken');
   console.log(`csrttoken:${csrftoken}`)
 
-  const socialuserid = document.getElementById('socialuserid').innerHTML;
-  console.log(`socialuserid:${socialuserid}`)
+  //const socialuserid = document.getElementById('socialuserid').innerHTML;
+  //console.log(`socialuserid:${socialuserid}`)
 
+  
+  /*/ async data fetching function
+  const fetchModeratorId = async () => {
+    const response = await fetch(`${window.location.origin}/moderation/api/moderator-id/`);
+    const json = await response.json();
+    //const jsn = json;
+    const socialuserid = json.id;
+    console.log(`socialuserid * :${json}`)
+  };*/
 
+  async function getModeratorId() 
+  {
+    let response = await fetch(`${window.location.origin}/moderation/api/moderator-id/`);
+    let data = await response.json()
+    let id =  data.id;
+    return id;
+  }
+
+  getModeratorId()
+    .then(id => console.log(`moderator id: ${id}`))
   
   // async data fetching function
   const fetchModerator = async (data, component) => {
-    const response = await fetch(`${window.location.origin}/moderation/moderators/${socialuserid}/`);
+    const id = await getModeratorId();
+    const response = await fetch(`${window.location.origin}/moderation/api/moderators/${id}/`);
     const json = await response.json();
     const jsn = json;
     console.log(jsn);
@@ -45,8 +41,8 @@
 
   
   const patchModerator = async (data) => {
-      console.log(socialuserid);
-	  const url = `${window.location.origin}/moderation/moderators/${socialuserid}/`;
+	  const id = await getModeratorId();
+	  const url = `${window.location.origin}/moderation/api/moderators/${id}/`;
 	  var active = document.getElementById("activeswitch").checked;
 	  var _public = document.getElementById("publicprivateswitch").checked;
 	  
@@ -92,6 +88,30 @@
     }
   };
 </script>
+
+<div id="app">
+{{#if (jsn == null)}}
+    <p>Data loading...</p>
+    {{else}}
+<div>
+  <!--p class="invisible">SocialUser: {{jsn.socialuser}} Active: {{jsn.active}}</p-->
+  <div class="onoffswitch">
+      <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="activeswitch" checked={{jsn.active}} on:change=patch()>
+      <label class="onoffswitch-label" for="activeswitch">
+          <span class="onoffswitch-inner"></span>
+          <span class="onoffswitch-switch"></span>
+      </label>
+  </div>
+  <div class="onoffswitch publicprivateswitch">
+      <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="publicprivateswitch" checked={{jsn.public}} on:change=patch()>
+      <label class="onoffswitch-label" for="publicprivateswitch">
+          <span class="onoffswitch-inner publicprivateswitch-inner"></span>
+          <span class="onoffswitch-switch publicprivateswitch-switch"></span>
+      </label>
+  </div> 
+</div>
+{{/if}}
+</div>
 
 <style>
     .onoffswitch {

@@ -1,11 +1,17 @@
 import logging
 import datetime
+from os.path import exists, basename
+import requests
+from urllib.parse import urlparse
+
+from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from psycopg2._json import json
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
 from django.conf import settings
 from moderation.models import SocialUser
+from conversation.models import Tweetdj
 
 
 logger = logging.getLogger('root')
@@ -84,9 +90,7 @@ def twitterprofile(jsn):
     avatar(p, jsn)
             
 def avatar(profile, response):
-    import requests
-    from django.core.files.base import ContentFile
-    from urllib.parse import urlparse
+
     
     img_url = response["profile_image_url_https"]
     name = urlparse(img_url).path.split('/')[-1]
@@ -96,7 +100,10 @@ def avatar(profile, response):
     logger.debug(f"uid (Twitter): {name_twitter_uid}, uid (Database): {name_database_uid}")
     if name_twitter_uid == name_database_uid:
         return
-    
+    save_profile_pictures(img_url, profile)
+
+def save_profile_pictures(img_url, profile):
+    name = urlparse(img_url).path.split('/')[-1]  
     resp = requests.get(img_url)
     if resp.status_code == 200:
         profile.normalavatar.delete(save=False)
@@ -140,3 +147,45 @@ def screen_name(userid):
 
     if hasattr(su, "profile"):
         return su.profile.screen_name_tag()
+
+def check_profile_pictures(userid):
+    """
+    Check if profile pictures (normal, bigger, mini) are available.
+    If not, try to download them again.
+    If the link is down, update the profile.
+    """
+    try:
+        su = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+    if not hasattr(su, "profile"):
+        return
+    profile = su.profile
+    for size in ["mini", "normal", "bigger"]:
+        default = f"default_profile_{size}.png"
+        attr = f"{size}avatar"
+        try:
+            path = getattr(profile, attr).path
+            if (basename(path) == default) or (not exists(path)):
+                logger.info(f"Update profile pictures of {profile.screen_name_tag()}")
+                update_profile_pictures(su)
+        except AttributeError:
+            pass
+    
+def update_profile_pictures(socialuser):
+    try:
+        profile = socialuser.profile
+    except AttributeError:
+        return
+    if not profile:
+        return
+    last_tweet = Tweetdj.objects.filter(socialuser=socialuser).latest()
+    if not last_tweet:
+        return
+    user = last_tweet.json.get("user", None)
+    if user:
+        img_url = user.get("profile_image_url_https", None)
+        if img_url:
+            save_profile_pictures(img_url, profile)
+
+    

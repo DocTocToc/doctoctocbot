@@ -87,5 +87,7 @@ services:
     image: dtn_prod
   stream_1:
     image: dtn_prod
+    restart: always
   stream_2:
     image: dtn_prod
+    restart: always

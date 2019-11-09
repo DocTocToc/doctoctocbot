@@ -1,6 +1,8 @@
+import logging
 from django import template
 from moderation.models import Category
 
+logger = logging.getLogger(__name__)
 register = template.Library()
 
 @register.filter(name='is_moderator')
@@ -10,6 +12,8 @@ def is_moderator(user):
     except:
         return False
     try:
-        return moderator_category in user.socialuser.category.all()
+        _is_moderator = moderator_category in user.socialuser.category.all()
+        logger.debug(f"_is_moderator: {_is_moderator}")
+        return _is_moderator
     except:
         return False

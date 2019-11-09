@@ -80,7 +80,6 @@ services:
       - celery_celery_worker
     working_dir: /code/src
   stream_1:
-    restart: always
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_1 --settings=settings"
@@ -96,7 +95,6 @@ services:
       - celery_retweet_worker
     working_dir: /code/src
   stream_2:
-    restart: always
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_2 --settings=settings"

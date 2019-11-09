@@ -61,7 +61,5 @@ class UserInfo(LoginRequiredMixin, TemplateView):
             except KeyError:
                 display_url = None        
             context['display_url'] = display_url
-        
             context['uid'] = uid
-            context['pp_url'] = json.get("profile_image_url_https", None)
         return context

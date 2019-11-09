@@ -22,6 +22,8 @@ urlpatterns = [
     path('moderation/moderator', TemplateView.as_view(template_name='landing/moderator/index.html'), name='moderator'),
     path('faq/', TemplateView.as_view(template_name='landing/faq/index.html'), name='faq'),
     path('spamtoctoc/', TemplateView.as_view(template_name='landing/spamtoctoc/index.html'), name='spamtoctoc'),
+    path('categories/', TemplateView.as_view(template_name='landing/categories/index.html'), name='categories'),
+
 
 
 ]

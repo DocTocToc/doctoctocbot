@@ -186,16 +186,17 @@ INSTALLED_APPS = [
     'mesh',
     'tagging',
     'markdownify',
+    'optin',
 ]
 
 if DEBUG:
     INSTALLED_APPS += [
         'django_extensions',
+        'corsheaders',
     ]
 
 MIDDLEWARE = [
-    # CORS
-    #'corsheaders.middleware.CorsMiddleware',
+
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -212,6 +213,11 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 # wagtail stop
 ]
+
+if DEBUG:
+    MIDDLEWARE += [
+        'corsheaders.middleware.CorsMiddleware',
+    ]
 
 ROOT_URLCONF = 'doctocnet.urls'
 
@@ -513,3 +519,8 @@ COMMUNITY_CROWDFUNDING = config('COMMUNITY_CROWDFUNDING')
 
 # django-taggit
 TAGGIT_CASE_INSENSITIVE = True
+
+if DEBUG:
+    # CORS
+    CORS_ORIGIN_ALLOW_ALL = config('CORS_ORIGIN_ALLOW_ALL', default=False, cast=bool)
+    CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', cast=Csv())

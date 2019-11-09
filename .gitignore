@@ -42,3 +42,7 @@ src/gpgcontact/static/gpgcontact/script/private
 
 # ignore django_celery_beat default db file
 django_celery_beat.schedulers:DatabaseScheduler.db
+
+#mypy
+src/.mypy_cache
+src/*/.mypy_cache

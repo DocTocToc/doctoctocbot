@@ -4,3 +4,4 @@ django-extensions
 logging_tree
 pygraphviz
 django-taggit
+django-cors-headers

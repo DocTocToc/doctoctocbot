@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from django.utils.translation import gettext as _
 from django.db import transaction, DatabaseError
@@ -11,15 +12,28 @@ from tagging.models import Process, Queue, Category
 from dm.api import senddm
 from celery import shared_task
 from conversation.models import Tweetdj
-from moderation.models import SocialMedia
+from moderation.models import SocialMedia, SocialUser
 from community.models import Community
 from community.helpers import site_url
 from dm.models import DirectMessage
+from optin.authorize import has_authorized, create_opt_in
+from optin.models import Option
+
 
 logger = get_task_logger(__name__)
 
 CATEGORY_TAG = "category"
 UUID_LENGTH = 36
+OPTIN_OPTION = "twitter_dm_category_self"
+STOP_CATEGORY = "stop"
+
+def get_optin_option() -> Optional[Option]:
+    try:
+        option = Option.objects.get(name=OPTIN_OPTION)
+    except Option.DoesNotExist:
+        logger.error(f"Option {OPTIN_OPTION} is not present in the database.")
+        option = None
+    return option
 
 def quickreply(process_id):
     try:
@@ -133,14 +147,25 @@ def handle_create_tag_queue(statusid, socialmedia_id, community_id):
     )
     if created:
         logger.info("Queue created.")
-        try:
-            socialuser = Tweetdj.objects.get(statusid=statusid).socialuser
-        except Tweetdj.DoesNotExist as e:
-            logger.warn(e)
-            return
-        if not socialuser:
-            logger.debug("No SocialUser")
-            return
+        create_tag_process(queue, statusid)
+
+def create_tag_process(queue, statusid):
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist as e:
+        logger.warn(e)
+        return
+    socialuser = tweetdj.socialuser
+    if not socialuser:
+        logger.debug("No SocialUser")
+        return
+    option = get_optin_option()
+    has_opted_in = has_authorized(socialuser, option)
+    logger.debug(f"_has_authorized: {has_opted_in}")
+    # If Opt in not yet set for this user, create it as True
+    if has_opted_in is None:
+        create_opt_in(socialuser, option, authorize=True)
+    if has_authorized(socialuser, option):
         process, created = Process.objects.get_or_create(
             queue=queue,
             processor=socialuser
@@ -148,8 +173,7 @@ def handle_create_tag_queue(statusid, socialmedia_id, community_id):
         if created:
             logger.info("Process created.")
             send_tag_request.apply_async(args=(process.id, socialuser.user_id))
-            
-            
+                    
         
 @shared_task
 def poll_tag_dm():
@@ -159,6 +183,10 @@ def poll_tag_dm():
                 process_mi.queue.delete()
             except DeletionOfNonCurrentVersionError as e:
                 logger.info(f"Queue {process_mi.queue} was already deleted. %s" % e)
+        delete_tag_process(process_mi)
+
+    def delete_tag_process(process_mi):
+        with transaction.atomic():
             try:
                 process_mi.delete()
             except DeletionOfNonCurrentVersionError as e:
@@ -176,7 +204,20 @@ def poll_tag_dm():
         end_idx = len(CATEGORY_TAG) + UUID_LENGTH
         return get_tag_metadata(dm)[end_idx:]
     
-    
+    def tag(process_mi, tag_name):
+        # determine id of status
+        status_id = process_mi.queue.uid
+        # Tweetdj
+        try:
+            tweetdj = Tweetdj.objects.get(statusid=status_id)
+            logger.info(f"tweetdj:{tweetdj}")
+        except Tweetdj.DoesNotExist:
+            return
+        #taggit
+        logger.info(f"Adding tag '{tag_name}' to {tweetdj}")
+        tweetdj.tags.add(tag_name)
+        delete_tag_queue(process_mi)
+
     current_process_uuid_lst = [str(process.id) for process in Process.objects.current.all()]
     logger.debug(f"current_process_uuid_lst: {current_process_uuid_lst}")
     # return if no current Moderation object
@@ -218,20 +259,15 @@ def poll_tag_dm():
             logger.info(f"Process instance {process_mi} was already processed.")
             continue
         
-        # determine id of status
-        status_id = process_mi.queue.uid
+        socialuser = process_mi.processor
         
-        # Tweetdj
-        try:
-            tweetdj = Tweetdj.objects.get(statusid=status_id)
-            logger.info(f"tweetdj:{tweetdj}")
-        except Tweetdj.DoesNotExist:
-            continue
+        if tag_name == STOP_CATEGORY:
+            opt_out(socialuser)
+            delete_tag_process(process_mi)
+        else:
+            tag(process_mi, tag_name)
         
-        #taggit
-        logger.info(f"Adding tag '{tag_name}' to {tweetdj}")
-        tweetdj.tags.add(tag_name)
-        delete_tag_queue(process_mi)
-        
-    
+def opt_out(socialuser):
+    option = get_optin_option()
+    create_opt_in(socialuser=socialuser, option=option, authorize=False)
         

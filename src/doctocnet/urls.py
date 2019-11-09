@@ -26,6 +26,7 @@ from wagtail.core import urls as wagtail_urls
 from ajax_select import urls as ajax_select_urls
 
 urlpatterns = [
+    path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
     path('', include('landing.urls')),
     path('', include('users.urls')),

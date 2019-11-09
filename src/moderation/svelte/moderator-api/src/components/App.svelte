@@ -1,28 +1,4 @@
-<div id="app">
-  {{#if (jsn == null)}}
-      <p>Data loading...</p>
-      {{else}}
-  <div>
-    <!--p class="invisible">SocialUser: {{jsn.socialuser}} Active: {{jsn.active}}</p-->
-    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="activeswitch" checked={{jsn.active}} on:change=patch()>
-        <label class="onoffswitch-label" for="activeswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-        </label>
-    </div>
-    <div class="onoffswitch publicprivateswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="publicprivateswitch" checked={{jsn.public}} on:change=patch()>
-        <label class="onoffswitch-label" for="publicprivateswitch">
-            <span class="onoffswitch-inner publicprivateswitch-inner"></span>
-            <span class="onoffswitch-switch publicprivateswitch-switch"></span>
-        </label>
-    </div> 
- 
-  </div>
-  {{/if}}
-  
-</div>
+
 
 <script type="text/javascript">
   var Cookies = require('js-cookie');
@@ -112,6 +88,30 @@
     }
   };
 </script>
+
+<div id="app">
+{{#if (jsn == null)}}
+    <p>Data loading...</p>
+    {{else}}
+<div>
+  <!--p class="invisible">SocialUser: {{jsn.socialuser}} Active: {{jsn.active}}</p-->
+  <div class="onoffswitch">
+      <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="activeswitch" checked={{jsn.active}} on:change=patch()>
+      <label class="onoffswitch-label" for="activeswitch">
+          <span class="onoffswitch-inner"></span>
+          <span class="onoffswitch-switch"></span>
+      </label>
+  </div>
+  <div class="onoffswitch publicprivateswitch">
+      <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="publicprivateswitch" checked={{jsn.public}} on:change=patch()>
+      <label class="onoffswitch-label" for="publicprivateswitch">
+          <span class="onoffswitch-inner publicprivateswitch-inner"></span>
+          <span class="onoffswitch-switch publicprivateswitch-switch"></span>
+      </label>
+  </div> 
+</div>
+{{/if}}
+</div>
 
 <style>
     .onoffswitch {

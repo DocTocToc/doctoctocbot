@@ -7,6 +7,8 @@
 
 {% block head_css %}
 {{ block.super }}
+<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
+<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
 {% endblock head_css %}
 
 {% block head_javascript %}
@@ -40,6 +42,9 @@
                 </li>
                 <li class="nav-item">
                     <a href="" data-target="#receipt" data-toggle="tab" class="nav-link">{% trans "Receipt" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="" data-target="#options" data-toggle="tab" class="nav-link">{% trans "Options" %}</a>
                 </li>
                 {% if user|is_moderator %}
                 <li class="nav-item">
@@ -229,6 +234,12 @@
                 <script type="text/javascript" src="{% static "moderation/moderator-api/app.js" %}"></script>
                 </div>
                 {% endif %}
+                <div class="tab-pane" id="options">
+                {% if user.socialuser %}
+                <category></category>
+                <script type="text/javascript" src="{% static "optin/optin-api/bundle.js" %}"></script>
+                {% endif %}
+                </div>
             </div>
         </div>
 

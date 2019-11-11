@@ -62,7 +62,7 @@ var app = (function () {
     function attr(node, attribute, value) {
         if (value == null)
             node.removeAttribute(attribute);
-        else
+        else if (node.getAttribute(attribute) !== value)
             node.setAttribute(attribute, value);
     }
     function children(element) {
@@ -133,10 +133,10 @@ var app = (function () {
         update_scheduled = false;
     }
     function update($$) {
-        if ($$.fragment) {
+        if ($$.fragment !== null) {
             $$.update($$.dirty);
             run_all($$.before_update);
-            $$.fragment.p($$.dirty, $$.ctx);
+            $$.fragment && $$.fragment.p($$.dirty, $$.ctx);
             $$.dirty = null;
             $$.after_update.forEach(add_render_callback);
         }
@@ -187,6 +187,7 @@ var app = (function () {
             info.resolved = key && { [key]: value };
             const child_ctx = assign(assign({}, info.ctx), info.resolved);
             const block = type && (info.current = type)(child_ctx);
+            let needs_flush = false;
             if (info.block) {
                 if (info.blocks) {
                     info.blocks.forEach((block, i) => {
@@ -205,11 +206,14 @@ var app = (function () {
                 block.c();
                 transition_in(block, 1);
                 block.m(info.mount(), info.anchor);
-                flush();
+                needs_flush = true;
             }
             info.block = block;
             if (info.blocks)
                 info.blocks[index] = block;
+            if (needs_flush) {
+                flush();
+            }
         }
         if (is_promise(promise)) {
             const current_component = get_current_component();
@@ -240,7 +244,7 @@ var app = (function () {
     const globals = (typeof window !== 'undefined' ? window : global);
     function mount_component(component, target, anchor) {
         const { fragment, on_mount, on_destroy, after_update } = component.$$;
-        fragment.m(target, anchor);
+        fragment && fragment.m(target, anchor);
         // onMount happens before the initial afterUpdate
         add_render_callback(() => {
             const new_on_destroy = on_mount.map(run).filter(is_function);
@@ -257,13 +261,14 @@ var app = (function () {
         after_update.forEach(add_render_callback);
     }
     function destroy_component(component, detaching) {
-        if (component.$$.fragment) {
-            run_all(component.$$.on_destroy);
-            component.$$.fragment.d(detaching);
+        const $$ = component.$$;
+        if ($$.fragment !== null) {
+            run_all($$.on_destroy);
+            $$.fragment && $$.fragment.d(detaching);
             // TODO null out other refs, including component.$$ (but need to
             // preserve final state?)
-            component.$$.on_destroy = component.$$.fragment = null;
-            component.$$.ctx = {};
+            $$.on_destroy = $$.fragment = null;
+            $$.ctx = {};
         }
     }
     function make_dirty(component, key) {
@@ -274,15 +279,15 @@ var app = (function () {
         }
         component.$$.dirty[key] = true;
     }
-    function init(component, options, instance, create_fragment, not_equal, prop_names) {
+    function init(component, options, instance, create_fragment, not_equal, props) {
         const parent_component = current_component;
         set_current_component(component);
-        const props = options.props || {};
+        const prop_values = options.props || {};
         const $$ = component.$$ = {
             fragment: null,
             ctx: null,
             // state
-            props: prop_names,
+            props,
             update: noop,
             not_equal,
             bound: blank_object(),
@@ -298,7 +303,7 @@ var app = (function () {
         };
         let ready = false;
         $$.ctx = instance
-            ? instance(component, props, (key, ret, value = ret) => {
+            ? instance(component, prop_values, (key, ret, value = ret) => {
                 if ($$.ctx && not_equal($$.ctx[key], $$.ctx[key] = value)) {
                     if ($$.bound[key])
                         $$.bound[key](value);
@@ -307,19 +312,20 @@ var app = (function () {
                 }
                 return ret;
             })
-            : props;
+            : prop_values;
         $$.update();
         ready = true;
         run_all($$.before_update);
-        $$.fragment = create_fragment($$.ctx);
+        // `false` as a special case of no DOM component
+        $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
         if (options.target) {
             if (options.hydrate) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                $$.fragment.l(children(options.target));
+                $$.fragment && $$.fragment.l(children(options.target));
             }
             else {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                $$.fragment.c();
+                $$.fragment && $$.fragment.c();
             }
             if (options.intro)
                 transition_in(component.$$.fragment);
@@ -556,14 +562,16 @@ var app = (function () {
     }));
     });
 
-    /* src/App.svelte generated by Svelte v3.12.1 */
-    const { Error: Error_1, console: console_1 } = globals;
+    /* src/App.svelte generated by Svelte v3.13.0 */
 
+    const { Error: Error_1, console: console_1 } = globals;
     const file = "src/App.svelte";
 
     // (144:0) {:catch error}
     function create_catch_block(ctx) {
-    	var p, t_value = ctx.error.message + "", t;
+    	let p;
+    	let t_value = ctx.error.message + "";
+    	let t;
 
     	const block = {
     		c: function create() {
@@ -572,27 +580,50 @@ var app = (function () {
     			set_style(p, "color", "red");
     			add_location(p, file, 144, 4, 4948);
     		},
-
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
     			append_dev(p, t);
     		},
-
     		p: noop,
-
     		d: function destroy(detaching) {
-    			if (detaching) {
-    				detach_dev(p);
-    			}
+    			if (detaching) detach_dev(p);
     		}
     	};
-    	dispatch_dev("SvelteRegisterBlock", { block, id: create_catch_block.name, type: "catch", source: "(144:0) {:catch error}", ctx });
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block.name,
+    		type: "catch",
+    		source: "(144:0) {:catch error}",
+    		ctx
+    	});
+
     	return block;
     }
 
     // (130:0) {:then res_jsn}
     function create_then_block(ctx) {
-    	var div2, div1, h5, t0_value = ctx.res_jsn["label"] + "", t0, t1, p, t2_value = ctx.res_jsn["description"] + "", t2, t3, div0, input, input_id_value, t4, label, span0, t5, span1, label_for_value, dispose;
+    	let div2;
+    	let div1;
+    	let h5;
+    	let t0_value = ctx.res_jsn["label"] + "";
+    	let t0;
+    	let t1;
+    	let p;
+    	let t2_value = ctx.res_jsn["description"] + "";
+    	let t2;
+    	let t3;
+    	let div0;
+    	let input;
+    	let input_id_value;
+    	let input_checked_value;
+    	let t4;
+    	let label;
+    	let span0;
+    	let t5;
+    	let span1;
+    	let label_for_value;
+    	let dispose;
 
     	const block = {
     		c: function create() {
@@ -618,15 +649,15 @@ var app = (function () {
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "name", "onoffswitch");
     			attr_dev(input, "class", "onoffswitch-checkbox svelte-12z4ikv");
-    			attr_dev(input, "id", input_id_value = "" + ctx.option + "-switch");
-    			input.checked = ctx.res_jsn["authorize"];
+    			attr_dev(input, "id", input_id_value = "" + (ctx.option + "-switch"));
+    			input.checked = input_checked_value = ctx.res_jsn["authorize"];
     			add_location(input, file, 135, 11, 4553);
     			attr_dev(span0, "class", "onoffswitch-inner svelte-12z4ikv");
     			add_location(span0, file, 137, 11, 4779);
     			attr_dev(span1, "class", "onoffswitch-switch svelte-12z4ikv");
     			add_location(span1, file, 138, 11, 4830);
     			attr_dev(label, "class", "onoffswitch-label svelte-12z4ikv");
-    			attr_dev(label, "for", label_for_value = "" + ctx.option + "-switch");
+    			attr_dev(label, "for", label_for_value = "" + (ctx.option + "-switch"));
     			add_location(label, file, 136, 11, 4712);
     			attr_dev(div0, "class", "onoffswitch svelte-12z4ikv");
     			add_location(div0, file, 134, 9, 4516);
@@ -635,9 +666,8 @@ var app = (function () {
     			attr_dev(div2, "class", "card");
     			set_style(div2, "width", "18rem");
     			add_location(div2, file, 130, 3, 4326);
-    			dispose = listen_dev(input, "change", ctx.toggleOptin);
+    			dispose = listen_dev(input, "change", ctx.toggleOptin, false, false, false);
     		},
-
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
     			append_dev(div2, div1);
@@ -655,32 +685,35 @@ var app = (function () {
     			append_dev(label, t5);
     			append_dev(label, span1);
     		},
-
     		p: function update(changed, ctx) {
-    			if ((changed.option) && input_id_value !== (input_id_value = "" + ctx.option + "-switch")) {
+    			if (changed.option && input_id_value !== (input_id_value = "" + (ctx.option + "-switch"))) {
     				attr_dev(input, "id", input_id_value);
     			}
 
-    			if ((changed.option) && label_for_value !== (label_for_value = "" + ctx.option + "-switch")) {
+    			if (changed.option && label_for_value !== (label_for_value = "" + (ctx.option + "-switch"))) {
     				attr_dev(label, "for", label_for_value);
     			}
     		},
-
     		d: function destroy(detaching) {
-    			if (detaching) {
-    				detach_dev(div2);
-    			}
-
+    			if (detaching) detach_dev(div2);
     			dispose();
     		}
     	};
-    	dispatch_dev("SvelteRegisterBlock", { block, id: create_then_block.name, type: "then", source: "(130:0) {:then res_jsn}", ctx });
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block.name,
+    		type: "then",
+    		source: "(130:0) {:then res_jsn}",
+    		ctx
+    	});
+
     	return block;
     }
 
     // (128:16)        <p>Data loading...</p> {:then res_jsn}
     function create_pending_block(ctx) {
-    	var p;
+    	let p;
 
     	const block = {
     		c: function create() {
@@ -688,25 +721,29 @@ var app = (function () {
     			p.textContent = "Data loading...";
     			add_location(p, file, 128, 6, 4284);
     		},
-
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
     		},
-
     		p: noop,
-
     		d: function destroy(detaching) {
-    			if (detaching) {
-    				detach_dev(p);
-    			}
+    			if (detaching) detach_dev(p);
     		}
     	};
-    	dispatch_dev("SvelteRegisterBlock", { block, id: create_pending_block.name, type: "pending", source: "(128:16)        <p>Data loading...</p> {:then res_jsn}", ctx });
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block.name,
+    		type: "pending",
+    		source: "(128:16)        <p>Data loading...</p> {:then res_jsn}",
+    		ctx
+    	});
+
     	return block;
     }
 
     function create_fragment(ctx) {
-    	var await_block_anchor, promise_1;
+    	let await_block_anchor;
+    	let promise_1;
 
     	let info = {
     		ctx,
@@ -715,8 +752,8 @@ var app = (function () {
     		pending: create_pending_block,
     		then: create_then_block,
     		catch: create_catch_block,
-    		value: 'res_jsn',
-    		error: 'error'
+    		value: "res_jsn",
+    		error: "error"
     	};
 
     	handle_promise(promise_1 = ctx.promise, info);
@@ -724,106 +761,112 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			await_block_anchor = empty();
-
     			info.block.c();
     		},
-
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
-
     		m: function mount(target, anchor) {
     			insert_dev(target, await_block_anchor, anchor);
-
     			info.block.m(target, info.anchor = anchor);
     			info.mount = () => await_block_anchor.parentNode;
     			info.anchor = await_block_anchor;
     		},
-
     		p: function update(changed, new_ctx) {
     			ctx = new_ctx;
     			info.block.p(changed, assign(assign({}, ctx), info.resolved));
     		},
-
     		i: noop,
     		o: noop,
-
     		d: function destroy(detaching) {
-    			if (detaching) {
-    				detach_dev(await_block_anchor);
-    			}
-
+    			if (detaching) detach_dev(await_block_anchor);
     			info.block.d(detaching);
     			info.token = null;
     			info = null;
     		}
     	};
-    	dispatch_dev("SvelteRegisterBlock", { block, id: create_fragment.name, type: "component", source: "", ctx });
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
     	return block;
     }
 
     function instance($$self, $$props, $$invalidate) {
-    	var csrftoken = js_cookie.get('csrftoken');
-        console.log(`csrttoken:${csrftoken}`);
-        let { option = {option} } = $$props;
-        let headers = new Headers();
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
-        const config = {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': `${csrftoken}`,
-                    },
-                    body: JSON.stringify({'option': option})
-                };
-        let promise = getOptin();
-        async function getOptin() {
-           const config = {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': `${csrftoken}`,
-                    },
-                    body: JSON.stringify({'option': option})
-            };
-            const res = await fetch(`http://development.doctoctoc.net/optin/api/get/`, config);
-            const res_jsn = await res.json();
-            if (res.ok) {
-                return res_jsn;
-            } else {
-                throw new Error(text);
-            }
-        }
-        
-        async function toggleOptin() {
-            const config = {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': `${csrftoken}`,
-                    },
-                    body: JSON.stringify({'option': option})
-            };
-            const res = await fetch(`http://development.doctoctoc.net/optin/api/update/`, config);
-            const res_jsn = await res.json();
-            if (res.ok) {
-                return res_jsn;
-            } else {
-                throw new Error(text);
-            }
-        }
+    	var csrftoken = js_cookie.get("csrftoken");
+    	console.log(`csrttoken:${csrftoken}`);
+    	let { option = { option } } = $$props;
+    	let headers = new Headers();
+    	headers.append("Accept", "application/json");
+    	headers.append("Content-Type", "application/json");
 
-    	const writable_props = ['option'];
+    	const config = {
+    		method: "POST",
+    		headers: {
+    			"Accept": "application/json",
+    			"Content-Type": "application/json",
+    			"X-CSRFToken": `${csrftoken}`
+    		},
+    		body: JSON.stringify({ "option": option })
+    	};
+
+    	let promise = getOptin();
+
+    	async function getOptin() {
+    		const config = {
+    			method: "POST",
+    			headers: {
+    				"Accept": "application/json",
+    				"Content-Type": "application/json",
+    				"X-CSRFToken": `${csrftoken}`
+    			},
+    			body: JSON.stringify({ "option": option })
+    		};
+
+    		const res = await fetch(`http://development.doctoctoc.net/optin/api/get/`, config);
+    		const res_jsn = await res.json();
+
+    		if (res.ok) {
+    			return res_jsn;
+    		} else {
+    			throw new Error(text);
+    		}
+    	}
+
+    	async function toggleOptin() {
+    		const config = {
+    			method: "POST",
+    			headers: {
+    				"Accept": "application/json",
+    				"Content-Type": "application/json",
+    				"X-CSRFToken": `${csrftoken}`
+    			},
+    			body: JSON.stringify({ "option": option })
+    		};
+
+    		const res = await fetch(`http://development.doctoctoc.net/optin/api/update/`, config);
+    		const res_jsn = await res.json();
+
+    		if (res.ok) {
+    			return res_jsn;
+    		} else {
+    			throw new Error(text);
+    		}
+    	}
+
+    	const writable_props = ["option"];
+
     	Object.keys($$props).forEach(key => {
-    		if (!writable_props.includes(key) && !key.startsWith('$$')) console_1.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!writable_props.includes(key) && !key.startsWith("$$")) console_1.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$set = $$props => {
-    		if ('option' in $$props) $$invalidate('option', option = $$props.option);
+    		if ("option" in $$props) $$invalidate("option", option = $$props.option);
     	};
 
     	$$self.$capture_state = () => {
@@ -831,10 +874,10 @@ var app = (function () {
     	};
 
     	$$self.$inject_state = $$props => {
-    		if ('csrftoken' in $$props) csrftoken = $$props.csrftoken;
-    		if ('option' in $$props) $$invalidate('option', option = $$props.option);
-    		if ('headers' in $$props) headers = $$props.headers;
-    		if ('promise' in $$props) $$invalidate('promise', promise = $$props.promise);
+    		if ("csrftoken" in $$props) csrftoken = $$props.csrftoken;
+    		if ("option" in $$props) $$invalidate("option", option = $$props.option);
+    		if ("headers" in $$props) headers = $$props.headers;
+    		if ("promise" in $$props) $$invalidate("promise", promise = $$props.promise);
     	};
 
     	return { option, promise, toggleOptin };
@@ -843,8 +886,14 @@ var app = (function () {
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance, create_fragment, safe_not_equal, ["option"]);
-    		dispatch_dev("SvelteRegisterComponent", { component: this, tagName: "App", options, id: create_fragment.name });
+    		init(this, options, instance, create_fragment, safe_not_equal, { option: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "App",
+    			options,
+    			id: create_fragment.name
+    		});
     	}
 
     	get option() {

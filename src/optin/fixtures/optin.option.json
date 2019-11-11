@@ -1,0 +1,1 @@
+[{"model": "optin.option", "pk": 1, "fields": {"name": "twitter_dm_category_self", "label": "DM: categorize your questions", "description": "The bot will send you Direct Messages asking you to select a category for your own questions."}}]

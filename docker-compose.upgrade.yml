@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+
+  nginx:
+    restart: on-failure
+    env_file:
+      - .env
+    image: nginx:latest
+    volumes:
+      - ./config/upgrade/index.html:/var/www/index.html
+      - ./config/upgrade/nginx:/etc/nginx/conf.d
+      - ${NGINX_LOG_DIR}:/var/log/nginx
+      - ${LETSENCRYPT_CONF}:/etc/letsencrypt
+      - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"

@@ -1,11 +1,13 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.db.utils import DatabaseError
 
 from versions.models import Versionable
 from versions.fields import VersionedForeignKey
 
 from community.models import get_default_community
 from moderation.models import get_default_socialmedia
+
 
 
 class Queue(Versionable):
@@ -41,7 +43,10 @@ class Process(Versionable):
 
 
 def max_value():
-    return Category.objects.count()
+    try:
+        return Category.objects.count()
+    except DatabaseError:
+        return 0
       
 class Category(models.Model):
     tag = models.CharField(

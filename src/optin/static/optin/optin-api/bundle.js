@@ -578,7 +578,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 144, 4, 4948);
+    			add_location(p, file, 144, 4, 4926);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -643,29 +643,29 @@ var app = (function () {
     			t5 = space();
     			span1 = element("span");
     			attr_dev(h5, "class", "card-title");
-    			add_location(h5, file, 132, 7, 4403);
+    			add_location(h5, file, 132, 7, 4381);
     			attr_dev(p, "class", "card-text");
-    			add_location(p, file, 133, 7, 4457);
+    			add_location(p, file, 133, 7, 4435);
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "name", "onoffswitch");
     			attr_dev(input, "class", "onoffswitch-checkbox svelte-12z4ikv");
     			attr_dev(input, "id", input_id_value = "" + (ctx.option + "-switch"));
     			input.checked = input_checked_value = ctx.res_jsn["authorize"];
-    			add_location(input, file, 135, 11, 4553);
+    			add_location(input, file, 135, 11, 4531);
     			attr_dev(span0, "class", "onoffswitch-inner svelte-12z4ikv");
-    			add_location(span0, file, 137, 11, 4779);
+    			add_location(span0, file, 137, 11, 4757);
     			attr_dev(span1, "class", "onoffswitch-switch svelte-12z4ikv");
-    			add_location(span1, file, 138, 11, 4830);
+    			add_location(span1, file, 138, 11, 4808);
     			attr_dev(label, "class", "onoffswitch-label svelte-12z4ikv");
     			attr_dev(label, "for", label_for_value = "" + (ctx.option + "-switch"));
-    			add_location(label, file, 136, 11, 4712);
+    			add_location(label, file, 136, 11, 4690);
     			attr_dev(div0, "class", "onoffswitch svelte-12z4ikv");
-    			add_location(div0, file, 134, 9, 4516);
+    			add_location(div0, file, 134, 9, 4494);
     			attr_dev(div1, "class", "card-body");
-    			add_location(div1, file, 131, 5, 4372);
+    			add_location(div1, file, 131, 5, 4350);
     			attr_dev(div2, "class", "card");
     			set_style(div2, "width", "18rem");
-    			add_location(div2, file, 130, 3, 4326);
+    			add_location(div2, file, 130, 3, 4304);
     			dispose = listen_dev(input, "change", ctx.toggleOptin, false, false, false);
     		},
     		m: function mount(target, anchor) {
@@ -719,7 +719,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Data loading...";
-    			add_location(p, file, 128, 6, 4284);
+    			add_location(p, file, 128, 6, 4262);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -828,7 +828,7 @@ var app = (function () {
     			body: JSON.stringify({ "option": option })
     		};
 
-    		const res = await fetch(`http://development.doctoctoc.net/optin/api/get/`, config);
+    		const res = await fetch(`https://doctoctoc.net/optin/api/get/`, config);
     		const res_jsn = await res.json();
 
     		if (res.ok) {
@@ -849,7 +849,7 @@ var app = (function () {
     			body: JSON.stringify({ "option": option })
     		};
 
-    		const res = await fetch(`http://development.doctoctoc.net/optin/api/update/`, config);
+    		const res = await fetch(`https://doctoctoc.net/optin/api/update/`, config);
     		const res_jsn = await res.json();
 
     		if (res.ok) {

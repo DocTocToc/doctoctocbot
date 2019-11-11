@@ -96,7 +96,7 @@
                 },
                 body: JSON.stringify({'option': option})
         }
-        const res = await fetch(`http://development.doctoctoc.net/optin/api/get/`, config);
+        const res = await fetch(`https://doctoctoc.net/optin/api/get/`, config);
         const res_jsn = await res.json();
         if (res.ok) {
             return res_jsn;
@@ -115,7 +115,7 @@
                 },
                 body: JSON.stringify({'option': option})
         }
-        const res = await fetch(`http://development.doctoctoc.net/optin/api/update/`, config);
+        const res = await fetch(`https://doctoctoc.net/optin/api/update/`, config);
         const res_jsn = await res.json();
         if (res.ok) {
             return res_jsn;

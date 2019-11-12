@@ -83,6 +83,7 @@ def tag_dm_text(process):
         _(
             "Please help us find the best category for this tweet "
             "https://twitter.com/{screen_name}/status/{statusid}\n"
+            "Please choose a category by clicking on one of the buttons bellow.\n"
             "Categories are described in full detail on this page ➡️ "
             "{categories_link}"
         ).format(

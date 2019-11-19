@@ -14,10 +14,6 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, ngettext_lazy
 from django.utils.text import format_lazy
 
-from chartjs.colors import next_color, COLORS
-from chartjs.views.lines import BaseLineChartView, BaseLineOptionsChartView, HighchartPlotLineChartView
-from chartjs.views.columns import BaseColumnsHighChartsView
-
 from conversation.models import Tweetdj, Hashtag
 from moderation.models import SocialUser, UserCategoryRelationship
 from community.helpers import get_community

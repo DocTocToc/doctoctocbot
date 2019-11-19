@@ -69,6 +69,7 @@ def get_chart(period, request, series):
         'yAxis': {
             'title': {'text': _('Number of tweets')},
             'allowDecimals': False,
+            'min': 0,
         },
         'series': series
     }
@@ -166,7 +167,7 @@ def questions_daily_data(request):
         serie.update({"name": f'{dct["label"]}'})
         #serie.update({"color": color_dct[key]})
         serie.update({
-            'lineWidth': 3,
+            'lineWidth': 1,
             'lineColor': color_dct[key],
             'marker': {
               'lineWidth': 1,

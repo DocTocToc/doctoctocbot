@@ -9,11 +9,11 @@ from crowdfunding.models import Project
 def handle_tweet_investment(userid: int,
                             rank: int,
                             public: bool,
-                            project: Project):
+                            project_id: int):
     
     if (not rank
         or not userid
-        or not project):
+        or not project_id):
         return
     
     User = get_user_model()
@@ -30,6 +30,10 @@ def handle_tweet_investment(userid: int,
     except ObjectDoesNotExist:
         pass
     
+    try:
+        project = Project.objects.get(id=project_id)
+    except Project.DoesNotExist:
+        return
     community = project.community.get()
     bot_screen_name = community.account.username
     domain_name = community.site.domain

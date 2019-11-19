@@ -1,17 +1,22 @@
 from datetime import datetime
 import logging
 import time
+from random import shuffle, randint
 
 from django.utils import translation
 from django.conf import settings
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractMonth, ExtractYear
-from django.db.models.functions import TruncMonth, TruncYear
+from django.db.models.functions import TruncMonth, TruncYear, TruncDay
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy, ngettext_lazy
 from django.utils.text import format_lazy
+
+from chartjs.colors import next_color, COLORS
+from chartjs.views.lines import BaseLineChartView, BaseLineOptionsChartView, HighchartPlotLineChartView
+from chartjs.views.columns import BaseColumnsHighChartsView
 
 from conversation.models import Tweetdj, Hashtag
 from moderation.models import SocialUser, UserCategoryRelationship
@@ -122,6 +127,15 @@ def filter_hashtag(qs, request):
 def daily(request):
     return render(request, 'charts/daily.html')
 
+def daily2(request):
+    return render(request, 'charts/daily2.html')
+
+def daily3(request):
+    return render(request, 'charts/daily3.html')
+
+def daily4(request):
+    return render(request, 'charts/daily4.html')
+
 def questions_daily_data(request):
     period = gettext_lazy("day")
     member_userid_lst = get_userid_lst(request)        
@@ -130,9 +144,10 @@ def questions_daily_data(request):
         .filter(userid__in=member_userid_lst)
         .filter(retweetedstatus=False)
         .filter(quotedstatus=False)
-        .extra({'date' : "date(created_at)"})
+        .annotate(date = TruncDay('created_at'))
         .values('date')
-        .annotate(count=Count('statusid')))
+        .annotate(count=Count('statusid'))
+        .order_by('date'))
 
     qs_dct = filter_hashtag(qsd, request) # qs_dct was 'qs_lst'
     
@@ -151,8 +166,25 @@ def questions_daily_data(request):
     series = list()
     for key, dct in qs_dct.items():
         serie = dict()
+        serie.update({"type": "area"})
         serie.update({"name": f'{dct["label"]}'})
-        serie.update({"color": color_dct[key]})                      
+        #serie.update({"color": color_dct[key]})
+        serie.update({
+            'lineWidth': 3,
+            'lineColor': color_dct[key],
+            'marker': {
+              'lineWidth': 1,
+              'lineColor': color_dct[key],
+              'fillColor': color_dct[key]
+            },
+            'fillColor': {
+                'linearGradient': {'x1': 0, 'y1': 0, 'x2': 0, 'y2': 1},
+                'stops': [
+                    [0, color_dct[key]],
+                    [1, 'rgba(255,255,255,.25)']
+                ]
+            }
+        })          
         data = []
         for values in dct["qs"]:
             d = values["date"]
@@ -161,7 +193,15 @@ def questions_daily_data(request):
             data.append([timestamp, count])
         serie.update({"data": data})
         series.append(serie)
+
     chart = get_chart(period, request, series)
+    chart.update(
+        {
+            'chart': {
+                'zoomType': 'x',
+                }
+            }
+    )
     return JsonResponse(chart)
 
 def monthly(request):

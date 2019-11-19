@@ -1,9 +1,9 @@
 {% extends "doctocnet/base.html" %}
 {% block content %}
-{% block container %}
-{% endblock %}
   <script src="https://code.highcharts.com/highcharts.src.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  {% block container %}
+  {% endblock %}
   <script>
     $.ajax({
       url: $("#container").attr("data-url"),

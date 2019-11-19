@@ -11,5 +11,4 @@ urlpatterns = [
     path('monthly/data/', views.questions_monthly_data, name='questions_monthly_data'),
     path('yearly/', views.yearly, name='yearly'),
     path('yearly/data/', views.questions_yearly_data, name='questions_yearly_data'),
-
 ]

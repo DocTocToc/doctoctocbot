@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-31 00:39+0100\n"
+"POT-Creation-Date: 2019-11-12 16:15+0100\n"
 "PO-Revision-Date: 2019-05-17 04:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,17 +18,17 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:602
+#: moderation/models.py:612
 msgid "Warn"
 msgstr ""
 
-#: moderation/models.py:603
+#: moderation/models.py:613
 #, fuzzy
 #| msgid "Moderators"
 msgid "Moderate"
 msgstr "Modérateurs"
 
-#: moderation/models.py:604
+#: moderation/models.py:614
 msgid "Ban"
 msgstr ""
 
@@ -64,7 +64,7 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:95
+#: moderation/tasks.py:102
 #, python-brace-format
 msgid ""
 "Please moderate this user: @{screen_name} Tweet: https://twitter.com/"
@@ -73,11 +73,11 @@ msgstr ""
 "Merci de modérer ce compte: @{screen_name} Tweet: https://twitter.com/"
 "{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:102
+#: moderation/tasks.py:109
 msgid "You will soon receive a moderation request for this user."
 msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."
 
-#: moderation/views.py:41
+#: moderation/views.py:49
 msgid "Moderators"
 msgstr "Modérateurs"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-12 16:15+0100\n"
+"POT-Creation-Date: 2019-11-22 19:46+0100\n"
 "PO-Revision-Date: 2019-10-14 18:23+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,35 +30,35 @@ msgstr "Tweets mensuels"
 msgid "Yearly tweets"
 msgstr "Tweets annuels"
 
-#: charts/views.py:34
+#: charts/views.py:35
 msgid "by"
 msgstr "par"
 
-#: charts/views.py:60
+#: charts/views.py:61
 #, python-brace-format
 msgid "Number of questions per {period} ({categories_str})"
 msgstr "Nombre de questions par {period} ({categories_str})"
 
-#: charts/views.py:69
+#: charts/views.py:70
 msgid "Number of tweets"
 msgstr "Nombre de tweets"
 
-#: charts/views.py:93
+#: charts/views.py:95
 msgid "or"
 msgstr "ou"
 
-#: charts/views.py:94
+#: charts/views.py:96
 msgid "and"
 msgstr "et"
 
-#: charts/views.py:126
+#: charts/views.py:137
 msgid "day"
 msgstr "jour"
 
-#: charts/views.py:171
+#: charts/views.py:208
 msgid "month"
 msgstr "mois"
 
-#: charts/views.py:217
+#: charts/views.py:254
 msgid "year"
 msgstr "an"

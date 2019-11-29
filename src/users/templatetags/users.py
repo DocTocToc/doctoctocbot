@@ -32,3 +32,39 @@ def category(context):
     for category in category_lst:
         label_lst.append(category.label)
     return label_lst
+
+@register.inclusion_tag('users/profile.html', takes_context=True)
+def profile(context):
+    def default_pp_url():
+        return settings.MEDIA_URL + "twitter/profile/images/bigger/default_profile_bigger.png"
+    if not context.request.user.is_authenticated:
+        return
+    su = context.request.user.socialuser
+    if not su:
+        name = context.request.user.get_full_name()
+        screen_name = context.request.user.get_username()
+        pp_url = default_pp_url()
+    else:
+        try:
+            pp_url = su.profile.biggeravatar.url
+        except:
+            pp_url = default_pp_url()
+        screen_name = su.screen_name_tag()
+        name = su.name_tag()
+    return {
+        'profile': {
+            'name' : name,
+            'screen_name': screen_name,
+            'pp_url': pp_url
+        }
+    }
+    
+@register.simple_tag(takes_context=True)
+def screen_name(context):
+    if not context.request.user.is_authenticated:
+        return
+    su = context.request.user.socialuser
+    try:
+        return su.screen_name_tag()
+    except:
+        return

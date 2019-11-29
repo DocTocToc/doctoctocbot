@@ -1,5 +1,7 @@
 from django.urls import include, path
 from django.views.generic import TemplateView
+from rest_framework import routers
+from crowdfunding.api.views import ProjectInvestmentViewSet
 
 #import djstripe
 #from crowdfunding.views3 import show_checkout, new_checkout, create_checkout
@@ -7,8 +9,14 @@ from crowdfunding.views import stripe_checkout, ProjectInvestmentView, InvestVie
 from crowdfunding.views import charge
 app_name = 'crowdfunding'
 
+router = routers.DefaultRouter()
+router.register(r'projectinvestment', ProjectInvestmentViewSet)
+
+
 urlpatterns = [
     path('', InvestViewBase.as_view(), name='start'),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('presentation/', TemplateView.as_view(template_name="crowdfunding/crowdfunding.html")),
     path('charge/', charge, name='stripe-charge'),
     #path('pay/', process_payment, name="pay"),

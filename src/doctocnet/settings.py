@@ -187,6 +187,7 @@ INSTALLED_APPS = [
     'tagging',
     'markdownify',
     'optin',
+    'bootstrap_modal_forms',
 ]
 
 if DEBUG:
@@ -524,3 +525,10 @@ if DEBUG:
     # CORS
     CORS_ORIGIN_ALLOW_ALL = config('CORS_ORIGIN_ALLOW_ALL', default=False, cast=bool)
     CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', cast=Csv())
+    
+
+# Copper
+COPPER_EXTRA = config('COPPER_EXTRA', default="") # "Tax exempt due to XXX"
+COPPER_SALES_TAX_PERCENT = config('COPPER_SALES_TAX_PERCENT', cast=int, default=0) # 24
+COPPER_SALES_TAX_NAME = config('COPPER_SALES_TAX_NAME', default="") # "VAT"
+COPPER_SALES_TAX_NUMBER = config('COPPER_SALES_TAX_NUMBER', default="") # "1234567890"

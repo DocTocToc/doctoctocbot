@@ -56,6 +56,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - django_1
+      - django_2
   celery_retweet_worker:
     image: dtn_dev
   celery_tree_worker:

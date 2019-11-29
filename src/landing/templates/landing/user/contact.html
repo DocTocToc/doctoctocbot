@@ -1,0 +1,32 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load auth_extras %}
+{% load static %}
+{% load users %}
+
+{% block title %}{% trans view.title %}{% endblock title %}
+
+{% block head_css %}
+{{ block.super }}
+<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
+<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
+{% endblock head_css %}
+
+{% block head_javascript %}
+{{ block.super }}
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+{% endblock head_javascript %}
+
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col col-lg-3">
+      {% profile %}
+    </div>
+    <div class="col-md-auto">
+      {% include "landing/usernav.html" %}
+    </div>
+  </div>
+</div>  
+{% endblock %}

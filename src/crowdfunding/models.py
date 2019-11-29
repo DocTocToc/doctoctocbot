@@ -39,7 +39,35 @@ class ProjectInvestment(models.Model):
     
     def __str__(self):
         return "{}:{} user:{} pledged:{} paid:{}".format(self.uuid, self.project, self.user, self.pledged, self.paid)
+
+    @staticmethod
+    def has_read_permission(self):
+        return True
+
+    def has_write_permission(self):
+        return False
     
+    def has_update_permission(self):
+        return False
+    
+    def has_object_read_permission(self, request):
+        #logger.debug(f"request.user.socialuser: {request.user.socialuser}")
+        #logger.debug(f"self.socialuser: {self.socialuser}")
+        try:
+            return (
+                self.user == request.user and 
+                self.paid == True 
+            )
+        except:
+            return False
+
+    def has_object_write_permission(self, request):
+        return False
+
+    def has_object_update_permission(self, request):
+        return False
+
+
 class Tier(models.Model):
     project = models.ForeignKey(
         'Project',

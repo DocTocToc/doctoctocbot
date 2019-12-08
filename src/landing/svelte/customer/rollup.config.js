@@ -3,8 +3,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
-import rollup_start_dev from './rollup_start_dev';
 import copy from 'rollup-plugin-copy'
+import dotenv from 'dotenv';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -14,7 +14,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/bundle.js',
+		file: 'public/build/bundle.js',
 		globals: {
             'js-cookie': 'Cookies',
         }
@@ -26,7 +26,7 @@ export default {
 			// we'll extract any component CSS out into
 			// a separate file — better for performance
 			css: css => {
-				css.write('public/bundle.css');
+				css.write('public/build/bundle.css');
 			}
 		}),
 
@@ -41,9 +41,9 @@ export default {
 		}),
 		commonjs(),
 
-		// In dev mode, call `npm run start:dev` once
+		// In dev mode, call `npm run start` once
 		// the bundle has been generated
-		!production && rollup_start_dev,
+		!production && serve(),
 
 		// Watch the `public` directory and refresh the
 		// browser on changes when not in production
@@ -54,11 +54,27 @@ export default {
 		production && terser(),
 		copy({
 		      targets: [
-		        { src: 'public/*', dest: '../../static/optin/optin-api/' }
-		      ]
+		    	  { src: 'public/*', dest: '../../static/landing/javascript/customer/' }		      ]
 		    })
 	],
 	watch: {
 		clearScreen: false
 	}
 };
+
+function serve() {
+	let started = false;
+
+	return {
+		writeBundle() {
+			if (!started) {
+				started = true;
+
+				require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+					stdio: ['ignore', 'inherit', 'inherit'],
+					shell: true
+				});
+			}
+		}
+	};
+}

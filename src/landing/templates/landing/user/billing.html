@@ -29,10 +29,17 @@
       {% profile %}
     </div>
     <div class="col-md-auto">
+    
+    
       {% include "landing/usernav.html" %}
+      
+      <customer></customer>
+      <script type="text/javascript" src="{% static "landing/javascript/customer/build/bundle.js" %}"></script>
+      
       {{ form }}
       <br>
       <button class="update-customer btn btn-primary" type="button" data-id="{% url 'landing:update-customer' form.id.value %}">Update</button>
+      </div>
     </div>
   </div>
 </div>

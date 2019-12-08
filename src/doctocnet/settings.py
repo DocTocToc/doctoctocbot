@@ -527,8 +527,11 @@ if DEBUG:
     CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', cast=Csv())
     
 
-# Copper
+# Copper (name of Silver billing app inside our project)
 COPPER_EXTRA = config('COPPER_EXTRA', default="") # "Tax exempt due to XXX"
 COPPER_SALES_TAX_PERCENT = config('COPPER_SALES_TAX_PERCENT', cast=int, default=0) # 24
 COPPER_SALES_TAX_NAME = config('COPPER_SALES_TAX_NAME', default="") # "VAT"
 COPPER_SALES_TAX_NUMBER = config('COPPER_SALES_TAX_NUMBER', default="") # "1234567890"
+# Copper 
+COPPER_TOKEN = config('COPPER_TOKEN')
+COPPER_URL = config('COPPER_URL')

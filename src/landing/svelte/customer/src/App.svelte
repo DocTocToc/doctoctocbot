@@ -3,6 +3,18 @@
     import { _ } from 'svelte-i18n';
     import Cookies from 'js-cookie';
 
+    function createInvoice(event) {
+    	console.log("hello");
+        console.log(event.target.value);
+        return;
+    }
+
+    function local_date(date) {
+        var d = new Date(date);
+        var l_d = d.toLocaleDateString();
+        return l_d;
+    }
+
     dictionary.set({
         en: {
             table: {
@@ -105,11 +117,11 @@
 {:then res_jsn}
 {#each res_jsn as purchase, i}
   <tr>
-    <th scope="row">{i + 1}</th>
-    <td>{purchase["datetime"]}</td>
+    <th scope="row">{i + 1} pk:{purchase["pk"]}</th>
+    <td>{local_date(purchase["datetime"])}</td>
     <td>{purchase["project"]}</td>
     <td>{purchase["pledged"]}</td>
-    <td></td>
+    <td><button class="btn btn-primary" value="{purchase['pk']}" on:click={createInvoice}>Create</button></td>
   </tr>
   {/each}
 {:catch error}

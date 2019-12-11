@@ -10,6 +10,8 @@ from django.conf import settings
 from crowdfunding.models import ProjectInvestment
 from customer.models import Customer, Provider
 
+from customer.copper import get_headers, get_api_endpoint
+
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=ProjectInvestment)
@@ -23,6 +25,109 @@ def create_customer(sender, instance, created, **kwargs):
             )
         except DatabaseError:
             return
+
+@receiver(post_save, sender=Customer)
+def on_customer_update(sender, instance, created, **kwargs):
+    if not customer_instance_is_complete(instance):
+        return
+    if created:
+        return
+    if instance.copper_id:
+        update_copper_customer(instance)
+    else:
+        create_copper_customer(instance)
+
+def customer_instance_is_complete(instance):
+    is_complete = (
+        instance.user and
+        instance.first_name and
+        instance.last_name and
+        #instance.company and
+        instance.email and
+        instance.address_1 and
+        instance.country and
+        instance.city and
+        instance.zip_code
+    )
+    return is_complete
+
+def create_copper_customer(instance):
+    data = json.dumps(copper_customer_json(instance))
+    logger.debug(get_api_endpoint("customers"))
+    logger.debug(get_headers())
+    logger.debug(data)
+    try:
+        response = requests.post(
+            url=get_api_endpoint("customers"),
+            data=data,
+            headers=get_headers()
+        )
+        # If the response was successful, no Exception will be raised
+        response.raise_for_status()
+        logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
+        if response.ok:
+            copper_customer_id=int(json.loads(response.text)['id'])
+            Customer.objects.filter(pk=instance.pk).update(copper_id=copper_customer_id)
+    except HTTPError as http_err:
+        logger.error(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        logger.error(f'Other error occurred: {err}')
+    else:
+        logger.info(f'Provider {instance.last_name} creation was successful!')
+
+def update_copper_customer(instance):
+    copper_customer_id = instance.copper_id
+    if not copper_customer_id:
+        logger.warn(
+            "This instance does not have a Copper customer id."
+            "It cannot be updated on Copper."    
+        )
+        return
+    data = json.dumps(copper_customer_json(instance))
+    try:
+        response = requests.put(
+            url=get_api_endpoint("customers", copper_customer_id),
+            data=data,
+            headers=get_headers()
+        )
+        # If the response was successful, no Exception will be raised
+        response.raise_for_status()
+        logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
+    except HTTPError as http_err:
+        logger.error(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        logger.error(f'Other error occurred: {err}')
+    else:
+        logger.info(f'Provider {instance.last_name} creation was successful!')
+
+def copper_customer_json(instance):
+    """Create a dictionary containing all the values of the Customer instance"""
+    data = dict()
+    keys = [
+        "customer_reference",
+        "first_name",
+        "last_name",
+        "company",
+        "email",
+        "address_1",
+        "address_2",
+        "country",
+        "city",
+        "state",
+        "zip_code",
+        "extra",
+        "sales_tax_percent",
+        "sales_tax_name",
+        "sales_tax_number",
+        "consolidated_billing"
+    ]
+    for key in keys:
+        d = {key: getattr(instance, key, "")}
+        data.update(d)
+    data.update({"customer_reference": instance.user.id})
+    data.update({"sales_tax_percent": 0})
+    data.update({"consolidated_billing": False})
+    return data
 
 def copper_provider_json(instance):
     """Create a dictionary containing all the values of the Provider instance"""
@@ -50,30 +155,21 @@ def copper_provider_json(instance):
         d = {key: getattr(instance, key, None)}
         data.update(d)
     return data
-        
+
 def create_copper_provider(instance):
-    if not settings.COPPER_TOKEN:
-        logger.warn("To use Copper, you must set COPPER_TOKEN in your .env file.")
-        return
-    authorization = f"Token {settings.COPPER_TOKEN}"
-    if settings.DEBUG:
-        protocol="http://"
-    else:
-        protocol="https://"
-    API_ENDPOINT = f"{protocol}{settings.COPPER_URL}/providers/"
-    data = copper_provider_json(instance)
-    headers = {
-        'content-type': 'application/json',
-        'Authorization': authorization,    
-    }
+    data = json.dumps(copper_provider_json(instance))
     try:
-        response = requests.post(url=API_ENDPOINT, data=json.dumps(data), headers=headers)
+        response = requests.post(
+            url=get_api_endpoint("providers"),
+            data=data,
+            headers=get_headers()
+        )
         # If the response was successful, no Exception will be raised
         response.raise_for_status()
         logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
         if response.ok:
-            copper_provider_id=int(json.loads(response.text)['id'])
-            Provider.objects.filter(pk=instance.pk).update(copper_provider_id=copper_provider_id)
+            copper_id=int(json.loads(response.text)['id'])
+            Provider.objects.filter(pk=instance.pk).update(copper_id=copper_id)
     except HTTPError as http_err:
         logger.error(f'HTTP error occurred: {http_err}')
     except Exception as err:
@@ -82,29 +178,21 @@ def create_copper_provider(instance):
         logger.info(f'Provider {instance.company} creation was successful!')
 
 def update_copper_provider(instance):
-    if not settings.COPPER_TOKEN:
-        logger.warn("To use Copper, you must set COPPER_TOKEN in your .env file.")
-        return
-    copper_provider_id = instance.copper_provider_id
-    if not copper_provider_id:
+    copper_id = instance.copper_id
+    if not copper_id:
         logger.warn(
             "This instance does not have a Copper provider id."
             "It cannot be updated on Copper."    
         )
         return        
-    authorization = f"Token {settings.COPPER_TOKEN}"
-    if settings.DEBUG:
-        protocol="http://"
-    else:
-        protocol="https://"
-    API_ENDPOINT = f"{protocol}{settings.COPPER_URL}/providers/{copper_provider_id}/"
-    data = copper_provider_json(instance)
-    headers = {
-        'content-type': 'application/json',
-        'Authorization': authorization,    
-    }
+    data = json.dumps(copper_provider_json(instance))
+
     try:
-        response = requests.put(url=API_ENDPOINT, data=json.dumps(data), headers=headers)
+        response = requests.put(
+            url=get_api_endpoint("providers", copper_id),
+            data=data,
+            headers=get_headers()
+        )
         # If the response was successful, no Exception will be raised
         response.raise_for_status()
     except HTTPError as http_err:

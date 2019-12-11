@@ -1,8 +1,11 @@
+import uuid
+from decimal import *
+
 from django.contrib.auth import get_user_model
 from django.db import models
-import uuid
+from django.core.validators import MaxValueValidator
 
-from common.international import countries
+from common.international import countries, currencies
 
 
 class Customer(models.Model):
@@ -47,7 +50,7 @@ class Provider(models.Model):
         (PROFORMA, 'Proforma'),
         (INVOICE, 'Invoice'),    
     ]
-    copper_provider_id = models.PositiveIntegerField(null=True, blank=True, unique=True)
+    copper_id = models.PositiveIntegerField(null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, blank=True)
     company = models.CharField(max_length=255, blank=True)
     email = models.CharField(max_length=255, blank=True)
@@ -72,6 +75,27 @@ class Provider(models.Model):
         choices=PROFORMA_INVOICE_CHOICES,
         default=DRAFT,
     )
-    meta = models.CharField(max_length=255, blank=True)
-    
+    meta = models.CharField(max_length=255, blank=True)    
 
+class Product(models.Model):
+    product_code = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=255, blank=True)
+    unit = models.CharField(max_length=255, blank=True)
+    unit_price = models.DecimalField(
+        default=Decimal('0.00'),
+        max_digits=8,
+        decimal_places=2,
+    )
+    sales_tax_percent = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(100),
+        ]
+    )
+    sales_tax_name = models.CharField(max_length=255, blank=True)
+    currency = models.CharField(
+        choices=currencies,
+        max_length=4,
+        default='EUR',
+        help_text='The currency used for billing.'
+    )

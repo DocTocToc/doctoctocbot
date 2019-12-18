@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-22 19:46+0100\n"
-"PO-Revision-Date: 2019-02-11 04:35+0100\n"
+"POT-Creation-Date: 2019-12-16 21:35+0100\n"
+"PO-Revision-Date: 2019-12-16 21:36+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,46 +18,58 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: customer/forms.py:20
+#: customer/forms.py:28 customer/models.py:51
 msgid "Country"
-msgstr ""
+msgstr "Pays"
 
-#: customer/forms.py:24
+#: customer/forms.py:47 customer/models.py:23
 msgid "First name"
 msgstr "Prénom"
 
-#: customer/forms.py:28
+#: customer/forms.py:52 customer/models.py:27
 msgid "Last name"
 msgstr "Nom"
 
-#: customer/forms.py:32
+#: customer/forms.py:57 customer/models.py:32
 msgid "Company"
 msgstr "Entreprise"
 
-#: customer/forms.py:36 customer/forms.py:40
+#: customer/forms.py:62 customer/forms.py:67
 msgid "Address"
 msgstr "Adresse"
 
-#: customer/forms.py:45
+#: customer/forms.py:73
 msgid "(select country)"
 msgstr "(Sélectionner le pays)"
 
-#: customer/forms.py:48
+#: customer/forms.py:76
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: customer/forms.py:53
+#: customer/forms.py:82 customer/models.py:37
 msgid "Email"
 msgstr "Courriel"
 
-#: customer/forms.py:57
+#: customer/forms.py:87 customer/models.py:55
 msgid "City"
 msgstr "Ville"
 
-#: customer/forms.py:61
+#: customer/forms.py:92 customer/models.py:60
 msgid "State"
 msgstr "Région"
 
-#: customer/forms.py:66
+#: customer/forms.py:98 customer/models.py:64
 msgid "ZIP code"
 msgstr "Code postal"
+
+#: customer/models.py:41
+msgid "Address Line 1"
+msgstr "Adresse Ligne 1"
+
+#: customer/models.py:46
+msgid "Address Line 2 (optional)"
+msgstr "Adresse Ligne 2 (optionnelle)"
+
+#: customer/templates/customer/update_customer.html:6
+msgid "Add your billing data"
+msgstr "Vos informations de facturation."

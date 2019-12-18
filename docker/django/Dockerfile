@@ -5,6 +5,18 @@ ENV DOCKER_CONTAINER 1
 
 RUN apt-get clean && apt-get update && apt-get install -y \
   locales
+#  build-essential \
+#  python3-dev \
+#  python3-pip \
+#  python3-setuptools \
+#  python3-wheel \
+#  python3-cffi \
+#  libcairo2 \
+#  libpango-1.0-0 \
+#  libpangocairo-1.0-0 \
+#  libgdk-pixbuf2.0-0 \
+#  libffi-dev \
+#  shared-mime-info
 
 RUN echo "Europe/Paris" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \

@@ -1,16 +1,18 @@
 import logging
 import requests
+import re
 from requests.exceptions import HTTPError
 import json
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.utils import DatabaseError
 from django.conf import settings
+from urllib.parse import urlparse
 
 from crowdfunding.models import ProjectInvestment
-from customer.models import Customer, Provider
+from customer.models import Customer, Provider, Product
 
-from customer.copper import get_headers, get_api_endpoint
+from customer.silver import get_headers, get_api_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +34,10 @@ def on_customer_update(sender, instance, created, **kwargs):
         return
     if created:
         return
-    if instance.copper_id:
-        update_copper_customer(instance)
+    if instance.silver_id:
+        update_silver_customer(instance)
     else:
-        create_copper_customer(instance)
+        create_silver_customer(instance)
 
 def customer_instance_is_complete(instance):
     is_complete = (
@@ -51,8 +53,8 @@ def customer_instance_is_complete(instance):
     )
     return is_complete
 
-def create_copper_customer(instance):
-    data = json.dumps(copper_customer_json(instance))
+def create_silver_customer(instance):
+    data = json.dumps(silver_customer_json(instance))
     logger.debug(get_api_endpoint("customers"))
     logger.debug(get_headers())
     logger.debug(data)
@@ -66,27 +68,27 @@ def create_copper_customer(instance):
         response.raise_for_status()
         logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
         if response.ok:
-            copper_customer_id=int(json.loads(response.text)['id'])
-            Customer.objects.filter(pk=instance.pk).update(copper_id=copper_customer_id)
+            silver_customer_id=int(json.loads(response.text)['id'])
+            Customer.objects.filter(pk=instance.pk).update(silver_id=silver_customer_id)
     except HTTPError as http_err:
         logger.error(f'HTTP error occurred: {http_err}')
     except Exception as err:
         logger.error(f'Other error occurred: {err}')
     else:
-        logger.info(f'Provider {instance.last_name} creation was successful!')
+        logger.info(f'Customer {instance.last_name} creation was successful!')
 
-def update_copper_customer(instance):
-    copper_customer_id = instance.copper_id
-    if not copper_customer_id:
+def update_silver_customer(instance):
+    silver_customer_id = instance.silver_id
+    if not silver_customer_id:
         logger.warn(
             "This instance does not have a Copper customer id."
             "It cannot be updated on Copper."    
         )
         return
-    data = json.dumps(copper_customer_json(instance))
+    data = json.dumps(silver_customer_json(instance))
     try:
         response = requests.put(
-            url=get_api_endpoint("customers", copper_customer_id),
+            url=get_api_endpoint("customers", silver_customer_id),
             data=data,
             headers=get_headers()
         )
@@ -100,7 +102,7 @@ def update_copper_customer(instance):
     else:
         logger.info(f'Provider {instance.last_name} creation was successful!')
 
-def copper_customer_json(instance):
+def silver_customer_json(instance):
     """Create a dictionary containing all the values of the Customer instance"""
     data = dict()
     keys = [
@@ -129,7 +131,7 @@ def copper_customer_json(instance):
     data.update({"consolidated_billing": False})
     return data
 
-def copper_provider_json(instance):
+def silver_provider_json(instance):
     """Create a dictionary containing all the values of the Provider instance"""
     data = dict()
     keys = [
@@ -156,8 +158,8 @@ def copper_provider_json(instance):
         data.update(d)
     return data
 
-def create_copper_provider(instance):
-    data = json.dumps(copper_provider_json(instance))
+def create_silver_provider(instance):
+    data = json.dumps(silver_provider_json(instance))
     try:
         response = requests.post(
             url=get_api_endpoint("providers"),
@@ -168,8 +170,8 @@ def create_copper_provider(instance):
         response.raise_for_status()
         logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
         if response.ok:
-            copper_id=int(json.loads(response.text)['id'])
-            Provider.objects.filter(pk=instance.pk).update(copper_id=copper_id)
+            silver_id=int(json.loads(response.text)['id'])
+            Provider.objects.filter(pk=instance.pk).update(silver_id=silver_id)
     except HTTPError as http_err:
         logger.error(f'HTTP error occurred: {http_err}')
     except Exception as err:
@@ -177,19 +179,19 @@ def create_copper_provider(instance):
     else:
         logger.info(f'Provider {instance.company} creation was successful!')
 
-def update_copper_provider(instance):
-    copper_id = instance.copper_id
-    if not copper_id:
+def update_silver_provider(instance):
+    silver_id = instance.silver_id
+    if not silver_id:
         logger.warn(
             "This instance does not have a Copper provider id."
             "It cannot be updated on Copper."    
         )
         return        
-    data = json.dumps(copper_provider_json(instance))
+    data = json.dumps(silver_provider_json(instance))
 
     try:
         response = requests.put(
-            url=get_api_endpoint("providers", copper_id),
+            url=get_api_endpoint("providers", silver_id),
             data=data,
             headers=get_headers()
         )
@@ -203,9 +205,8 @@ def update_copper_provider(instance):
         logger.info(f'Provider {instance.company} was successfully updated!')
 
 @receiver(post_save, sender=Provider)
-def create_update_copper_provider(sender, instance, created, **kwargs):
+def create_update_silver_provider(sender, instance, created, **kwargs):
     """ Create or update provider in Silver billing app.
-    Silver is called copper inside our code.
     Create a new provider or update an existing provider.
     """
     if not provider_instance_is_complete(instance):
@@ -215,9 +216,9 @@ def create_update_copper_provider(sender, instance, created, **kwargs):
         )
         return
     if created is True:
-        create_copper_provider(instance)
+        create_silver_provider(instance)
     else:
-        update_copper_provider(instance)
+        update_silver_provider(instance)
 
 
 def provider_instance_is_complete(instance):
@@ -235,3 +236,71 @@ def provider_instance_is_complete(instance):
         instance.proforma_starting_number
     )
     return is_complete
+
+def create_silver_product_code(instance):
+    data = json.dumps({"value": instance.product_code})
+    try:
+        response = requests.post(
+            url=get_api_endpoint("product-codes"),
+            data=data,
+            headers=get_headers()
+        )
+        # If the response was successful, no Exception will be raised
+        response.raise_for_status()
+        logger.debug(f"{response}\n {response.text}\n {json.loads(response.text)}\n")
+        if response.ok:
+            url = json.loads(response.text)['url']
+            url_parsed = urlparse(url)
+            path = url_parsed.path
+            lst = re.findall('\d+', path)
+            if not lst:
+                return
+            silver_id = int(lst[0])
+            logger.debug(f"silver_id:{silver_id}")
+            Product.objects.filter(pk=instance.pk).update(silver_id=silver_id)
+    except HTTPError as http_err:
+        logger.error(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        logger.error(f'Other error occurred: {err}')
+    else:
+        logger.info(f'Product {instance.product_code} creation was successful!')
+
+def update_silver_product_code(instance):
+    silver_id = instance.silver_id
+    if not silver_id:
+        logger.warn(
+            "This instance does not have a Copper provider id."
+            "It cannot be updated on Copper."    
+        )
+        return        
+    data = json.dumps({"value": instance.product_code})
+    try:
+        response = requests.put(
+            url=get_api_endpoint("product-codes", silver_id),
+            data=data,
+            headers=get_headers()
+        )
+        # If the response was successful, no Exception will be raised
+        response.raise_for_status()
+    except HTTPError as http_err:
+        logger.error(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        logger.error(f'Other error occurred: {err}')
+    else:
+        logger.info(f'product_code {instance.product_code} was successfully updated!')
+
+@receiver(post_save, sender=Product)
+def create_update_silver_product_code(sender, instance, created, **kwargs):
+    """ Create or update product_code in Silver billing app.
+    Create a new product_code or update an existing product_code.
+    """
+    if not instance.product_code:
+        logger.warn(
+            "Required field 'product_code' is missing in Product instance. "
+            f"product_code will not be {(lambda: 'modified', lambda: 'created')[created]()} on Copper."
+        )
+        return
+    if created is True:
+        create_silver_product_code(instance)
+    else:
+        update_silver_product_code(instance)

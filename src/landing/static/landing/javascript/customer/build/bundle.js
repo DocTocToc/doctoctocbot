@@ -111,6 +111,9 @@ var app = (function () {
             throw new Error(`Function called outside component initialization`);
         return current_component;
     }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
 
     const dirty_components = [];
     const binding_callbacks = [];
@@ -4309,21 +4312,27 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
-    	child_ctx[11] = i;
+    	child_ctx[15] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[14] = list[i];
+    	child_ctx[20] = list[i];
+    	child_ctx[22] = i;
     	return child_ctx;
     }
 
-    // (93:0) {#each $locales as locale}
-    function create_each_block_1(ctx) {
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[24] = list[i];
+    	return child_ctx;
+    }
+
+    // (180:0) {#each $locales as locale}
+    function create_each_block_2(ctx) {
     	let option;
-    	let t_value = /*locale*/ ctx[14] + "";
+    	let t_value = /*locale*/ ctx[24] + "";
     	let t;
     	let option_value_value;
 
@@ -4331,18 +4340,18 @@ var app = (function () {
     		c: function create() {
     			option = element("option");
     			t = text$1(t_value);
-    			option.__value = option_value_value = /*locale*/ ctx[14];
+    			option.__value = option_value_value = /*locale*/ ctx[24];
     			option.value = option.__value;
-    			add_location(option, file, 93, 2, 2672);
+    			add_location(option, file, 180, 2, 5759);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
     			append_dev(option, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$locales*/ 2 && t_value !== (t_value = /*locale*/ ctx[14] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$locales*/ 8 && t_value !== (t_value = /*locale*/ ctx[24] + "")) set_data_dev(t, t_value);
 
-    			if (dirty & /*$locales*/ 2 && option_value_value !== (option_value_value = /*locale*/ ctx[14])) {
+    			if (dirty & /*$locales*/ 8 && option_value_value !== (option_value_value = /*locale*/ ctx[24])) {
     				prop_dev(option, "__value", option_value_value);
     			}
 
@@ -4355,19 +4364,19 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1.name,
+    		id: create_each_block_2.name,
     		type: "each",
-    		source: "(93:0) {#each $locales as locale}",
+    		source: "(180:0) {#each $locales as locale}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (127:0) {:catch error}
-    function create_catch_block(ctx) {
+    // (220:0) {:catch error}
+    function create_catch_block_1(ctx) {
     	let p;
-    	let t_value = /*error*/ ctx[13].message + "";
+    	let t_value = /*error*/ ctx[19].message + "";
     	let t;
 
     	const block = {
@@ -4375,7 +4384,366 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 127, 0, 3502);
+    			add_location(p, file, 220, 0, 6760);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction*/ 2 && t_value !== (t_value = /*error*/ ctx[19].message + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block_1.name,
+    		type: "catch",
+    		source: "(220:0) {:catch error}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (204:0) {:then res_jsn}
+    function create_then_block_1(ctx) {
+    	let each_1_anchor;
+    	let each_value_1 = /*res_jsn*/ ctx[23];
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction, myButton, createInvoice, local_date*/ 35) {
+    				each_value_1 = /*res_jsn*/ ctx[23];
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_1.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block_1.name,
+    		type: "then",
+    		source: "(204:0) {:then res_jsn}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (214:4) {:else}
+    function create_else_block(ctx) {
+    	let a;
+    	let t;
+    	let a_href_value;
+
+    	const block = {
+    		c: function create() {
+    			a = element("a");
+    			t = text$1("Pdf");
+    			attr_dev(a, "href", a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf");
+    			add_location(a, file, 214, 4, 6646);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, a, anchor);
+    			append_dev(a, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction*/ 2 && a_href_value !== (a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf")) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(a);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(214:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (212:4) {#if (purchase["invoice"] === null)}
+    function create_if_block_1(ctx) {
+    	let button;
+    	let t;
+    	let button_value_value;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			button = element("button");
+    			t = text$1("Create");
+    			attr_dev(button, "class", "btn btn-primary");
+    			button.value = button_value_value = /*purchase*/ ctx[20]["pk"];
+    			add_location(button, file, 212, 4, 6511);
+    			dispose = listen_dev(button, "click", /*createInvoice*/ ctx[5], false, false, false);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, button, anchor);
+    			append_dev(button, t);
+    			/*button_binding*/ ctx[14](button);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction*/ 2 && button_value_value !== (button_value_value = /*purchase*/ ctx[20]["pk"])) {
+    				prop_dev(button, "value", button_value_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(button);
+    			/*button_binding*/ ctx[14](null);
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(212:4) {#if (purchase[\\\"invoice\\\"] === null)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (205:0) {#each res_jsn as purchase, i}
+    function create_each_block_1(ctx) {
+    	let tr;
+    	let th;
+    	let t0_value = /*i*/ ctx[22] + 1 + "";
+    	let t0;
+    	let t1;
+    	let t2_value = /*purchase*/ ctx[20]["pk"] + "";
+    	let t2;
+    	let t3;
+    	let td0;
+    	let t4_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "";
+    	let t4;
+    	let t5;
+    	let td1;
+    	let t6_value = /*purchase*/ ctx[20]["project"] + "";
+    	let t6;
+    	let t7;
+    	let td2;
+    	let t8_value = /*purchase*/ ctx[20]["pledged"] + "";
+    	let t8;
+    	let t9;
+    	let td3;
+    	let t10;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*purchase*/ ctx[20]["invoice"] === null) return create_if_block_1;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			tr = element("tr");
+    			th = element("th");
+    			t0 = text$1(t0_value);
+    			t1 = text$1(" pk:");
+    			t2 = text$1(t2_value);
+    			t3 = space();
+    			td0 = element("td");
+    			t4 = text$1(t4_value);
+    			t5 = space();
+    			td1 = element("td");
+    			t6 = text$1(t6_value);
+    			t7 = space();
+    			td2 = element("td");
+    			t8 = text$1(t8_value);
+    			t9 = space();
+    			td3 = element("td");
+    			if_block.c();
+    			t10 = space();
+    			attr_dev(th, "scope", "row");
+    			add_location(th, file, 206, 4, 6290);
+    			add_location(td0, file, 207, 4, 6343);
+    			add_location(td1, file, 208, 4, 6391);
+    			add_location(td2, file, 209, 4, 6426);
+    			add_location(td3, file, 210, 4, 6461);
+    			add_location(tr, file, 205, 2, 6281);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, tr, anchor);
+    			append_dev(tr, th);
+    			append_dev(th, t0);
+    			append_dev(th, t1);
+    			append_dev(th, t2);
+    			append_dev(tr, t3);
+    			append_dev(tr, td0);
+    			append_dev(td0, t4);
+    			append_dev(tr, t5);
+    			append_dev(tr, td1);
+    			append_dev(td1, t6);
+    			append_dev(tr, t7);
+    			append_dev(tr, td2);
+    			append_dev(td2, t8);
+    			append_dev(tr, t9);
+    			append_dev(tr, td3);
+    			if_block.m(td3, null);
+    			append_dev(tr, t10);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction*/ 2 && t2_value !== (t2_value = /*purchase*/ ctx[20]["pk"] + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*promise_transaction*/ 2 && t4_value !== (t4_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "")) set_data_dev(t4, t4_value);
+    			if (dirty & /*promise_transaction*/ 2 && t6_value !== (t6_value = /*purchase*/ ctx[20]["project"] + "")) set_data_dev(t6, t6_value);
+    			if (dirty & /*promise_transaction*/ 2 && t8_value !== (t8_value = /*purchase*/ ctx[20]["pledged"] + "")) set_data_dev(t8, t8_value);
+
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(td3, null);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(tr);
+    			if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(205:0) {#each res_jsn as purchase, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (197:28)  <tr> <th scope="row">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}
+    function create_pending_block_1(ctx) {
+    	let tr;
+    	let th;
+    	let t1;
+    	let td0;
+    	let t3;
+    	let td1;
+    	let t5;
+    	let td2;
+
+    	const block = {
+    		c: function create() {
+    			tr = element("tr");
+    			th = element("th");
+    			th.textContent = "1";
+    			t1 = space();
+    			td0 = element("td");
+    			td0.textContent = "Data loading...";
+    			t3 = space();
+    			td1 = element("td");
+    			td1.textContent = "Data loading...";
+    			t5 = space();
+    			td2 = element("td");
+    			td2.textContent = "Data loading...";
+    			attr_dev(th, "scope", "row");
+    			add_location(th, file, 198, 0, 6128);
+    			add_location(td0, file, 199, 0, 6151);
+    			add_location(td1, file, 200, 0, 6176);
+    			add_location(td2, file, 201, 0, 6201);
+    			add_location(tr, file, 197, 0, 6123);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, tr, anchor);
+    			append_dev(tr, th);
+    			append_dev(tr, t1);
+    			append_dev(tr, td0);
+    			append_dev(tr, t3);
+    			append_dev(tr, td1);
+    			append_dev(tr, t5);
+    			append_dev(tr, td2);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(tr);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block_1.name,
+    		type: "pending",
+    		source: "(197:28)  <tr> <th scope=\\\"row\\\">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (236:0) {:catch error}
+    function create_catch_block(ctx) {
+    	let p;
+    	let t_value = /*error*/ ctx[19].message + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			t = text$1(t_value);
+    			set_style(p, "color", "red");
+    			add_location(p, file, 236, 0, 7084);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4391,17 +4759,17 @@ var app = (function () {
     		block,
     		id: create_catch_block.name,
     		type: "catch",
-    		source: "(127:0) {:catch error}",
+    		source: "(236:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (117:0) {:then res_jsn}
+    // (230:0) {:then customer_jsn}
     function create_then_block(ctx) {
     	let each_1_anchor;
-    	let each_value = /*res_jsn*/ ctx[12];
+    	let each_value = /*customer_jsn*/ ctx[18];
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -4424,8 +4792,8 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*promise, createInvoice, local_date*/ 8) {
-    				each_value = /*res_jsn*/ ctx[12];
+    			if (dirty & /*promise_customer*/ 64) {
+    				each_value = /*customer_jsn*/ ctx[18];
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
@@ -4457,100 +4825,72 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(117:0) {:then res_jsn}",
+    		source: "(230:0) {:then customer_jsn}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (118:0) {#each res_jsn as purchase, i}
-    function create_each_block(ctx) {
-    	let tr;
-    	let th;
-    	let t0_value = /*i*/ ctx[11] + 1 + "";
+    // (232:0) {#if (customer["empty_fields"])}
+    function create_if_block(ctx) {
+    	let p;
     	let t0;
+    	let t1_value = /*customer*/ ctx[15]["empty_fields"] + "";
     	let t1;
-    	let t2_value = /*purchase*/ ctx[9]["pk"] + "";
     	let t2;
-    	let t3;
-    	let td0;
-    	let t4_value = local_date(/*purchase*/ ctx[9]["datetime"]) + "";
-    	let t4;
-    	let t5;
-    	let td1;
-    	let t6_value = /*purchase*/ ctx[9]["project"] + "";
-    	let t6;
-    	let t7;
-    	let td2;
-    	let t8_value = /*purchase*/ ctx[9]["pledged"] + "";
-    	let t8;
-    	let t9;
-    	let td3;
-    	let button;
-    	let t10;
-    	let button_value_value;
-    	let t11;
-    	let dispose;
 
     	const block = {
     		c: function create() {
-    			tr = element("tr");
-    			th = element("th");
-    			t0 = text$1(t0_value);
-    			t1 = text$1(" pk:");
-    			t2 = text$1(t2_value);
-    			t3 = space();
-    			td0 = element("td");
-    			t4 = text$1(t4_value);
-    			t5 = space();
-    			td1 = element("td");
-    			t6 = text$1(t6_value);
-    			t7 = space();
-    			td2 = element("td");
-    			t8 = text$1(t8_value);
-    			t9 = space();
-    			td3 = element("td");
-    			button = element("button");
-    			t10 = text$1("Create");
-    			t11 = space();
-    			attr_dev(th, "scope", "row");
-    			add_location(th, file, 119, 4, 3191);
-    			add_location(td0, file, 120, 4, 3244);
-    			add_location(td1, file, 121, 4, 3292);
-    			add_location(td2, file, 122, 4, 3327);
-    			attr_dev(button, "class", "btn btn-primary");
-    			button.value = button_value_value = /*purchase*/ ctx[9]["pk"];
-    			add_location(button, file, 123, 8, 3366);
-    			add_location(td3, file, 123, 4, 3362);
-    			add_location(tr, file, 118, 2, 3182);
-    			dispose = listen_dev(button, "click", createInvoice, false, false, false);
+    			p = element("p");
+    			t0 = text$1("Pour nous permettre d'éditer votre facture, merci de compléter: ");
+    			t1 = text$1(t1_value);
+    			t2 = text$1(".");
+    			add_location(p, file, 232, 0, 6956);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, tr, anchor);
-    			append_dev(tr, th);
-    			append_dev(th, t0);
-    			append_dev(th, t1);
-    			append_dev(th, t2);
-    			append_dev(tr, t3);
-    			append_dev(tr, td0);
-    			append_dev(td0, t4);
-    			append_dev(tr, t5);
-    			append_dev(tr, td1);
-    			append_dev(td1, t6);
-    			append_dev(tr, t7);
-    			append_dev(tr, td2);
-    			append_dev(td2, t8);
-    			append_dev(tr, t9);
-    			append_dev(tr, td3);
-    			append_dev(td3, button);
-    			append_dev(button, t10);
-    			append_dev(tr, t11);
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t0);
+    			append_dev(p, t1);
+    			append_dev(p, t2);
     		},
     		p: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(tr);
-    			dispose();
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(232:0) {#if (customer[\\\"empty_fields\\\"])}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (231:0) {#each customer_jsn as customer}
+    function create_each_block(ctx) {
+    	let if_block_anchor;
+    	let if_block = /*customer*/ ctx[15]["empty_fields"] && create_if_block(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*customer*/ ctx[15]["empty_fields"]) if_block.p(ctx, dirty);
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
 
@@ -4558,58 +4898,29 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(118:0) {#each res_jsn as purchase, i}",
+    		source: "(231:0) {#each customer_jsn as customer}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (110:16)  <tr> <th scope="row">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}
+    // (228:25)  <p>...</p> {:then customer_jsn}
     function create_pending_block(ctx) {
-    	let tr;
-    	let th;
-    	let t1;
-    	let td0;
-    	let t3;
-    	let td1;
-    	let t5;
-    	let td2;
+    	let p;
 
     	const block = {
     		c: function create() {
-    			tr = element("tr");
-    			th = element("th");
-    			th.textContent = "1";
-    			t1 = space();
-    			td0 = element("td");
-    			td0.textContent = "Data loading...";
-    			t3 = space();
-    			td1 = element("td");
-    			td1.textContent = "Data loading...";
-    			t5 = space();
-    			td2 = element("td");
-    			td2.textContent = "Data loading...";
-    			attr_dev(th, "scope", "row");
-    			add_location(th, file, 111, 0, 3029);
-    			add_location(td0, file, 112, 0, 3052);
-    			add_location(td1, file, 113, 0, 3077);
-    			add_location(td2, file, 114, 0, 3102);
-    			add_location(tr, file, 110, 0, 3024);
+    			p = element("p");
+    			p.textContent = "...";
+    			add_location(p, file, 228, 0, 6858);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, tr, anchor);
-    			append_dev(tr, th);
-    			append_dev(tr, t1);
-    			append_dev(tr, td0);
-    			append_dev(tr, t3);
-    			append_dev(tr, td1);
-    			append_dev(tr, t5);
-    			append_dev(tr, td2);
+    			insert_dev(target, p, anchor);
     		},
     		p: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(tr);
+    			if (detaching) detach_dev(p);
     		}
     	};
 
@@ -4617,7 +4928,7 @@ var app = (function () {
     		block,
     		id: create_pending_block.name,
     		type: "pending",
-    		source: "(110:16)  <tr> <th scope=\\\"row\\\">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}",
+    		source: "(228:25)  <p>...</p> {:then customer_jsn}",
     		ctx
     	});
 
@@ -4633,43 +4944,59 @@ var app = (function () {
     	let th0;
     	let t2;
     	let th1;
-    	let t3_value = /*$_*/ ctx[2]("table.date") + "";
+    	let t3_value = /*$_*/ ctx[4]("table.date") + "";
     	let t3;
     	let t4;
     	let th2;
-    	let t5_value = /*$_*/ ctx[2]("table.purchase") + "";
+    	let t5_value = /*$_*/ ctx[4]("table.purchase") + "";
     	let t5;
     	let t6;
     	let th3;
-    	let t7_value = /*$_*/ ctx[2]("table.amount") + "";
+    	let t7_value = /*$_*/ ctx[4]("table.amount") + "";
     	let t7;
     	let t8;
     	let th4;
-    	let t9_value = /*$_*/ ctx[2]("table.invoice") + "";
+    	let t9_value = /*$_*/ ctx[4]("table.invoice") + "";
     	let t9;
     	let t10;
     	let tbody;
+    	let promise;
+    	let t11;
+    	let await_block1_anchor;
     	let promise_1;
     	let dispose;
-    	let each_value_1 = /*$locales*/ ctx[1];
+    	let each_value_2 = /*$locales*/ ctx[3];
     	let each_blocks = [];
 
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
     	}
 
     	let info = {
     		ctx,
     		current: null,
     		token: null,
+    		pending: create_pending_block_1,
+    		then: create_then_block_1,
+    		catch: create_catch_block_1,
+    		value: 23,
+    		error: 19
+    	};
+
+    	handle_promise(promise = /*promise_transaction*/ ctx[1], info);
+
+    	let info_1 = {
+    		ctx,
+    		current: null,
+    		token: null,
     		pending: create_pending_block,
     		then: create_then_block,
     		catch: create_catch_block,
-    		value: 12,
-    		error: 13
+    		value: 18,
+    		error: 19
     	};
 
-    	handle_promise(promise_1 = /*promise*/ ctx[3], info);
+    	handle_promise(promise_1 = /*promise_customer*/ ctx[6], info_1);
 
     	const block = {
     		c: function create() {
@@ -4700,24 +5027,27 @@ var app = (function () {
     			t10 = space();
     			tbody = element("tbody");
     			info.block.c();
-    			if (/*$locale*/ ctx[0] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[8].call(select));
-    			add_location(select, file, 91, 0, 2613);
+    			t11 = space();
+    			await_block1_anchor = empty();
+    			info_1.block.c();
+    			if (/*$locale*/ ctx[2] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[13].call(select));
+    			add_location(select, file, 178, 0, 5700);
     			attr_dev(th0, "scope", "col");
-    			add_location(th0, file, 100, 4, 2773);
+    			add_location(th0, file, 187, 4, 5860);
     			attr_dev(th1, "scope", "col");
-    			add_location(th1, file, 101, 4, 2800);
+    			add_location(th1, file, 188, 4, 5887);
     			attr_dev(th2, "scope", "col");
-    			add_location(th2, file, 102, 4, 2844);
+    			add_location(th2, file, 189, 4, 5931);
     			attr_dev(th3, "scope", "col");
-    			add_location(th3, file, 103, 4, 2892);
+    			add_location(th3, file, 190, 4, 5979);
     			attr_dev(th4, "scope", "col");
-    			add_location(th4, file, 104, 4, 2938);
-    			add_location(tr, file, 99, 2, 2764);
-    			add_location(thead, file, 98, 0, 2754);
-    			add_location(tbody, file, 107, 0, 2998);
+    			add_location(th4, file, 191, 4, 6025);
+    			add_location(tr, file, 186, 2, 5851);
+    			add_location(thead, file, 185, 0, 5841);
+    			add_location(tbody, file, 194, 0, 6085);
     			attr_dev(table, "class", "table");
-    			add_location(table, file, 97, 0, 2732);
-    			dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[8]);
+    			add_location(table, file, 184, 0, 5819);
+    			dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[13]);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4729,7 +5059,7 @@ var app = (function () {
     				each_blocks[i].m(select, null);
     			}
 
-    			select_option(select, /*$locale*/ ctx[0]);
+    			select_option(select, /*$locale*/ ctx[2]);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, table, anchor);
     			append_dev(table, thead);
@@ -4752,21 +5082,26 @@ var app = (function () {
     			info.block.m(tbody, info.anchor = null);
     			info.mount = () => tbody;
     			info.anchor = null;
+    			insert_dev(target, t11, anchor);
+    			insert_dev(target, await_block1_anchor, anchor);
+    			info_1.block.m(target, info_1.anchor = anchor);
+    			info_1.mount = () => await_block1_anchor.parentNode;
+    			info_1.anchor = await_block1_anchor;
     		},
     		p: function update(new_ctx, [dirty]) {
     			ctx = new_ctx;
 
-    			if (dirty & /*$locales*/ 2) {
-    				each_value_1 = /*$locales*/ ctx[1];
+    			if (dirty & /*$locales*/ 8) {
+    				each_value_2 = /*$locales*/ ctx[3];
     				let i;
 
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+    				for (i = 0; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i] = create_each_block_2(child_ctx);
     						each_blocks[i].c();
     						each_blocks[i].m(select, null);
     					}
@@ -4776,22 +5111,29 @@ var app = (function () {
     					each_blocks[i].d(1);
     				}
 
-    				each_blocks.length = each_value_1.length;
+    				each_blocks.length = each_value_2.length;
     			}
 
-    			if (dirty & /*$locale*/ 1) {
-    				select_option(select, /*$locale*/ ctx[0]);
+    			if (dirty & /*$locale*/ 4) {
+    				select_option(select, /*$locale*/ ctx[2]);
     			}
 
-    			if (dirty & /*$_*/ 4 && t3_value !== (t3_value = /*$_*/ ctx[2]("table.date") + "")) set_data_dev(t3, t3_value);
-    			if (dirty & /*$_*/ 4 && t5_value !== (t5_value = /*$_*/ ctx[2]("table.purchase") + "")) set_data_dev(t5, t5_value);
-    			if (dirty & /*$_*/ 4 && t7_value !== (t7_value = /*$_*/ ctx[2]("table.amount") + "")) set_data_dev(t7, t7_value);
-    			if (dirty & /*$_*/ 4 && t9_value !== (t9_value = /*$_*/ ctx[2]("table.invoice") + "")) set_data_dev(t9, t9_value);
+    			if (dirty & /*$_*/ 16 && t3_value !== (t3_value = /*$_*/ ctx[4]("table.date") + "")) set_data_dev(t3, t3_value);
+    			if (dirty & /*$_*/ 16 && t5_value !== (t5_value = /*$_*/ ctx[4]("table.purchase") + "")) set_data_dev(t5, t5_value);
+    			if (dirty & /*$_*/ 16 && t7_value !== (t7_value = /*$_*/ ctx[4]("table.amount") + "")) set_data_dev(t7, t7_value);
+    			if (dirty & /*$_*/ 16 && t9_value !== (t9_value = /*$_*/ ctx[4]("table.invoice") + "")) set_data_dev(t9, t9_value);
+    			info.ctx = ctx;
+
+    			if (dirty & /*promise_transaction*/ 2 && promise !== (promise = /*promise_transaction*/ ctx[1]) && handle_promise(promise, info)) ; else {
+    				const child_ctx = ctx.slice();
+    				child_ctx[23] = info.resolved;
+    				info.block.p(child_ctx, dirty);
+    			}
 
     			{
     				const child_ctx = ctx.slice();
-    				child_ctx[12] = info.resolved;
-    				info.block.p(child_ctx, dirty);
+    				child_ctx[18] = info_1.resolved;
+    				info_1.block.p(child_ctx, dirty);
     			}
     		},
     		i: noop,
@@ -4804,6 +5146,11 @@ var app = (function () {
     			info.block.d();
     			info.token = null;
     			info = null;
+    			if (detaching) detach_dev(t11);
+    			if (detaching) detach_dev(await_block1_anchor);
+    			info_1.block.d(detaching);
+    			info_1.token = null;
+    			info_1 = null;
     			dispose();
     		}
     	};
@@ -4819,16 +5166,18 @@ var app = (function () {
     	return block;
     }
 
-    function createInvoice(event) {
-    	console.log("hello");
-    	console.log(event.target.value);
-    	return;
-    }
-
     function local_date(date) {
     	var d = new Date(date);
     	var l_d = d.toLocaleDateString();
     	return l_d;
+    }
+
+    function disable_button() {
+    	document.getElementsByClassName("btn-primary").disabled = true;
+    }
+
+    function enable_button() {
+    	document.getElementsByClassName("btn-primary").disabled = false;
     }
 
     function instance($$self, $$props, $$invalidate) {
@@ -4836,11 +5185,61 @@ var app = (function () {
     	let $locales;
     	let $_;
     	validate_store(D, "locale");
-    	component_subscribe($$self, D, $$value => $$invalidate(0, $locale = $$value));
+    	component_subscribe($$self, D, $$value => $$invalidate(2, $locale = $$value));
     	validate_store(m, "locales");
-    	component_subscribe($$self, m, $$value => $$invalidate(1, $locales = $$value));
+    	component_subscribe($$self, m, $$value => $$invalidate(3, $locales = $$value));
     	validate_store(_, "_");
-    	component_subscribe($$self, _, $$value => $$invalidate(2, $_ = $$value));
+    	component_subscribe($$self, _, $$value => $$invalidate(4, $_ = $$value));
+    	let myButton;
+
+    	onMount(() => {
+    		getCustomer().then(customer_jsn => {
+    			console.log(customer_jsn);
+    			console.log(customer_jsn[0]);
+    			console.log(customer_jsn[0]["empty_fields"]);
+
+    			if (!(customer_jsn[0]["empty_fields"] === "")) {
+    				$$invalidate(0, myButton.disabled = true, myButton);
+    				myButton.classList.toggle("btn-warning");
+    				myButton.classList.toggle("btn-primary");
+    				$$invalidate(0, myButton.innerHTML = "Compléter le formulaire contact.", myButton);
+    			}
+    		});
+    	});
+
+    	function createInvoice(event) {
+    		if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
+    			console.log("confirmed");
+    			console.log(event.target.value);
+    			postInvoice(event);
+    			getCustomer();
+    			return;
+    		}
+    	}
+
+    	async function postInvoice(event) {
+    		console.log(event.target.value);
+
+    		const config = {
+    			method: "POST",
+    			headers: {
+    				"Accept": "application/json",
+    				"Content-Type": "application/json",
+    				"X-CSRFToken": `${csrftoken}`
+    			},
+    			body: JSON.stringify({ "uuid": event.target.value })
+    		};
+
+    		const res = await fetch(`http://127.0.0.1/customer/api/invoice/`, config);
+    		const res_jsn = await res.json();
+
+    		if (res.ok) {
+    			console.log(JSON.stringify(res_jsn));
+    			return res_jsn;
+    		} else {
+    			throw new Error(text);
+    		}
+    	}
 
     	l.set({
     		en: {
@@ -4877,8 +5276,6 @@ var app = (function () {
     		}
     	};
 
-    	let promise = getTransaction();
-
     	async function getTransaction() {
     		const config = {
     			method: "GET",
@@ -4890,11 +5287,60 @@ var app = (function () {
     		};
 
     		const res = await fetch(`http://127.0.0.1/financement/api/projectinvestment/`, config);
-    		const res_jsn = await res.json();
+    		var res_jsn = await res.json();
 
     		if (res.ok) {
-    			console.log(`res_jsn:${res_jsn[0]["project"]}`);
+    			var str = JSON.stringify(res_jsn, null, 2);
+    			console.log(`res_jsn:${str}`);
     			return res_jsn;
+    		} else {
+    			throw new Error(text);
+    		}
+    	}
+
+    	let promise_customer = getCustomer();
+
+    	async function getCustomer() {
+    		const config = {
+    			method: "GET",
+    			headers: {
+    				"Accept": "application/json",
+    				"Content-Type": "application/json",
+    				"X-CSRFToken": `${csrftoken}`
+    			}
+    		};
+
+    		const res = await fetch(`http://127.0.0.1/customer/api/customer/`, config);
+    		const customer_jsn = await res.json();
+
+    		if (res.ok) {
+    			var str = JSON.stringify(customer_jsn, null, 2);
+    			var k;
+    			console.log(`customer_jsn:${str}`);
+    			var empty_fields = [];
+    			var dct = customer_jsn[0];
+
+    			for (k in dct) {
+    				console.log(`k:${k}`);
+    				console.log(`dct[k]:${dct[k]}`);
+
+    				if (dct[k] === "" || dct[k] == null) {
+    					empty_fields.push(k);
+    				}
+    			}
+
+    			console.log(`empty_fields:${empty_fields}`);
+    			var empty_fields_list = "";
+
+    			if (empty_fields.length) {
+    				empty_fields_list = empty_fields.join(", ");
+    				disable_button();
+    			} else {
+    				enable_button();
+    			}
+
+    			customer_jsn[0]["empty_fields"] = empty_fields_list;
+    			return customer_jsn;
     		} else {
     			throw new Error(text);
     		}
@@ -4905,29 +5351,46 @@ var app = (function () {
     		D.set($locale);
     	}
 
+    	function button_binding($$value) {
+    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    			$$invalidate(0, myButton = $$value);
+    		});
+    	}
+
     	$$self.$capture_state = () => {
     		return {};
     	};
 
     	$$self.$inject_state = $$props => {
+    		if ("myButton" in $$props) $$invalidate(0, myButton = $$props.myButton);
     		if ("csrftoken" in $$props) csrftoken = $$props.csrftoken;
     		if ("headers" in $$props) headers = $$props.headers;
-    		if ("promise" in $$props) $$invalidate(3, promise = $$props.promise);
+    		if ("promise_customer" in $$props) $$invalidate(6, promise_customer = $$props.promise_customer);
+    		if ("promise_transaction" in $$props) $$invalidate(1, promise_transaction = $$props.promise_transaction);
     		if ("$locale" in $$props) D.set($locale = $$props.$locale);
     		if ("$locales" in $$props) m.set($locales = $$props.$locales);
     		if ("$_" in $$props) _.set($_ = $$props.$_);
     	};
 
+    	let promise_transaction;
+    	 $$invalidate(1, promise_transaction = getTransaction());
+
     	return [
+    		myButton,
+    		promise_transaction,
     		$locale,
     		$locales,
     		$_,
-    		promise,
+    		createInvoice,
+    		promise_customer,
+    		postInvoice,
     		csrftoken,
     		headers,
     		config,
     		getTransaction,
-    		select_change_handler
+    		getCustomer,
+    		select_change_handler,
+    		button_binding
     	];
     }
 

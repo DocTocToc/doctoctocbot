@@ -188,6 +188,10 @@ INSTALLED_APPS = [
     'markdownify',
     'optin',
     'bootstrap_modal_forms',
+    'dal',
+    'dal_select2',
+    'silver',
+    'rest_framework.authtoken',
 ]
 
 if DEBUG:
@@ -376,6 +380,14 @@ CELERY_TASK_ROUTES = {
     'conversation.tasks.handle_update_trees': {'queue': 'tree'},
 }
 
+ONCE = {
+  'backend': 'celery_once.backends.Redis',
+  'settings': {
+    'url': CELERY_RESULT_BACKEND,
+    'default_timeout': 60 * 60
+  }
+}
+
 # CACHE
 CACHES = {
     "default": {
@@ -393,6 +405,10 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
 
@@ -528,10 +544,15 @@ if DEBUG:
     
 
 # Copper (name of Silver billing app inside our project)
-COPPER_EXTRA = config('COPPER_EXTRA', default="") # "Tax exempt due to XXX"
-COPPER_SALES_TAX_PERCENT = config('COPPER_SALES_TAX_PERCENT', cast=int, default=0) # 24
-COPPER_SALES_TAX_NAME = config('COPPER_SALES_TAX_NAME', default="") # "VAT"
-COPPER_SALES_TAX_NUMBER = config('COPPER_SALES_TAX_NUMBER', default="") # "1234567890"
+SILVER_EXTRA = config('SILVER_EXTRA', default="") # "Tax exempt due to XXX"
+SILVER_SALES_TAX_PERCENT = config('SILVER_SALES_TAX_PERCENT', cast=int, default=0) # 24
+SILVER_SALES_TAX_NAME = config('SILVER_SALES_TAX_NAME', default="") # "VAT"
+SILVER_SALES_TAX_NUMBER = config('SILVER_SALES_TAX_NUMBER', default="") # "1234567890"
 # Copper 
-COPPER_TOKEN = config('COPPER_TOKEN')
-COPPER_URL = config('COPPER_URL')
+SILVER_TOKEN = config('SILVER_TOKEN')
+SILVER_URL = config('SILVER_URL')
+
+PAYMENT_PROCESSORS = {}
+SILVER_AUTOMATICALLY_CREATE_TRANSACTIONS = False
+SILVER_DOCUMENT_PREFIX = config('SILVER_DOCUMENT_PREFIX')
+SILVER_DOCUMENT_STORAGE = None

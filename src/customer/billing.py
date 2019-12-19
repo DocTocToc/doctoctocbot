@@ -8,7 +8,7 @@ import logging
 from silver.models.documents.invoice import Invoice
 from silver.models.documents.entries import DocumentEntry
 from silver.models.product_codes import ProductCode
-from silver.tasks import generate_pdf
+from customer.tasks import generate_pdf
 
 from crowdfunding.models import ProjectInvestment, Project
 from customer.models import Customer, Provider, Product

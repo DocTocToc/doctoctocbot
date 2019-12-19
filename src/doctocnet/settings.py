@@ -300,6 +300,9 @@ LANGUAGES = [
 
 ]
 
+LOCALE_PATHS = [
+    "templates/locale",
+]
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
 # you have to generate the locales you will use on your GNU/Linux server:
 # $ locale-gen fr_FR.UTF-8

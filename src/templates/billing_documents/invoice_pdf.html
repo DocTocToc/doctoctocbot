@@ -155,6 +155,9 @@ strong {
       <tr>
         <td width="8cm">
           <h1>{% trans "Issuer" %}: {{ provider.billing_name }}</h1>
+          {% if provider.name %}
+          {{ provider.name }}<br>
+          {% endif %}
           <strong>{% trans "Address" %}</strong>: {{ provider.address_1 }}<br>
           {% if provider.address_2 %}
           {{ provider.address_2 }}<br>

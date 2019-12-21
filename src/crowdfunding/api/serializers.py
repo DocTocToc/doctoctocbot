@@ -11,4 +11,4 @@ class ProjectInvestmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProjectInvestment
-        fields = ('pk', 'project', 'pledged', 'datetime', 'invoice')
+        fields = ('pk', 'project', 'pledged', 'datetime', 'invoice', 'invoice_pdf',)

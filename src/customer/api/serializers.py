@@ -9,7 +9,6 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = (
             'first_name',
             'last_name',
-            'company',
             'address_1',
             'country',
             'city',

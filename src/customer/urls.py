@@ -10,8 +10,8 @@ router = routers.DefaultRouter()
 router.register(r'customer', CustomerViewSet)
 
 urlpatterns = [
+    path('customer/api/invoice/', create_invoice, name='invoice'),
     path('customer/api/', include(router.urls)),
     path('customer/', views.get_customer, name='customer'),
     path('thanks/', TemplateView.as_view(template_name='customer/thanks.html')),
-    path('customer/api/invoice/', create_invoice, name='invoice'),
 ]

@@ -33,7 +33,7 @@ class ProjectInvestmentFilterBackend(DRYPermissionFiltersBase):
         return queryset.filter(
             user=request.user,
             paid=True
-        )
+        ).order_by('datetime')
 
 
 class ProjectInvestmentViewSet(viewsets.ModelViewSet):

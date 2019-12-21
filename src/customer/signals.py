@@ -11,22 +11,82 @@ from urllib.parse import urlparse
 
 from crowdfunding.models import ProjectInvestment
 from customer.models import Customer, Provider, Product
+from silver.models.billing_entities.customer import Customer as SilverCustomer
+from silver.models.billing_entities.provider import Provider as SilverProvider
+from silver.models.documents.invoice import Invoice as SilverInvoice
 
 from customer.silver import get_headers, get_api_endpoint
 
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=ProjectInvestment)
-def create_customer(sender, instance, created, **kwargs):
+def create_customer_and_draft_invoice(sender, instance, created, **kwargs):
     logger.debug("create_customer()")
-    if instance.paid is True:
-        logger.debug("create_customer(), paid is True")
+    # start invoicing only if instance is paid
+    # start invoicing only if instance doesn't already have invoice
+    if instance.paid is True and instance.invoice is None:
+        logger.debug("paid is True, invoice is None: create customer, silver customer (temp), silver invoice (draft)")
         try:
-            Customer.objects.create(
+            doctocnet_customer, _created = Customer.objects.get_or_create(
                 user = instance.user,
             )
         except DatabaseError:
             return
+        try:
+            silver_customer = SilverCustomer.objects.get(customer_reference=str(instance.user.id))
+        except SilverCustomer.DoesNotExist:
+            silver_customer = create_draft_silver_customer(
+                customer_reference = str(instance.user.id)
+            )
+        if not silver_customer:
+            return
+        # add silver_id to draft customer
+        doctocnet_customer.silver_id = silver_customer.id
+        doctocnet_customer.save()
+
+        provider = instance.project.provider
+        try:
+            silver_provider = SilverProvider.objects.get(id=provider.silver_id)
+        except SilverProvider.DoesNotExist:
+            return
+        #calculate ProjectInvestment cardinality
+        cardinality = project_investment_cardinality(instance)
+        silver_invoice = create_draft_silver_invoice(
+            silver_customer = silver_customer,
+            silver_provider = silver_provider,
+            cardinality = cardinality,
+        )
+        instance.invoice = silver_invoice.id
+        instance.save()
+
+def create_draft_silver_invoice(
+        silver_customer: SilverCustomer,
+        silver_provider: SilverProvider,
+        cardinality: int):
+    silver_invoice, _ = SilverInvoice.objects.get_or_create(
+        customer=silver_customer,
+        provider=silver_provider,
+        number=cardinality,
+        )
+    return silver_invoice
+
+def project_investment_cardinality(project_investment: ProjectInvestment):
+    return ProjectInvestment.objects.filter(
+        paid=True,
+        datetime__lte=project_investment.datetime).count()
+
+def create_draft_silver_customer(customer_reference: str):
+    try:
+        return SilverCustomer.objects.create(
+            customer_reference = customer_reference,
+            first_name = "?",
+            last_name = "?",
+            address_1 = "?",
+            city = "?",
+            country = "VA", # Holy See (Vatican City State)
+        )
+    except DatabaseError:
+        return
 
 @receiver(post_save, sender=Customer)
 def on_customer_update(sender, instance, created, **kwargs):
@@ -34,7 +94,7 @@ def on_customer_update(sender, instance, created, **kwargs):
         return
     if created:
         return
-    if instance.silver_id:
+    if instance.silver_id is not None:
         update_silver_customer(instance)
     else:
         create_silver_customer(instance)
@@ -100,7 +160,7 @@ def update_silver_customer(instance):
     except Exception as err:
         logger.error(f'Other error occurred: {err}')
     else:
-        logger.info(f'Provider {instance.last_name} creation was successful!')
+        logger.info(f"Customer {json.loads(response.text)['id']} update was successful!")
 
 def silver_customer_json(instance):
     """Create a dictionary containing all the values of the Customer instance"""

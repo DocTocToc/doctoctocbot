@@ -14,19 +14,11 @@
         	    myButton.disabled=true;
         	    myButton.classList.toggle("btn-warning");
         	    myButton.classList.toggle("btn-primary");
-        	    myButton.innerHTML = "Compléter le formulaire contact.";
+        	    myButton.innerHTML = "Complétez le formulaire.";
         	}
         });
     });
-    function createInvoice(event) {
-    	if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
-        	console.log("confirmed");
-            console.log(event.target.value);
-            postInvoice(event);
-            getCustomer();
-            return;
-    	}
-    }
+
 
     async function postInvoice(event) {
         console.log(event.target.value);
@@ -114,6 +106,19 @@
         } else {
             throw new Error(text);
         }
+    }
+
+    function createInvoice(event) {
+    	if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
+        	console.log("confirmed");
+            console.log(event.target.value);
+            postInvoice(event);
+            var delayInMilliseconds = 3000; //1 second
+            setTimeout(function() {
+            	promise_transaction = getTransaction();
+            }, delayInMilliseconds);
+            return;
+    	}
     }
 
     let promise_customer = getCustomer();
@@ -204,15 +209,15 @@
 {:then res_jsn}
 {#each res_jsn as purchase, i}
   <tr>
-    <th scope="row">{i + 1} pk:{purchase["pk"]}</th>
+    <th scope="row">{i + 1}</th>
     <td>{local_date(purchase["datetime"])}</td>
     <td>{purchase["project"]}</td>
     <td>{purchase["pledged"]}</td>
     <td>
-    {#if (purchase["invoice"] === null)}
-    <button class="btn btn-primary" bind:this={myButton} value="{purchase['pk']}" on:click={createInvoice}>Create</button>
-    {:else}
+    {#if (purchase["invoice_pdf"])}
     <a href='/silver/invoices/{purchase["invoice"]}.pdf'>Pdf</a>
+    {:else}
+    <button class="btn btn-primary" bind:this={myButton} value="{purchase['pk']}" on:click={createInvoice}>Create</button>
     {/if}
     </td>
   </tr>

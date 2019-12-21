@@ -4329,7 +4329,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (180:0) {#each $locales as locale}
+    // (185:0) {#each $locales as locale}
     function create_each_block_2(ctx) {
     	let option;
     	let t_value = /*locale*/ ctx[24] + "";
@@ -4342,7 +4342,7 @@ var app = (function () {
     			t = text$1(t_value);
     			option.__value = option_value_value = /*locale*/ ctx[24];
     			option.value = option.__value;
-    			add_location(option, file, 180, 2, 5759);
+    			add_location(option, file, 185, 2, 5907);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -4366,14 +4366,14 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(180:0) {#each $locales as locale}",
+    		source: "(185:0) {#each $locales as locale}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (220:0) {:catch error}
+    // (225:0) {:catch error}
     function create_catch_block_1(ctx) {
     	let p;
     	let t_value = /*error*/ ctx[19].message + "";
@@ -4384,7 +4384,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 220, 0, 6760);
+    			add_location(p, file, 225, 0, 6883);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4402,14 +4402,14 @@ var app = (function () {
     		block,
     		id: create_catch_block_1.name,
     		type: "catch",
-    		source: "(220:0) {:catch error}",
+    		source: "(225:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (204:0) {:then res_jsn}
+    // (209:0) {:then res_jsn}
     function create_then_block_1(ctx) {
     	let each_1_anchor;
     	let each_value_1 = /*res_jsn*/ ctx[23];
@@ -4468,53 +4468,15 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(204:0) {:then res_jsn}",
+    		source: "(209:0) {:then res_jsn}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (214:4) {:else}
+    // (219:4) {:else}
     function create_else_block(ctx) {
-    	let a;
-    	let t;
-    	let a_href_value;
-
-    	const block = {
-    		c: function create() {
-    			a = element("a");
-    			t = text$1("Pdf");
-    			attr_dev(a, "href", a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf");
-    			add_location(a, file, 214, 4, 6646);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, a, anchor);
-    			append_dev(a, t);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*promise_transaction*/ 2 && a_href_value !== (a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf")) {
-    				attr_dev(a, "href", a_href_value);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(a);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(214:4) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (212:4) {#if (purchase["invoice"] === null)}
-    function create_if_block_1(ctx) {
     	let button;
     	let t;
     	let button_value_value;
@@ -4526,7 +4488,7 @@ var app = (function () {
     			t = text$1("Create");
     			attr_dev(button, "class", "btn btn-primary");
     			button.value = button_value_value = /*purchase*/ ctx[20]["pk"];
-    			add_location(button, file, 212, 4, 6511);
+    			add_location(button, file, 219, 4, 6711);
     			dispose = listen_dev(button, "click", /*createInvoice*/ ctx[5], false, false, false);
     		},
     		m: function mount(target, anchor) {
@@ -4548,42 +4510,77 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1.name,
-    		type: "if",
-    		source: "(212:4) {#if (purchase[\\\"invoice\\\"] === null)}",
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(219:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (205:0) {#each res_jsn as purchase, i}
+    // (217:4) {#if (purchase["invoice_pdf"])}
+    function create_if_block_1(ctx) {
+    	let a;
+    	let t;
+    	let a_href_value;
+
+    	const block = {
+    		c: function create() {
+    			a = element("a");
+    			t = text$1("Pdf");
+    			attr_dev(a, "href", a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf");
+    			add_location(a, file, 217, 4, 6634);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, a, anchor);
+    			append_dev(a, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*promise_transaction*/ 2 && a_href_value !== (a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf")) {
+    				attr_dev(a, "href", a_href_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(a);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(217:4) {#if (purchase[\\\"invoice_pdf\\\"])}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (210:0) {#each res_jsn as purchase, i}
     function create_each_block_1(ctx) {
     	let tr;
     	let th;
     	let t0_value = /*i*/ ctx[22] + 1 + "";
     	let t0;
     	let t1;
-    	let t2_value = /*purchase*/ ctx[20]["pk"] + "";
+    	let td0;
+    	let t2_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "";
     	let t2;
     	let t3;
-    	let td0;
-    	let t4_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "";
+    	let td1;
+    	let t4_value = /*purchase*/ ctx[20]["project"] + "";
     	let t4;
     	let t5;
-    	let td1;
-    	let t6_value = /*purchase*/ ctx[20]["project"] + "";
+    	let td2;
+    	let t6_value = /*purchase*/ ctx[20]["pledged"] + "";
     	let t6;
     	let t7;
-    	let td2;
-    	let t8_value = /*purchase*/ ctx[20]["pledged"] + "";
-    	let t8;
-    	let t9;
     	let td3;
-    	let t10;
+    	let t8;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*purchase*/ ctx[20]["invoice"] === null) return create_if_block_1;
+    		if (/*purchase*/ ctx[20]["invoice_pdf"]) return create_if_block_1;
     		return create_else_block;
     	}
 
@@ -4595,54 +4592,49 @@ var app = (function () {
     			tr = element("tr");
     			th = element("th");
     			t0 = text$1(t0_value);
-    			t1 = text$1(" pk:");
+    			t1 = space();
+    			td0 = element("td");
     			t2 = text$1(t2_value);
     			t3 = space();
-    			td0 = element("td");
+    			td1 = element("td");
     			t4 = text$1(t4_value);
     			t5 = space();
-    			td1 = element("td");
+    			td2 = element("td");
     			t6 = text$1(t6_value);
     			t7 = space();
-    			td2 = element("td");
-    			t8 = text$1(t8_value);
-    			t9 = space();
     			td3 = element("td");
     			if_block.c();
-    			t10 = space();
+    			t8 = space();
     			attr_dev(th, "scope", "row");
-    			add_location(th, file, 206, 4, 6290);
-    			add_location(td0, file, 207, 4, 6343);
-    			add_location(td1, file, 208, 4, 6391);
-    			add_location(td2, file, 209, 4, 6426);
-    			add_location(td3, file, 210, 4, 6461);
-    			add_location(tr, file, 205, 2, 6281);
+    			add_location(th, file, 211, 4, 6438);
+    			add_location(td0, file, 212, 4, 6471);
+    			add_location(td1, file, 213, 4, 6519);
+    			add_location(td2, file, 214, 4, 6554);
+    			add_location(td3, file, 215, 4, 6589);
+    			add_location(tr, file, 210, 2, 6429);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
     			append_dev(tr, th);
     			append_dev(th, t0);
-    			append_dev(th, t1);
-    			append_dev(th, t2);
-    			append_dev(tr, t3);
+    			append_dev(tr, t1);
     			append_dev(tr, td0);
-    			append_dev(td0, t4);
-    			append_dev(tr, t5);
+    			append_dev(td0, t2);
+    			append_dev(tr, t3);
     			append_dev(tr, td1);
-    			append_dev(td1, t6);
-    			append_dev(tr, t7);
+    			append_dev(td1, t4);
+    			append_dev(tr, t5);
     			append_dev(tr, td2);
-    			append_dev(td2, t8);
-    			append_dev(tr, t9);
+    			append_dev(td2, t6);
+    			append_dev(tr, t7);
     			append_dev(tr, td3);
     			if_block.m(td3, null);
-    			append_dev(tr, t10);
+    			append_dev(tr, t8);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*promise_transaction*/ 2 && t2_value !== (t2_value = /*purchase*/ ctx[20]["pk"] + "")) set_data_dev(t2, t2_value);
-    			if (dirty & /*promise_transaction*/ 2 && t4_value !== (t4_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "")) set_data_dev(t4, t4_value);
-    			if (dirty & /*promise_transaction*/ 2 && t6_value !== (t6_value = /*purchase*/ ctx[20]["project"] + "")) set_data_dev(t6, t6_value);
-    			if (dirty & /*promise_transaction*/ 2 && t8_value !== (t8_value = /*purchase*/ ctx[20]["pledged"] + "")) set_data_dev(t8, t8_value);
+    			if (dirty & /*promise_transaction*/ 2 && t2_value !== (t2_value = local_date(/*purchase*/ ctx[20]["datetime"]) + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*promise_transaction*/ 2 && t4_value !== (t4_value = /*purchase*/ ctx[20]["project"] + "")) set_data_dev(t4, t4_value);
+    			if (dirty & /*promise_transaction*/ 2 && t6_value !== (t6_value = /*purchase*/ ctx[20]["pledged"] + "")) set_data_dev(t6, t6_value);
 
     			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
     				if_block.p(ctx, dirty);
@@ -4666,14 +4658,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(205:0) {#each res_jsn as purchase, i}",
+    		source: "(210:0) {#each res_jsn as purchase, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (197:28)  <tr> <th scope="row">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}
+    // (202:28)  <tr> <th scope="row">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}
     function create_pending_block_1(ctx) {
     	let tr;
     	let th;
@@ -4699,11 +4691,11 @@ var app = (function () {
     			td2 = element("td");
     			td2.textContent = "Data loading...";
     			attr_dev(th, "scope", "row");
-    			add_location(th, file, 198, 0, 6128);
-    			add_location(td0, file, 199, 0, 6151);
-    			add_location(td1, file, 200, 0, 6176);
-    			add_location(td2, file, 201, 0, 6201);
-    			add_location(tr, file, 197, 0, 6123);
+    			add_location(th, file, 203, 0, 6276);
+    			add_location(td0, file, 204, 0, 6299);
+    			add_location(td1, file, 205, 0, 6324);
+    			add_location(td2, file, 206, 0, 6349);
+    			add_location(tr, file, 202, 0, 6271);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -4725,14 +4717,14 @@ var app = (function () {
     		block,
     		id: create_pending_block_1.name,
     		type: "pending",
-    		source: "(197:28)  <tr> <th scope=\\\"row\\\">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}",
+    		source: "(202:28)  <tr> <th scope=\\\"row\\\">1</th> <td>Data loading...</td> <td>Data loading...</td> <td>Data loading...</td> </tr> {:then res_jsn}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (236:0) {:catch error}
+    // (241:0) {:catch error}
     function create_catch_block(ctx) {
     	let p;
     	let t_value = /*error*/ ctx[19].message + "";
@@ -4743,7 +4735,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 236, 0, 7084);
+    			add_location(p, file, 241, 0, 7207);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4759,14 +4751,14 @@ var app = (function () {
     		block,
     		id: create_catch_block.name,
     		type: "catch",
-    		source: "(236:0) {:catch error}",
+    		source: "(241:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (230:0) {:then customer_jsn}
+    // (235:0) {:then customer_jsn}
     function create_then_block(ctx) {
     	let each_1_anchor;
     	let each_value = /*customer_jsn*/ ctx[18];
@@ -4825,14 +4817,14 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(230:0) {:then customer_jsn}",
+    		source: "(235:0) {:then customer_jsn}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (232:0) {#if (customer["empty_fields"])}
+    // (237:0) {#if (customer["empty_fields"])}
     function create_if_block(ctx) {
     	let p;
     	let t0;
@@ -4846,7 +4838,7 @@ var app = (function () {
     			t0 = text$1("Pour nous permettre d'éditer votre facture, merci de compléter: ");
     			t1 = text$1(t1_value);
     			t2 = text$1(".");
-    			add_location(p, file, 232, 0, 6956);
+    			add_location(p, file, 237, 0, 7079);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4864,14 +4856,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(232:0) {#if (customer[\\\"empty_fields\\\"])}",
+    		source: "(237:0) {#if (customer[\\\"empty_fields\\\"])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (231:0) {#each customer_jsn as customer}
+    // (236:0) {#each customer_jsn as customer}
     function create_each_block(ctx) {
     	let if_block_anchor;
     	let if_block = /*customer*/ ctx[15]["empty_fields"] && create_if_block(ctx);
@@ -4898,14 +4890,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(231:0) {#each customer_jsn as customer}",
+    		source: "(236:0) {#each customer_jsn as customer}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (228:25)  <p>...</p> {:then customer_jsn}
+    // (233:25)  <p>...</p> {:then customer_jsn}
     function create_pending_block(ctx) {
     	let p;
 
@@ -4913,7 +4905,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "...";
-    			add_location(p, file, 228, 0, 6858);
+    			add_location(p, file, 233, 0, 6981);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4928,7 +4920,7 @@ var app = (function () {
     		block,
     		id: create_pending_block.name,
     		type: "pending",
-    		source: "(228:25)  <p>...</p> {:then customer_jsn}",
+    		source: "(233:25)  <p>...</p> {:then customer_jsn}",
     		ctx
     	});
 
@@ -5031,22 +5023,22 @@ var app = (function () {
     			await_block1_anchor = empty();
     			info_1.block.c();
     			if (/*$locale*/ ctx[2] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[13].call(select));
-    			add_location(select, file, 178, 0, 5700);
+    			add_location(select, file, 183, 0, 5848);
     			attr_dev(th0, "scope", "col");
-    			add_location(th0, file, 187, 4, 5860);
+    			add_location(th0, file, 192, 4, 6008);
     			attr_dev(th1, "scope", "col");
-    			add_location(th1, file, 188, 4, 5887);
+    			add_location(th1, file, 193, 4, 6035);
     			attr_dev(th2, "scope", "col");
-    			add_location(th2, file, 189, 4, 5931);
+    			add_location(th2, file, 194, 4, 6079);
     			attr_dev(th3, "scope", "col");
-    			add_location(th3, file, 190, 4, 5979);
+    			add_location(th3, file, 195, 4, 6127);
     			attr_dev(th4, "scope", "col");
-    			add_location(th4, file, 191, 4, 6025);
-    			add_location(tr, file, 186, 2, 5851);
-    			add_location(thead, file, 185, 0, 5841);
-    			add_location(tbody, file, 194, 0, 6085);
+    			add_location(th4, file, 196, 4, 6173);
+    			add_location(tr, file, 191, 2, 5999);
+    			add_location(thead, file, 190, 0, 5989);
+    			add_location(tbody, file, 199, 0, 6233);
     			attr_dev(table, "class", "table");
-    			add_location(table, file, 184, 0, 5819);
+    			add_location(table, file, 189, 0, 5967);
     			dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[13]);
     		},
     		l: function claim(nodes) {
@@ -5202,20 +5194,10 @@ var app = (function () {
     				$$invalidate(0, myButton.disabled = true, myButton);
     				myButton.classList.toggle("btn-warning");
     				myButton.classList.toggle("btn-primary");
-    				$$invalidate(0, myButton.innerHTML = "Compléter le formulaire contact.", myButton);
+    				$$invalidate(0, myButton.innerHTML = "Complétez le formulaire.", myButton);
     			}
     		});
     	});
-
-    	function createInvoice(event) {
-    		if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
-    			console.log("confirmed");
-    			console.log(event.target.value);
-    			postInvoice(event);
-    			getCustomer();
-    			return;
-    		}
-    	}
 
     	async function postInvoice(event) {
     		console.log(event.target.value);
@@ -5295,6 +5277,24 @@ var app = (function () {
     			return res_jsn;
     		} else {
     			throw new Error(text);
+    		}
+    	}
+
+    	function createInvoice(event) {
+    		if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
+    			console.log("confirmed");
+    			console.log(event.target.value);
+    			postInvoice(event);
+    			var delayInMilliseconds = 3000;
+
+    			setTimeout(
+    				function () {
+    					$$invalidate(1, promise_transaction = getTransaction());
+    				},
+    				delayInMilliseconds
+    			);
+
+    			return;
     		}
     	}
 

@@ -31,7 +31,7 @@ ENV LANG fr_FR.UTF-8
 ENV LANGUAGE fr_FR
 ENV LC_ALL fr_FR.UTF-8
 
-COPY ./requirements /code/requirements
+ADD ./requirements /code/requirements
 RUN pip install --upgrade pip
 RUN pip install --upgrade -r /code/requirements/common.txt
 

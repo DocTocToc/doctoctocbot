@@ -24,8 +24,12 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.core import urls as wagtail_urls
 # wagtail stop
 from ajax_select import urls as ajax_select_urls
+from doctocnet.views import media_access
 
 urlpatterns = [
+    re_path(r'^media/(?P<path>.*)', media_access, name='media'),
+    path('admin/', admin.site.urls),
+    path('silver/', include('silver.urls')),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
     path('', include('landing.urls')),
@@ -41,7 +45,6 @@ urlpatterns = [
 
     path('conversation/', include('conversation.urls')),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
-    path('admin/', admin.site.urls),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
     
@@ -50,8 +53,6 @@ urlpatterns = [
     re_path(r'^documents/', include(wagtaildocs_urls)),
 #    re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'', include(wagtail_urls)),
-    
-
 ]
 
 # Use static() to add url mappings to serve static files during development (only)

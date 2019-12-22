@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-22 19:46+0100\n"
+"POT-Creation-Date: 2019-12-22 18:16+0100\n"
 "PO-Revision-Date: 2019-10-21 19:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings.py:293 doctocnet/settings_backup/base.py:191
+#: doctocnet/settings.py:298 doctocnet/settings_backup/base.py:191
 msgid "French"
 msgstr "Français"
 
@@ -122,6 +122,10 @@ msgstr "Blog"
 #: doctocnet/templates/doctocnet/navbar.html:77
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
+
+#: doctocnet/views.py:37 doctocnet/views.py:50
+msgid "Not authorized to access this media."
+msgstr ""
 
 #~ msgid "English"
 #~ msgstr "Anglais"

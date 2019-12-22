@@ -37,3 +37,4 @@ def update_transaction_count(sender, instance, created, **kwargs):
     project_mi = instance.project
     project_mi.transaction_count = ProjectInvestment.objects.filter(paid=True).count()
     project_mi.save()
+    

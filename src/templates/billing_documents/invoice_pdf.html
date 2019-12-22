@@ -1,0 +1,260 @@
+{% load staticfiles %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{% if document.state == 'canceled' %} {% trans "Canceled" %} {% elif document.state == 'paid' %} FACTURE ACQUITTÉE {% endif %} {{ document.kind }} {{ document.series }}-{{ document.number }} {% if document.is_storno %}, {% trans "storno of" %} {{ document.related_document.series }}-{{ document.related_document.number }}{% endif %}</title>
+<style type="text/css">
+@page {
+	size: a4;
+	margin: 2cm;
+}
+
+/* Normal */
+@font-face {
+	font-family: open-sans;
+	src: url({% static 'font/OpenSans-Regular.ttf' %});
+}
+
+/* Bold */
+@font-face {
+	font-family: open-sans;
+	src: url({% static 'font/OpenSans-Bold.ttf' %});
+font-weight
+:
+ 
+bold
+;
+
+        
+}
+
+/* Italic */
+@font-face {
+	font-family: open-sans;
+	src: url({% static 'font/OpenSans-Italic.ttf' %});
+    font-style:italic;
+}
+
+/* Bold Italic */
+@font-face {
+	font-family: open-sans;
+	src: url({% static 'font/OpenSans-BoldItalic.ttf' %});
+    font-style:italic;
+    font-weight:bold;
+}
+hr {
+	color: #86ba49;
+}
+
+html {
+	font-family: open-sans;
+}
+
+body {
+	font-family: open-sans;
+	font-size: 8pt;
+	color: #4d4d4d;
+}
+
+strong {
+	font-weight: bold;
+}
+
+#parties td {
+	vertical-align: top;
+}
+
+#entries {
+	margin-top: 1cm;
+}
+
+#entries th {
+	text-align: left;
+}
+
+#entries th.price {
+	text-align: left;
+}
+
+#entries tr {
+	padding: 5pt 0 1pt;
+	border-bottom: 1pt solid #ddd;
+}
+
+#entries tbody td {
+	vertical-align: top;
+}
+
+#entries tbody td {
+	padding-right: 3pt;
+}
+
+#entries tfoot {
+	font-weight: bold;
+}
+
+#entries tfoot tr {
+	border-bottom: none;
+}
+
+#entries tfoot td {
+	vertical-align: top;
+}
+
+#entries tfoot .total {
+	padding-left: 5pt;
+	padding-right: 5pt;
+	text-align: right;
+}
+</style>
+</head>
+<body>
+  <div id="header">
+    <table>
+      <tr>
+        <td class="title">
+          <h1>{% if document.state == 'canceled' %}{% trans "Canceled" %} {% endif %}
+            FACTURE {% if document.state == 'paid' %} ACQUITTÉE {% endif %}</h1>
+          {% if document.is_storno %}
+          <h2>Storno of {{ document.related_document.series }}-{{ document.related_document.number }}</h2>
+          {% endif %}
+          <table>
+            <tr>
+              <td width="48mm"><strong>{% trans "Number" %}</strong></td>
+              <td>{{ document.number }}</td>
+            </tr>
+            <tr>
+              <td width="48mm"><strong>{% trans "Issue date" %}</strong></td>
+              <td>{{ document.issue_date|date:"j F Y" }}</td>
+            </tr>
+            <tr>
+              <td width="48mm">
+              <strong>{% trans "Due date" %}</strong>
+              </td>
+              <td>
+              {{ document.due_date|date:"j F Y" }}
+              </td>
+            </tr>
+            {% if document.sales_tax_percent %}
+            <tr>
+              <td width="48mm" style="vertical-align: top;">
+              <strong>{% if document.sales_tax_name %}{{ document.sales_tax_name }}{% else %}Tax{% endif %}</strong>
+              </td>
+              <td>{{ document.sales_tax_percent }}%</td>
+            </tr>
+            {% endif %}
+          </table>
+        </td>
+      </tr>
+    </table>
+    <hr color="#86ba49" size="0.5mm">
+  </div>
+  <div id="content">
+    <table id="parties">
+      <tr>
+        <td width="8cm">
+          <h1>{% trans "Issuer" %}: {{ provider.billing_name }}</h1>
+          {% if provider.name %}
+          {{ provider.name }}<br>
+          {% endif %}
+          <strong>{% trans "Address" %}</strong>: {{ provider.address_1 }}<br>
+          {% if provider.address_2 %}
+          {{ provider.address_2 }}<br>
+          {% endif %}
+          {{ provider.city }}<br>
+          {% if provider.state %}
+          {{ provider.state }}<br>
+          {% endif %}
+          {% if provider.zip_code %}
+          {{ provider.zip_code }}<br>
+          {% endif %}
+          {% if provider.email %}
+          <strong>Email</strong>: {{ provider.email }}<br>
+          {% endif %}
+          {% if provider.extra %}<br>
+          {{ provider.extra|linebreaksbr }}<br>
+          {% endif %}
+        </td>
+        <td width="8cm">
+          <h1>{% trans "Customer" %}: {{ customer.billing_name }}</h1>
+          {% if customer.sales_tax_number %}
+          <strong>{% trans "Tax ID" %}</strong>: {{ customer.sales_tax_number }}<br>
+          {% endif %}
+          <strong>{% trans "Address" %}</strong>: {{ customer.address_1 }}<br>
+          {% if customer.address_2 %}
+          {{ customer.address_2 }}<br>
+          {% endif %}
+          {{ customer.city }}<br>
+          {% if customer.state %}
+          {{ customer.state }}<br>
+          {% endif %}
+          {% if customer.zip_code %}
+          {{ customer.zip_code }}<br>
+          {% endif %}
+          {% if customer.email %}
+          <strong>{% trans "Email" %}</strong>: {{ customer.email }}<br>
+          {% endif %}
+          {% if customer.company %}
+          <strong>{% trans "Name" %}</strong>: {{ customer.name }}<br>
+          {% endif %}
+          {% if customer.customer_reference %}
+          <strong>{% trans "Customer Reference" %}</strong>: {{ customer.customer_reference }}<br>
+          {% endif %}
+          {% if customer.extra %}<br>
+          {{ customer.extra|linebreaksbr }}
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+    <table id="entries">
+      <thead>
+        <tr>
+          <th width="3%"><i>#</i><br></th>
+          <th width="27%" class="description">{% trans "Service" %}</th>
+          <th width="10%">{% trans "Start date" %}</th>
+          <th width="10%">{% trans "End date" %}</th>
+          <th class="unit" width="15%">{% trans "Unit" %}</th>
+          <th class="count" width="5%">{% trans "Qty" %}.</th>
+          <th class="unit_price" width="15%">{% trans "Unit price" %}</th>
+          <th class="price" width="15%">{% trans "Total Amount" %}</th>
+        </tr>
+      </thead>
+      <hr color="#86ba49" size="0.5mm">
+      <tbody>
+        {% for entry in entries %}
+        <tr>
+          <td class="index">{{ forloop.counter }}</td>
+          <td class="description">{{ entry.description }}</td>
+          <td>{{ entry.start_date|date:"d/m/Y" }}</td>
+          <td>{{ entry.end_date|date:"d/m/Y" }}</td>
+          <td class="unit">{{ entry.unit }}</td>
+          <td class="count">{{ entry.quantity|floatformat:-2 }}</td>
+          <td class="unit_price">{{ entry.unit_price|floatformat:2 }} {{ document.currency }}</td>
+          <td class="price">{{ entry.total|floatformat:2 }} {{ document.currency }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="7" class="total">{% trans "Total" %}</td>
+          <td class="total_amount">{{ document.total|floatformat:2 }} {{ document.currency }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  <hr color="#86ba49" size="0.5mm">
+  </div>
+  <div>
+    <table>
+      <tr>
+        <td width="48mm"><strong>{% trans "Date of payment" %}:</strong></td>
+        <td>{{ document.paid_date|date:"j F Y" }}</td>
+      </tr>
+      <tr>
+        <td width="48mm"><strong>{% trans "Payment method" %}:</strong></td>
+        <td>{% trans "Debit card" %}</td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

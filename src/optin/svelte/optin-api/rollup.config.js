@@ -16,7 +16,7 @@ export default {
 		name: 'app',
 		file: 'public/bundle.js',
 		globals: {
-            'js-cookies': 'Cookies',
+            'js-cookie': 'Cookies',
         }
 	},
 	plugins: [

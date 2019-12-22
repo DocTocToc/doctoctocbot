@@ -356,7 +356,7 @@ def charge(request):
                 source=request.POST['stripeToken'],
                 metadata={'uuid': uuid_str},
             )
-            # mark project investmen object as paid
+            # mark project investment object as paid
             
         except stripe.error.CardError as e:
             # Since it's a decline, stripe.error.CardError will be caught

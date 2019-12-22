@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-22 19:46+0100\n"
-"PO-Revision-Date: 2019-10-18 23:00+0200\n"
+"POT-Creation-Date: 2019-12-22 18:16+0100\n"
+"PO-Revision-Date: 2019-12-22 16:57+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -27,6 +27,100 @@ msgstr ""
 "\n"
 "<h1>4🧐4 Page non trouvée</h1>\n"
 "<p>Cette page n'existe pas encore!</p>\n"
+
+#: templates/billing_documents/invoice_pdf.html:6
+#: templates/billing_documents/invoice_pdf.html:117
+msgid "Canceled"
+msgstr "Annulée"
+
+#: templates/billing_documents/invoice_pdf.html:6
+msgid "storno of"
+msgstr "extourne de"
+
+#: templates/billing_documents/invoice_pdf.html:124
+msgid "Number"
+msgstr "Numéro"
+
+#: templates/billing_documents/invoice_pdf.html:128
+msgid "Issue date"
+msgstr "Date d'émission"
+
+#: templates/billing_documents/invoice_pdf.html:133
+msgid "Due date"
+msgstr "Échéance"
+
+#: templates/billing_documents/invoice_pdf.html:157
+msgid "Issuer"
+msgstr "Prestataire"
+
+#: templates/billing_documents/invoice_pdf.html:161
+#: templates/billing_documents/invoice_pdf.html:184
+msgid "Address"
+msgstr "Adresse"
+
+#: templates/billing_documents/invoice_pdf.html:180
+msgid "Customer"
+msgstr "Client"
+
+#: templates/billing_documents/invoice_pdf.html:182
+msgid "Tax ID"
+msgstr "ID taxe"
+
+#: templates/billing_documents/invoice_pdf.html:196
+msgid "Email"
+msgstr "Courriel"
+
+#: templates/billing_documents/invoice_pdf.html:199
+msgid "Name"
+msgstr "Nom"
+
+#: templates/billing_documents/invoice_pdf.html:202
+msgid "Customer Reference"
+msgstr "Référence client"
+
+#: templates/billing_documents/invoice_pdf.html:214
+msgid "Service"
+msgstr "Service"
+
+#: templates/billing_documents/invoice_pdf.html:215
+msgid "Start date"
+msgstr "Début"
+
+#: templates/billing_documents/invoice_pdf.html:216
+msgid "End date"
+msgstr "Fin"
+
+#: templates/billing_documents/invoice_pdf.html:217
+msgid "Unit"
+msgstr "Unité"
+
+#: templates/billing_documents/invoice_pdf.html:218
+msgid "Qty"
+msgstr "Qté"
+
+#: templates/billing_documents/invoice_pdf.html:219
+msgid "Unit price"
+msgstr "Prix unitaire"
+
+#: templates/billing_documents/invoice_pdf.html:220
+msgid "Total Amount"
+msgstr "Montant total"
+
+#: templates/billing_documents/invoice_pdf.html:240
+msgid "Total"
+msgstr "Total"
+
+#: templates/billing_documents/invoice_pdf.html:250
+msgid "Date of payment"
+msgstr "Date du règlement"
+
+#: templates/billing_documents/invoice_pdf.html:254
+msgid "Payment method"
+msgstr "Méthode de paiement"
+
+#: templates/billing_documents/invoice_pdf.html:255
+msgid "Debit card"
+msgstr "Carte bancaire"
 
 #: templates/registration/login.html:12
 msgid "Your username and password didn't match. Please try again."
@@ -70,6 +164,12 @@ msgstr ""
 "Nous vous avons envoyé un mail avec des instructions pour réinitialiser "
 "votre mot de passe. Si le mail n'arrive pas dans quelques minutes, vérifiez "
 "votre dossier spam."
+
+#: templates/registration/password_reset_email.html:2
+msgid "Someone asked for password reset. Follow the link below:"
+msgstr ""
+"Quelqu'un a demandé la réinitialisation du mot de passe. Merci de suivre le "
+"lien ci-dessous:"
 
 #: templates/registration/password_reset_form.html:4
 msgid "Please enter the email you used to register your account."

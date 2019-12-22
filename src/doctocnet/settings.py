@@ -187,6 +187,11 @@ INSTALLED_APPS = [
     'tagging',
     'markdownify',
     'optin',
+    'bootstrap_modal_forms',
+    'dal',
+    'dal_select2',
+    'silver',
+    'rest_framework.authtoken',
 ]
 
 if DEBUG:
@@ -295,6 +300,9 @@ LANGUAGES = [
 
 ]
 
+LOCALE_PATHS = [
+    "templates/locale",
+]
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
 # you have to generate the locales you will use on your GNU/Linux server:
 # $ locale-gen fr_FR.UTF-8
@@ -314,10 +322,9 @@ USE_TZ = True
 
 
 
-
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
-LOGIN_REDIRECT_URL = '/user/'
+LOGIN_REDIRECT_URL = '/user/profile'
 
 # custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -375,6 +382,14 @@ CELERY_TASK_ROUTES = {
     'conversation.tasks.handle_update_trees': {'queue': 'tree'},
 }
 
+ONCE = {
+  'backend': 'celery_once.backends.Redis',
+  'settings': {
+    'url': CELERY_RESULT_BACKEND,
+    'default_timeout': 60 * 60
+  }
+}
+
 # CACHE
 CACHES = {
     "default": {
@@ -392,6 +407,10 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
 
@@ -524,3 +543,18 @@ if DEBUG:
     # CORS
     CORS_ORIGIN_ALLOW_ALL = config('CORS_ORIGIN_ALLOW_ALL', default=False, cast=bool)
     CORS_ORIGIN_WHITELIST = config('CORS_ORIGIN_WHITELIST', cast=Csv())
+    
+
+# Copper (name of Silver billing app inside our project)
+SILVER_EXTRA = config('SILVER_EXTRA', default="") # "Tax exempt due to XXX"
+SILVER_SALES_TAX_PERCENT = config('SILVER_SALES_TAX_PERCENT', cast=int, default=0) # 24
+SILVER_SALES_TAX_NAME = config('SILVER_SALES_TAX_NAME', default="") # "VAT"
+SILVER_SALES_TAX_NUMBER = config('SILVER_SALES_TAX_NUMBER', default="") # "1234567890"
+# Copper 
+SILVER_TOKEN = config('SILVER_TOKEN')
+SILVER_URL = config('SILVER_URL')
+
+PAYMENT_PROCESSORS = {}
+SILVER_AUTOMATICALLY_CREATE_TRANSACTIONS = False
+SILVER_DOCUMENT_PREFIX = config('SILVER_DOCUMENT_PREFIX')
+SILVER_DOCUMENT_STORAGE = None

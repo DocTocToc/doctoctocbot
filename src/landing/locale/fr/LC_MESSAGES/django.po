@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-22 19:46+0100\n"
-"PO-Revision-Date: 2019-11-22 18:34+0100\n"
+"POT-Creation-Date: 2019-12-22 18:16+0100\n"
+"PO-Revision-Date: 2019-12-22 18:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -44,6 +44,7 @@ msgid "Network"
 msgstr "Réseau"
 
 #: landing/templates/landing/user.html:33
+#: landing/templates/landing/usernav.html:14 landing/views.py:74
 msgid "Profile"
 msgstr "Profil"
 
@@ -60,46 +61,28 @@ msgid "Receipt"
 msgstr "Facture"
 
 #: landing/templates/landing/user.html:45
+#: landing/templates/landing/usernav.html:26
 msgid "Options"
 msgstr "Options"
 
 #: landing/templates/landing/user.html:49
+#: landing/templates/landing/usernav.html:31
 msgid "Moderation"
 msgstr "Modération"
 
-#: landing/templates/landing/user.html:55
-msgid "User Profile"
-msgstr "Profil utilisateur"
+#: landing/templates/landing/user/account.html:29
+msgid "Change your password."
+msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user.html:58
-msgid "Twitter screen name:"
-msgstr "Nom d'utilisateur Twitter:"
+#: landing/templates/landing/user/billing.html:41
+msgid "Edit"
+msgstr "Éditer"
 
-#: landing/templates/landing/user.html:60
-msgid "Category"
-msgstr "Catégorie"
-
-#: landing/templates/landing/user.html:69
-msgid "Recent badges"
-msgstr "Badges récents"
-
-#: landing/templates/landing/user.html:72
-msgid "Question(s)"
-msgstr "Question(s)"
-
-#: landing/templates/landing/user.html:82
-msgid "Recent Activity"
-msgstr "Activité récente"
-
-#: landing/templates/landing/user.html:197
-msgid "Connection settings"
-msgstr "Paramètres de connexion"
-
-#: landing/templates/landing/user.html:207
+#: landing/templates/landing/user/moderation.html:29
 msgid "Collective moderation"
 msgstr "Modération collective"
 
-#: landing/templates/landing/user.html:209
+#: landing/templates/landing/user/moderation.html:31
 msgid ""
 "You can suspend or resume your participation to collective moderation "
 "through the on/off switch."
@@ -107,7 +90,7 @@ msgstr ""
 "Vous pouvez suspendre ou reprendre votre participation à la modération "
 "collective via l'interrupteur on/off."
 
-#: landing/templates/landing/user.html:210
+#: landing/templates/landing/user/moderation.html:32
 msgid ""
 "Set if you want to appear on the public list of moderators with the public/"
 "private switch."
@@ -115,7 +98,47 @@ msgstr ""
 "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
 "modérateurs via l'interrupteur public / private."
 
-#: landing/views.py:36
+#: landing/templates/landing/user/profile.html:30
+msgid "User Profile"
+msgstr "Profil utilisateur"
+
+#: landing/templates/landing/user/profile.html:33
+msgid "Twitter screen name:"
+msgstr "Nom d'utilisateur Twitter:"
+
+#: landing/templates/landing/user/profile.html:35
+msgid "Category"
+msgstr "Catégorie"
+
+#: landing/templates/landing/user/profile.html:44
+msgid "Recent badges"
+msgstr "Badges récents"
+
+#: landing/templates/landing/user/profile.html:47
+msgid "Question(s)"
+msgstr "Question(s)"
+
+#: landing/templates/landing/user/profile.html:57
+msgid "Recent Activity"
+msgstr "Activité récente"
+
+#: landing/templates/landing/user/social.html:30
+msgid "Connection settings"
+msgstr "Paramètres de connexion"
+
+#: landing/templates/landing/usernav.html:17
+msgid "Social"
+msgstr "Social"
+
+#: landing/templates/landing/usernav.html:21
+msgid "Billing"
+msgstr "Facturation"
+
+#: landing/templates/landing/usernav.html:36
+msgid "Account"
+msgstr "Compte"
+
+#: landing/views.py:40
 msgid "User"
 msgstr "Utilisateur"
 

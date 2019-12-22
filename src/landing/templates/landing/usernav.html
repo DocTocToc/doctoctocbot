@@ -1,0 +1,41 @@
+{% load auth_extras %}
+{% load users %}
+{% load i18n %}
+{% load customer_tags %}
+{% screen_name as username %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/user/profile">{{ username|default_if_none:user.get_username }}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/user/profile">{% trans "Profile" %}<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/user/social">{% trans "Social" %}</a>
+      </li>
+      {% if user|is_customer is True %}
+      <li class="nav-item">
+        <a class="nav-link" href="/user/billing">{% trans "Billing" %}</a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated and user.socialuser %}
+      <li class="nav-item">
+        <a class="nav-link" href="/user/option">{% trans "Options" %}</a>
+      </li>
+      {% endif %}
+      {% if user|is_moderator is True %}
+      <li class="nav-item">
+        <a class="nav-link" href="/user/moderation">{% trans "Moderation" %}</a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="/user/account">{% trans "Account" %}</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

@@ -2,12 +2,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes, renderer_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
-from rest_framework.decorators import parser_classes, renderer_classes
 from optin.models import OptIn, Option 
 
 

@@ -14,6 +14,7 @@
 
 {% block head_javascript %}
 {{ block.super }}
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
 {% endblock head_javascript %}
 
 
@@ -22,12 +23,11 @@
   <!--Homepage: <a href="{{ expanded_url }}">{{ display_url }}</a></li-->
   {% endif %}
 <div class="container">
-    <div class="row">
-        <div class="col">
-        <img src="{{ user.socialuser.profile.biggeravatar.url }}" alt="Profile pic" class="mx-auto img-fluid img-circle">
-        <h6>{{ name }}</h6>
-        </div>
-        <div class="col">
+  <div class="row">
+    <div class="col col-lg-3">
+      {% profile %}
+    </div>
+    <div class="col-md-auto">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">{% trans "Profile" %}</a>
@@ -51,58 +51,7 @@
                 {% endif %}
             </ul>
             <div class="tab-content py-4">
-                <div class="tab-pane active" id="profile">
-                    <h5 class="mb-3">{% trans "User Profile" %}</h5>
-                    <div class="row">
-                        <div class="col">
-                            <h6><b>{% trans "Twitter screen name:" %}</b></h6>
-                            <p>{{ screen_name }}</p>
-                            <h6><b>{% trans "Category" %}:</b></h6>
-                            <ul class="list-group">
-                            {% category as category_lst %}
-                            {% for category in category_lst %}
-                            <li class="list-group">{{ category }}</li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col">
-                            <h6>{% trans "Recent badges" %}</h6>
-                            <a href="#" class="badge badge-dark badge-pill">user</a>
-                            <hr>
-                            {% trans "Question(s)" %}
-                            <ul class="list-group">
-                            {% for label, count in hashtag.items %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                            #{{ label }}<span class="badge badge-pill badge-secondary">{{ count }}</span>
-                            </li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-md-12">
-                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span>{% trans "Recent Activity" %}</h5>
-                            <table class="table table-sm table-hover table-striped">
-                                <tbody>                                    
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!--/row-->
-                </div>
+                
                 <div class="tab-pane" id="contact">
                     <form role="form">
                         <div class="form-group row">
@@ -192,25 +141,34 @@
                             </div>
                         </div>
                     </form>
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $(".create-customer").modalForm({
+        formURL: "{% url 'landing:create_customer' %}"
+    });
+
+});
+</script>
+<!-- Create book button -->
+<button class="create-customer btn btn-primary" type="button" name="button">Add billing data</button>
+
+
                 </div>
-                <div class="tab-pane" id="socialauth">
-                  <a type="button" class="btn btn-primary" href="/settings">{% trans "Connection settings" %}</a>
-                </div>
+
                 <div class="tab-pane" id="receipt">
                 <p>
                 Vos factures pourront être éditées et téléchargées à partir du 1er juin 2019. Nous vous prions de nous excuser pour ce délai. Merci de votre patience.
                 </p>
                 </div>
-                {% if user|is_moderator is True %}
-                <div class="tab-pane" id="moderation">
-                <!-- input id="checkSwitch" type="checkbox" data-toggle="switchbutton" checked-->
-                <h5 class="mb-3">{% trans "Collective moderation" %}</h5>
-                <main></main>
-                <p>{% trans "You can suspend or resume your participation to collective moderation through the on/off switch." %}</p>
-                <p>{% trans "Set if you want to appear on the public list of moderators with the public/private switch." %}</p>
-                <script type="text/javascript" src="{% static "moderation/moderator-api/app.js" %}"></script>
-                </div>
-                {% endif %}
+
                 <div class="tab-pane" id="options">
                 {% if user.socialuser %}
                 <category></category>
@@ -219,7 +177,6 @@
                 </div>
             </div>
         </div>
-
     </div>
-</div>
+  </div>
 {% endblock %}

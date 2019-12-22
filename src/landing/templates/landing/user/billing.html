@@ -1,0 +1,55 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load auth_extras %}
+{% load static %}
+{% load users %}
+
+{% block title %}{% trans view.title %}{% endblock title %}
+
+{% block head_css %}
+{{ block.super }}
+<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
+<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
+{% endblock head_css %}
+
+{% block head_javascript %}
+{{ block.super }}
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+{% endblock head_javascript %}
+
+
+{% block content %}
+
+
+{% include "landing/_modal.html" %}
+
+<div class="container">
+  <div class="row">
+    <div class="col col-lg-2">
+      {% profile %}
+    </div>
+    <div class="col-md-auto">
+    
+    
+      {% include "landing/usernav.html" %}
+      
+      <customer></customer>
+      <script type="text/javascript" src="{% static "landing/javascript/customer/build/bundle.js" %}"></script>
+      
+      {{ form }}
+      <br>
+      <button class="update-customer btn btn-primary" type="button" data-id="{% url 'landing:update-customer' form.id.value %}">{% trans "Edit" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+// Update book buttons
+$(".update-customer").each(function () {
+  $(this).modalForm({formURL: $(this).data('id')});
+});
+</script>
+{% endblock %}
+
+

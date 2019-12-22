@@ -38,3 +38,8 @@ django-ajax-selects
 furl
 gunicorn==19.9.0
 django-markdownify
+django-bootstrap-modal-forms
+pycountry
+simplejson
+django-silver
+celery_once

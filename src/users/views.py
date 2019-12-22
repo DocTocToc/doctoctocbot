@@ -50,7 +50,7 @@ def password(request):
             form.save()
             update_session_auth_hash(request, form.user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('password')
+            return redirect('users:password')
         else:
             messages.error(request, 'Please correct the error below.')
     else:

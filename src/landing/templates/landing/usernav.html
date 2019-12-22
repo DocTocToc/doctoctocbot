@@ -1,5 +1,6 @@
 {% load auth_extras %}
 {% load users %}
+{% load i18n %}
 {% load customer_tags %}
 {% screen_name as username %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -10,27 +11,29 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link" href="/user/profile">Profile <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/user/profile">{% trans "Profile" %}<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/user/contact">Contact</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/user/social">Social</a>
+        <a class="nav-link" href="/user/social">{% trans "Social" %}</a>
       </li>
       {% if user|is_customer is True %}
       <li class="nav-item">
-        <a class="nav-link" href="/user/billing">Billing</a>
+        <a class="nav-link" href="/user/billing">{% trans "Billing" %}</a>
       </li>
       {% endif %}
       {% if user.is_authenticated and user.socialuser %}
       <li class="nav-item">
-        <a class="nav-link" href="/user/option">Options</a>
+        <a class="nav-link" href="/user/option">{% trans "Options" %}</a>
       </li>
       {% endif %}
       {% if user|is_moderator is True %}
       <li class="nav-item">
-        <a class="nav-link" href="/user/moderation">Moderation</a>
+        <a class="nav-link" href="/user/moderation">{% trans "Moderation" %}</a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="/user/account">{% trans "Account" %}</a>
       </li>
       {% endif %}
     </ul>

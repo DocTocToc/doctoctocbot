@@ -19,6 +19,7 @@ urlpatterns = [
     path('user/option/', login_required(TemplateView.as_view(template_name="landing/user/option.html")), name="user-option"),
     path('user/moderation', login_required(TemplateView.as_view(template_name="landing/user/moderation.html")), name="user-moderation"),
     path('user/contact/update/<uuid:pk>/', views.CustomerUpdateView.as_view(), name='update-customer'),
+    path('user/account/', login_required(TemplateView.as_view(template_name="landing/user/account.html")), name='user-account'),
     path('status/<int:statusid>/', views.status),
     path('privacy/', TemplateView.as_view(template_name='landing/privacy/index.html'), name='privacy'),
     path('about/', TemplateView.as_view(template_name='landing/about/index.html'), name='about'),

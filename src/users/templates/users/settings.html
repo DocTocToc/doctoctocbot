@@ -15,7 +15,7 @@
       </form>
     {% else %}
       <button type="button" disabled>Disconnect from Twitter</button>
-      <p style="color: red">You must <a href="{% url 'password' %}">define a password</a> for your account before disconnecting from Twitter.</p>
+      <p style="color: red">You must <a href="{% url 'users:password' %}">define a password</a> for your account before disconnecting from Twitter.</p>
     {% endif %}
   {% else %}
     <a href="{% url 'social:begin' 'twitter' %}">Connect to Twitter</a>

@@ -322,10 +322,9 @@ USE_TZ = True
 
 
 
-
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
-LOGIN_REDIRECT_URL = '/user/'
+LOGIN_REDIRECT_URL = '/user/profile'
 
 # custom user model
 AUTH_USER_MODEL = 'users.User'

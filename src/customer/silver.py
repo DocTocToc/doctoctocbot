@@ -1,7 +1,7 @@
 from django.conf import settings
 
 def get_protocol():
-    if settings.DEBUG:
+    if settings.DEBUG or settings.SILVER_IS_LOCAL:
         return "http://"
     else:
         return "https://"

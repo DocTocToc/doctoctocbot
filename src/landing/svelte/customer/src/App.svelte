@@ -131,7 +131,7 @@
                     'X-CSRFToken': `${csrftoken}`,
                 },
         }
-        const res = await fetch(`http://127.0.0.1/customer/api/customer/`, config);
+        const res = await fetch(`/customer/api/customer/`, config);
         const customer_jsn = await res.json();
         if (res.ok) {
         	var str = JSON.stringify(customer_jsn, null, 2);

@@ -71,7 +71,7 @@
 <script>
     import Cookies from 'js-cookie';
     var csrftoken = Cookies.get('csrftoken');
-    console.log(`csrttoken:${csrftoken}`)
+    //console.log(`csrttoken:${csrftoken}`)
     export let option = {option};
     let headers = new Headers();
     headers.append('Accept', 'application/json')
@@ -96,10 +96,11 @@
                 },
                 body: JSON.stringify({'option': option})
         }
-        const res = await fetch(`https://doctoctoc.net/optin/api/get/`, config);
+        const res = await fetch(`/optin/api/get/`, config);
         const res_jsn = await res.json();
         if (res.ok) {
             return res_jsn;
+        	//console.log(`getOptin() res_jsn: ${JSON.stringify(res_jsn)}`);
         } else {
             throw new Error(text);
         }
@@ -115,9 +116,10 @@
                 },
                 body: JSON.stringify({'option': option})
         }
-        const res = await fetch(`https://doctoctoc.net/optin/api/update/`, config);
+        const res = await fetch(`/optin/api/update/`, config);
         const res_jsn = await res.json();
         if (res.ok) {
+        	//console.log(JSON.stringify(res_jsn));
             return res_jsn;
         } else {
             throw new Error(text);

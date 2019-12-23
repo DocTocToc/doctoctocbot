@@ -4,7 +4,8 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import APIException, PermissionDenied
+from common.drf import ServiceUnavailable
+from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import render
 from rest_framework import viewsets
 from customer.models import Customer
@@ -48,12 +49,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     filter_backends = (CustomerFilterBackend,)
-
-
-class ServiceUnavailable(APIException):
-    status_code = 503
-    default_detail = 'Service temporarily unavailable, try again later.'
-    default_code = 'service_unavailable'
 
 
 @api_view(['POST'])

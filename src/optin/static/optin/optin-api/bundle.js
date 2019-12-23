@@ -567,7 +567,7 @@ var app = (function () {
     const { Error: Error_1, console: console_1 } = globals;
     const file = "src/App.svelte";
 
-    // (144:0) {:catch error}
+    // (146:0) {:catch error}
     function create_catch_block(ctx) {
     	let p;
     	let t_value = ctx.error.message + "";
@@ -578,7 +578,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 144, 4, 4926);
+    			add_location(p, file, 146, 4, 5003);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -594,14 +594,14 @@ var app = (function () {
     		block,
     		id: create_catch_block.name,
     		type: "catch",
-    		source: "(144:0) {:catch error}",
+    		source: "(146:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (130:0) {:then res_jsn}
+    // (132:0) {:then res_jsn}
     function create_then_block(ctx) {
     	let div2;
     	let div1;
@@ -643,29 +643,29 @@ var app = (function () {
     			t5 = space();
     			span1 = element("span");
     			attr_dev(h5, "class", "card-title");
-    			add_location(h5, file, 132, 7, 4381);
+    			add_location(h5, file, 134, 7, 4458);
     			attr_dev(p, "class", "card-text");
-    			add_location(p, file, 133, 7, 4435);
+    			add_location(p, file, 135, 7, 4512);
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "name", "onoffswitch");
     			attr_dev(input, "class", "onoffswitch-checkbox svelte-12z4ikv");
     			attr_dev(input, "id", input_id_value = "" + (ctx.option + "-switch"));
     			input.checked = input_checked_value = ctx.res_jsn["authorize"];
-    			add_location(input, file, 135, 11, 4531);
+    			add_location(input, file, 137, 11, 4608);
     			attr_dev(span0, "class", "onoffswitch-inner svelte-12z4ikv");
-    			add_location(span0, file, 137, 11, 4757);
+    			add_location(span0, file, 139, 11, 4834);
     			attr_dev(span1, "class", "onoffswitch-switch svelte-12z4ikv");
-    			add_location(span1, file, 138, 11, 4808);
+    			add_location(span1, file, 140, 11, 4885);
     			attr_dev(label, "class", "onoffswitch-label svelte-12z4ikv");
     			attr_dev(label, "for", label_for_value = "" + (ctx.option + "-switch"));
-    			add_location(label, file, 136, 11, 4690);
+    			add_location(label, file, 138, 11, 4767);
     			attr_dev(div0, "class", "onoffswitch svelte-12z4ikv");
-    			add_location(div0, file, 134, 9, 4494);
+    			add_location(div0, file, 136, 9, 4571);
     			attr_dev(div1, "class", "card-body");
-    			add_location(div1, file, 131, 5, 4350);
+    			add_location(div1, file, 133, 5, 4427);
     			attr_dev(div2, "class", "card");
     			set_style(div2, "width", "18rem");
-    			add_location(div2, file, 130, 3, 4304);
+    			add_location(div2, file, 132, 3, 4381);
     			dispose = listen_dev(input, "change", ctx.toggleOptin, false, false, false);
     		},
     		m: function mount(target, anchor) {
@@ -704,14 +704,14 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(130:0) {:then res_jsn}",
+    		source: "(132:0) {:then res_jsn}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (128:16)        <p>Data loading...</p> {:then res_jsn}
+    // (130:16)        <p>Data loading...</p> {:then res_jsn}
     function create_pending_block(ctx) {
     	let p;
 
@@ -719,7 +719,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Data loading...";
-    			add_location(p, file, 128, 6, 4262);
+    			add_location(p, file, 130, 6, 4339);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -734,7 +734,7 @@ var app = (function () {
     		block,
     		id: create_pending_block.name,
     		type: "pending",
-    		source: "(128:16)        <p>Data loading...</p> {:then res_jsn}",
+    		source: "(130:16)        <p>Data loading...</p> {:then res_jsn}",
     		ctx
     	});
 
@@ -828,7 +828,7 @@ var app = (function () {
     			body: JSON.stringify({ "option": option })
     		};
 
-    		const res = await fetch(`https://doctoctoc.net/optin/api/get/`, config);
+    		const res = await fetch(`/optin/api/get/`, config);
     		const res_jsn = await res.json();
 
     		if (res.ok) {
@@ -849,10 +849,11 @@ var app = (function () {
     			body: JSON.stringify({ "option": option })
     		};
 
-    		const res = await fetch(`https://doctoctoc.net/optin/api/update/`, config);
+    		const res = await fetch(`/optin/api/update/`, config);
     		const res_jsn = await res.json();
 
     		if (res.ok) {
+    			console.log(JSON.stringify(res_jsn));
     			return res_jsn;
     		} else {
     			throw new Error(text);

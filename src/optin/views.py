@@ -1,14 +1,18 @@
 import logging
 
-logger = logging.getLogger(__name__)
 from django.shortcuts import render
+from django.db.utils import DatabaseError
+
 from rest_framework.decorators import api_view, permission_classes, parser_classes, renderer_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
-from optin.models import OptIn, Option 
 
+from optin.models import OptIn, Option 
+from common.drf import ServiceUnavailable
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -30,7 +34,7 @@ def get_optin_view(request, format=None):
             optin = OptIn.objects.current.get(socialuser=socialuser, option=option)
             authorize = optin.authorize
         except OptIn.DoesNotExist:
-            return Response({"authorize": None})
+            authorize = option.default_bool
         label = option.label
         description = option.description
         response = Response(
@@ -58,15 +62,28 @@ def update_optin_view(request, format=None):
             return Response({"authorize": None})
         try:
             optin = OptIn.objects.current.get(socialuser=socialuser, option=option)
+            logger.debug(f"optin: {optin}")
             optin = optin.clone()
-            # toggle boolean field
-            authorize = optin.authorize
-            if authorize is None:
-                authorize = False
-            optin.authorize = not authorize
-            optin.save()
+            logger.debug(f"cloned optin: {optin}")
         except OptIn.DoesNotExist:
-            return Response({"authorize": None})
+            logger.debug(f"create optin")
+            # toggle boolean field
+            default_authorize = option.default_bool
+            try:
+                optin = OptIn.objects.create(
+                    socialuser = socialuser,
+                    option = option,
+                    authorize = default_authorize
+                )
+            except DatabaseError:
+                raise ServiceUnavailable
+        authorize = optin.authorize
+        if authorize is None:
+            optin.authorize = False
+        else:
+            optin.authorize = not authorize
+        optin.save()
+
         authorize = optin.authorize
         return Response({
             "option": option.name,

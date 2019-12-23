@@ -31,7 +31,7 @@
                 },
                 body: JSON.stringify({'uuid': event.target.value})
         }
-        const res = await fetch(`http://127.0.0.1/customer/api/invoice/`, config);
+        const res = await fetch(`/customer/api/invoice/`, config);
         const res_jsn = await res.json();
         if (res.ok) {
             console.log(JSON.stringify(res_jsn));
@@ -97,7 +97,7 @@
                     'X-CSRFToken': `${csrftoken}`,
                 },
         }
-        const res = await fetch(`http://127.0.0.1/financement/api/projectinvestment/`, config);
+        const res = await fetch(`/financement/api/projectinvestment/`, config);
         var res_jsn = await res.json();
         if (res.ok) {
         	var str = JSON.stringify(res_jsn, null, 2);

@@ -4342,7 +4342,7 @@ var app = (function () {
     			t = text$1(t_value);
     			option.__value = option_value_value = /*locale*/ ctx[24];
     			option.value = option.__value;
-    			add_location(option, file, 185, 2, 5907);
+    			add_location(option, file, 185, 2, 5875);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -4384,7 +4384,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 225, 0, 6883);
+    			add_location(p, file, 225, 0, 6851);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4488,7 +4488,7 @@ var app = (function () {
     			t = text$1("Create");
     			attr_dev(button, "class", "btn btn-primary");
     			button.value = button_value_value = /*purchase*/ ctx[20]["pk"];
-    			add_location(button, file, 219, 4, 6711);
+    			add_location(button, file, 219, 4, 6679);
     			dispose = listen_dev(button, "click", /*createInvoice*/ ctx[5], false, false, false);
     		},
     		m: function mount(target, anchor) {
@@ -4530,7 +4530,7 @@ var app = (function () {
     			a = element("a");
     			t = text$1("Pdf");
     			attr_dev(a, "href", a_href_value = "/silver/invoices/" + /*purchase*/ ctx[20]["invoice"] + ".pdf");
-    			add_location(a, file, 217, 4, 6634);
+    			add_location(a, file, 217, 4, 6602);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -4606,12 +4606,12 @@ var app = (function () {
     			if_block.c();
     			t8 = space();
     			attr_dev(th, "scope", "row");
-    			add_location(th, file, 211, 4, 6438);
-    			add_location(td0, file, 212, 4, 6471);
-    			add_location(td1, file, 213, 4, 6519);
-    			add_location(td2, file, 214, 4, 6554);
-    			add_location(td3, file, 215, 4, 6589);
-    			add_location(tr, file, 210, 2, 6429);
+    			add_location(th, file, 211, 4, 6406);
+    			add_location(td0, file, 212, 4, 6439);
+    			add_location(td1, file, 213, 4, 6487);
+    			add_location(td2, file, 214, 4, 6522);
+    			add_location(td3, file, 215, 4, 6557);
+    			add_location(tr, file, 210, 2, 6397);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -4691,11 +4691,11 @@ var app = (function () {
     			td2 = element("td");
     			td2.textContent = "Data loading...";
     			attr_dev(th, "scope", "row");
-    			add_location(th, file, 203, 0, 6276);
-    			add_location(td0, file, 204, 0, 6299);
-    			add_location(td1, file, 205, 0, 6324);
-    			add_location(td2, file, 206, 0, 6349);
-    			add_location(tr, file, 202, 0, 6271);
+    			add_location(th, file, 203, 0, 6244);
+    			add_location(td0, file, 204, 0, 6267);
+    			add_location(td1, file, 205, 0, 6292);
+    			add_location(td2, file, 206, 0, 6317);
+    			add_location(tr, file, 202, 0, 6239);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -4735,7 +4735,7 @@ var app = (function () {
     			p = element("p");
     			t = text$1(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file, 241, 0, 7207);
+    			add_location(p, file, 241, 0, 7175);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4838,7 +4838,7 @@ var app = (function () {
     			t0 = text$1("Pour nous permettre d'éditer votre facture, merci de compléter: ");
     			t1 = text$1(t1_value);
     			t2 = text$1(".");
-    			add_location(p, file, 237, 0, 7079);
+    			add_location(p, file, 237, 0, 7047);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -4905,7 +4905,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "...";
-    			add_location(p, file, 233, 0, 6981);
+    			add_location(p, file, 233, 0, 6949);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -5023,22 +5023,22 @@ var app = (function () {
     			await_block1_anchor = empty();
     			info_1.block.c();
     			if (/*$locale*/ ctx[2] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[13].call(select));
-    			add_location(select, file, 183, 0, 5848);
+    			add_location(select, file, 183, 0, 5816);
     			attr_dev(th0, "scope", "col");
-    			add_location(th0, file, 192, 4, 6008);
+    			add_location(th0, file, 192, 4, 5976);
     			attr_dev(th1, "scope", "col");
-    			add_location(th1, file, 193, 4, 6035);
+    			add_location(th1, file, 193, 4, 6003);
     			attr_dev(th2, "scope", "col");
-    			add_location(th2, file, 194, 4, 6079);
+    			add_location(th2, file, 194, 4, 6047);
     			attr_dev(th3, "scope", "col");
-    			add_location(th3, file, 195, 4, 6127);
+    			add_location(th3, file, 195, 4, 6095);
     			attr_dev(th4, "scope", "col");
-    			add_location(th4, file, 196, 4, 6173);
-    			add_location(tr, file, 191, 2, 5999);
-    			add_location(thead, file, 190, 0, 5989);
-    			add_location(tbody, file, 199, 0, 6233);
+    			add_location(th4, file, 196, 4, 6141);
+    			add_location(tr, file, 191, 2, 5967);
+    			add_location(thead, file, 190, 0, 5957);
+    			add_location(tbody, file, 199, 0, 6201);
     			attr_dev(table, "class", "table");
-    			add_location(table, file, 189, 0, 5967);
+    			add_location(table, file, 189, 0, 5935);
     			dispose = listen_dev(select, "change", /*select_change_handler*/ ctx[13]);
     		},
     		l: function claim(nodes) {
@@ -5212,7 +5212,7 @@ var app = (function () {
     			body: JSON.stringify({ "uuid": event.target.value })
     		};
 
-    		const res = await fetch(`http://127.0.0.1/customer/api/invoice/`, config);
+    		const res = await fetch(`/customer/api/invoice/`, config);
     		const res_jsn = await res.json();
 
     		if (res.ok) {
@@ -5268,7 +5268,7 @@ var app = (function () {
     			}
     		};
 
-    		const res = await fetch(`http://127.0.0.1/financement/api/projectinvestment/`, config);
+    		const res = await fetch(`/financement/api/projectinvestment/`, config);
     		var res_jsn = await res.json();
 
     		if (res.ok) {

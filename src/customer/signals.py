@@ -43,8 +43,14 @@ def create_customer_and_draft_invoice(sender, instance, created, **kwargs):
         # add silver_id to draft customer
         doctocnet_customer.silver_id = silver_customer.id
         doctocnet_customer.save()
-
-        provider = instance.project.provider
+        project = instance.project
+        if not project:
+            logger.warn(f"ProjectInvestment {instance} is not linked to any Project")
+            return
+        provider = project.provider
+        if not provider:
+            logger.warn(f"Project {instance.project} is not linked to any Pro")
+            return
         try:
             silver_provider = SilverProvider.objects.get(id=provider.silver_id)
         except SilverProvider.DoesNotExist:

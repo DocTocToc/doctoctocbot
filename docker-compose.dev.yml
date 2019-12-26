@@ -52,6 +52,7 @@ services:
       - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
       - ${NGINX_LOG_DIR}:/var/log/nginx
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
+      - ./config/nginx/options-ssl-nginx.conf /etc/letsencrypt/options-ssl-nginx.conf
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     ports:
       - "80:80"

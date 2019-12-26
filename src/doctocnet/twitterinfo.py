@@ -10,10 +10,11 @@ def show_profile(backend, user, response, *args, **kwargs):
                 logger.debug(f"user.id: {user.id}")
         except:
             pass
-        logger.debug(f"response: {str(response)[:140]}")
+        logger.debug(f"response: {str(response)}")
         logger.debug(f"args: {args}")
         logger.debug(f"kwargs: {kwargs}")
         logger.debug(f"uid: {kwargs['uid']}")
+        logger.debug(f"email: {kwargs['details']['email']}")
 
 
 

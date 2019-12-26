@@ -7,6 +7,9 @@ from bot.models import Account
 
 from django.conf import settings
 
+from social_django.models import UserSocialAuth
+from django.contrib.auth import get_user_model
+
 logger = logging.getLogger(__name__)
 
 def getAuth(username=None):
@@ -15,7 +18,7 @@ def getAuth(username=None):
         try:
             account = Account.objects.get(username=username)
         except Account.DoesNotExist:
-            return getAuth()
+            return getSocialDjangoAuth(username)
         auth = tweepy.OAuthHandler(
             account.twitter_consumer_key,
             account.twitter_consumer_secret
@@ -33,6 +36,31 @@ def getAuth(username=None):
             settings.TWITTER_ACCESS_TOKEN,
             settings.TWITTER_ACCESS_TOKEN_SECRET
         )
+    return auth
+
+def getSocialDjangoAuth(username):
+    "get Tweepy OAuthHandler authentication object"
+    User = get_user_model()
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return getAuth()
+    try:
+        user_social_auth = UserSocialAuth.objects.get(user=user)
+    except UserSocialAuth.DoesNotExist:
+        return getAuth()
+    if (user_social_auth.provider != "twitter"):
+        return getAuth() 
+    auth = tweepy.OAuthHandler(
+        settings.SOCIAL_AUTH_TWITTER_KEY,
+        settings.SOCIAL_AUTH_TWITTER_SECRET
+    )
+    logger.debug(user_social_auth.extra_data["access_token"]["oauth_token"])
+    logger.debug(user_social_auth.extra_data["access_token"]["oauth_token_secret"])
+    auth.set_access_token(
+        user_social_auth.extra_data["access_token"]["oauth_token"],
+        user_social_auth.extra_data["access_token"]["oauth_token_secret"],
+    )
     return auth
 
 def get_api(username=None):

@@ -53,6 +53,7 @@ services:
       - ${NGINX_LOG_DIR}:/var/log/nginx
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
       - ./config/nginx/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+      - ./config/nginx/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     ports:
       - "80:80"

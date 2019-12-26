@@ -62,7 +62,7 @@ services:
       - django_1
       - django_2
   letsencrypt:
-    restart: no
+    restart: "no"
     build:
       context: docker/letsencrypt
       dockerfile: ./Dockerfile

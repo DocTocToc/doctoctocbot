@@ -5,7 +5,7 @@ import tweepy
 import logging
 from typing import List
 
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 
 logger = logging.getLogger(__name__)
 

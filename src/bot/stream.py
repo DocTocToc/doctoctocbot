@@ -2,7 +2,7 @@ import logging
 import tweepy
 from tweepy.streaming import StreamListener
 
-from bot.twitter import getAuth
+from bot.tweepy_api import getAuth
 from conversation.models import Hashtag
 from bot.tasks import handle_on_status
 from bot.lib.status import status_json_log

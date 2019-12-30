@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 
 def getratelimit():
     "get Twitter API rate limit info"

@@ -1,5 +1,5 @@
 from moderation.models import SocialUser, Follower, Category
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from bot.models import Account
 from django.db.utils import DatabaseError
 import logging

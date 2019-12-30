@@ -2,7 +2,7 @@ import sys, getopt
 import string
 import random
 from time import sleep
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 
 TEST_ACCOUNT = "cryptomed"
 

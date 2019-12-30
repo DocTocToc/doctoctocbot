@@ -18,8 +18,8 @@ import tweepy
 from conversation.models import Tweetdj
 
 from .lib.statusdb import Addstatus
-from .twitter import getAuth
-from .twitter import statuses_lookup
+from bot.tweepy_api import getAuth
+from bot.tweepy_api import statuses_lookup
 
 
 logger = logging.getLogger(__name__)

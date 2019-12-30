@@ -1,4 +1,4 @@
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from celery import shared_task
 
 from django.contrib.auth import get_user_model

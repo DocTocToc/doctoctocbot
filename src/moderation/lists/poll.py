@@ -20,7 +20,7 @@ from django.conf import settings
 
 from django.db.utils import DatabaseError
 
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from moderation.models import SocialUser, SocialMedia, Category, UserCategoryRelationship
 
 from .constants import MODERATOR

@@ -4,7 +4,7 @@ from bot.doctoctocbot import isrt, isquestion
 import hashlib
 import os
 import tweepy
-from bot.twitter import getAuth
+from bot.tweepy_api import getAuth
 import logging
 
 # TODO: refactor, could be useful if user tweeted again before being moderated

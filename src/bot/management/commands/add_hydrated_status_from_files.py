@@ -4,7 +4,7 @@ import os
 from os.path import isfile, join, stat
 import json
 import tweepy
-from bot.twitter import getAuth                                                     
+from bot.tweepy_api import getAuth                                                     
 import logging
 from bot.lib.statusdb import Addstatus
 

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 import tweepy                                                                   
-from bot.twitter import getAuth                                                     
+from bot.tweepy_api import getAuth                                                     
 from bot.lib.statusdb import Addstatus
 
 class Command(BaseCommand):

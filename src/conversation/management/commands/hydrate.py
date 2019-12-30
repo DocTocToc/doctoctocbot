@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from conversation.models import Tweetdj
 from bot.lib.statusdb import Addstatus
 from tweepy import TweepError

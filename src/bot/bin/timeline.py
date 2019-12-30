@@ -1,7 +1,7 @@
 from typing import List
 
 from community.models import Community
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from bot.lib.statusdb import Addstatus
 from timeline.models import add_status_tl, Status
 import tweepy

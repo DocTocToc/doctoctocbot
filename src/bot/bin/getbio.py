@@ -3,7 +3,7 @@
 
 import os, inspect, io
 
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 

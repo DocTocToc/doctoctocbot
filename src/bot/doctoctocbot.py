@@ -26,13 +26,13 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 
 from moderation.moderate import addtoqueue
-from bot.twitter import getAuth
+from bot.tweepy_api import getAuth
 from moderation.models import SocialUser, Category, SocialMedia
 from moderation.social import update_followersids
 from community.models import Community, Retweet
 from conversation.models import Hashtag
 from .tasks import handle_retweetroot, handle_question
-from .twitter import get_api
+from bot.tweepy_api import get_api
 from moderation.moderate import process_unknown_user
 
 from tagging.tasks import handle_create_tag_queue

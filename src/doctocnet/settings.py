@@ -192,6 +192,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'silver',
     'rest_framework.authtoken',
+    'request',
 ]
 
 if DEBUG:

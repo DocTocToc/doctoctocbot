@@ -2,7 +2,7 @@ import twitter
 
 from social_django.models import UserSocialAuth
 from django.contrib.auth import get_user_model
-
+from django.conf import settings
 from bot.models import Account
 
 
@@ -13,14 +13,14 @@ def get_api(username=None):
             account = Account.objects.get(username=username)
         except Account.DoesNotExist:
             return getSocialDjangoAuth(username)
-        api = twitter.API(
+        api = twitter.Api(
             consumer_key = account.twitter_consumer_key,
             consumer_secret = account.twitter_consumer_secret,
             access_token_key = account.twitter_access_token,
             access_token_secret = account.twitter_access_token_secret
         )
     else:
-        api = twitter.API(
+        api = twitter.Api(
             consumer_key = settings.TWITTER_CONSUMER_KEY,
             consumer_secret = settings.TWITTER_CONSUMER_SECRET,
             access_token_key = settings.TWITTER_ACCESS_TOKEN,
@@ -41,7 +41,7 @@ def getSocialDjangoAuth(username):
         return get_api()
     if (user_social_auth.provider != "twitter"):
         return get_api() 
-        api = twitter.API(
+        api = twitter.Api(
         consumer_key = settings.SOCIAL_AUTH_TWITTER_KEY,
         consumer_secre = settings.SOCIAL_AUTH_TWITTER_SECRET,
         access_token_key = user_social_auth.extra_data["access_token"]["oauth_token"],

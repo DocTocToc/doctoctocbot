@@ -23,7 +23,10 @@ def media_access(request, path):
 
     user = request.user
     logger.debug(f"path:{path}")
-    if user.is_authenticated:
+    if not user.is_authenticated:
+        if not path.startswith("documents/"):
+            access_granted=True
+    else:
         if user.is_staff:
             # If admin, everything is granted
             access_granted = True

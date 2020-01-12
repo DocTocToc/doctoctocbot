@@ -1,0 +1,30 @@
+{% extends "doctocnet/base.html" %}
+
+{% block head_meta %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="" og_title="" og_description="" og_image="" %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} Discussion {% endblock title %}</h1>
+
+<p>
+Notre forum discussion est en phase de test.
+Pour l'instant, il est réservés à ces catégories de professionnels de santé:
+</p>
+<ul>
+<li>médecin</li>
+<li>IDE</li>
+<li>pharmacien</li>
+<li>étudiant en médecine</li>
+<li>sage-femme</li>
+<li>kinésithérapeute</li>
+</ul>
+<p>
+Lors de cette phase de test, seuls les professionnels qui ont un compte Twitter et qui suivent @doctoctocbot peuvent avoir accès au forum.
+Merci de votre patience.
+</p>
+{% endblock content %}

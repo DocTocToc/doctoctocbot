@@ -7,6 +7,8 @@ from urllib import parse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.conf import settings
+from moderation.templatetags.auth_extras import is_allowed_discussion
+from django.shortcuts import redirect
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +37,11 @@ def discourse_sso(request):
     if not hmac.compare_digest(this_signature, signature):
         return HttpResponseBadRequest('Invalid payload. Please contact support if this problem persists.')
 
+    user = request.user
+    if not is_allowed_discussion(user):
+        return redirect("discourse-unauthorized")
     # Build the return payload
     qs = parse.parse_qs(decoded)
-    user = request.user
     params = {
         'nonce': qs['nonce'][0],
         'email': user.email,

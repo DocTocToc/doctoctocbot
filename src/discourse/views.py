@@ -39,7 +39,7 @@ def discourse_sso(request):
 
     user = request.user
     if not is_allowed_discussion(user):
-        return redirect("discourse-unauthorized")
+        return redirect("discourse:discourse-unauthorized")
     # Build the return payload
     qs = parse.parse_qs(decoded)
     params = {

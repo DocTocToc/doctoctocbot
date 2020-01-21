@@ -359,6 +359,7 @@ SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'users.social_auth.add_email_if_not_exist',
 )
 MEDIA_ROOT = config('MEDIA_ROOT')
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

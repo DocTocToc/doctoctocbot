@@ -12,6 +12,7 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 from moderation.models import SocialUser
 from conversation.models import Tweetdj
+from moderation.models import Profile
 
 
 logger = logging.getLogger('root')
@@ -30,7 +31,6 @@ def socialuser(backend, user, response, *args, **kwargs):
         return {'socialuser': su_mi}
     
 def user(backend, user, response, *args, **kwargs):
-    from .models import Profile
     from users.models import User
     if backend.name == 'twitter':
         logger.debug(f"user.socialuser {user.socialuser} {type(user.socialuser)}")
@@ -40,8 +40,6 @@ def user(backend, user, response, *args, **kwargs):
         logger.debug(f'socialmedia: {user}')
         
 def profile(backend, user, response, *args, **kwargs):
-    from .models import Profile
-
     if backend.name == 'twitter':
         logger.debug(f"user.socialuser {user.socialuser} type:{type(user.socialuser)}")
         try:

@@ -42,6 +42,7 @@ def discourse_sso(request):
         return redirect("discourse:discourse-unauthorized")
     # Build the return payload
     qs = parse.parse_qs(decoded)
+
     params = {
         'nonce': qs['nonce'][0],
         'email': user.email,
@@ -50,6 +51,15 @@ def discourse_sso(request):
         #'require_activation': 'true',
         'name': user.get_full_name(),
     }
+    
+    try:
+        avatar_url = user.socialuser.profile.json["profile_image_url_https"]
+    except AttributeError as e:
+        logger.warn("Attribute error on user object", e)
+    except KeyError as e:
+        logger.warn("Key error on profile object json field", e)
+    else:
+        params["avatar_url"] = avatar_url
 
     return_payload = base64.encodebytes(bytes(parse.urlencode(params), 'utf-8'))
     h = hmac.new(key, return_payload, digestmod=hashlib.sha256)

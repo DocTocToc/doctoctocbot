@@ -256,7 +256,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                     trust = True
             
             if trust:
-                get_api(username=dct["_bot_screen_name"]).retweet(statusid)
+                get_api(username=dct["_bot_screen_name"], backend=True).retweet(statusid)
                 tag(statusid, community)
             else:
                 addtoqueue(userid, statusid, community.name)

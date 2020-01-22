@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
-def getAuth(username=None, backend):
+def getAuth(username=None, backend=False):
     "get Tweepy OAuthHandler authentication object"
     if username:
         try:

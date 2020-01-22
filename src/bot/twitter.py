@@ -65,7 +65,7 @@ def getSocialDjangoAuth(username):
 
 def get_api(username=None):
     api = tweepy.API(getAuth(username), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-    verify_credentials(api)
+    verify_credentials(api, username)
     return api
 
 def statuses_lookup(statusid):
@@ -97,9 +97,9 @@ def statuses_lookup(statusid):
     elif len(statuses) == 1:
         return statuses[0]
     
-def verify_credentials(api):
+def verify_credentials(api, username):
     try:
         r = api.verify_credentials()
-        logger.info(f"Authentication info {r}")
+        logger.info(f"Authentication info for {username}: {r}")
     except:
-        logger.error("Error during authentication")
+        logger.error(f"Error during authentication of {username}")

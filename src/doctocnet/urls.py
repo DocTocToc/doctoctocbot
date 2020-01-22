@@ -26,10 +26,12 @@ from wagtail.core import urls as wagtail_urls
 from ajax_select import urls as ajax_select_urls
 from doctocnet.views import media_access
 
+app_name = 'doctocnet'
+
 urlpatterns = [
     re_path(r'^media/(?P<path>.*)', media_access, name='media'),
-    path('admin/', admin.site.urls),
     path('silver/', include('silver.urls')),
+    path('admin/', admin.site.urls),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
     path('', include('landing.urls')),
@@ -51,7 +53,6 @@ urlpatterns = [
     # wagtail
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
-#    re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'', include(wagtail_urls)),
 ]
 

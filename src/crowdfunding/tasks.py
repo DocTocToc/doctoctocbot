@@ -37,16 +37,11 @@ def handle_tweet_investment(userid: int,
     community = project.community.get()
     bot_screen_name = community.account.username
     domain_name = community.site.domain
-    
-    try:
-        api = get_api(bot_screen_name)
-    except ObjectDoesNotExist:
-        api = get_api()
-    
+    api = get_api(bot_screen_name, backend=True)    
     if public:
         status = (
             "Merci à {display_name} pour sa participation "
-            "à ma campagne de financement 2019! 🤖 "
+            "à ma campagne de financement! 🤖 "
             "Vous pouvez consulter la liste des dépenses "
             "et des projets en cours de développement et y contribuer ici ⬇️ "
             "https://{domain_name}/financement/"
@@ -58,7 +53,7 @@ def handle_tweet_investment(userid: int,
     elif not public:
         status = (
             "Merci à la personne qui vient de faire la {rank}ème contribution "
-            "à ma campagne de financement 2019! 🤖 "
+            "à ma campagne de financement! 🤖 "
             "Cette personne a souhaité garder l'anonymat. "
             "Vous pouvez consulter la liste des dépenses "
             "et des projets en cours de développement et y contribuer ici ⬇️ "

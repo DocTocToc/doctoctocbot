@@ -3,7 +3,6 @@ from unicodedata import category
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from celery import shared_task
-from bot.tasks import handle_retweet
 from bot.bin.user import getuser_lst
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists

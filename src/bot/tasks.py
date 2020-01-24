@@ -27,11 +27,6 @@ def handle_on_status(statusid: int):
     triage(statusid)
     
 @shared_task
-def handle_retweet(statusid: int):
-    from bot.doctoctocbot import retweet
-    retweet(statusid)
-
-@shared_task
 def handle_image(url, filepath):
     r = requests.get(url, allow_redirects=True)
     with open(filepath, 'wb') as f:

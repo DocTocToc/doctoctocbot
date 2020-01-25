@@ -5,10 +5,13 @@ import hashlib
 from urllib import parse
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import (HttpResponseBadRequest, HttpResponseRedirect,
+                         HttpResponse)
 from django.conf import settings
-from discourse.templatetags.auth_discourse import is_allowed_discussion
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
+from discourse.templatetags.auth_discourse import is_allowed_discussion
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,3 +73,7 @@ def discourse_sso(request):
     discourse_sso_url = 'https://{0}/session/sso_login?{1}'.format(settings.DISCOURSE_BASE_URL, query_string)
     logger.warning("discourse redirect url: %s", discourse_sso_url)
     return HttpResponseRedirect(discourse_sso_url)
+
+@csrf_exempt
+def webhook(request):
+    return HttpResponse('pong')

@@ -107,11 +107,17 @@ def webhook(request):
         return HttpResponseForbidden('Permission denied.')
     
     # If request reached this point we are in a good shape
-    event = request.META.get('HTTP_X_DISCOURSE_EVENT_TYPE')
-    if event == 'ping':
+    event_type = request.META.get('HTTP_X_DISCOURSE_EVENT_TYPE')
+    event = request.META.get('HTTP_X_DISCOURSE_EVENT')
+    if event_type == 'ping' and event == 'ping':
         return HttpResponse('pong')
-    elif event == 'user_created':
-        logger.debug("Discourse user created!")
+    elif event_type == 'user':
+        if event == 'user_created':
+            logger.debug("Discourse user created!")
+            logger.debug(f"Request body: {request.body}")
+        elif event == 'user_updated':
+            logger.debug("Discourse user updated!")
+            logger.debug(f"Request body: {request.body}")
         return HttpResponse('success')
     
     return HttpResponse(status=204)

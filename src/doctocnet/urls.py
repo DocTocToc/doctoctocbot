@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
+    path('', include('ip.urls')),
     path('', include('landing.urls')),
     path('', include('users.urls')),
     path('', include('registration.urls')),

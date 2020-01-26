@@ -82,7 +82,9 @@ def webhook(request):
     discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
     if not discourse_ip:
         discourse_ip = set_discourse_ip_cache()
-    if ip_yours(request) is not discourse_ip:
-        return HttpResponseForbidden('Permission denied.')
-    else:
+    client_ip = ip_yours(request)
+    logger.debug(f"client: {client_ip}, discourse: {discourse_ip}")
+    if client_ip == discourse_ip:
         return HttpResponse('pong')
+    else:
+        return HttpResponseForbidden('Permission denied.')

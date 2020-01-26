@@ -17,6 +17,7 @@ from discourse.templatetags.auth_discourse import is_allowed_discussion
 from ip.views import ip_yours
 from django.core.cache import cache
 from ip.host import set_discourse_ip_cache
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,7 @@ def discourse_sso(request):
     logger.warning("discourse redirect url: %s", discourse_sso_url)
     return HttpResponseRedirect(discourse_sso_url)
 
+@require_POST
 @csrf_exempt
 def webhook(request):
     logger.debug(request.META)
@@ -105,5 +107,14 @@ def webhook(request):
         return HttpResponseForbidden('Permission denied.')
     
     # If request reached this point we are in a good shape
-    return HttpResponse('pong')
+    event = request.META.get('HTTP_X_DISCOURSE_EVENT_TYPE')
+    if event == 'ping':
+        return HttpResponse('pong')
+    elif event == 'user_created':
+        logger.debug("Discourse user created!")
+        return HttpResponse('success')
+    
+    return HttpResponse(status=204)
+        
+    
     

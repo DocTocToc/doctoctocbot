@@ -118,6 +118,8 @@ def webhook(request):
         elif event == 'user_updated':
             logger.debug("Discourse user updated!")
             logger.debug(f"Request body: {request.body}")
+        elif event == 'user_destroyed':
+            logger.debug("Discourse user destroyed!")
         return HttpResponse('success')
     
     return HttpResponse(status=204)

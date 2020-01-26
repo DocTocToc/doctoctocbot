@@ -4,6 +4,7 @@ import logging
 from django.utils.log import DEFAULT_LOGGING
 from decouple import AutoConfig, Csv
 from pathlib import Path
+from ip.host import hostname_ip
 
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING) 
@@ -560,3 +561,6 @@ SILVER_AUTOMATICALLY_CREATE_TRANSACTIONS = False
 SILVER_DOCUMENT_PREFIX = config('SILVER_DOCUMENT_PREFIX')
 SILVER_DOCUMENT_STORAGE = None
 SILVER_IS_LOCAL = config('SILVER_IS_LOCAL', default=True, cast=bool)
+
+DISCOURSE_HOSTNAME = config('DISCOURSE_HOSTNAME')
+DISCOURSE_IP = hostname_ip(DISCOURSE_HOSTNAME)

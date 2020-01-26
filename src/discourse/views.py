@@ -12,7 +12,9 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from discourse.templatetags.auth_discourse import is_allowed_discussion
 from ip.views import ip_yours
-
+from ip.host import hostname_ip
+from django.core.cache import cache
+from ip.host import set_discourse_ip_cache
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +79,10 @@ def discourse_sso(request):
 
 @csrf_exempt
 def webhook(request):
-    if ip_yours(request) is not settings.DISCOURSE_IP:
+    discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
+    if not discourse_ip:
+        discourse_ip = set_discourse_ip_cache
+    if ip_yours(request) is not discourse_ip:
         return HttpResponseForbidden('Permission denied.')
     else:
         return HttpResponse('pong')

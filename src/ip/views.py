@@ -14,12 +14,12 @@ def ip_mine(request):
 def ip_yours(request):
     logger.debug(request.META)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if request.META.get('HTTP_X_REAL_IP'):
+    if x_forwarded_for:
+        logger.debug(f'HTTP_X_FORWARDED_FOR: {x_forwarded_for}')
+        ip = x_forwarded_for.split(',')[0].strip()
+    elif request.META.get('HTTP_X_REAL_IP'):
         ip = request.META.get('HTTP_X_REAL_IP')
         logger.debug(f'HTTP_X_REAL_IP: {ip}')
-    elif x_forwarded_for:
-        logger.debug(f'HTTP_X_FORWARDED_FOR: {x_forwarded_for}')
-        ip = x_forwarded_for.split(',')[-1].strip()
     else:
         ip = request.META.get('REMOTE_ADDR')
         logger.debug(f'REMOTE_ADDR: {ip}')

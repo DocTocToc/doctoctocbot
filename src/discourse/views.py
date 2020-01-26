@@ -81,7 +81,7 @@ def discourse_sso(request):
 def webhook(request):
     discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
     if not discourse_ip:
-        discourse_ip = set_discourse_ip_cache
+        discourse_ip = set_discourse_ip_cache()
     if ip_yours(request) is not discourse_ip:
         return HttpResponseForbidden('Permission denied.')
     else:

@@ -12,6 +12,7 @@ def ip_mine(request):
     return HttpResponse(MACHINE_IP)
 
 def ip_yours(request):
+    logger.debug(request.META)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if request.META.get('HTTP_X_REAL_IP'):
         ip = request.META.get('HTTP_X_REAL_IP')

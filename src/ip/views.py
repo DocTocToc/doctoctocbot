@@ -1,5 +1,8 @@
 import socket
+import logging
 from django.http import HttpResponse
+
+logger= logging.getLogger(__name__)
 
 def ip_mine(request):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)                        
@@ -11,9 +14,12 @@ def ip_mine(request):
 def ip_yours(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
+        logger.debug(f'HTTP_X_FORWARDED_FOR: {x_forwarded_for}')
         ip = x_forwarded_for.split(',')[-1].strip()
     elif request.META.get('HTTP_X_REAL_IP'):
         ip = request.META.get('HTTP_X_REAL_IP')
+        logger.debug(f'HTTP_X_REAL_IP: {ip}')
     else:
         ip = request.META.get('REMOTE_ADDR')
+        logger.debug(f'REMOTE_ADDR: {ip}')
     return HttpResponse(ip)

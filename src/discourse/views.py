@@ -79,12 +79,19 @@ def discourse_sso(request):
 
 @csrf_exempt
 def webhook(request):
+    logger.debug(request.META)
     discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
     if not discourse_ip:
         discourse_ip = set_discourse_ip_cache()
     client_ip = ip_yours(request)
     logger.debug(f"client: {client_ip}, discourse: {discourse_ip}")
+    
+    header_signature = request.META.get('X-Discourse-Event-Signature')
+    logger.debug(f"header signature: {header_signature}")
+    if header_signature is None:
+        return HttpResponseForbidden('Permission denied.')
     if client_ip == discourse_ip:
         return HttpResponse('pong')
     else:
         return HttpResponseForbidden('Permission denied.')
+    

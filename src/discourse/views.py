@@ -3,16 +3,18 @@ import base64
 import hmac
 import hashlib
 from urllib import parse
-
+from django.utils.encoding import force_bytes
 from django.contrib.auth.decorators import login_required
-from django.http import (HttpResponseBadRequest, HttpResponseRedirect,
-                         HttpResponse, HttpResponseForbidden)
+from django.http import (HttpResponseBadRequest,
+                         HttpResponseRedirect,
+                         HttpResponse,
+                         HttpResponseForbidden,
+                         HttpResponseServerError)
 from django.conf import settings
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from discourse.templatetags.auth_discourse import is_allowed_discussion
 from ip.views import ip_yours
-from ip.host import hostname_ip
 from django.core.cache import cache
 from ip.host import set_discourse_ip_cache
 
@@ -80,18 +82,28 @@ def discourse_sso(request):
 @csrf_exempt
 def webhook(request):
     logger.debug(request.META)
+    
+    # ip check
     discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
     if not discourse_ip:
         discourse_ip = set_discourse_ip_cache()
     client_ip = ip_yours(request)
     logger.debug(f"client: {client_ip}, discourse: {discourse_ip}")
+    if client_ip != discourse_ip:
+        return HttpResponseForbidden('Permission denied.')
     
-    header_signature = request.META.get('X-Discourse-Event-Signature')
+    # header signature check
+    header_signature = request.META.get('HTTP_X_DISCOURSE_EVENT_SIGNATURE')
     logger.debug(f"header signature: {header_signature}")
     if header_signature is None:
         return HttpResponseForbidden('Permission denied.')
-    if client_ip == discourse_ip:
-        return HttpResponse('pong')
-    else:
+    sha_name, signature = header_signature.split('=')
+    if sha_name != 'sha256':
+        return HttpResponseServerError('Operation not supported.', status=501)
+    mac = hmac.new(force_bytes(settings.DISCOURSE_WEBHOOK_SECRET), msg=force_bytes(request.body), digestmod=hashlib.sha256)
+    if not hmac.compare_digest(force_bytes(mac.hexdigest()), force_bytes(signature)):
         return HttpResponseForbidden('Permission denied.')
+    
+    # If request reached this point we are in a good shape
+    return HttpResponse('pong')
     

@@ -114,8 +114,8 @@ def webhook(request):
     if event_type == 'ping' and event == 'ping':
         return HttpResponse('pong')
     elif event_type == 'user':
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = json.loads(request.body)
+        logger.debug(f"body (json): {body}")
         if event == 'user_created':
             logger.debug("Discourse user created!")
             logger.debug(f"Request body: {request.body}")
@@ -123,7 +123,7 @@ def webhook(request):
                 userid=body["user"]["userid"]
                 username=body["user"]["username"]
             except KeyError:
-                return
+                return HttpResponseServerError('Internal server error.', status=500)
             user_created_pipe(userid=userid, username=username)            
         elif event == 'user_updated':
             logger.debug("Discourse user updated!")

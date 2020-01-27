@@ -2,6 +2,7 @@ import logging
 import base64
 import hmac
 import hashlib
+import json
 from urllib import parse
 from django.utils.encoding import force_bytes
 from django.contrib.auth.decorators import login_required
@@ -113,12 +114,14 @@ def webhook(request):
     if event_type == 'ping' and event == 'ping':
         return HttpResponse('pong')
     elif event_type == 'user':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
         if event == 'user_created':
             logger.debug("Discourse user created!")
             logger.debug(f"Request body: {request.body}")
             try:
-                userid=request.body["user"]["userid"]
-                username=request.body["user"]["username"]
+                userid=body["user"]["userid"]
+                username=body["user"]["username"]
             except KeyError:
                 return
             user_created_pipe(userid=userid, username=username)            

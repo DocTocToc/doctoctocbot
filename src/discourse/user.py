@@ -5,6 +5,9 @@ from discourse.api import add_username_to_group
 
 logger = logging.getLogger(__name__)
 
+def user_created_pipe(userid, username):
+    add_group(username)
+
 def add_group(username):
     """ Add user to a Discussion group according to its category"""
     su = get_socialuser_from_screen_name(username)

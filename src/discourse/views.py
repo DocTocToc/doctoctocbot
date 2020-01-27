@@ -18,6 +18,7 @@ from ip.views import ip_yours
 from django.core.cache import cache
 from ip.host import set_discourse_ip_cache
 from django.views.decorators.http import require_POST
+from discourse.user import user_created_pipe
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ def webhook(request):
     logger.debug(f"client: {client_ip}, discourse: {discourse_ip}")
     if client_ip != discourse_ip:
         return HttpResponseForbidden('Permission denied.')
-    
+
     # header signature check
     header_signature = request.META.get('HTTP_X_DISCOURSE_EVENT_SIGNATURE')
     logger.debug(f"header signature: {header_signature}")
@@ -115,6 +116,12 @@ def webhook(request):
         if event == 'user_created':
             logger.debug("Discourse user created!")
             logger.debug(f"Request body: {request.body}")
+            try:
+                userid=request.body["user"]["userid"]
+                username=request.body["user"]["username"]
+            except KeyError:
+                return
+            user_created_pipe(userid=userid, username=username)            
         elif event == 'user_updated':
             logger.debug("Discourse user updated!")
             logger.debug(f"Request body: {request.body}")

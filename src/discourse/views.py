@@ -120,7 +120,7 @@ def webhook(request):
             logger.debug("Discourse user created!")
             logger.debug(f"Request body: {request.body}")
             try:
-                userid=body["user"]["userid"]
+                userid=body["user"]["id"]
                 username=body["user"]["username"]
             except KeyError:
                 return HttpResponseServerError('Internal server error.', status=500)

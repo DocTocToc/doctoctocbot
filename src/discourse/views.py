@@ -66,9 +66,9 @@ def discourse_sso(request):
     try:
         avatar_url = user.socialuser.profile.json["profile_image_url_https"]
     except AttributeError as e:
-        logger.warn("Attribute error on user object", e)
+        logger.error("Attribute error on user object", e)
     except KeyError as e:
-        logger.warn("Key error on profile object json field", e)
+        logger.error("Key error on profile object json field", e)
     else:
         params["avatar_url"] = avatar_url
 
@@ -79,26 +79,23 @@ def discourse_sso(request):
     # Redirect back to Discourse
 
     discourse_sso_url = 'https://{0}/session/sso_login?{1}'.format(settings.DISCOURSE_BASE_URL, query_string)
-    logger.warning("discourse redirect url: %s", discourse_sso_url)
     return HttpResponseRedirect(discourse_sso_url)
 
 @require_POST
 @csrf_exempt
 def webhook(request):
-    logger.debug(request.META)
-    
+    """Handle webhook post request coming from Discourse
+    """
     # ip check
     discourse_ip = cache.get(settings.DISCOURSE_IP_CACHE_KEY)
     if not discourse_ip:
         discourse_ip = set_discourse_ip_cache()
     client_ip = ip_yours(request)
-    logger.debug(f"client: {client_ip}, discourse: {discourse_ip}")
     if client_ip != discourse_ip:
         return HttpResponseForbidden('Permission denied.')
 
     # header signature check
     header_signature = request.META.get('HTTP_X_DISCOURSE_EVENT_SIGNATURE')
-    logger.debug(f"header signature: {header_signature}")
     if header_signature is None:
         return HttpResponseForbidden('Permission denied.')
     sha_name, signature = header_signature.split('=')
@@ -118,7 +115,6 @@ def webhook(request):
         logger.debug(f"body (json): {body}")
         if event == 'user_created':
             logger.debug("Discourse user created!")
-            logger.debug(f"Request body: {request.body}")
             try:
                 userid=body["user"]["id"]
                 username=body["user"]["username"]
@@ -127,11 +123,9 @@ def webhook(request):
             user_created_pipe(userid=userid, username=username)            
         elif event == 'user_updated':
             logger.debug("Discourse user updated!")
-            logger.debug(f"Request body: {request.body}")
         elif event == 'user_destroyed':
             logger.debug("Discourse user destroyed!")
         return HttpResponse('success')
-    
     return HttpResponse(status=204)
         
     

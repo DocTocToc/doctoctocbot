@@ -1,5 +1,4 @@
 import logging
-from discourse.models import AccessControl
 from moderation.social import get_socialuser_from_screen_name
 from discourse.api import add_username_to_group
 
@@ -9,7 +8,7 @@ def user_created_pipe(userid, username):
     add_group(username)
 
 def add_group(username):
-    """ Add user to a Discussion group according to its category"""
+    """ Add user to a Discourse group according to its categories"""
     su = get_socialuser_from_screen_name(username)
     if not su:
         return

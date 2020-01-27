@@ -17,5 +17,5 @@ def add_group(username):
         group = category.accesscontrol.group
         add_username_to_group(
             username=username,
-            group=group
+            groupname=group
         )    

@@ -227,8 +227,8 @@ def pie_plot(dct):
         f.close()
     return f
 
-def get_dm_media_id(file):
-    api = get_api()
+def get_dm_media_id(file, bot_screen_name):
+    api = get_api(username=bot_screen_name, backend=True)
     res = api.media_upload(file.name, media_category="dm_image")
     file.close()
     return res.media_id
@@ -239,7 +239,7 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
         file = pie_plot(graph(user_id, community))
         if not file:
             return False
-        media_id = get_dm_media_id(file)
+        media_id = get_dm_media_id(file, bot_screen_name)
         attachment = {"type": "media",
                       "media": {
                           "id": media_id }

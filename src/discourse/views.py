@@ -118,7 +118,8 @@ def webhook(request):
             try:
                 userid=body["user"]["id"]
                 username=body["user"]["username"]
-            except KeyError:
+            except KeyError as e:
+                logger.error(f"KeyError with webhook request's json body: {e}")
                 return HttpResponseServerError('Internal server error.', status=500)
             user_created_pipe(userid=userid, username=username)            
         elif event == 'user_updated':

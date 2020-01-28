@@ -18,7 +18,7 @@ def get_api_dict(__screen_name: typing.Optional[str]=None):
         access_token = account.backend_twitter_access_token
         access_token_secret = account.backend_twitter_access_token_secret
     except Account.DoesNotExist as e:
-        logger.error(f"account with username {__screen_name} does not exist", e)
+        logger.error(f"account with username {__screen_name} does not exist. \n {e}")
         return
 
     if (not consumer_key

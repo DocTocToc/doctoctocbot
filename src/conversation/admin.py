@@ -33,6 +33,9 @@ def screen_name_link(self, obj):
         except:
             return
 
+    if not isinstance(status, dict):
+        return
+
     screen_name = ""
     if "user" in status:  
         if "screen_name" in status["user"]:

@@ -6,8 +6,7 @@ from random import shuffle, randint
 from django.utils import translation
 from django.conf import settings
 from django.db.models import Count, Q
-from django.db.models.functions import ExtractMonth, ExtractYear
-from django.db.models.functions import TruncMonth, TruncYear, TruncDay
+from django.db.models.functions import TruncMonth, TruncYear, TruncDay, TruncWeek
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation import gettext as _
@@ -18,6 +17,12 @@ from conversation.models import Tweetdj, Hashtag
 from moderation.models import SocialUser, UserCategoryRelationship
 from community.helpers import get_community
 from moderation.profile import screen_name
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.views.generic import View
+
+from django.db.models.functions import Cast
+from django.db.models import DateTimeField, CharField
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +62,10 @@ def get_chart(period, request, series):
     categories = get_community(request).membership.all()
     categories_str = ", ".join([cat.label for cat in categories])
     return {
-        'chart': {'type': 'column'}, 
+        'chart': {
+            'type': 'column',
+            "zoomType": "x",
+        }, 
         'title': {'text': _('Number of questions per {period} ({categories_str})').format(
             period=period,
             categories_str=categories_str)
@@ -163,9 +171,9 @@ def questions_daily_data(request):
     series = list()
     for key, dct in qs_dct.items():
         serie = dict()
-        serie.update({"type": "area"})
+        #serie.update({"type": "bar"})
         serie.update({"name": f'{dct["label"]}'})
-        #serie.update({"color": color_dct[key]})
+        serie.update({"color": color_dct[key]})
         serie.update({
             'lineWidth': 1,
             'lineColor': color_dct[key],
@@ -200,6 +208,53 @@ def questions_daily_data(request):
             }
     )
     return JsonResponse(chart)
+
+def weekly(request):
+    return render(request, 'charts/weekly.html')
+
+def questions_weekly_data(request):
+    period = gettext_lazy("week")
+    member_userid_lst = get_userid_lst(request)        
+ 
+    qsm = (Tweetdj.objects
+        .filter(userid__in=member_userid_lst)
+        .filter(retweetedstatus=False)
+        .filter(quotedstatus=False)
+        .annotate(date = TruncWeek('created_at'))
+        .values('date')
+        .annotate(count=Count('statusid'))
+        .order_by('date'))
+    
+    qs_dct = filter_hashtag(qsm, request)
+    
+    uid = authenticated_socialuser_userid(request)
+    qs_dct_copy = dict(qs_dct)
+    if uid:
+        for key in qs_dct_copy.keys():
+            qs_dct.update(
+                {f"{key}_user": {
+                    "label": f'{qs_dct_copy[key]["label"]} {by} {screen_name(uid)}',
+                    "qs": qs_dct_copy[key]["qs"].filter(userid=uid)
+                    }
+                }
+            )
+    
+    series = list()
+    for key, dct in qs_dct.items():
+        serie = dict()
+        serie.update({"name": f'{dct["label"]}'})
+        serie.update({"color": color_dct[key]})                      
+        data = []
+        for values in dct["qs"]:
+            d = values["date"]
+            timestamp = int(time.mktime(d.timetuple())*1000)
+            count = values["count"]
+            data.append([timestamp, count])
+        serie.update({"data": data})
+        series.append(serie)
+    chart = get_chart(period, request, series)
+    return JsonResponse(chart)
+
 
 def monthly(request):
     return render(request, 'charts/monthly.html')
@@ -291,3 +346,21 @@ def questions_yearly_data(request):
         series.append(serie)
     chart = get_chart(period, request, series)
     return JsonResponse(chart)
+
+
+class HomePageView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'charts/category.html')
+
+
+class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        data = {
+            "labels": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "data": [12, 19, 3, 5, 2, 3, 10],
+        }   
+
+        return Response(data)

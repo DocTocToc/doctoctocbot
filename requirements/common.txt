@@ -45,3 +45,4 @@ django-silver
 celery_once
 ipaddress
 pydiscourse
+Faker

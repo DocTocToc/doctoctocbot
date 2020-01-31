@@ -7,41 +7,33 @@
   <script type="text/javascript">
    $.get('{% url 'charts:questions_daily_data' %}', function (data) {
           Highcharts.chart('myHighChart', {
-              chart: data.chart,
+              "chart": {
+                  "defaultSeriesType": "column",
+                  //"height": 200,
+                  "borderRadius": 0,
+                  "zoomType": "x"
+          },
               title: data.title,
               subtitle: {
                   text: document.ontouchstart === undefined ?
                       'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
               },
-              xAxis: data.xAxis,
+              xAxis: {
+                  startOnTick:true,
+                  endOnTick:true,
+                  "type": "datetime",
+                  "minTickInterval": 86400000
+              },
               yAxis: data.yAxis,
               legend: {
-                  enabled: true
+                  "layout": "vertical",
+                  "style": {},
+                  "enabled": true
               },
               plotOptions: {
-                  area: {
-                      fillColor: {
-                          linearGradient: {
-                              x1: 0,
-                              y1: 0,
-                              x2: 0,
-                              y2: 1
-                          },
-                          stops: [
-                              [0, Highcharts.getOptions().colors[0]],
-                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                          ]
-                      },
-                      marker: {
-                          radius: 2
-                      },
-                      lineWidth: 1,
-                      states: {
-                          hover: {
-                              lineWidth: 1
-                          }
-                      },
-                      threshold: null
+                  "column": {
+                      //"stacking": "normal",
+                      //pointWidth:1
                   }
               },
               series: data.series

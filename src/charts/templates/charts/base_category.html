@@ -1,0 +1,29 @@
+{% extends "doctocnet/base.html" %}
+{% block content %}
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+  {% block container %}
+  <div class="container">
+    <div class="row"> 
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+        <canvas id="myChart" width="400" height="400">
+            <script>
+                $(document).ready(function(){
+                {% block jquery %}{% endblock %}
+                })
+            </script>
+        </canvas>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+</div>
+  
+</main><!-- /.container -->
+  {% endblock %}
+  
+
+
+
+
+{% endblock %}

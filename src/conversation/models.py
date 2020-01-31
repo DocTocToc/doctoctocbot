@@ -86,6 +86,8 @@ class Tweetdj(models.Model):
 
     def status_text_tag(self):
         status = self.json
+        if not isinstance(status, dict):
+            return
         if 'full_text' in status:  
             status_str = status.get("full_text")
         elif 'text' in status:

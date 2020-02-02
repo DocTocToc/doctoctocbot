@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-01 00:28+0100\n"
-"PO-Revision-Date: 2019-10-21 19:56+0200\n"
+"PO-Revision-Date: 2020-02-02 13:26+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -44,7 +44,7 @@ msgstr "Jours"
 
 #: doctocnet/templates/doctocnet/navbar.html:29
 msgid "Weekly"
-msgstr ""
+msgstr "Semaines"
 
 #: doctocnet/templates/doctocnet/navbar.html:30
 msgid "Monthly"
@@ -129,11 +129,11 @@ msgstr "Se connecter avec Twitter"
 
 #: doctocnet/templates/doctocnet/navbar.html:97
 msgid "Discussion"
-msgstr ""
+msgstr "Discussion"
 
 #: doctocnet/views.py:40 doctocnet/views.py:53
 msgid "Not authorized to access this media."
-msgstr ""
+msgstr "Vous n'êtes pas autorisé à accéder à ce document."
 
 #~ msgid "English"
 #~ msgstr "Anglais"

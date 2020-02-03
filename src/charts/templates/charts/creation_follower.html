@@ -12,8 +12,9 @@ window.chartColors = {
     purple: 'rgb(153, 102, 255)',
     grey: 'rgb(201, 203, 207)'
 };
-  var endpoint = "{% url 'charts:category-data' %}" //'/charts/api/category/data'
-  
+  var endpoint = "{% url 'charts:creation-follower-data' %}"
+  var twitter0 = new Date(2006, 3, 21);
+  var today = new Date();
   $.ajax({
     method: "GET",
     url: endpoint,
@@ -21,18 +22,14 @@ window.chartColors = {
       var ctx = document.getElementById("myChart").getContext('2d');
       var color = Chart.helpers.color;
       var myChart = new Chart(ctx, {
-          type: 'bar',
+          type: 'scatter',
           data: {
+        	  labels: data.labels,
               datasets: [{
-                  label: 'Tweets',
+                  label: 'Users',
                   backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
                   borderColor: window.chartColors.red,
-                  data: data,
-                  type: 'bar',
-                  pointRadius: 0,
-                  fill: false,
-                  lineTension: 0,
-                  borderWidth: 2
+                  data: data.data,
                   /*backgroundColor: [
                       'rgba(255, 99, 132, 0.2)',
                       'rgba(54, 162, 235, 0.2)',
@@ -53,6 +50,14 @@ window.chartColors = {
               }]
           },
           options: {
+        	  tooltips: {
+        	         callbacks: {
+        	            label: function(tooltipItem, data) {
+        	               var label = data.labels[tooltipItem.index];
+        	               return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+        	            }
+        	         }
+        	      },
               reponsive: true,
               scales: {
             	  yAxes: [{
@@ -61,13 +66,16 @@ window.chartColors = {
                       },
                       scaleLabel: {
                           display: true,
-                          labelString: 'number of tweets'
+                          labelString: 'followers'
                       }
                   }],
                   xAxes: [{
                       type: 'time',
-                      distribution: 'linear',
-                      offset: true,
+                      time:{
+                          min: twitter0,
+                          max: today,
+                      },
+                      position: 'bottom',
                       ticks: {
                           major: {
                               enabled: true,
@@ -77,7 +85,7 @@ window.chartColors = {
                           autoSkip: true,
                           autoSkipPadding: 75,
                           maxRotation: 0,
-                          sampleSize: 100
+                          sampleSize: 100,
                       }}],
               }
           }

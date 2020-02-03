@@ -6,7 +6,8 @@ from random import shuffle, randint
 from django.utils import translation
 from django.conf import settings
 from django.db.models import Count, Q
-from django.db.models.functions import TruncMonth, TruncYear, TruncDay, TruncWeek
+from django.db import models
+from django.db.models.functions import TruncMonth, TruncYear, TruncDay, TruncWeek, Cast
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation import gettext as _
@@ -23,6 +24,10 @@ from django.views.generic import View
 
 from django.db.models.functions import Cast
 from django.db.models import DateTimeField, CharField
+
+from moderation.models import SocialUser
+from django.db.models import F
+from bot.lib.datetime import get_datetime_tz_from_twitter_str
 
 logger = logging.getLogger(__name__)
 
@@ -358,9 +363,58 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
+        member_userid_lst = get_userid_lst(request)
+        #filter(hashtag__hashtag = h0_label)
+        hashtag = "doctoctoctest" if settings.DEBUG else "doctoctoc"
+        qs = (Tweetdj.objects
+            .filter(userid__in=member_userid_lst)
+            .filter(retweetedstatus=False)
+            .filter(quotedstatus=False)
+            .filter(hashtag__hashtag = hashtag)
+            #.annotate(t = TruncDay('created_at'))
+            .annotate(t=Cast(TruncDay('created_at', models.DateTimeField()), models.TextField()))
+            .values('t')
+            .annotate(y=Count('statusid'))
+            .order_by('t'))
+        """
         data = {
-            "labels": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "t": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
             "data": [12, 19, 3, 5, 2, 3, 10],
         }   
+        """
+        return Response(list(qs))
 
-        return Response(data)
+  
+class CreationFollowerChartView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'charts/creation_follower.html')
+
+    
+class CreationFollowerChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        member_userid_lst = get_userid_lst(request)
+        labels = []
+        data = list(
+            SocialUser.objects
+            .filter(user_id__in=member_userid_lst)
+            .values(
+                "profile__json__created_at",
+                "profile__json__followers_count",
+                "profile__json__screen_name",)
+        )
+        for i in range(len(data)):
+            dict = data.pop(i)
+            twitter_datetime: str =  dict.pop("profile__json__created_at")
+            python_datetime = get_datetime_tz_from_twitter_str(twitter_datetime)
+            dict["t"] = python_datetime.date().isoformat()
+            dict["y"] = dict.pop("profile__json__followers_count")
+            labels.insert(i, dict.pop("profile__json__screen_name"))
+            data.insert(i, dict)
+        res = {
+            "labels": labels,
+            "data": data,
+        }
+        return Response(res)

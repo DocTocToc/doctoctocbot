@@ -15,4 +15,7 @@ urlpatterns = [
     path('yearly/data/', views.questions_yearly_data, name='questions_yearly_data'),
     path('category/', views.HomePageView.as_view(), name='category'),
     path('api/category/data/', views.ChartData.as_view(), name="category-data"),
+    path('creation-follower/', views.CreationFollowerChartView.as_view(), name='creation-follower'),
+    path('api/creation-follower/data/', views.CreationFollowerChartData.as_view(), name="creation-follower-data"),
+
 ]

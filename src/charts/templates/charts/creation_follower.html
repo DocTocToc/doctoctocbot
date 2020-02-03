@@ -1,7 +1,42 @@
 {% extends 'charts/base_category.html' %}
-
 <script>
 {% block jquery %}
+var changeScaleTypePlugin = {
+		beforeUpdate: function (chartInstance) {
+		    var self = this;
+		    chartInstance.beforeInit = null;
+		    if (chartInstance.options.changeScale) {
+		        self.changeScales(chartInstance);
+		        if (chartInstance.options.scaleTypeChanged) {
+		            chartInstance.options.scaleTypeChanged = false;
+		            Object.keys(chartInstance.scales).forEach(function (axisName) {
+		                var scale = chartInstance.scales[axisName];
+		                Chart.layoutService.removeBox(chartInstance, scale);
+		            });
+		            chartInstance.initialize();
+		        }
+		    }
+		},
+		changeScales: function (chartInstance) {
+		    var maxValue = Math.max.apply(null, chartInstance.data.datasets.map(function (dataset) { return Math.max.apply(null, dataset.data); }));
+		    var minValue = Math.min.apply(null, chartInstance.data.datasets.map(function (dataset) { return Math.min.apply(null, dataset.data); }));
+		    var logMax = Math.floor(Math.log(maxValue) / Math.LN10);
+		    var logMin = Math.floor(Math.log(minValue) / Math.LN10);
+		    if (logMax - logMin > chartInstance.options.maxRankDifference) {
+		        if (!chartInstance.options.scaleTypeChanged && chartInstance.options.scales.yAxes.filter(function (axis) { return axis.type !== 'logarithmic'; }).length) {
+		            console.log('logarithmic');
+		            chartInstance.options.scaleTypeChanged = true;
+		            chartInstance.options.scales.yAxes = Chart.helpers.scaleMerge(Chart.defaults.scale, { yAxes: chartInstance.options.logarithmicScaleOptions }).yAxes;                
+		        }
+		    } else {
+		        if (!chartInstance.options.scaleTypeChanged && chartInstance.options.scales.yAxes.filter(function (axis) { return axis.type !== 'linear'; }).length) {
+		            console.log('linear');
+		            chartInstance.options.scaleTypeChanged = true;
+		            chartInstance.options.scales.yAxes = Chart.helpers.scaleMerge(Chart.defaults.scale, { yAxes: chartInstance.options.linearScaleOptions }).yAxes;
+		        }
+		    }
+		}
+};
 
 window.chartColors = {
     red: 'rgb(255, 99, 132)',
@@ -26,7 +61,7 @@ window.chartColors = {
           data: {
         	  labels: data.labels,
               datasets: [{
-                  label: 'Users',
+                  label: 'Twitter users verified by @doctoctocbot (physician, pharmacist, midwife)',
                   backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
                   borderColor: window.chartColors.red,
                   data: data.data,
@@ -50,6 +85,8 @@ window.chartColors = {
               }]
           },
           options: {
+               changeScale: true,
+               //maxRankDifference: 3,
         	  tooltips: {
         	         callbacks: {
         	            label: function(tooltipItem, data) {
@@ -61,12 +98,32 @@ window.chartColors = {
               reponsive: true,
               scales: {
             	  yAxes: [{
-                      gridLines: {
-                          drawBorder: false
-                      },
+            		  id: 'y-axis-0',
+            		  type: 'logarithmic',
                       scaleLabel: {
                           display: true,
-                          labelString: 'followers'
+                          labelString: 'followers (logarithmic scale)'
+                      },
+                      ticks: {
+                          min: 0,
+                          max: 40000,
+                          callback: function (value, index, values) {
+                              if (value === 40000) return "40K";
+                              if (value === 30000) return "30K";
+                              if (value === 20000) return "20K";
+                              if (value === 10000) return "10K";
+                              if (value === 5000) return "5K";
+                              if (value === 4000) return "4K";
+                              if (value === 3000) return "3K";
+                              if (value === 2000) return "2K";
+                              if (value === 1000) return "1K";
+                              if (value === 500) return "500";
+                              if (value === 100) return "100";
+                              if (value === 50) return "50";
+                              if (value === 10) return "10";
+                              if (value === 0) return "0";
+                              return null;
+                          }
                       }
                   }],
                   xAxes: [{

@@ -28,6 +28,7 @@ from django.db.models import DateTimeField, CharField
 from moderation.models import SocialUser
 from django.db.models import F
 from bot.lib.datetime import get_datetime_tz_from_twitter_str
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 logger = logging.getLogger(__name__)
 
@@ -385,7 +386,7 @@ class ChartData(APIView):
         return Response(list(qs))
 
   
-class CreationFollowerChartView(View):
+class CreationFollowerChartView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, 'charts/creation_follower.html')
 

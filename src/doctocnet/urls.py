@@ -41,16 +41,18 @@ urlpatterns = [
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
+    path('accounts/',
+        include('django.contrib.auth.urls')
+    ),
     path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
 
     path('conversation/', include('conversation.urls')),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
-    
+    path('invitations/', include('invitations.urls', namespace='invitations')),
     # wagtail
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),

@@ -192,6 +192,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'silver',
     'rest_framework.authtoken',
+    'invitations',
 ]
 
 if DEBUG:
@@ -568,3 +569,6 @@ DISCOURSE_IP_CACHE_TTL = config('DISCOURSE_IP_CACHE_TTL', cast=int, default=3600
 DISCOURSE_IP_CACHE_KEY = config('DISCOURSE_IP_CACHE_KEY', default="discourse_ip")
 DISCOURSE_WEBHOOK_SECRET = config('DISCOURSE_WEBHOOK_SECRET')
 DISCOURSE_API_KEY_SYSTEM = config('DISCOURSE_API_KEY_SYSTEM')
+
+# Invite
+INVITATIONS_SIGNUP_REDIRECT = 'django_registration_register_invite_email'

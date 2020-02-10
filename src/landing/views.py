@@ -8,7 +8,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
-
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
 

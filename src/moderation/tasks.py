@@ -89,7 +89,11 @@ def handle_check_all_profile_pictures():
 
 @shared_task(bind=True)
 def handle_sendmoderationdm(self, mod_instance_id):
-    mod_mi = Moderation.objects.get(pk=mod_instance_id)
+    try:
+        mod_mi = Moderation.objects.get(pk=mod_instance_id)
+    except Moderation.DoesNotExist:
+        logger.error(f"Moderation with id={id} does not exist.")
+        return
     qr = quickreply(mod_instance_id)
     logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
     #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")

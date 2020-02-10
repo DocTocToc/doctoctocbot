@@ -104,7 +104,8 @@ def sendmoderationdm(sender, instance, created, **kwargs):
     if created:
         transaction.on_commit(
             lambda: handle_sendmoderationdm.apply_async(
-                args=[instance.id,],
+                args=[],
+                kwargs={'mod_instance_id': instance.id},
                 countdown=60
                 )
             )

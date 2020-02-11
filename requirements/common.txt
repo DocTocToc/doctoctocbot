@@ -13,7 +13,7 @@ django-mptt
 social-auth-app-django
 CleanerVersion==2.1.1
 pillow
-Celery==4.3.0
+Celery==4.4.0
 python-decouple
 dj-database-url
 lxml

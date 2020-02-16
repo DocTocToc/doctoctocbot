@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from invitations.models import Invitation
+from invite.models import CategoryInvitation
+
+admin.site.register(Invitation)

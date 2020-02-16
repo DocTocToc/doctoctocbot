@@ -1,12 +1,18 @@
+import logging
 from django_registration.backends.one_step.views import RegistrationView
 from django.urls import reverse
 from django.contrib.auth import authenticate, get_user_model, login
 from django_registration import signals
+from django.conf import settings
+from invite.models import CategoryInvitation
+
+logger=logging.getLogger(__name__)
 
 User = get_user_model()
 
 class OneStepRegistrationView(RegistrationView):
     success_url = "/user/profile/"
+    disallowed_url = "/accounts/register/disallowed/"
     
     def register(self, form):
         new_user = form.save()
@@ -21,3 +27,15 @@ class OneStepRegistrationView(RegistrationView):
             sender=self.__class__, user=new_user, request=self.request
         )
         return new_user
+
+    def registration_allowed(self):
+        """
+        Override this to enable/disable user registration, either
+        globally or on a per-request basis.
+        """
+        key = self.request.session.get(settings.INVITATION_SESSION_KEY, None)
+        if not key:
+            logger.debug("no key")
+            return False
+        logger.debug(f"key:{key}")
+        return CategoryInvitation.objects.filter(key=key, accepted=True).exists()

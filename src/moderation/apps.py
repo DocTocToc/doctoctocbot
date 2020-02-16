@@ -4,5 +4,5 @@ class ModerationConfig(AppConfig):
     name = 'moderation'
     
     def ready(self):
-        import moderation.signals
+        import moderation.signals #noqa
     

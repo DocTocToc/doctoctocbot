@@ -46,4 +46,4 @@ celery_once
 ipaddress
 pydiscourse
 Faker
-django-invitations
+git+https://github.com/DocTocToc/django-invitations.git@master#egg=django-invitations

@@ -138,7 +138,7 @@ class SocialUser(models.Model):
     
     def __str__(self):
         try:
-            return str("%i | %s | %i " % (self.pk, self.profile.json["screen_name"], self.user_id))
+            return f'{self.pk} | {self.profile.json.get("screen_name", None)} | {self.user_id})'
         except Profile.DoesNotExist:
             return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
 
@@ -306,15 +306,11 @@ class Profile(models.Model):
     
     name_tag.short_description = 'Name'
 
-
-
-    
     def __str__(self):
         try:
             text = self.json["status"]["text"][:140]
         except KeyError:
             text = None
-            pass
         description = (
             f'pk: {self.id}'
             f'Profile id: {str(self.json.get("id", None))} '

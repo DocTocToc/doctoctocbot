@@ -1,0 +1,10 @@
+{% extends "doctocnet/base.html" %}
+{% block content %}
+{% if allowed %}
+<p>Vous pouvez inviter un professionnel de santé à rejoindre notre communauté.</p>
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+{% else %}
+  Vous n'êtes pas autorisé à envoyer une invitation.
+{% endif %}
+{% endblock %}

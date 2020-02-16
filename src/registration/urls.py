@@ -1,9 +1,9 @@
 from django.urls import include, path
 from django_registration.backends.activation.views import RegistrationView
+from django.views.generic import TemplateView
+
 from registration.views import OneStepRegistrationView
-
 from registration.forms import RegistrationFormPasswordless, RegistrationFormPasswordlessCaseInsensitiveSocial
-
 from registration.forms import RegistrationFormInviteEmail
 
 
@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     path('accounts/register/invite/email/',
         OneStepRegistrationView.as_view(form_class= RegistrationFormInviteEmail),
-        name='django_registration_register_invite_email',
+        name='register-invite-email',
     ),
     path('accounts/registersocial/',
         RegistrationView.as_view(
@@ -32,4 +32,11 @@ urlpatterns = [
     path('accounts/',
         include('django_registration.backends.one_step.urls')
     ),
+    path('accounts/register/disallowed/',
+         TemplateView.as_view(
+             template_name='django_registration/registration_disallowed.html'
+             ),
+         name='registration_disallowed'
+    ),
+
 ]

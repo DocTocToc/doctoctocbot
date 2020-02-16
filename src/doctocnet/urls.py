@@ -41,6 +41,7 @@ urlpatterns = [
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
+    path('', include('invite.urls')),
     path('accounts/',
         include('django.contrib.auth.urls')
     ),

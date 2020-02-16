@@ -1,0 +1,9 @@
+{% extends "doctocnet/base.html" %}
+{% block title %}Inscription non autorisée{% endblock %}
+
+{% block content %}
+  <h3>Inscription non autorisée</h3>
+  <p>Vous devez être invité par un utilisateur du réseau.</p>
+  <p>Si vous ne connaissez aucun utilisateur susceptible de vous envoyer une invitation, merci de nous envoyer un message de présentation contenant votre adress email via le formulaire de <a href="{% url 'gpgcontact:contact-form' %}">contact</a>.</p>
+  <p>À bientôt!</p>
+{% endblock %}

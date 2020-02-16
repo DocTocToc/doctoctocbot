@@ -1,12 +1,12 @@
 import logging
 import datetime
+import json
 from os.path import exists, basename
 import requests
 from urllib.parse import urlparse
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
-from psycopg2._json import json
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
 from django.conf import settings
@@ -88,8 +88,6 @@ def twitterprofile(jsn):
     avatar(p, jsn)
             
 def avatar(profile, response):
-
-    
     img_url = response["profile_image_url_https"]
     name = urlparse(img_url).path.split('/')[-1]
     logger.debug(f"name (Twitter): {name}, name (Database): {profile.normalavatar.name.split('/')[-1]}")
@@ -186,4 +184,29 @@ def update_profile_pictures(socialuser):
         if img_url:
             save_profile_pictures(img_url, profile)
 
+def create_update_profile_twitter(su: SocialUser):
+    userid = su.user_id
+    try:
+        tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
+    except Tweetdj.DoesNotExist:
+        tweetdj_mi = None
+    if tweetdj_mi is None:
+        from bot.bin.user import getuser
+        userjson = getuser(userid)
+    else:
+        userjson = tweetdj_mi.json.get("user")
+    twitterprofile(userjson)
     
+def create_update_profile_local(su: SocialUser):
+    try:
+        username: str = su.user_set.first().username
+    except:
+        return
+    profile = {"screen_name": username}
+    try:
+        Profile.objects.create(
+            socialuser=su,
+            json=json.loads(json.dumps(profile)),
+        )
+    except DatabaseError:
+        return

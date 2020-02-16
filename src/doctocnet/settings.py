@@ -96,6 +96,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "django-invitations": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }
@@ -193,6 +197,7 @@ INSTALLED_APPS = [
     'silver',
     'rest_framework.authtoken',
     'invitations',
+    'invite',
 ]
 
 if DEBUG:
@@ -571,4 +576,16 @@ DISCOURSE_WEBHOOK_SECRET = config('DISCOURSE_WEBHOOK_SECRET')
 DISCOURSE_API_KEY_SYSTEM = config('DISCOURSE_API_KEY_SYSTEM')
 
 # Invite
-INVITATIONS_SIGNUP_REDIRECT = 'django_registration_register_invite_email'
+INVITATIONS_SIGNUP_REDIRECT = 'registration:register-invite-email'
+INVITATIONS_INVITATION_MODEL = 'invite.CategoryInvitation'
+INVITATION_USE_SESSION_KEY = config(
+    'INVITATION_USE_SESSION_KEY',
+    default=True,
+    cast=bool
+)
+INVITATION_SESSION_KEY = config(
+    'INVITATION_SESSION_KEY',
+    default='invitation_session_key'
+)
+
+THIS_SOCIAL_MEDIA =  config('THIS_SOCIAL_MEDIA', default='this_social_media')

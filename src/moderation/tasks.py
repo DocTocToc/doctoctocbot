@@ -8,6 +8,7 @@ from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
+from conversation.models import Tweetdj
 
 from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
@@ -23,6 +24,10 @@ from moderation.models import Moderation
 from dm.api import senddm
 from community.models import Community
 from moderation.profile import check_profile_pictures
+from moderation.profile import (
+    create_update_profile_twitter,
+    create_update_profile_local,
+    )
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -41,22 +46,19 @@ def handle_create_update_lists(community_name: str):
 
 
 @shared_task
-def handle_create_update_profile(userid_int):
-    from conversation.models import Tweetdj
-
+def handle_create_update_profile(userid: int):
     try:
-        tweetdj_mi = Tweetdj.objects.filter(userid = userid_int).latest()
-    except Tweetdj.DoesNotExist:
-        tweetdj_mi = None
-        
-    if tweetdj_mi is None:
-        from bot.bin.user import getuser
-        userjson = getuser(userid_int)
-    else:
-        userjson = tweetdj_mi.json.get("user")
-
-    logger.debug(userjson)
-    twitterprofile(userjson)
+        su: SocialUser = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        sm: SocialMedia = su.social_media
+    except AttributeError:
+        return
+    if sm.name == 'twitter':
+        create_update_profile_twitter(su)
+    elif sm.name == settings.THIS_SOCIAL_MEDIA:
+        create_update_profile_local(su)
 
 def handle_create_all_profiles():
     from conversation.models import Tweetdj

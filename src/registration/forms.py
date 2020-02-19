@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_registration import validators
 from django_registration.forms import RegistrationForm
 from registration.validators import CaseInsensitiveReservedSocialUsername
-
+from crispy_forms.helper import FormHelper
 
 User = get_user_model()
 
@@ -26,6 +26,11 @@ class RegistrationFormInviteEmail(RegistrationForm):
     A form that creates a user, with no privileges, from the given username
     and password, following an invite.
     """
+    email = forms.Field(
+        widget=forms.EmailInput(attrs={'class':'form-control'}),
+        label=_("Email (Be sure to use the same email to which the invitation was sent)")
+    )
+    
     class Meta(RegistrationForm.Meta):
         model = User
         fields = ("username", "password1", "password2", "email",)
@@ -35,6 +40,8 @@ class RegistrationFormInviteEmail(RegistrationForm):
         
     def __init__(self, *args, **kwargs):
         super(RegistrationFormInviteEmail, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'blueForms'
         self.fields[User.USERNAME_FIELD].validators.extend(
             [validators.CaseInsensitiveUnique(
                 User, User.USERNAME_FIELD,

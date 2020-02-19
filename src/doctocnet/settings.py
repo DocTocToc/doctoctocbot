@@ -130,6 +130,7 @@ WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 # Application definition
 
 INSTALLED_APPS = [
+    'invitations',
     'users',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -196,7 +197,6 @@ INSTALLED_APPS = [
     'dal_select2',
     'silver',
     'rest_framework.authtoken',
-    'invitations',
     'invite',
 ]
 
@@ -209,10 +209,10 @@ if DEBUG:
 MIDDLEWARE = [
 
 
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -248,11 +248,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.media',
-                'django.template.context_processors.i18n',
                 'doctocnet.context_processors.site',
             ],
         },
@@ -296,17 +296,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-
 LANGUAGE_CODE = 'fr'
-
 
 LANGUAGES = [
     ('fr', _('French')),
-#    ('en', _('English')),
-
 ]
 
 LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
     "templates/locale",
 ]
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
@@ -325,8 +322,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
 
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
@@ -348,8 +343,6 @@ AUTHENTICATION_BACKENDS = (
     #'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
-
-
 
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -455,7 +448,6 @@ STATUS_DISPLAY_HOUR = {
     'help': 72,
     'top': 72
 }
-
 
 #CORS_ORIGIN_ALLOW_ALL = True
 

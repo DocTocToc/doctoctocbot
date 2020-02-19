@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-01 00:28+0100\n"
-"PO-Revision-Date: 2019-12-22 16:57+0100\n"
+"POT-Creation-Date: 2020-02-18 18:49+0100\n"
+"PO-Revision-Date: 2020-02-18 18:06+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -167,7 +167,7 @@ msgstr ""
 
 #: templates/registration/password_reset_email.html:2
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: templates/registration/password_reset_email.html:4
 msgid "Someone asked for password reset. Follow the link below:"

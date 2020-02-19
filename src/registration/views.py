@@ -15,6 +15,15 @@ class OneStepRegistrationView(RegistrationView):
     disallowed_url = "/accounts/register/disallowed/"
     
     def register(self, form):
+        # Check that the email used to register is identical to invitation email
+        registration_email = form.cleaned_data["email"]
+        key = self.request.session.get(settings.INVITATION_SESSION_KEY, None)
+        try:
+            invitation = CategoryInvitation.objects.get(key=key)
+        except CategoryInvitation.DoesNotExist:
+            return
+        if registration_email != invitation.email:
+            return
         new_user = form.save()
         new_user = authenticate(
             **{

@@ -3,8 +3,9 @@
 {% block title %}Register for an account{% endblock %}
 
 {% block content %}
+  {% load crispy_forms_tags %}
   <form action="." method="post">{% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <p class="submit"><button type="submit">Submit</button></p>
   </form>
 {% endblock %}

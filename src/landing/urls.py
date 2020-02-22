@@ -11,7 +11,11 @@ app_name = 'landing'
 
 urlpatterns = [
     path('', All.as_view(), name='index'),
-    path('user/', RedirectView.as_view(pattern_name='user')),
+    path('user/', RedirectView.as_view(
+        url='/user/profile/',
+        permanent=True
+        )
+    ),
     path('user/profile/', login_required(views.UserProfile.as_view()), name='user'),
     path('user/social/', login_required(TemplateView.as_view(template_name="landing/user/social.html")), name="user-social"),
     path('user/contact/', login_required(TemplateView.as_view(template_name="landing/user/contact.html")), name="user-contact"),

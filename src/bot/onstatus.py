@@ -10,6 +10,7 @@ from bot.doctoctocbot import (
 )
 from bot.lib.statusdb import Addstatus
 from bot.twitter import getAuth
+from bot.twitter import get_api
 from conversation.models import create_tree, Tweetdj
 from moderation.moderate import process_unknown_user
 
@@ -19,7 +20,8 @@ logger = logging.getLogger(__name__)
 
 def triage(statusid):
     try:
-        status = tweepy.API(getAuth()).get_status(statusid, tweet_mode='extended')
+        api = get_api()
+        status = api.get_status(statusid, tweet_mode='extended')
     except tweepy.TweepError as e:
         logger.error(e)
         return

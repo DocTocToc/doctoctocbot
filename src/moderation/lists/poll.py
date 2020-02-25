@@ -68,9 +68,10 @@ def check_add_usercategoryrelationship(user, category, moderator_mi, community_m
         or not moderator_mi
         or not community_mi):
         return
-    crs_lst = user.categoryrelationships.filter(
-        category=category,
-        community=community_mi
+    crs_lst = (
+        user.categoryrelationships
+        .filter(category=category, community=community_mi)
+        .exclude(moderator=user)
     )
 
     if not crs_lst:

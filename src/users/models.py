@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from moderation.models import SocialUser
@@ -13,3 +13,12 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.username
+
+    def is_categorized(self) -> bool:
+        """Does this Django user belong to a category?
+        """
+        try:
+            user_categories = self.socialuser.category.all()
+            return bool(user_categories)
+        except:
+            return False

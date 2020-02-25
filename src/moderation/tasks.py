@@ -222,9 +222,9 @@ def poll_moderation_dm():
         
         #Check if relationship already exists for the given community
         #if cat_mi in moderated_su_mi.category.all():
-        if moderated_su_mi.categoryrelationships.filter(
-            community=mod_mi.queue.community,
-            category=cat_mi):
+        if (moderated_su_mi.categoryrelationships
+            .filter(community=mod_mi.queue.community,category=cat_mi)
+            .exclude(moderator=moderated_su_mi)):
             logger.info(f"{moderated_su_mi} is already a {cat_mi} for community {mod_mi.queue.community}")
             delete_moderation_queue(mod_mi)
             continue

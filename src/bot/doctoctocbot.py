@@ -250,7 +250,11 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             trusted_community_lst.append(community)
             
             trust = False
-            crs_lst = social_user.categoryrelationships.filter(category=category)
+            crs_lst = (
+                social_user.categoryrelationships
+                .filter(category=category)
+                .exclude(moderator=social_user)
+            )
             for crs in crs_lst:
                 if crs.community in trusted_community_lst:
                     trust = True

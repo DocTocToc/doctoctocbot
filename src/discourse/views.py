@@ -49,6 +49,9 @@ def discourse_sso(request):
         return HttpResponseBadRequest('Invalid payload. Please contact support if this problem persists.')
 
     user = request.user
+    if not user.is_categorized():
+        # moderate this user
+        return redirect("moderation:self")
     if not is_allowed_discussion(user):
         return redirect("discourse:discourse-unauthorized")
     # Build the return payload
@@ -128,6 +131,3 @@ def webhook(request):
             logger.debug("Discourse user destroyed!")
         return HttpResponse('success')
     return HttpResponse(status=204)
-        
-    
-    

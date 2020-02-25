@@ -1,0 +1,45 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load auth_extras %}
+{% load static %}
+{% load users %}
+
+{% block title %}{% trans view.title %}{% endblock title %}
+
+{% block head_css %}
+{{ block.super }}
+<style>
+#div_id_message {
+    display: none;
+}
+</style>
+{% endblock head_css %}
+
+{% block head_javascript %}
+{{ block.super }}
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+{% endblock head_javascript %}
+
+
+{% block content %}
+          {% load crispy_forms_tags %}
+          {% crispy form %}
+          
+<script>
+$('#id_category').on('change', function() {
+  console.log( this.value );
+  if (this.value === '') {
+      $('#div_id_message').show();
+  } else {
+      $('#div_id_message').hide();
+  }
+});
+$('#id_certify').on('change', function() {
+    var cat = $("#id_category").val();
+	if ( cat === '') {
+	      $('#div_id_message').show();
+	  }
+});
+</script>
+{% endblock %}
+

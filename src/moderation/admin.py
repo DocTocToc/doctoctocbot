@@ -63,6 +63,8 @@ class CategoryRelationshipInline(admin.TabularInline):
     readonly_fields = (
         'social_user_screen_name_tag',
         'moderator_screen_name_tag',
+        'created',
+        'updated',
     )
 
     
@@ -70,15 +72,47 @@ class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
     extra = 10
     fk_name = 'social_user'
+    readonly_fields = ['created', 'updated']
 
     
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag', 'profile_link',  'social_media_profile', )
-    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst',)
-    readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
-    search_fields = ('user_id', 'profile__json',)
-    
+    list_display = (
+        'pk',
+        'user_id',
+        'screen_name_tag',
+        'mini_image_tag',
+        'name_tag',
+        'profile_link',
+        'social_media_profile',
+    )
+    fields = (
+        'pk',
+        'screen_name_tag',
+        'normal_image_tag',
+        'name_tag',
+        'user_id',
+        'profile_link',
+        'social_media_profile',
+        'category',
+        'category_moderator_lst',
+    )
+    readonly_fields = (
+        'pk',
+        'screen_name_tag',
+        'normal_image_tag',
+        'name_tag',
+        'user_id',
+        'profile_link',
+        'social_media_profile',
+        'category',
+        'category_moderator_lst'
+    )
+    search_fields = (
+        'user_id',
+        'profile__json',
+    )
+
     def category_moderator_lst(self, obj):
         cat_mod_lst = []
         for relation in obj.categoryrelationships.all():

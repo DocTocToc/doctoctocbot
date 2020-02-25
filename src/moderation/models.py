@@ -2,6 +2,7 @@ import logging
 from datetime import date
 from os.path import stat
 from sys import getprofile
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
@@ -17,6 +18,8 @@ from versions.fields import VersionedForeignKey
 from versions.models import Versionable
 from community.models import Community, get_default_community
 from django.contrib.sites.shortcuts import get_current_site
+from bot.twitter import get_api
+from tweepy.error import TweepError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -172,7 +175,45 @@ class SocialUser(models.Model):
     
     name_tag.short_description = 'Name'
 
-            
+    def self_moderate(self, category_name: str):
+        try:
+            category: Category = Category.objects.get(name=category_name)
+        except Category.DoesNotExist:
+            return
+        community: Community =  category.community.first()
+        if not community:
+            return
+        try:
+            with transaction.atomic():
+                ucr = UserCategoryRelationship.objects.create(
+                    social_user = self,
+                    category = category,
+                    moderator = self,
+                    community = community,
+                )
+                logger.info(f'Created {ucr}')
+        except DatabaseError:
+            return
+        
+    def follow_twitter(self, category_name: str):
+        try:
+            category: Category = Category.objects.get(name=category_name)
+        except Category.DoesNotExist:
+            return 
+        community: Community =  category.community.first()
+        if not community:
+            return
+        bot_screen_name = community.account.username
+        try:
+            api = get_api(username=bot_screen_name, backend=False)
+        except TweepError as e:
+            logger.error(e.response.text)
+            return
+        try:
+            api.create_friendship(user_id=self.user_id)
+        except TweepError:
+            return
+
 
     class Meta:
         ordering = ('user_id',)
@@ -203,6 +244,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+    def twitter_screen_name(self):
+        communities =  self.community.all()
+        if not communities:
+            return
+        return communities[0].account.username
     #def clean(self):
     #    if (self.quickreply and
     #            Category.objects.filter(quickreply=True).count() > 20):
@@ -218,7 +264,11 @@ def limit_user_category_relationship_moderator():
     return {'category__name': 'moderator'}
 
 class UserCategoryRelationship(models.Model):
-    social_user = models.ForeignKey('SocialUser', on_delete=models.CASCADE, related_name="categoryrelationships")
+    social_user = models.ForeignKey(
+        'SocialUser',
+        on_delete=models.CASCADE,
+        related_name="categoryrelationships"
+    )
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name="relationships")
     moderator = models.ForeignKey(
         'SocialUser',
@@ -248,6 +298,7 @@ class UserCategoryRelationship(models.Model):
     
     class Meta:
         unique_together = ("social_user", "category", "community")
+        get_latest_by = "created"
 
     
 class SocialMedia(models.Model):

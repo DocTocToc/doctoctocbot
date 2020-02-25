@@ -1,7 +1,11 @@
 import json
+from django.views.generic.edit import FormView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.contrib.sites.models import Site
 from rest_framework import viewsets
 from .models import Moderator
 from .serializers import ModeratorSerializer
@@ -19,6 +23,11 @@ from community.helpers import get_community
 from moderation.thumbnail import get_thumbnail_url
 from django.contrib.sites.shortcuts import get_current_site
 import logging
+from moderation.forms import SelfModerationForm
+from social_django.models import UserSocialAuth
+from community.models import Community
+from moderation.models import UserCategoryRelationship
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
 
@@ -105,3 +114,76 @@ def moderator_id_view(request):
             community__in=get_current_site(request).community.all()
             ).first()
         return Response({"id": moderator.id})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def follower_view(request):
+        try:
+            socialuser = request.user.socialuser
+        except DatabaseError:
+            return Response({"is_following": False})
+        if True:
+            return Response({"is_following": True})
+
+
+class SelfModerationView(LoginRequiredMixin, FormView):
+    template_name = 'moderation/self_moderation_form.html'
+    form_class = SelfModerationForm
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        # create moderation task here
+        user = self.request.user
+        logger.debug(UserSocialAuth.objects.filter(
+                provider='twitter',
+                user=user,
+            ).exists())
+        if UserSocialAuth.objects.filter(
+                provider='twitter',
+                user=user,
+            ).exists():
+            category_name = form.cleaned_data['category']
+            logger.debug(category_name)
+            user.socialuser.self_moderate(category_name=category_name)
+            user.socialuser.follow_twitter(category_name=category_name)
+            #email
+            scheme = self.request.is_secure() and "https" or "http"
+            su_admin_link = (
+                f'{scheme}://'
+                f'{Site.objects.get_current().domain}'
+                f'/silver/admin/moderation/socialuser/{user.socialuser.id}/change/'
+            )
+            try:
+                send_mail(
+                    ('Please moderate this user: '
+                    f'{user.username} {user.socialuser.screen_name_tag()}'),
+                    f'{su_admin_link}',
+                    settings.ADMIN_EMAIL_ADDRESS,
+                    [settings.ADMIN_EMAIL_ADDRESS],
+                    fail_silently=False,
+                )
+            except:
+                logger.error("Self moderation email error for {user.username}")
+        else:
+            pass
+        return super().form_valid(form)
+
+    def get_success_url(self, **kwargs):
+        user = self.request.user
+        try:
+            ucr = UserCategoryRelationship.objects.filter(
+                moderator=user.socialuser,
+                social_user=user.socialuser
+                ).latest()
+            logger.debug(ucr)
+        except UserCategoryRelationship.DoesNotExist:
+            return '/oauth/login/twitter/?next=/moderation/self/'
+        category: Category = ucr.category
+        bot_screen_name = category.twitter_screen_name()
+        logger.debug(bot_screen_name)
+        return reverse_lazy(
+            'moderation:self-success',
+            kwargs = {'screen_name': bot_screen_name}
+        )

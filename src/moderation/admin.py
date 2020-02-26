@@ -1,5 +1,7 @@
 import logging
+from functools import partial
 from django.contrib import admin
+from django.db.models import Q
 from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
@@ -73,6 +75,22 @@ class UserRelationshipInline(admin.TabularInline):
     extra = 10
     fk_name = 'social_user'
     readonly_fields = ['created', 'updated']
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "moderator":
+            mod_ids = list(Moderator.objects.values_list('socialuser', flat=True))
+            try:
+                logger.debug(request.resolver_match.kwargs["object_id"])
+                parent_obj_id = request.resolver_match.kwargs["object_id"]
+                kwargs["queryset"] = SocialUser.objects.filter(
+                    Q(id=parent_obj_id) | Q(id__in=mod_ids)
+                )
+            except IndexError:
+                pass
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+
 
     
 class SocialUserAdmin(admin.ModelAdmin):

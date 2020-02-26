@@ -259,9 +259,8 @@ class Category(models.Model):
         ordering = ('name',)
         verbose_name_plural = "categories"
 
-    
-def limit_user_category_relationship_moderator():
-    return {'category__name': 'moderator'}
+
+#limit_user_category_relationship_moderator = None
 
 class UserCategoryRelationship(models.Model):
     social_user = models.ForeignKey(
@@ -275,7 +274,6 @@ class UserCategoryRelationship(models.Model):
         on_delete=models.CASCADE,
         related_name='moderated',
         null=True,
-        limit_choices_to = limit_user_category_relationship_moderator    
     )
     community = models.ForeignKey(
         'community.Community',

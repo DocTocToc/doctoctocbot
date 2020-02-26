@@ -268,7 +268,11 @@ class UserCategoryRelationship(models.Model):
         on_delete=models.CASCADE,
         related_name="categoryrelationships"
     )
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name="relationships")
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name="relationships"
+    )
     moderator = models.ForeignKey(
         'SocialUser',
         on_delete=models.CASCADE,

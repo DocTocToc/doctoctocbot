@@ -297,7 +297,7 @@ class UserCategoryRelationship(models.Model):
 
     
     class Meta:
-        unique_together = ("social_user", "category", "community")
+        unique_together = ("social_user", "moderator", "category", "community")
         get_latest_by = "created"
 
     

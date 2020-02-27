@@ -198,6 +198,9 @@ INSTALLED_APPS = [
     'silver',
     'rest_framework.authtoken',
     'invite',
+    'controlled_vocabulary',
+    'dublincore_resource',
+    'loci',
 ]
 
 if DEBUG:

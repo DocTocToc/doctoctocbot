@@ -47,3 +47,5 @@ ipaddress
 pydiscourse
 Faker
 git+https://github.com/DocTocToc/django-invitations.git
+django-controlled-vocabulary
+django-dublincore-resource

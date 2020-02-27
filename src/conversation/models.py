@@ -67,7 +67,10 @@ class Tweetdj(models.Model):
         help_text="Has this tweet been deleted?",
         verbose_name="Del",
     )
-    hashtag = models.ManyToManyField(Hashtag)
+    hashtag = models.ManyToManyField(
+        Hashtag,
+        blank=True,
+    )
     tags = TaggableManager(through=GenericBigIntTaggedItem)
     
     

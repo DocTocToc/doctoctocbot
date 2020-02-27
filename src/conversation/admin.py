@@ -92,7 +92,8 @@ class TweetdjAdmin(admin.ModelAdmin):
         'created_at',
         'quotedstatus',
         'retweetedstatus',
-        'deleted',    
+        'deleted',
+        'tag_list',
     )
     search_fields = ['statusid', 'userid', 'json',]
     fields = (
@@ -141,6 +142,14 @@ class TweetdjAdmin(admin.ModelAdmin):
         return mark_safe(f'<a href="{status_url_from_id(obj.statusid)}">🐦</a>')
 
     status_link.short_description = 'tweet'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('tags')
+
+    def tag_list(self, obj):
+        return u", ".join(o.name for o in obj.tags.all())
+
+    tag_list.short_description = 'tag'
 
 admin.site.register(Tweetdj, TweetdjAdmin)
 

@@ -52,9 +52,21 @@ class Tweetdj(models.Model):
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    quotedstatus = models.NullBooleanField(default=None, help_text="Is quoted_status")
-    retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
-    deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
+    quotedstatus = models.NullBooleanField(
+        default=None,
+        help_text="Is quoted_status",
+        verbose_name="Quote",
+    )
+    retweetedstatus = models.NullBooleanField(
+        default=None,
+        help_text="Has retweeted_status",
+        verbose_name="RT",
+    )
+    deleted = models.NullBooleanField(
+        default=None,
+        help_text="Has this tweet been deleted?",
+        verbose_name="Del",
+    )
     hashtag = models.ManyToManyField(Hashtag)
     tags = TaggableManager(through=GenericBigIntTaggedItem)
     

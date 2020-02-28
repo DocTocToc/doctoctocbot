@@ -23,6 +23,4 @@ def handle_scrape_web_timeline(hourdelta=None):
 def handle_scrape_status(statusid: int):
             tweet = get_tweet(statusid)
             logger.debug(f"{tweet} {tweet.bodyhtml} {tweet.statusid}")
-            if tweet is None:
-                return
             create_or_update_webtweet(tweet)

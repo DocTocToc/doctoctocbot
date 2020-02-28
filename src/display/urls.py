@@ -27,4 +27,5 @@ urlpatterns = [
     path('status/top/', views.Top.as_view(), name='top'),
     path('status/help/', views.Help.as_view(), name='help'),
     path('status/all/', views.All.as_view(), name= 'all'),
+    path('status/covid19/', views.Covid19.as_view(), name= 'covid19'),
 ]

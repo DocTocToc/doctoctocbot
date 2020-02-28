@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-18 18:49+0100\n"
+"POT-Creation-Date: 2020-02-28 03:05+0100\n"
 "PO-Revision-Date: 2020-02-18 22:06+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -31,10 +31,11 @@ msgid "Please choose a category for the invitee"
 msgstr "Choisir une catégorie pour la personne invitée"
 
 #: invite/forms.py:42
-msgid "I hereby certify that the person I am inviting do belong to this category."
+msgid ""
+"I hereby certify that the person I am inviting do belong to this category."
 msgstr "Je certifie que la personne invitée appartient bien à cette catégorie."
 
-#: invite/views.py:95
+#: invite/views.py:97
 #, python-format
 msgid "%(email)s has been invited"
 msgstr "%(email)s a été invité·e"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-18 18:49+0100\n"
-"PO-Revision-Date: 2019-05-23 20:08+0200\n"
+"POT-Creation-Date: 2020-02-28 03:05+0100\n"
+"PO-Revision-Date: 2020-02-28 03:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -22,22 +22,36 @@ msgstr ""
 msgid "Home"
 msgstr "Accueil"
 
-#: display/views.py:51
+#: display/views.py:53
 msgid "Status"
 msgstr "Tweet"
 
-#: display/views.py:75
+#: display/views.py:77
 msgid "Last tweets"
 msgstr "Dernières questions"
 
-#: display/views.py:101
+#: display/views.py:103
 msgid "Top tweets"
 msgstr "Questions populaires"
 
-#: display/views.py:127
+#: display/views.py:129
 msgid "Help tweets"
 msgstr "Questions avec peu de réponses"
 
-#: display/views.py:153
+#: display/views.py:155
 msgid "All tweets"
 msgstr "Toutes les questions"
+
+#: display/views.py:199
+#, python-format
+msgid ""
+"We couldn't find a tweet with id %s. This tweet might not be in our archive "
+"yet, or it was deleted, or the id is not correct. Sorry about that!"
+msgstr ""
+"Nous n'avons pas trouvé de tweet avec l'identifiant %s. Ce tweet n'est peut-"
+"être pas encore dans notre archive, ou il a été effacé, ou l'identifiant "
+"n'est pas correct. Nous vous prions de nous excuser!"
+
+#: display/views.py:284
+msgid "covid-19 tweets"
+msgstr "tweets au sujet de covid-19"

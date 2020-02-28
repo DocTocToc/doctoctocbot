@@ -15,3 +15,10 @@ def handle_scrape_web_timeline(hourdelta=None):
             if tweet is None:
                 continue
             create_or_update_webtweet(tweet)
+            
+@shared_task
+def handle_scrape_status(statusid: int):
+            tweet = get_tweet(statusid)
+            if tweet is None:
+                return
+            create_or_update_webtweet(tweet)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-18 18:49+0100\n"
+"POT-Creation-Date: 2020-02-28 03:05+0100\n"
 "PO-Revision-Date: 2019-12-22 18:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -44,7 +44,7 @@ msgid "Network"
 msgstr "Réseau"
 
 #: landing/templates/landing/user.html:33
-#: landing/templates/landing/usernav.html:14 landing/views.py:73
+#: landing/templates/landing/usernav.html:15 landing/views.py:73
 msgid "Profile"
 msgstr "Profil"
 
@@ -61,12 +61,12 @@ msgid "Receipt"
 msgstr "Facture"
 
 #: landing/templates/landing/user.html:45
-#: landing/templates/landing/usernav.html:26
+#: landing/templates/landing/usernav.html:27
 msgid "Options"
 msgstr "Options"
 
 #: landing/templates/landing/user.html:49
-#: landing/templates/landing/usernav.html:31
+#: landing/templates/landing/usernav.html:32
 msgid "Moderation"
 msgstr "Modération"
 
@@ -126,17 +126,21 @@ msgstr "Activité récente"
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 
-#: landing/templates/landing/usernav.html:17
+#: landing/templates/landing/usernav.html:18
 msgid "Social"
 msgstr "Social"
 
-#: landing/templates/landing/usernav.html:21
+#: landing/templates/landing/usernav.html:22
 msgid "Billing"
 msgstr "Facturation"
 
-#: landing/templates/landing/usernav.html:36
+#: landing/templates/landing/usernav.html:37
 msgid "Account"
 msgstr "Compte"
+
+#: landing/templates/landing/usernav.html:42
+msgid "Invitation"
+msgstr ""
 
 #: landing/views.py:39
 msgid "User"

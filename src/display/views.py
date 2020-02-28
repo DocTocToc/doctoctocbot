@@ -174,7 +174,7 @@ class All(TemplateView):
         for tweet in last_tweet_lst:
             logger.debug(f"last_tweet: {tweet.html}")
         tweet_lst_dic['last']= last_tweet_lst
-        
+        """
         #help
         sid_lst = help_statusid_lst(self.hour, community)[:self.n]
         help_tweet_lst = []
@@ -192,6 +192,14 @@ class All(TemplateView):
             #logger.debug(f"type: {type(sid)}")
             top_tweet_lst.append(statuscontext(sid))
         tweet_lst_dic['top']=top_tweet_lst
+        """
+        # covid19
+        sid_lst = tweetdj_tag(["covid19",])[:self.n]
+        covid19_tweet_lst = []
+        for sid in sid_lst:
+            covid19_tweet_lst.append(statuscontext(sid))
+        tweet_lst_dic['covid19']=covid19_tweet_lst
+        
         context['display'] = tweet_lst_dic
         return context
 
@@ -277,6 +285,16 @@ def addurl(fragment: str, url: str) -> str:
     logger.debug(f"rawsoup:{str(soup)}")
     return str(soup)
 
+def tweetdj_tag(tag_lst):
+    """Return list of status id of statuses containing on of the tag in the list
+    """
+    return list(
+            Tweetdj.objects
+            .filter(tags__name__in=tag_lst)
+            .values_list('statusid', flat=True)
+    )
+
+
 class Covid19(TemplateView):
     """
     Return a template view of statuses with covid19 tag.
@@ -286,15 +304,11 @@ class Covid19(TemplateView):
     tag: List = ["covid19"]
     def get_context_data(self, *args, **kwargs):
         context = super(Covid19, self).get_context_data(*args, **kwargs)
-        sid_lst = (
-            Tweetdj.objects
-            .filter(tags__name__in=self.tag)
-            .values_list('statusid', flat=True)
-        )
+        sid_lst = tweetdj_tag(self.tag)
         tweet_lst = []
         for sid in sid_lst:
             tweet_lst.append(statuscontext(sid))
         context['tweet_lst'] = tweet_lst
         context['display_cache'] = get_display_cache()
-        context['cache_uid'] = cache_uid(self.title,self.request)
+        context['cache_uid'] = cache_uid(self.title, self.request)
         return context

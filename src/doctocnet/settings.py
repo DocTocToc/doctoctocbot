@@ -436,17 +436,19 @@ MODERATION = {
 }
 
 STATUS_DISPLAY_NUMBER = {
-    'all': 20,
-    'last': 20,
-    'help': 20,
-    'top': 20
+    'all': 10,
+    'last': 10,
+    'help': 10,
+    'top': 10,
+    'covid19': 10,
 }
 
 STATUS_DISPLAY_HOUR = {
     'all': 72,
     'last': 72,
     'help': 72,
-    'top': 72
+    'top': 72,
+    'covid19': 72,
 }
 
 #CORS_ORIGIN_ALLOW_ALL = True

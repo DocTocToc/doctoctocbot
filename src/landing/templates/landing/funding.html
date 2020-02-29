@@ -1,15 +1,17 @@
 {% load landing_links %}
 {% load landing_tags %}
-<p>
-{% bot_link_text %} est un compte Twitter qui retweete les questions
-{% hashtag_lst %} des professionnels de santé ({% retweeted_category_and %}) qui le suivent.
-</p>
-<p>
-{% bot_link_text %} est à votre service depuis
-{% bot_launch_date "F Y" as ccd %}
-{{ ccd|lower }}.
-Il fonctionne sans pub ni sponsor.
-Il a besoin de votre soutien financier pour continuer à exister et à progresser.
-Investissez dans votre outil professionnel indépendant!
-<a href="{% url "crowdfunding:start" %}" id="donate" type="button" class="btn btn-outline-primary">Je finance!</a>
-</p>
+<div class="jumbotron">
+  <h1 class="display-5">Hello, je suis {% bot_link_text %}!</h1>
+  <p class="lead">
+    Je retweete les questions
+    {% hashtag_lst %} des professionnels de santé ({% retweeted_category_and %}) qui me suivent depuis
+    {% bot_launch_date "F Y" as ccd %}
+    {{ ccd|lower }}.
+  </p>
+  <hr class="my-3">
+  <p>
+  Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien
+  pour continuer à exister et à progresser.
+  <a class="btn btn-outline-primary" href="{% url "crowdfunding:start" %}" role="button">Je soutiens!</a>
+  <p>
+</div>

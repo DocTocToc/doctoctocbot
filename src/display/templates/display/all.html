@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load cache %}
 {% load static %}
+{% load landing_tags %}
 
 {% block head_meta %}
 {% static "doctocnet/bot_logo_400x400.jpg" as og_image_static %}
@@ -11,50 +12,70 @@
 {% include "doctocnet/twitter_opengraph.html" %}
 {% endwith %}
 {% endwith %}
+
+{% block style %}
+  <style>
+  </style>
+{{ block.super }}  
+{% endblock style %}
+
 {% endblock head_meta %}
 
 {% block title %}{% trans "Home" %}{% endblock title %}
 
 {% block content %}
 
-{% get_current_language as LANGUAGE_CODE %}
-<!-- outside display cache {% now "jS F Y H:i:s" %} -->
-<!-- LANGUAGE_CODE: {{ LANGUAGE_CODE }} -->
-{% cache display_cache frontpage cache_uid %}
-<!-- inside display cache {% now "jS F Y H:i:s" %} -->
-<!-- TTL: {{ display_cache }} -->
-<div class="container">
+  <div class="container">
   {% include "landing/funding.html" %}
-  <div class="row">
-    <div class="col">
-      {% with display.last as tweet_lst %}
-      <h2><a href="{% url "display:last" %}">Last</a></h2>
-      {% include "display/tweet.html" %}
-      {% endwith %}
+
+      <ul class="nav nav-pills bg-light d-xl-none">
+        <li class="nav-item">
+          <a class="nav-link" href="#last">Dernières questions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#covid19">Dernières questions #covid19</a>
+        </li>
+      </ul>
+
+    <div class="container">
+    <div class="row">
+
+     {% get_current_language as LANGUAGE_CODE %}
+     <!-- outside display cache {% now "jS F Y H:i:s" %} -->
+     <!-- LANGUAGE_CODE: {{ LANGUAGE_CODE }} -->
+     {% cache display_cache frontpage cache_uid %}
+     <!-- inside display cache {% now "jS F Y H:i:s" %} -->
+     <!-- TTL: {{ display_cache }} -->
+      <div id="last" class="col">
+        {% with display.last as tweet_lst %}
+        <span class="badge badge-secondary">Dernières questions {% hashtag_lst %}</span>
+        {% include "display/tweet.html" %}
+        <a href="{% url "display:last" %}" class="btn btn-outline-primary btn-sm">Voir plus de questions {% hashtag_lst %}</a>
+        {% endwith %}
+      </div>
+      <div id="covid19" class="col">
+        {% with display.covid19 as tweet_lst %}
+        <span class="badge badge-warning">Questions #covid19</span>
+        {% include "display/tweet.html" %}
+        <a href="{% url "display:covid19" %}" class="btn btn-outline-primary btn-sm" role="button">Voir plus de questions #covid19</a>
+        {% endwith %}    
+      </div>
+      <!--
+      <div class="col">
+        {% with display.help as tweet_lst %}
+        <h2><a href="{% url "display:help" %}">Help</a></h2>
+        {% include "display/tweet.html" %}
+        {% endwith %}    
+      </div>
+      <div class="col">
+        {% with display.top as tweet_lst %}
+        <h2><a href="{% url "display:top" %}">Top</a></h2>
+        {% include "display/tweet.html" %}
+        {% endwith %}    
+      </div>
+      -->
     </div>
-    <div class="col">
-      {% with display.covid19 as tweet_lst %}
-      <h2><a href="{% url "display:covid19" %}">#covid19</a></h2>
-      {% include "display/tweet.html" %}
-      {% endwith %}    
     </div>
-    <!--
-    <div class="col">
-      {% with display.help as tweet_lst %}
-      <h2><a href="{% url "display:help" %}">Help</a></h2>
-      {% include "display/tweet.html" %}
-      {% endwith %}    
-    </div>
-    <div class="col">
-      {% with display.top as tweet_lst %}
-      <h2><a href="{% url "display:top" %}">Top</a></h2>
-      {% include "display/tweet.html" %}
-      {% endwith %}    
-    </div>
-    -->
+    {% endcache %}
   </div>
-</div>
-
-{% endcache %}
-
-{% endblock %}
+{% endblock content %}

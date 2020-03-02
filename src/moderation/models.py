@@ -2,6 +2,8 @@ import logging
 from datetime import date
 from os.path import stat
 from sys import getprofile
+from typing import List
+
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
@@ -214,6 +216,12 @@ class SocialUser(models.Model):
         except TweepError:
             return
 
+    def community(self) -> List:
+        community_lst = []
+        for category in self.category.all():
+            for community in category.community.all():
+                community_lst.append(community)
+        return community_lst
 
     class Meta:
         ordering = ('user_id',)

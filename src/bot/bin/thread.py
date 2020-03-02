@@ -7,6 +7,9 @@ from conversation.tree import tweet_parser, tweet_server
 from moderation.models import SocialUser
 from community.models import Retweet 
 from django.conf import settings
+import tweepy
+from bot.twitter import get_api
+from conversation.models import create_leaf
 
 from ..addstatusdj import addstatus
 from ..doctoctocbot import (
@@ -98,6 +101,55 @@ def has_questionmark(tweet: tweet_parser.Tweet) -> bool:
 
 def is_same_author(tweet0: tweet_parser.Tweet, tweet: tweet_parser.Tweet) -> bool:        
     return tweet0.userid == tweet.userid
+
+def question_api(statusid: int) -> bool:
+    try:
+        socialuser = Tweetdj.objects.get(statusid=statusid).socialuser
+    except Tweetdj.DoesNotExist:
+        return
+    community = socialuser.community()
+    if not community:
+        return
+    try:
+        bot_username = community.account.username
+    except:
+        return
+    api = get_api(username=bot_username, backend=True)
+    treedj, _created = Treedj.objects.get_or_create(statusid=statusid)
+    descendants_id_lst = (
+        treedj.get_descendants(include_self=True)
+        .values_list("statusid", flat=True)
+    )
+    for status in tweepy.Cursor(api.user_timeline, 
+                        user_id=socialuser.user_id, 
+                        count=None,
+                        since_id=statusid,
+                        max_id=None,
+                        trim_user=True,
+                        exclude_replies=False,
+                        ).items():
+        reply_id = status._json.get("in_reply_to_status_id", None)
+        if not reply_id:
+            continue
+        if reply_id in descendants_id_lst:
+            if "?" in status._json["text"]:
+                logger.debug(
+                    f'status {status._json["id"]} '
+                    f'{status._json["text"]} is ?'
+                )
+                return True
+            try:
+                parent = Treedj.objects.get(statusid=reply_id)
+            except Treedj.DoesNotExist:
+                continue 
+            try:
+                Treedj.objects.create(
+                    statusid=status._json["id"],
+                    parent=parent
+                )
+            except DatabaseError:
+                continue
+        
      
 def question(statusid: int) -> bool:
     logger.debug(f"Running question() with statusid {statusid}")

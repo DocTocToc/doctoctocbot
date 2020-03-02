@@ -156,7 +156,7 @@ admin.site.register(Tweetdj, TweetdjAdmin)
 
 class TreedjAdmin(MPTTModelAdmin):
     list_display = ('statusid', 'parent', 'screen_name', 'status_text_tag', 'tweetdj_link', 'status_url_tag',)
-    search_fields = ['statusid', 'parent__statusid', 'screen_name',]
+    search_fields = ['statusid', 'parent__statusid',]
     fields = ('statusid', 'parent', 'screen_name', 'status_text_tag', 'tweetdj_link', 'status_url_tag',)
     readonly_fields = ('statusid', 'parent', 'screen_name', 'status_text_tag', 'tweetdj_link', 'status_url_tag',)
 

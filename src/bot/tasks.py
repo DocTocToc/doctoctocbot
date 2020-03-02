@@ -15,10 +15,14 @@ def handle_retweetroot(statusid: int):
     
 @shared_task(bind=True)
 def handle_question(self, statusid: int):
-    from .bin.thread import question
-    ok = question(statusid) 
+    from .bin.thread import question_api
+    ok = question_api(statusid) 
     if not ok:
-        self.retry(args=(statusid,), countdown=2 ** self.request.retries, max_retries=10)
+        self.retry(
+            args=(statusid,),
+            countdown=(10 + 2 ** self.request.retries),
+            max_retries=10
+        )
         
 @shared_task
 def handle_on_status(statusid: int):

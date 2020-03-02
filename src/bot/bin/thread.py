@@ -107,6 +107,7 @@ def question_api(statusid: int) -> bool:
         socialuser = Tweetdj.objects.get(statusid=statusid).socialuser
     except Tweetdj.DoesNotExist:
         return
+    userid = socialuser.userid
     community = socialuser.community()
     if not community:
         return
@@ -121,7 +122,7 @@ def question_api(statusid: int) -> bool:
         .values_list("statusid", flat=True)
     )
     for status in tweepy.Cursor(api.user_timeline, 
-                        user_id=socialuser.user_id, 
+                        user_id=userid, 
                         count=None,
                         since_id=statusid,
                         max_id=None,
@@ -137,7 +138,10 @@ def question_api(statusid: int) -> bool:
                     f'status {status._json["id"]} '
                     f'{status._json["text"]} is ?'
                 )
-                return True
+                hrh = has_retweet_hashtag(status._json)
+                if hrh:
+                    community_retweet(statusid, userid, hrh)
+                    return True
             try:
                 parent = Treedj.objects.get(statusid=reply_id)
             except Treedj.DoesNotExist:

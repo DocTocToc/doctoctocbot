@@ -146,13 +146,16 @@ def question_api(start_status_id: int) -> bool:
     if not socialuser:
         return
     userid = socialuser.user_id
+    logger.debug(f'userid: {userid}')
     community = socialuser.community()
+    logger.debug(f'community: {community}')
     if not community:
         return
     try:
         bot_username = community.account.username
     except:
         return
+    logger.debut(f'bot_username: {bot_username}')
     api = get_api(username=bot_username, backend=True)
     root_tweetdj = get_root_status(start_tweetdj)
     tree_has_q_m: bool = tree_has_question_mark(start_tweetdj)
@@ -173,6 +176,7 @@ def question_api(start_status_id: int) -> bool:
                         exclude_replies=False,
                         ).items():
         reply_id = status._json.get("in_reply_to_status_id", None)
+        logger.debug(f'reply_id: {reply_id}')
         if not reply_id:
             continue
         if reply_id in descendants_id_lst:
@@ -182,7 +186,10 @@ def question_api(start_status_id: int) -> bool:
             if not tweetdj:
                 continue
             hrh = tree_hrh(tweetdj)
-            if tree_has_question_mark(tweetdj) and hrh:
+            logger.debug(f'hrh: {hrh}')
+            q = tree_has_question_mark(tweetdj)
+            logger.debug(f'q:{q}')
+            if q and hrh:
                 logger.debug(
                     f'status {status._json["id"]} '
                     f'{status._json["text"]} is ?'

@@ -151,6 +151,7 @@ def question_api(start_status_id: int) -> bool:
     logger.debug(f'community: {community}')
     if not community:
         return
+    community = community[0]
     try:
         bot_username = community.account.username
     except:

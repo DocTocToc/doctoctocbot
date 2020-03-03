@@ -129,14 +129,14 @@ def add_leaf(node_id, parent_id):
     try:
         parent = Treedj.objects.get(statusid=parent_id)
     except Treedj.DoesNotExist:
-        continue 
+        return
     try:
         Treedj.objects.create(
             statusid=node_id,
             parent=parent
         )
     except DatabaseError:
-        continue
+        return
 
 def question_api(start_status_id: int) -> bool:
     try:

@@ -46,8 +46,7 @@ def retweetroot(statusid: int):
     logger.debug(f"authorid:{authorid}")
     current_mi: Tweetdj = status_mi
     
-    while True:
-        
+    while True:    
         parent_mi = getorcreate(current_mi.parentid)
 
         if parent_mi is None:

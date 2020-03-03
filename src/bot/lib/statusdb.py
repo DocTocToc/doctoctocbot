@@ -10,7 +10,6 @@ from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, DatabaseError, transaction
 from django.conf import settings
 from bot.tasks import handle_image
-from bot.doctoctocbot import isrt
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
 from conversation.models import Tweetdj
@@ -27,6 +26,12 @@ __email__ = "jerome@jerome.cc"
 __status__ = "Production"
 
 logger = logging.getLogger(__name__)
+
+def isrt(status):
+    "is this status a RT?"
+    isrt = "retweeted_status" in status.keys()
+    logger.debug("is this status a retweet? %s" , isrt)
+    return isrt
 
 class Addstatus:
     def __init__(self, json):

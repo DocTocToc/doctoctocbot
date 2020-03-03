@@ -8,7 +8,6 @@ from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
-from conversation.models import Tweetdj
 
 from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
@@ -20,7 +19,6 @@ from moderation.social import send_graph_dm
 from bot.onstatus import triage_status
 
 from moderation.moderate import quickreply
-from moderation.models import Moderation
 from dm.api import senddm
 from community.models import Community
 from moderation.profile import check_profile_pictures
@@ -41,9 +39,6 @@ def handle_poll_lists_members(community_name: str):
 @shared_task
 def handle_create_update_lists(community_name: str):
     create_update_lists(community_name)
-
-
-
 
 @shared_task
 def handle_create_update_profile(userid: int):

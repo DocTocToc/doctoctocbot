@@ -26,13 +26,13 @@ from django.db.models import F
 from django.db.utils import DatabaseError
 from django.conf import settings
 
-from bot.bin.thread import getorcreate
+from bot.addstatusdj import addstatus
 from moderation.moderate import addtoqueue
 from bot.twitter import getAuth
 from moderation.models import SocialUser, Category, SocialMedia
 from moderation.social import update_followersids
 from community.models import Community, Retweet
-from conversation.models import Hashtag
+from conversation.models import Hashtag, Tweetdj
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 from moderation.moderate import process_unknown_user
@@ -40,6 +40,7 @@ from moderation.moderate import process_unknown_user
 from tagging.tasks import handle_create_tag_queue
 
 logger = logging.getLogger(__name__)
+
 
 class HasRetweetHashtag(object):
     try:
@@ -95,6 +96,19 @@ def has_retweet_hashtag(status):
     return HasRetweetHashtag(hashtags)
 
 def tree_hrh(tweetdj, hrh=None) -> HasRetweetHashtag:
+    def getorcreate(statusid: int) -> Tweetdj:  
+        # Is status in database? If not, add it.
+        if statusid is None:
+            logger.debug("statusid is None.")
+            return None
+        try:
+            return Tweetdj.objects.get(pk=statusid)
+        except Tweetdj.DoesNotExist:
+            addstatus(statusid)
+            try:
+                return Tweetdj.objects.get(pk=statusid)
+            except Tweetdj.DoesNotExist:
+                return None
     if hrh is None:
         hrh = has_retweet_hashtag(tweetdj.json)
     elif isinstance(hrh, HasRetweetHashtag):
@@ -140,18 +154,15 @@ def is_following_rules(status):
     """  
     if isrt(status):
         return False
-
     if isreply(status):
         handle_retweetroot.apply_async(args=(status['id'],))
         return False
-
     if not isquestion(status):
         handle_question.apply_async(args=(status['id'],), countdown=10, expires=300) 
         return False
-
     return True
 
-def isrt( status ):
+def isrt(status):
     "is this status a RT?"
     isrt = "retweeted_status" in status.keys()
     logger.debug("is this status a retweet? %s" , isrt)

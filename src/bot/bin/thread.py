@@ -119,7 +119,12 @@ def has_questionmark(tweet: tweet_parser.Tweet) -> bool:
     return '?' in tweet.bodytext
 
 def tweetdj_has_q_m(tweetdj):
-    return '?' in tweetdj.json["text"]
+    status = tweetdj.json
+    if not status:
+        return False
+    if 'extended_tweet' in status:
+        status = status['extended_tweet']
+    return '?' in status["full_text"]
 
 def is_same_author(tweet0: tweet_parser.Tweet, tweet: tweet_parser.Tweet) -> bool:        
     return tweet0.userid == tweet.userid

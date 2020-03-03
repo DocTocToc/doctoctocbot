@@ -156,7 +156,7 @@ def question_api(start_status_id: int) -> bool:
         bot_username = community.account.username
     except:
         return
-    logger.debut(f'bot_username: {bot_username}')
+    logger.debug(f'bot_username: {bot_username}')
     api = get_api(username=bot_username, backend=True)
     root_tweetdj = get_root_status(start_tweetdj)
     tree_has_q_m: bool = tree_has_question_mark(start_tweetdj)

@@ -20,11 +20,13 @@ import os
 import tweepy
 from tweepy.error import TweepError
 import unidecode
+from typing import List
 
 from django.db.models import F
 from django.db.utils import DatabaseError
 from django.conf import settings
 
+from bot.bin.thread import getorcreate
 from moderation.moderate import addtoqueue
 from bot.twitter import getAuth
 from moderation.models import SocialUser, Category, SocialMedia
@@ -78,23 +80,31 @@ class HasRetweetHashtag(object):
             logger.error(e)
 
 
-def has_retweet_hashtag( status ):
-    """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.
-    Returns False otherwise.
-    In this function a "keyword" is always a hashtag. We must remove the #
-    (first character) before comparing the string with the text of the hashtag entity.
-    """
+def hashtag_list(status) -> List:
     if 'extended_tweet' in status:
         status = status['extended_tweet']
     #logger.debug("status in has_retweet_hashtag: %s", status)
-    hashtags = [hashtag["text"].lower() for hashtag in status["entities"]["hashtags"]]
-    #hashtag_retweet_list = [f"#{keyword}" for keyword in settings.KEYWORD_RETWEET_LIST]
-    #ismatch = False
-    #for hashtag in hashtags:
-    #    for keyword in hashtag_retweet_list:
-    #        if keyword[1:].lower() == hashtag["text"].lower():
-    #            ismatch = True
+    return [hashtag["text"].lower() for hashtag in status["entities"]["hashtags"]]
+
+def has_retweet_hashtag(status):
+    """ Returns HasRetweetHashtag object
+    In this function a "keyword" is always a hashtag. We must remove the #
+    (first character) before comparing the string with the text of the hashtag entity.
+    """
+    hashtags = hashtag_list(status)
     return HasRetweetHashtag(hashtags)
+
+def tree_hrh(tweetdj, hrh=None) -> HasRetweetHashtag:
+    if hrh is None:
+        hrh = has_retweet_hashtag(tweetdj.json)
+    elif isinstance(hrh, HasRetweetHashtag):
+        hrh.add(hashtag_list(tweetdj.json))
+    else:
+        return HasRetweetHashtag()
+    if not tweetdj.parentid:
+        return hrh
+    parent: Tweetdj = getorcreate(tweetdj.parentid)
+    return tree_hrh(parent, hrh)
 
 def isreply( status ):
     "is status in reply to screen name or status or user?"

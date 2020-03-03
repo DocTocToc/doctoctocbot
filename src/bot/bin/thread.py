@@ -145,7 +145,7 @@ def question_api(start_status_id: int) -> bool:
     socialuser = start_tweetdj.socialuser
     if not socialuser:
         return
-    userid = socialuser.userid
+    userid = socialuser.user_id
     community = socialuser.community()
     if not community:
         return

@@ -6,7 +6,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from versions.admin import VersionedAdmin
 
-from tagging.models import Queue, Process, Category
+from tagging.models import Queue, Process, Category, TagKeyword
 from community.models import Community
 from conversation.models import Tweetdj
 
@@ -295,3 +295,4 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(Process, ProcessAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(TagKeyword)

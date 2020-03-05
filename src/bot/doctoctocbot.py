@@ -36,8 +36,8 @@ from conversation.models import Hashtag, Tweetdj
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 from moderation.moderate import process_unknown_user
-
-from tagging.tasks import handle_create_tag_queue
+from bot.tweet import hashtag_list
+from tagging.tasks import handle_create_tag_queue, keyword_tag
 
 logger = logging.getLogger(__name__)
 
@@ -79,13 +79,6 @@ class HasRetweetHashtag(object):
                 self.hashtag_mi_lst.append(hashtag_mi)
         except DatabaseError as e:
             logger.error(e)
-
-
-def hashtag_list(status) -> List:
-    if 'extended_tweet' in status:
-        status = status['extended_tweet']
-    #logger.debug("status in has_retweet_hashtag: %s", status)
-    return [hashtag["text"].lower() for hashtag in status["entities"]["hashtags"]]
 
 def has_retweet_hashtag(status):
     """ Returns HasRetweetHashtag object
@@ -283,8 +276,10 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             if trust:
                 get_api(username=dct["_bot_screen_name"], backend=True).retweet(statusid)
                 tag(statusid, community)
+                keyword_tag(statusid, community)
             else:
                 addtoqueue(userid, statusid, community.name)
+
     
  
 def get_search_string():

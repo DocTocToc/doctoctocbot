@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 
 from django.utils.translation import gettext as _
 from django.db import transaction, DatabaseError
@@ -18,7 +18,8 @@ from community.helpers import site_url
 from dm.models import DirectMessage
 from optin.authorize import has_authorized, create_opt_in
 from optin.models import Option
-
+from tagging.models import TagKeyword
+from bot.tweet import hashtag_list
 
 logger = get_task_logger(__name__)
 
@@ -271,4 +272,22 @@ def poll_tag_dm():
 def opt_out(socialuser):
     option = get_optin_option()
     create_opt_in(socialuser=socialuser, option=option, authorize=False)
+    
+def keyword_tag(statusid, community):
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
+    qs = TagKeyword.objects.filter(community__in=[community]).distinct()
+    for tk in qs:
+        hashtag: List = hashtag_list(tweetdj.json)
+        if hashtag:
+            for tag_name in tk.tag.names():
+                if tag_name in hashtag:
+                    tweetdj.tags.add(tag_name)
+        for keyword in tk.keyword:
+            if keyword in tweetdj.json["full_text"].lower():
+                for tag_name in tk.tag.names():
+                    tweetdj.tags.add(tag_name)
+        
         

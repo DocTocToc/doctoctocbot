@@ -1,4 +1,5 @@
 import os
+import unidecode
 from typing import Optional, List
 
 from django.utils.translation import gettext as _
@@ -18,7 +19,7 @@ from community.helpers import site_url
 from dm.models import DirectMessage
 from optin.authorize import has_authorized, create_opt_in
 from optin.models import Option
-from tagging.models import TagKeyword
+from tagging.models import TagKeyword, Category
 from bot.tweet import hashtag_list
 
 logger = get_task_logger(__name__)
@@ -142,14 +143,34 @@ def handle_create_tag_queue(statusid, socialmedia_id, community_id):
         logger.warn("There are no tagging categories for this community.")
         return
     
-    queue, created = Queue.objects.get_or_create(
-            uid=statusid,
-            socialmedia=socialmedia,
-            community=community
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
+    
+    category_tags = list(
+        Category.objects.filter(
+            community=community,
+            hashtag=True,
+        ).values_list('tag', flat=True)
     )
-    if created:
-        logger.info("Queue created.")
-        create_tag_process(queue, statusid)
+    logger.debug(f"{category_tags}")
+    
+    tweet_tags = tweetdj.tags.names()
+    logger.debug(f"{tweet_tags}")
+    
+    # if status does not have any tags corresponding to a category,
+    # create queue
+    logger.debug(f"{set(category_tags).isdisjoint(tweet_tags)}")
+    if set(category_tags).isdisjoint(tweet_tags):
+        queue, created = Queue.objects.get_or_create(
+                uid=statusid,
+                socialmedia=socialmedia,
+                community=community
+        )
+        if created:
+            logger.info("Queue created.")
+            create_tag_process(queue, statusid)
 
 def create_tag_process(queue, statusid):
     try:
@@ -274,20 +295,36 @@ def opt_out(socialuser):
     create_opt_in(socialuser=socialuser, option=option, authorize=False)
     
 def keyword_tag(statusid, community):
+    def category_tagging(tweetdj, community, hashtag):
+        tags = diacriticless_category_tags(community)
+        if hashtag:
+            for tag in tags:
+                if tag in hashtag:
+                    tweetdj.tags.add(tag)
+    def keyword_tagging(tweetdj, community, hashtag):
+        qs = TagKeyword.objects.filter(community__in=[community]).distinct()
+        for tk in qs:
+            if hashtag:
+                for tag_name in tk.tag.names():
+                    if tag_name in hashtag:
+                        tweetdj.tags.add(tag_name)
+            for keyword in tk.keyword:
+                if keyword in tweetdj.json["full_text"].lower():
+                    for tag_name in tk.tag.names():
+                        tweetdj.tags.add(tag_name)
     try:
         tweetdj = Tweetdj.objects.get(statusid=statusid)
     except Tweetdj.DoesNotExist:
         return
-    qs = TagKeyword.objects.filter(community__in=[community]).distinct()
-    for tk in qs:
-        hashtag: List = hashtag_list(tweetdj.json)
-        if hashtag:
-            for tag_name in tk.tag.names():
-                if tag_name in hashtag:
-                    tweetdj.tags.add(tag_name)
-        for keyword in tk.keyword:
-            if keyword in tweetdj.json["full_text"].lower():
-                for tag_name in tk.tag.names():
-                    tweetdj.tags.add(tag_name)
-        
-        
+    hashtag: List = hashtag_list(tweetdj.json)
+    category_tagging(tweetdj, community, hashtag)
+    keyword_tagging(tweetdj, community, hashtag)
+
+def diacriticless_category_tags(community):
+    # return a list of all category tags of a community, without diacritic,
+    # lowercased
+    tags = Category.objects.filter(
+        community=community,
+        hashtag=True,
+    ).values_list('tag', flat=True)
+    return [unidecode.unidecode(tag).lower() for tag in tags]    

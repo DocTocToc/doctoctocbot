@@ -50,7 +50,7 @@ def max_value():
         return Category.objects.count()
     except DatabaseError:
         return 0
-      
+
 class Category(models.Model):
     tag = models.CharField(
         max_length=36,

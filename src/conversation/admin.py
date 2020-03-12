@@ -11,6 +11,7 @@ from multiprocessing import Pool
 from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
 from common.twitter import status_url_from_id
+from versions.admin import VersionedAdmin
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ from .models import (
     Treedj,
     Tweetdj,
     Hashtag,
+    Retweeted,
 )
 
 
@@ -94,6 +96,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'retweetedstatus',
         'deleted',
         'tag_list',
+        'retweeted_by_screen_name',
     )
     search_fields = ['statusid', 'userid', 'json',]
     fields = (
@@ -110,6 +113,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'parentid',
         'tags',
+        'retweeted_by',
     )
     readonly_fields = (
         'statusid',
@@ -123,6 +127,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quotedstatus',
         'retweetedstatus',
         'parentid',
+        'retweeted_by',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -150,6 +155,15 @@ class TweetdjAdmin(admin.ModelAdmin):
         return u", ".join(o.name for o in obj.tags.all())
 
     tag_list.short_description = 'tag'
+    
+    def retweeted_by_screen_name(self, obj):
+        rtby_lst = []
+        for rtby in obj.retweeted_by.all():
+            rtby_lst.append(rtby.screen_name_tag())
+        return "\n".join(rtby_lst)
+            
+
+    retweeted_by_screen_name.short_description = "RT by"
 
 admin.site.register(Tweetdj, TweetdjAdmin)
 
@@ -178,10 +192,42 @@ class TreedjAdmin(MPTTModelAdmin):
 
     screen_name.short_description = "Screen name"
 
-admin.site.register(Treedj, TreedjAdmin)
+
+
+class RetweetedAdmin(VersionedAdmin):
+    pass
+
+    list_display = (
+        'status',
+        'status_link',
+        'retweet',
+        'account',  
+    )
+    fields = (
+        'status',
+        'status_link',
+        'retweet',
+        'account',
+    )
+    readonly_fields = (
+        'status',
+        'status_link',
+        'retweet',
+        'account',   
+    )
+    list_display_show_identity = True
+    list_display_show_end_date = True
+    list_display_show_start_date = True
+    
+    def status_link(self, obj):
+        return mark_safe(f'<a href="{status_url_from_id(obj.status)}">🐦</a>')
+
+    status_link.short_description = 'status'
+
 
 class HashtagAdmin(admin.ModelAdmin):
     pass
 
+admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)
-
+admin.site.register(Retweeted, RetweetedAdmin)

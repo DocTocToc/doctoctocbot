@@ -32,7 +32,7 @@ from bot.twitter import getAuth
 from moderation.models import SocialUser, Category, SocialMedia
 from moderation.social import update_followersids
 from community.models import Community, Retweet
-from conversation.models import Hashtag, Tweetdj
+from conversation.models import Hashtag, Tweetdj, Retweeted
 from .tasks import handle_retweetroot, handle_question
 from .twitter import get_api
 from moderation.moderate import process_unknown_user
@@ -231,6 +231,29 @@ def tag(statusid, community):
         return
     handle_create_tag_queue.apply_async(args=(statusid, socialmedia.id, community.id))
 
+def create_update_retweeted(statusid, community, retweet_status):
+    rt: Retweeted = Retweeted.objects.as_of().filter(
+        status=statusid,
+        account=community.account,
+    ).first()
+    if rt:
+        rt = Retweeted.objects.current_version(retweet)
+        if rt.status == statusid and rt.retweet == retweet_status["id"]:
+            return
+        else:
+            retweet = retweet.clone()
+            retweet.retweet = retweet_status["id"]
+            retweet.save()
+            return
+    try:
+        Retweeted.objects.create(
+            status=statusid,
+            account=community.account,
+            retweet=retweet_status["id"],  
+        )
+    except:
+        return
+
 def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
     try:
         social_user = SocialUser.objects.get(user_id=userid)
@@ -274,14 +297,35 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                     trust = True
             
             if trust:
-                get_api(username=dct["_bot_screen_name"], backend=True).retweet(statusid)
-                tag(statusid, community)
-                keyword_tag(statusid, community)
+                username = dct["_bot_screen_name"]
+                try:
+                    retweet = get_api(username=username, backend=True).retweet(statusid)
+                    logger.debug(retweet)
+                except TweepError:
+                    retweet = None
+                if retweet:
+                    set_retweeted_by(statusid, community)
+                    create_update_retweeted(statusid, community, retweet._json)
+                    tag(statusid, community)
+                    keyword_tag(statusid, community)
             else:
                 addtoqueue(userid, statusid, community.name)
 
-    
- 
+def set_retweeted_by(statusid: int, community):
+    try:
+        user_id = community.account.userid
+    except:
+        return
+    try:
+        su: SocialUser = SocialUser.objects.get(user_id=user_id)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
+    tweetdj.retweeted_by.add(su)
+
 def get_search_string():
     keyword_list = settings.KEYWORD_RETWEET_LIST
     search_string = " OR ".join ( keyword_list )
@@ -324,7 +368,6 @@ def timeline_iterator():
 def main():
     from .onstatus import triage 
     timelineIterator = timeline_iterator()
-    current_sid = None
     for tweet in timelineIterator:
         triage(tweet.id)
 

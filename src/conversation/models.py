@@ -10,6 +10,7 @@ from common.twitter import status_url_from_id
 from taggit.managers import TaggableManager
 from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
 from django.utils.translation import ugettext_lazy as _
+from versions.models import Versionable
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,10 @@ class Tweetdj(models.Model):
         blank=True,
     )
     tags = TaggableManager(through=GenericBigIntTaggedItem)
+    retweeted_by = models.ManyToManyField(
+        "moderation.SocialUser",
+        blank=True,
+    )
     
     
     class Meta:
@@ -208,3 +213,12 @@ def create_leaf(statusid, parentid):
     except DatabaseError as e:
         logger.error(str(e))
     return leaf
+
+
+class Retweeted(Versionable):
+    status = models.BigIntegerField()
+    retweet = models.BigIntegerField()
+    account = models.ForeignKey(
+        "bot.Account",
+        on_delete=models.CASCADE,
+    )

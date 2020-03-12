@@ -23,7 +23,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.translation import get_language_from_request
 from django.utils.text import slugify
 
-from moderation.models import SocialUser
+from moderation.models import SocialUser, Category
 from display.models import WebTweet, create_or_update_webtweet
 from community.helpers import get_community
 from display.tasks import  handle_scrape_status
@@ -288,8 +288,18 @@ def addurl(fragment: str, url: str) -> str:
 def tweetdj_tag(tag_lst):
     """Return list of status id of statuses containing on of the tag in the list
     """
+    category_names: List[str] = settings.COVID19_CATEGORIES
+    category: List[Category] = []
+    for category_name in category_names:
+        try:
+            _category = Category.objects.get(name=category_name)
+            category.append(_category)
+        except Category.DoesNotExist:
+            continue
+        
     return list(
             Tweetdj.objects
+            .filter(socialuser__category__in=category)
             .filter(tags__name__in=tag_lst)
             .values_list('statusid', flat=True)
     )

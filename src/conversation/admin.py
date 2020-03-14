@@ -10,6 +10,7 @@ import logging
 from multiprocessing import Pool
 from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
+from bot.models import Account
 from common.twitter import status_url_from_id
 from versions.admin import VersionedAdmin
 
@@ -83,6 +84,25 @@ class CategoryListFilter(admin.SimpleListFilter):
             return queryset
 
 
+class RetweetedByListFilter(admin.SimpleListFilter):
+    title = _('retweeted by')
+    parameter_name = 'retweeted_by'
+    
+    def lookups(self, request, model_admin):
+        account_id: List[int] = list(
+            Account.objects.values_list('userid', flat=True)
+        )
+        return (
+            [(str(su.user_id), su.screen_name_tag(),)
+            for su in SocialUser.objects.filter(user_id__in=account_id)]
+        )
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(
+            retweeted_by=SocialUser.objects.get(user_id=int(self.value()))
+        )
+
 class TweetdjAdmin(admin.ModelAdmin):
     list_display = (
         'statusid',
@@ -136,6 +156,8 @@ class TweetdjAdmin(admin.ModelAdmin):
         'deleted',
         CategoryListFilter,
         'hashtag',
+        'tags',
+        RetweetedByListFilter,
     )
     
     def screen_name(self, obj):

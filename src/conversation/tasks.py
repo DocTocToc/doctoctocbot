@@ -5,7 +5,7 @@ from django.utils import timezone
 from celery import shared_task
 from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from moderation.models import SocialUser
 
 logger = logging.getLogger(__name__)

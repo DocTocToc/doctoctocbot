@@ -20,7 +20,7 @@ from versions.fields import VersionedForeignKey
 from versions.models import Versionable
 from community.models import Community, get_default_community
 from django.contrib.sites.shortcuts import get_current_site
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
 import logging

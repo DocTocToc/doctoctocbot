@@ -49,7 +49,7 @@ class Queue(Versionable):
     class Meta:
         unique_together: ('uid', 'socialmedia', 'community')
 
-
+"""
 class Process(Versionable):
     queue = VersionedForeignKey(Queue, on_delete=models.CASCADE)
     processor = models.ForeignKey('moderation.SocialUser',
@@ -62,3 +62,4 @@ class Process(Versionable):
     class Meta:
         unique_together = ('queue', 'processor')
         verbose_name_plural = "processes"
+"""

@@ -8,7 +8,7 @@ from moderation.models import SocialUser
 from community.models import Retweet 
 from django.conf import settings
 import tweepy
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from conversation.models import create_leaf
 
 from ..addstatusdj import addstatus

@@ -3,7 +3,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from moderation.models import SocialUser, SocialMedia
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
 class Command(BaseCommand):

@@ -9,7 +9,7 @@ from bot.doctoctocbot import (
     has_retweet_hashtag,
 )
 from bot.lib.statusdb import Addstatus
-from bot.twitter import get_api
+from bot.tweepy_api import get_api
 from conversation.models import create_tree, Tweetdj
 from moderation.moderate import process_unknown_user
 

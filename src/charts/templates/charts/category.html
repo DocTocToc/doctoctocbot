@@ -1,0 +1,91 @@
+{% extends 'charts/base_category.html' %}
+
+<script>
+{% block jquery %}
+
+window.chartColors = {
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    yellow: 'rgb(255, 205, 86)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(54, 162, 235)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)'
+};
+  var endpoint = "{% url 'charts:category-data' %}" //'/charts/api/category/data'
+  
+  $.ajax({
+    method: "GET",
+    url: endpoint,
+    success: function(data){
+      var ctx = document.getElementById("myChart").getContext('2d');
+      var color = Chart.helpers.color;
+      var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              datasets: [{
+                  label: 'Tweets',
+                  backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.red,
+                  data: data,
+                  type: 'bar',
+                  pointRadius: 0,
+                  fill: false,
+                  lineTension: 0,
+                  borderWidth: 2
+                  /*backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255,99,132,1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1*/
+              }]
+          },
+          options: {
+              reponsive: true,
+              scales: {
+            	  yAxes: [{
+                      gridLines: {
+                          drawBorder: false
+                      },
+                      scaleLabel: {
+                          display: true,
+                          labelString: 'number of tweets'
+                      }
+                  }],
+                  xAxes: [{
+                      type: 'time',
+                      distribution: 'linear',
+                      offset: true,
+                      ticks: {
+                          major: {
+                              enabled: true,
+                              fontStyle: 'bold'
+                          },
+                          source: 'auto',//'data'
+                          autoSkip: true,
+                          autoSkipPadding: 75,
+                          maxRotation: 0,
+                          sampleSize: 100
+                      }}],
+              }
+          }
+      });
+    },
+    error: function(error_data){
+      console.log(error_data)
+    }
+  })
+{% endblock %}
+</script>

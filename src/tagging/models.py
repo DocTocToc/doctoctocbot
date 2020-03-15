@@ -8,6 +8,9 @@ from versions.fields import VersionedForeignKey
 from community.models import get_default_community
 from moderation.models import get_default_socialmedia
 
+from taggit.managers import TaggableManager
+from conversation.models import GenericBigIntTaggedItem
+from django.contrib.postgres.fields import ArrayField
 
 
 class Queue(Versionable):
@@ -47,7 +50,7 @@ def max_value():
         return Category.objects.count()
     except DatabaseError:
         return 0
-      
+
 class Category(models.Model):
     tag = models.CharField(
         max_length=36,
@@ -78,3 +81,22 @@ class Category(models.Model):
         verbose_name_plural = "categories"
         ordering = ["order", "tag"]
 
+
+class TagKeyword(models.Model):
+    tag = TaggableManager(through=GenericBigIntTaggedItem)
+    keyword = ArrayField(
+        models.CharField(
+            max_length=255,
+            blank=True
+        )
+    )
+    community = models.ManyToManyField(
+        "community.Community",
+        blank=True    
+    )
+
+    def __str__(self):
+        tags = []
+        for tag in self.tag.all():
+            tags.append(str(tag))
+        return ', '.join(tags)

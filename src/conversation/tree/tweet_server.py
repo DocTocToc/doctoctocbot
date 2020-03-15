@@ -44,4 +44,3 @@ def get_tweet(statusid: int) -> Tweet:
     if tweet_context.in_reply_to_status_id is not None:
         tweet.in_reply_to_status_id = tweet_context.in_reply_to_status_id
     return tweet
-

@@ -1,8 +1,7 @@
 import logging
 import tweepy
 from tweepy.streaming import StreamListener
-
-from bot.tweepy_api import getAuth
+from bot.twitter import get_api
 from conversation.models import Hashtag
 from bot.tasks import handle_on_status
 from bot.lib.status import status_json_log
@@ -21,6 +20,13 @@ class StdOutListener(StreamListener):
         logger.error(status_code)
         if status_code == 420:
             return False
+        if status_code == 401:
+            logger.error(
+                "401 Unauthorized "
+                "Missing or incorrect authentication credentials. "
+                "This may also returned in other undefined circumstances."
+            )
+            return False
 
 def main(community=None):
     #This handles Twitter authentication and the connection to Twitter Streaming API
@@ -28,9 +34,9 @@ def main(community=None):
         screen_name = Community.objects.get(name=community).account.username
     except:
         screen_name = None
-    auth = getAuth(screen_name)
+    api = get_api(screen_name)
     l = StdOutListener()
-    stream = tweepy.Stream(auth, l)
+    stream = tweepy.Stream(auth = api.auth, listener=l)
     #This line filter Twitter Streams to capture data by the keywords
     track_list = []
     if community is None:

@@ -26,32 +26,37 @@ from wagtail.core import urls as wagtail_urls
 from ajax_select import urls as ajax_select_urls
 from doctocnet.views import media_access
 
+app_name = 'doctocnet'
+
 urlpatterns = [
     re_path(r'^media/(?P<path>.*)', media_access, name='media'),
-    path('admin/', admin.site.urls),
     path('silver/', include('silver.urls')),
+    path('admin/', admin.site.urls),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
+    path('', include('ip.urls')),
     path('', include('landing.urls')),
     path('', include('users.urls')),
     path('', include('registration.urls')),
     path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
+    path('', include('invite.urls')),
+    path('accounts/',
+        include('django.contrib.auth.urls')
+    ),
     path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
 
     path('conversation/', include('conversation.urls')),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
-    
+    path('invitations/', include('invitations.urls', namespace='invitations')),
     # wagtail
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
-#    re_path(r'^pages/', include(wagtail_urls)),
     re_path(r'', include(wagtail_urls)),
 ]
 

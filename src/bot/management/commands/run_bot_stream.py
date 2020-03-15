@@ -15,4 +15,4 @@ class Command(BaseCommand):
         except KeyError:
             community = None
         main(community)
-        self.stdout.write(self.style.SUCCESS('Done launching {community} stream.'))
+        self.stdout.write(self.style.SUCCESS(f'Done launching {community} stream.'))

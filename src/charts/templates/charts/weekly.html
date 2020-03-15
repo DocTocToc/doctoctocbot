@@ -1,0 +1,6 @@
+{% extends "charts/charts.html" %}
+{% load i18n %}
+{% block title %}{% trans "Weekly tweets" %}{% endblock %}
+{% block container %}
+  <div id="container" data-url="{% url 'charts:questions_weekly_data' %}"></div>
+{% endblock %}

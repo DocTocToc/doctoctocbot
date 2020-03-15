@@ -12,21 +12,31 @@ from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
-def getAuth(username=None):
+def getAuth(username=None, backend=False):
     "get Tweepy OAuthHandler authentication object"
     if username:
         try:
             account = Account.objects.get(username=username)
         except Account.DoesNotExist:
             return getSocialDjangoAuth(username)
-        auth = tweepy.OAuthHandler(
-            account.twitter_consumer_key,
-            account.twitter_consumer_secret
-        )
-        auth.set_access_token(
-            account.twitter_access_token,
-            account.twitter_access_token_secret
-        )
+        if backend:
+            auth = tweepy.OAuthHandler(
+                account.backend_twitter_consumer_key,
+                account.backend_twitter_consumer_secret
+            )
+            auth.set_access_token(
+                account.backend_twitter_access_token,
+                account.backend_twitter_access_token_secret
+            )
+        else:
+            auth = tweepy.OAuthHandler(
+                account.twitter_consumer_key,
+                account.twitter_consumer_secret
+            )
+            auth.set_access_token(
+                account.twitter_access_token,
+                account.twitter_access_token_secret
+            )
     else:
         auth = tweepy.OAuthHandler(
             settings.TWITTER_CONSUMER_KEY,
@@ -63,8 +73,10 @@ def getSocialDjangoAuth(username):
     )
     return auth
 
-def get_api(username=None):
-    return tweepy.API(getAuth(username), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+def get_api(username=None, backend=False):
+    api = tweepy.API(getAuth(username, backend), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+    verify_credentials(api, username, backend)
+    return api
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.
@@ -94,3 +106,10 @@ def statuses_lookup(statusid):
         return statuses
     elif len(statuses) == 1:
         return statuses[0]
+    
+def verify_credentials(api, username, backend):
+    try:
+        r = api.verify_credentials()
+        logger.info(f"Authentication info for {username} (backend: {backend}): {r}")
+    except:
+        logger.error(f"Error during authentication of {username} (backend: {backend})")

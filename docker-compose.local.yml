@@ -1,0 +1,70 @@
+version: '3.7'
+
+services:
+  django_1:
+    restart: always
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+      target: dev
+    image: dtn_dev
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
+      - ${GNUPGHOME}:${GNUPGHOME}
+    depends_on:
+      - database
+      - redis
+    working_dir: /code/src
+  django_2:
+    restart: always
+    env_file:
+      - .env
+    image: dtn_dev
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
+      - ${GNUPGHOME}:${GNUPGHOME}
+    depends_on:
+      - database
+      - redis
+    working_dir: /code/src
+  nginx:
+    restart: on-failure
+    env_file:
+      - .env
+    image: nginx:latest
+    volumes:
+      - ./src:/code/src
+      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
+      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
+      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
+      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
+      - ${NGINX_LOG_DIR}:/var/log/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - django_1
+      - django_2
+  celery_retweet_worker:
+    image: dtn_dev
+  celery_tree_worker:
+    image: dtn_dev
+  celery_celery_worker:
+    image: dtn_dev
+  celery-beat:
+    image: dtn_dev
+  stream_1:
+    image: dtn_dev
+  stream_2:
+    image: dtn_dev

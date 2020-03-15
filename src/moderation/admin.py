@@ -1,5 +1,7 @@
 import logging
+from functools import partial
 from django.contrib import admin
+from django.db.models import Q
 from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
@@ -63,6 +65,8 @@ class CategoryRelationshipInline(admin.TabularInline):
     readonly_fields = (
         'social_user_screen_name_tag',
         'moderator_screen_name_tag',
+        'created',
+        'updated',
     )
 
     
@@ -70,15 +74,63 @@ class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
     extra = 10
     fk_name = 'social_user'
+    readonly_fields = ['created', 'updated']
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "moderator":
+            mod_ids = list(Moderator.objects.values_list('socialuser', flat=True))
+            try:
+                logger.debug(request.resolver_match.kwargs["object_id"])
+                parent_obj_id = request.resolver_match.kwargs["object_id"]
+                kwargs["queryset"] = SocialUser.objects.filter(
+                    Q(id=parent_obj_id) | Q(id__in=mod_ids)
+                )
+            except IndexError:
+                pass
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+
 
     
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
-    list_display = ('pk', 'user_id', 'screen_name_tag', 'mini_image_tag',  'name_tag', 'profile_link',  'social_media_profile', )
-    fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst',)
-    readonly_fields = ('pk', 'screen_name_tag', 'normal_image_tag', 'name_tag', 'user_id', 'profile_link', 'social_media_profile', 'category', 'category_moderator_lst')
-    search_fields = ('user_id', 'profile__json',)
-    
+    list_display = (
+        'pk',
+        'user_id',
+        'screen_name_tag',
+        'mini_image_tag',
+        'name_tag',
+        'profile_link',
+        'social_media_profile',
+    )
+    fields = (
+        'pk',
+        'screen_name_tag',
+        'normal_image_tag',
+        'name_tag',
+        'user_id',
+        'profile_link',
+        'social_media_profile',
+        'category',
+        'category_moderator_lst',
+    )
+    readonly_fields = (
+        'pk',
+        'screen_name_tag',
+        'normal_image_tag',
+        'name_tag',
+        'user_id',
+        'profile_link',
+        'social_media_profile',
+        'category',
+        'category_moderator_lst'
+    )
+    search_fields = (
+        'user_id',
+        'profile__json',
+    )
+
     def category_moderator_lst(self, obj):
         cat_mod_lst = []
         for relation in obj.categoryrelationships.all():

@@ -16,16 +16,18 @@ from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import top_statusid_lst, help_statusid_lst
-from conversation.models import Treedj
+from conversation.models import Treedj, Tweetdj
 from moderation.tasks import handle_create_update_profile
 from moderation.profile import is_profile_uptodate
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.translation import get_language_from_request
 from django.utils.text import slugify
 
-from moderation.models import SocialUser
+from moderation.models import SocialUser, Category
 from display.models import WebTweet, create_or_update_webtweet
 from community.helpers import get_community
+from display.tasks import  handle_scrape_status
+
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +174,7 @@ class All(TemplateView):
         for tweet in last_tweet_lst:
             logger.debug(f"last_tweet: {tweet.html}")
         tweet_lst_dic['last']= last_tweet_lst
-        
+        """
         #help
         sid_lst = help_statusid_lst(self.hour, community)[:self.n]
         help_tweet_lst = []
@@ -190,15 +192,23 @@ class All(TemplateView):
             #logger.debug(f"type: {type(sid)}")
             top_tweet_lst.append(statuscontext(sid))
         tweet_lst_dic['top']=top_tweet_lst
+        """
+        # covid19
+        sid_lst = tweetdj_tag(["covid19",])[:self.n]
+        covid19_tweet_lst = []
+        for sid in sid_lst:
+            covid19_tweet_lst.append(statuscontext(sid))
+        tweet_lst_dic['covid19']=covid19_tweet_lst
+        
         context['display'] = tweet_lst_dic
         return context
 
 def notfound(sid):
-    html = ("<html><body>We couldn't find a tweet with id %s. "
-                        "This tweet might not be in our archive yet, or it was "
-                        "deleted, or the id is not correct. "
-                        "Sorry about that! 🙇"
-                        "</body></html>" % sid)
+    msg = _("We couldn't find a tweet with id %s. "
+           "This tweet might not be in our archive yet, or it was "
+           "deleted, or the id is not correct. "
+           "Sorry about that!" % sid)
+    html = "<html><body>{} 🙇</body></html>".format(msg)
     tweet = Tweet(0)
     setattr(tweet, 'html', mark_safe(html))
     return tweet
@@ -207,6 +217,7 @@ def statuscontext(sid):
     try:
         tweet_mi = WebTweet.objects.get(statusid=sid)
     except WebTweet.DoesNotExist:
+        handle_scrape_status.apply_async(args=(sid,))
         return notfound(sid)
 
     if not is_profile_uptodate(tweet_mi.userid):
@@ -273,3 +284,41 @@ def addurl(fragment: str, url: str) -> str:
     soup.body.unwrap()
     logger.debug(f"rawsoup:{str(soup)}")
     return str(soup)
+
+def tweetdj_tag(tag_lst):
+    """Return list of status id of statuses containing on of the tag in the list
+    """
+    category_names: List[str] = settings.COVID19_CATEGORIES
+    category: List[Category] = []
+    for category_name in category_names:
+        try:
+            _category = Category.objects.get(name=category_name)
+            category.append(_category)
+        except Category.DoesNotExist:
+            continue
+        
+    return list(
+            Tweetdj.objects
+            .filter(socialuser__category__in=category)
+            .filter(tags__name__in=tag_lst)
+            .values_list('statusid', flat=True)
+    )
+
+
+class Covid19(TemplateView):
+    """
+    Return a template view of statuses with covid19 tag.
+    """
+    title = _("covid-19 tweets")
+    template_name = "display/display.html"
+    tag: List = ["covid19"]
+    def get_context_data(self, *args, **kwargs):
+        context = super(Covid19, self).get_context_data(*args, **kwargs)
+        sid_lst = tweetdj_tag(self.tag)
+        tweet_lst = []
+        for sid in sid_lst:
+            tweet_lst.append(statuscontext(sid))
+        context['tweet_lst'] = tweet_lst
+        context['display_cache'] = get_display_cache()
+        context['cache_uid'] = cache_uid(self.title, self.request)
+        return context

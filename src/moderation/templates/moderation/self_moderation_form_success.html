@@ -1,0 +1,31 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load auth_extras %}
+{% load static %}
+{% load users %}
+
+{% block title %}{% trans view.title %}{% endblock title %}
+
+{% block head_css %}
+{{ block.super }}
+<style>
+#div_id_message {
+    display: none;
+}
+</style>
+{% endblock head_css %}
+
+{% block head_javascript %}
+{{ block.super }}
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+{% endblock head_javascript %}
+
+
+{% block content %}
+<p>Merci. Nous allons vérifier votre inscription.</p>
+<p>Vous aurez bientôt accès au forum et à tous nos services.</p>
+<p>Nous vous prions de suivre le compte Twitter @{{ view.kwargs.screen_name }} pour
+recevoir notre DM (message privé) de confirmation.
+Si votre compte est protégé, merci d'accepter la demande d'abonnement de @{{ view.kwargs.screen_name }}.
+{% endblock %}
+

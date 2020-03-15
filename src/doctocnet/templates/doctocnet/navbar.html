@@ -1,10 +1,12 @@
 {% load static %}
 {% load i18n %}
 {% load auth_extras %}
+{% load auth_discourse %}
 {% load landing_links %}
 {% load landing_tags %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav id="navbar-main" class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
   <a class="navbar-brand" href="/">{{ site.name }}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
   <span class="navbar-toggler-icon"></span>
@@ -25,6 +27,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{% url 'charts:daily' %}">{% trans "Daily" %}</a>
+          <a class="dropdown-item" href="{% url 'charts:weekly' %}">{% trans "Weekly" %}</a>
           <a class="dropdown-item" href="{% url 'charts:monthly' %}">{% trans "Monthly" %}</a>
           <a class="dropdown-item" href="{% url 'charts:yearly' %}">{% trans "Yearly" %}</a>
         </div>
@@ -63,7 +66,7 @@
         </div>
       </li>
       <li class="nav-item"><a class="nav-link" href="/blog">{% trans "Blog" %}</a></li>
-      
+      <!--
       {% if 'twitter' in backends.not_associated %}
       <li class="nav-item">
         <a class="nav-link mx-2 px-2" href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}" aria-label="Twitter">
@@ -80,18 +83,26 @@
         </a>
       </li>
       {% endif %}
+      -->
       <ul class="navbar-nav">
-      <li class="nav-item">
-        <a href="https://github.com/doctoctoc/doctoctocbot" title="" id="navitemGitHub" class="nav-link">
-        <img src="{% static '/doctocnet/GitHub-Mark-32px.png' %}" class="img-responsive"  height="20" width="20"/>
-        </a>
+        <li class="nav-item">
+          <a href="https://github.com/doctoctoc/doctoctocbot" title="" id="navitemGitHub" class="nav-link">
+          <img src="{% static '/doctocnet/GitHub-Mark-32px.png' %}" class="img-responsive"  height="20" width="20"/>
+          </a>
         </li>
         <li class="nav-item">
-        <a href="{% bot_url %}" title="{% bot_screen_name %}" id="navitemBot" class="nav-link">
-        🤖
-        </a>
+          <a href="{% bot_url %}" title="{% bot_screen_name %}" id="navitemBot" class="nav-link">
+          🤖
+          </a>
         </li>
-        </ul>
+        {% if user|is_allowed_discussion %}
+        <li class="nav-item">
+          <a href="https://discussion.doctoctoc.net" title="{% trans 'Discussion' %}" id="discussion" class="nav-link">
+         🙊Discussion
+          </a>
+        </li>
+        {% endif %}
+      </ul>
         <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
         {% network_navbar %}
       <!--li class="navbar-brand"><a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">
@@ -99,5 +110,5 @@
 </a></li-->
     </ul>
   </div>
-
+  </div>
 </nav>

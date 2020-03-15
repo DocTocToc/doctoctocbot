@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-22 18:16+0100\n"
-"PO-Revision-Date: 2019-05-17 04:15+0200\n"
+"POT-Creation-Date: 2020-02-28 03:05+0100\n"
+"PO-Revision-Date: 2020-02-25 22:16+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,19 +18,44 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/models.py:612
+#: moderation/forms.py:18
+msgid "Submit"
+msgstr "Envoyer"
+
+#: moderation/forms.py:27
+msgid "None of those categories"
+msgstr "Aucune de ces catégories"
+
+#: moderation/forms.py:29
+msgid "Please choose a category"
+msgstr "Merci de choisir une catégorie"
+
+#: moderation/forms.py:34
+msgid "I hereby certify that I do belong to this category."
+msgstr "Je certifie que j'appartiens bien à cette catégorie."
+
+#: moderation/forms.py:39
+msgid ""
+"This community is mostly comprised of people belonging to the listed "
+"categories. If you don't belong to any of them but you still want to join, "
+"please tell us why and we will review your application."
+msgstr ""
+"Cette communauté est principalement composée de personnes qui appartiennent "
+"aux catégories listées. Si vous n'appartenez à aucune d'entre elles mais que "
+"vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
+"pourquoi et nous examinerons votre demande."
+
+#: moderation/models.py:661
 msgid "Warn"
-msgstr ""
+msgstr "Avertir"
 
-#: moderation/models.py:613
-#, fuzzy
-#| msgid "Moderators"
+#: moderation/models.py:662
 msgid "Moderate"
-msgstr "Modérateurs"
+msgstr "Modérer"
 
-#: moderation/models.py:614
+#: moderation/models.py:663
 msgid "Ban"
-msgstr ""
+msgstr "Exclure"
 
 #: moderation/social.py:120
 msgid "Followers"
@@ -64,7 +89,7 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:102
+#: moderation/tasks.py:107
 #, python-brace-format
 msgid ""
 "Please moderate this user: @{screen_name} Tweet: https://twitter.com/"
@@ -73,11 +98,11 @@ msgstr ""
 "Merci de modérer ce compte: @{screen_name} Tweet: https://twitter.com/"
 "{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:109
+#: moderation/tasks.py:114
 msgid "You will soon receive a moderation request for this user."
 msgstr "Vous allez bientôt recevoir une demande de modération pour ce compte."
 
-#: moderation/views.py:49
+#: moderation/views.py:58
 msgid "Moderators"
 msgstr "Modérateurs"
 

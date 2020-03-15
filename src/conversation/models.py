@@ -10,6 +10,7 @@ from common.twitter import status_url_from_id
 from taggit.managers import TaggableManager
 from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
 from django.utils.translation import ugettext_lazy as _
+from versions.models import Versionable
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +53,30 @@ class Tweetdj(models.Model):
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    quotedstatus = models.NullBooleanField(default=None, help_text="Is quoted_status")
-    retweetedstatus = models.NullBooleanField(default=None, help_text="Has retweeted_status")
-    deleted = models.NullBooleanField(default=None, help_text="Has this tweet been deleted?")
-    hashtag = models.ManyToManyField(Hashtag)
+    quotedstatus = models.NullBooleanField(
+        default=None,
+        help_text="Is quoted_status",
+        verbose_name="Quote",
+    )
+    retweetedstatus = models.NullBooleanField(
+        default=None,
+        help_text="Has retweeted_status",
+        verbose_name="RT",
+    )
+    deleted = models.NullBooleanField(
+        default=None,
+        help_text="Has this tweet been deleted?",
+        verbose_name="Del",
+    )
+    hashtag = models.ManyToManyField(
+        Hashtag,
+        blank=True,
+    )
     tags = TaggableManager(through=GenericBigIntTaggedItem)
+    retweeted_by = models.ManyToManyField(
+        "moderation.SocialUser",
+        blank=True,
+    )
     
     
     class Meta:
@@ -86,6 +106,8 @@ class Tweetdj(models.Model):
 
     def status_text_tag(self):
         status = self.json
+        if not isinstance(status, dict):
+            return
         if 'full_text' in status:  
             status_str = status.get("full_text")
         elif 'text' in status:
@@ -191,3 +213,12 @@ def create_leaf(statusid, parentid):
     except DatabaseError as e:
         logger.error(str(e))
     return leaf
+
+
+class Retweeted(Versionable):
+    status = models.BigIntegerField()
+    retweet = models.BigIntegerField()
+    account = models.ForeignKey(
+        "bot.Account",
+        on_delete=models.CASCADE,
+    )

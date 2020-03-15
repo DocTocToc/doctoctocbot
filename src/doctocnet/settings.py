@@ -96,6 +96,14 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "django-invitations": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
+        "bot.bin.thread": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
     },
 }
@@ -126,6 +134,7 @@ WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 # Application definition
 
 INSTALLED_APPS = [
+    'invitations',
     'users',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -193,6 +202,7 @@ INSTALLED_APPS = [
     'silver',
     'rest_framework.authtoken',
     'request',
+    'invite',
 ]
 
 if DEBUG:
@@ -204,10 +214,10 @@ if DEBUG:
 MIDDLEWARE = [
 
 
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -243,11 +253,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.media',
-                'django.template.context_processors.i18n',
                 'doctocnet.context_processors.site',
             ],
         },
@@ -291,17 +301,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-
 LANGUAGE_CODE = 'fr'
-
 
 LANGUAGES = [
     ('fr', _('French')),
-#    ('en', _('English')),
-
 ]
 
 LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
     "templates/locale",
 ]
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
@@ -320,8 +327,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
 
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
@@ -344,8 +349,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-
-
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -360,6 +363,7 @@ SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'users.social_auth.add_email_if_not_exist',
 )
 MEDIA_ROOT = config('MEDIA_ROOT')
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -437,19 +441,20 @@ MODERATION = {
 }
 
 STATUS_DISPLAY_NUMBER = {
-    'all': 20,
-    'last': 20,
-    'help': 20,
-    'top': 20
+    'all': 10,
+    'last': 10,
+    'help': 10,
+    'top': 10,
+    'covid19': 10,
 }
 
 STATUS_DISPLAY_HOUR = {
     'all': 72,
     'last': 72,
     'help': 72,
-    'top': 72
+    'top': 72,
+    'covid19': 72,
 }
-
 
 #CORS_ORIGIN_ALLOW_ALL = True
 
@@ -507,6 +512,7 @@ TWITTER_ACCESS_TOKEN_SECRET = config('TWITTER_ACCESS_TOKEN_SECRET')
 BOT_IMAGES_PATH = config('BOT_IMAGES_PATH')
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""
+TWEET_LENGTH = 280
 
 # Twitter key (social-auth-app-django)
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
@@ -560,3 +566,31 @@ SILVER_AUTOMATICALLY_CREATE_TRANSACTIONS = False
 SILVER_DOCUMENT_PREFIX = config('SILVER_DOCUMENT_PREFIX')
 SILVER_DOCUMENT_STORAGE = None
 SILVER_IS_LOCAL = config('SILVER_IS_LOCAL', default=True, cast=bool)
+
+DISCOURSE_HOSTNAME = config('DISCOURSE_HOSTNAME')
+DISCOURSE_PROTOCOL = config('DISCOURSE_PROTOCOL', default='https')
+DISCOURSE_IP_CACHE_TTL = config('DISCOURSE_IP_CACHE_TTL', cast=int, default=3600)
+DISCOURSE_IP_CACHE_KEY = config('DISCOURSE_IP_CACHE_KEY', default="discourse_ip")
+DISCOURSE_WEBHOOK_SECRET = config('DISCOURSE_WEBHOOK_SECRET')
+DISCOURSE_API_KEY_SYSTEM = config('DISCOURSE_API_KEY_SYSTEM')
+
+# Invite
+INVITATIONS_SIGNUP_REDIRECT = 'registration:register-invite-email'
+INVITATIONS_INVITATION_MODEL = 'invite.CategoryInvitation'
+INVITATION_USE_SESSION_KEY = config(
+    'INVITATION_USE_SESSION_KEY',
+    default=True,
+    cast=bool
+)
+INVITATION_SESSION_KEY = config(
+    'INVITATION_SESSION_KEY',
+    default='invitation_session_key'
+)
+
+THIS_SOCIAL_MEDIA =  config('THIS_SOCIAL_MEDIA', default='this_social_media')
+
+COVID19_CATEGORIES = config(
+    'COVID19_CATEGORIES',
+    cast=Csv(),
+    default=['physician', 'midwife', 'pharmacist',]
+)

@@ -1,4 +1,5 @@
 {% load auth_extras %}
+{% load auth_discourse %}
 {% load users %}
 {% load i18n %}
 {% load customer_tags %}
@@ -35,6 +36,11 @@
       <li class="nav-item">
         <a class="nav-link" href="/user/account">{% trans "Account" %}</a>
       </li>
+      {% endif %}
+      {% if user|is_allowed_discussion %}
+        <li class="nav-item">
+          <a class="nav-link" href="/send-invite">{% trans "Invitation" %}</a>
+        </li>
       {% endif %}
     </ul>
   </div>

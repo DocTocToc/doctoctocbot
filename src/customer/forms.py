@@ -26,7 +26,7 @@ class CustomerReadOnlyForm(forms.Form):
         self.helper.label_class = 'offset-md-1 col-md-1'
         self.helper.field_class = 'col-md-8'
         self.fields['country'].label = _('Country')
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
         self.fields['id'].initial=customer.id
         self.fields['first_name'].initial=customer.first_name
         self.fields['last_name'].initial=customer.last_name

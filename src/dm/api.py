@@ -17,7 +17,8 @@ def get_api_dict(__screen_name: typing.Optional[str]=None):
         consumer_secret = account.backend_twitter_consumer_secret
         access_token = account.backend_twitter_access_token
         access_token_secret = account.backend_twitter_access_token_secret
-    except Account.DoesNotExist:
+    except Account.DoesNotExist as e:
+        logger.error(f"account with username {__screen_name} does not exist. \n {e}")
         return
 
     if (not consumer_key
@@ -35,8 +36,9 @@ def get_api_dict(__screen_name: typing.Optional[str]=None):
     return api_dict
     
 def getapi(__screen_name: typing.Optional[str]=None):
-    api_dict = get_api_dict(__screen_name)    
-    return twitter.Api(**api_dict)
+    api_dict = get_api_dict(__screen_name)
+    if api_dict:    
+        return twitter.Api(**api_dict)
 
 def getdm(dmid, screen_name):
     dm_lst = []
@@ -69,6 +71,8 @@ def senddm(text,
            attachment=None,
            screen_name=None):
     api_ = getapi(screen_name)
+    if not api_:
+        return
     try:
         response = api_.PostDirectMessage(text=text,
                            user_id=user_id,

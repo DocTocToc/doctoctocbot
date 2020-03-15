@@ -8,10 +8,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.conf import settings
-
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
-
+from moderation.models import Profile
 from customer.forms import CustomerForm, CustomerReadOnlyForm
 from customer.models import Customer
 from bootstrap_modal_forms.generic import BSModalUpdateView
@@ -82,22 +81,22 @@ class UserProfile(LoginRequiredMixin, TemplateView):
             uid = 0
         
         if self.request.user.socialuser is not None:
-            json = self.request.user.socialuser.profile.json
             userid= self.request.user.socialuser.user_id
-            #context['location'] = json.get("location", None)
-            context['hashtag'] = userhashtagcount(userid, self.request)    
+            context['hashtag'] = userhashtagcount(userid, self.request)  
+            try:
+                json = self.request.user.socialuser.profile.json
+            except Profile.DoesNotExist:
+                return context
             try:
                 expanded_url = json["entities"]["url"]["urls"][0]["expanded_url"]
             except KeyError:
                 expanded_url = None
             context['expanded_url'] = expanded_url
-        
             try:
                 display_url = json["entities"]["url"]["urls"][0]["display_url"]
             except KeyError:
                 display_url = None        
             context['display_url'] = display_url
-            #context['uid'] = uid
         return context
 
 

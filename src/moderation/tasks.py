@@ -3,7 +3,6 @@ from unicodedata import category
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from celery import shared_task
-from bot.tasks import handle_retweet
 from bot.bin.user import getuser_lst
 from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
@@ -20,10 +19,13 @@ from moderation.social import send_graph_dm
 from bot.onstatus import triage_status
 
 from moderation.moderate import quickreply
-from moderation.models import Moderation
 from dm.api import senddm
 from community.models import Community
 from moderation.profile import check_profile_pictures
+from moderation.profile import (
+    create_update_profile_twitter,
+    create_update_profile_local,
+    )
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -38,26 +40,20 @@ def handle_poll_lists_members(community_name: str):
 def handle_create_update_lists(community_name: str):
     create_update_lists(community_name)
 
-
-
-
 @shared_task
-def handle_create_update_profile(userid_int):
-    from conversation.models import Tweetdj
-
+def handle_create_update_profile(userid: int):
     try:
-        tweetdj_mi = Tweetdj.objects.filter(userid = userid_int).latest()
-    except Tweetdj.DoesNotExist:
-        tweetdj_mi = None
-        
-    if tweetdj_mi is None:
-        from bot.bin.user import getuser
-        userjson = getuser(userid_int)
-    else:
-        userjson = tweetdj_mi.json.get("user")
-
-    logger.debug(userjson)
-    twitterprofile(userjson)
+        su: SocialUser = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        sm: SocialMedia = su.social_media
+    except AttributeError:
+        return
+    if sm.name == 'twitter':
+        create_update_profile_twitter(su)
+    elif sm.name == settings.THIS_SOCIAL_MEDIA:
+        create_update_profile_local(su)
 
 def handle_create_all_profiles():
     from conversation.models import Tweetdj
@@ -90,7 +86,11 @@ def handle_check_all_profile_pictures():
 
 @shared_task(bind=True)
 def handle_sendmoderationdm(self, mod_instance_id):
-    mod_mi = Moderation.objects.get(pk=mod_instance_id)
+    try:
+        mod_mi = Moderation.objects.get(pk=mod_instance_id)
+    except Moderation.DoesNotExist:
+        logger.error(f"Moderation with id={id} does not exist.")
+        return
     qr = quickreply(mod_instance_id)
     logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
     #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")
@@ -217,9 +217,9 @@ def poll_moderation_dm():
         
         #Check if relationship already exists for the given community
         #if cat_mi in moderated_su_mi.category.all():
-        if moderated_su_mi.categoryrelationships.filter(
-            community=mod_mi.queue.community,
-            category=cat_mi):
+        if (moderated_su_mi.categoryrelationships
+            .filter(community=mod_mi.queue.community,category=cat_mi)
+            .exclude(moderator=moderated_su_mi)):
             logger.info(f"{moderated_su_mi} is already a {cat_mi} for community {mod_mi.queue.community}")
             delete_moderation_queue(mod_mi)
             continue

@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='usercategoryrelationship',
             name='moderator',
-            field=models.ForeignKey(limit_choices_to=moderation.models.limit_user_category_relationship_moderator, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='moderated', to='moderation.SocialUser'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='moderated', to='moderation.SocialUser'),
         ),
     ]

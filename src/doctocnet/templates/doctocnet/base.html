@@ -3,7 +3,6 @@
 <!-- django-meta & wagtail-metadata-mixin -->
 {% load meta %}
 
-{# HTML5 declaration #}
 <!DOCTYPE html>
 <html>
 
@@ -25,31 +24,39 @@
 <meta http-equiv="Content-Language" value="fr" />
 {% endblock head_meta_contentlanguage %}
 {% block head_meta_viewport %}
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 {% endblock head_meta_viewport %}
 {% endblock head_meta %}
 
+{% block head_css %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<!--  link rel="stylesheet" href="{% static "doctocnet/_nav.scss" %}" type="text/css"-->
+<!--  link rel="stylesheet" href="{% static "doctocnet/_navbar.scss" %}" type="text/css" -->
+<!--  link rel="stylesheet" href="{% static "doctocnet/_reboot.scss" %}" type="text/css" -->
+<!--  link rel="stylesheet" href="{% static "doctocnet/mynavbar.scss" %}" type="text/css" -->
+{% endblock head_css %}
 
 {% block head_javascript %}
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-  crossorigin="anonymous"></script>                    
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+  crossorigin="anonymous"></script>                   
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
   crossorigin="anonymous"></script>
 {% endblock head_javascript %}
 
+{% block style %}
+<style>
+body {
+  padding-top: 4.5rem;
+}
+</style>
+{% endblock style %}
 
-{% block head_css %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" href="{% static "doctocnet/_nav.scss" %}" type="text/css">
-<link rel="stylesheet" href="{% static "doctocnet/_navbar.scss" %}" type="text/css">
-<link rel="stylesheet" href="{% static "doctocnet/_reboot.scss" %}" type="text/css">
-<link rel="stylesheet" href="{% static "doctocnet/mynavbar.scss" %}" type="text/css">
-{% endblock head_css %}
+
 
 <!-- The following script is necessary for navbar dropdown toogle to work. -->
 <!--script>
@@ -72,44 +79,26 @@ $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
 });
 </script>
 
-
 <title>{% block title %} Home {% endblock title %} | {{ site.name }}</title>
 
 {% block header_javascript %}
 <!--  add your scripts here -->
 {% endblock header_javascript %}
-
 </head>
 
-<body>
-  <div id="site-wrapper" class="container-fluid m-1">
-  {# Navigation Menu #}
+  <body data-spy="scroll" data-target="#navbar-main">
+
   {% include "doctocnet/navbar.html" %}
-  {# The Document Body #}
-  {% block content %}
-    if you see this, something is wrong!
-  {% endblock content %}
-  </div>
   
-  {# The Footer #}
-  <!--div class="footer">
-    <div class="container">
-      <p>DocTocToc.net Copyright 2017-2018 Jérôme Pinguet</p>
-      <p>This site runs on free and open source Python code based on <a href="https://www.djangoproject.com/">Django</a>. It is available on <a href="https://github.com/doctoctoc">github.com/doctoctoc</a></p>
-    </div>
-  </div-->
+  <main role="main" class="container">
+    {% block content %}
+    if you see this, something is wrong!
+    {% endblock content %}
+  </main>
+  
   {% block footer_javascript %}
-  <!-- Optional JavaScript -->                                                  
-  <!-- jQuery first, then Popper.js, then Bootstrap JS-->                      
-  <!--script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-  integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
-  crossorigin="anonymous"></script>    
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-  crossorigin="anonymous"></script>                    
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-  crossorigin="anonymous"></script-->
- {% endblock footer_javascript %}
-</body>
+  {% endblock footer_javascript %}
+
+  </body>
+
 </html>

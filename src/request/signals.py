@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Queue)
 def dm_admin(sender, instance, created, **kwargs):
-    if created:
+    if (
+        created
+        and (instance.state == Queue.PENDING)
+        and (instance.id == instance.identity)
+    ):
         try:
             screen_name = instance.socialuser.profile.screen_name_tag()
         except:

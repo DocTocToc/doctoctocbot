@@ -10,7 +10,7 @@ class QueueAdmin(VersionedAdmin):
     list_display = (
         'mini_image_tag',
         'screen_name_link',
-#        'name_tag',
+        'state_tag',
         'uid',
         'socialuser',
         'community',
@@ -19,15 +19,25 @@ class QueueAdmin(VersionedAdmin):
     readonly_fields = (
         'mini_image_tag',
         'screen_name_link',
-#        'name_tag',
         'uid',
         'socialuser',
         'community',
         'socialmedia',   
     )
+    search_fields = (
+        'socialuser__profile__json__screen_name',
+    )
     list_display_show_identity = False
     list_display_show_end_date = False
     list_display_show_start_date = True
+
+    def state_tag(self, obj):
+        if obj.state == Queue.PENDING:
+            return "pending⌛"
+        else:
+            return obj.state
+
+    state_tag.short_description = 'STATE'
     
     def screen_name_link(self, obj):
         try:

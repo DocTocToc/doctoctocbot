@@ -29,6 +29,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'name',
         'active',
         'account',
+        'helper',
         'created',
         'site',
     )
@@ -36,6 +37,8 @@ class CommunityAdmin(admin.ModelAdmin):
         'name',
         'active',
         'account',
+        'helper',
+        'helper_message',
         'hashtag',
         'membership',
         'created',

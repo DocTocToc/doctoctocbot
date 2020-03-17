@@ -8,7 +8,10 @@ logger = logging.getLogger(__name__)
 class Community(models.Model):
     name = models.CharField(max_length=101, unique=True)
     active = models.BooleanField(default=False)
-    account = models.OneToOneField('bot.Account', on_delete=models.CASCADE)
+    account = models.OneToOneField(
+        'bot.Account',
+        on_delete=models.CASCADE
+    )
     hashtag = models.ManyToManyField('conversation.Hashtag')
     membership = models.ManyToManyField(
         'moderation.Category',
@@ -45,6 +48,16 @@ class Community(models.Model):
         on_delete=models.CASCADE,
         null=True,
         related_name="community",
+    )
+    helper = models.ForeignKey(
+        'bot.Account',
+        on_delete=models.PROTECT,
+        null=True,
+        related_name="helper_community",
+    )
+    helper_message = models.TextField(
+        max_length=200,
+        blank=True,
     )
 
     def __str__(self):

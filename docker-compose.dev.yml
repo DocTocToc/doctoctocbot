@@ -56,8 +56,7 @@ services:
       - ./config/nginx/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     ports:
-      - "80:80"
-      - "443:443"
+      - "9000:80"
     depends_on:
       - django_1
       - django_2

@@ -16,6 +16,7 @@ class Community(models.Model):
     membership = models.ManyToManyField(
         'moderation.Category',
         related_name='member_of',
+        blank=True,
     )
     created =  models.DateTimeField(auto_now_add=True)
     site = models.ForeignKey(
@@ -30,6 +31,8 @@ class Community(models.Model):
         through_fields=('from_community', 'to_community'),
         symmetrical=False,
         related_name='trusted_by',
+        blank=True,
+        
     )
     cooperation = models.ManyToManyField(
         'self',
@@ -37,27 +40,32 @@ class Community(models.Model):
         through_fields=('from_community', 'to_community'),
         symmetrical=False,
         related_name='cooperating_with',
+        blank=True,
     )
     category = models.ManyToManyField(
         'moderation.Category',
         through='CommunityCategoryRelationship',
         related_name='community',
+        blank=True,
     )
     crowdfunding = models.ForeignKey(
         'crowdfunding.Project',
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         related_name="community",
     )
     helper = models.ForeignKey(
         'bot.Account',
         on_delete=models.PROTECT,
         null=True,
+        blank=True,
         related_name="helper_community",
     )
     helper_message = models.TextField(
         max_length=200,
         blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -81,6 +89,7 @@ class Retweet(models.Model):
     hashtag = models.ForeignKey('conversation.Hashtag', on_delete=models.CASCADE)
     category = models.ForeignKey('moderation.Category', on_delete=models.CASCADE)
     retweet = models.BooleanField(default=False)
+    moderation = models.BooleanField(default=True)
 
     def __str__(self):
         return "{} - {} - {} : {}".format(self.community, self.hashtag, self.category, self.retweet)

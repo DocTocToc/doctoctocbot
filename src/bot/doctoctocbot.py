@@ -270,18 +270,22 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                                .values(
                                    _community=F('community'),
                                    _category=F('category'),
-                                   _bot_screen_name=F('community__account__username')
+                                   _bot_screen_name=F('community__account__username'),
+                                   _moderation=F('moderation'),
                                 ) \
                                .distinct()
     for dct in dct_lst:
         logger.debug(
             f'community: {dct["_community"]}, '
             f'category: {dct["_category"]}, '
-            f'bot_screen_name: {dct["_bot_screen_name"]}'
+            f'bot_screen_name: {dct["_bot_screen_name"]}',
+            f'moderation: {dct["_moderation"]}',
         )
-        if is_follower(userid, dct["_bot_screen_name"]):
+        community = Community.objects.get(pk=dct['_community'])
+        if not dct["_moderation"]:
+            rt(statusid, dct, community)
+        elif is_follower(userid, dct["_bot_screen_name"]):
             category = Category.objects.get(pk=dct["_category"])
-            community = Community.objects.get(pk=dct['_community'])
             trusted_community_qs = community.trust.filter(category=category)
             trusted_community_lst = list(trusted_community_qs)
             trusted_community_lst.append(community)
@@ -297,19 +301,22 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                     trust = True
             
             if trust:
-                username = dct["_bot_screen_name"]
-                try:
-                    retweet = get_api(username=username, backend=True).retweet(statusid)
-                    logger.debug(retweet)
-                except TweepError:
-                    retweet = None
-                if retweet:
-                    set_retweeted_by(statusid, community)
-                    create_update_retweeted(statusid, community, retweet._json)
-                    tag(statusid, community)
-                    keyword_tag(statusid, community)
+                rt(statusid, dct, community)
             else:
                 addtoqueue(userid, statusid, community.name)
+
+def rt(statusid, dct, community):
+    username = dct["_bot_screen_name"]
+    try:
+        retweet = get_api(username=username, backend=True).retweet(statusid)
+        logger.debug(retweet)
+    except TweepError:
+        retweet = None
+    if retweet:
+        set_retweeted_by(statusid, community)
+        create_update_retweeted(statusid, community, retweet._json)
+        tag(statusid, community)
+        keyword_tag(statusid, community)
 
 def set_retweeted_by(statusid: int, community):
     try:

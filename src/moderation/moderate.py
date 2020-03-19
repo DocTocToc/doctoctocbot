@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 def process_unknown_user(user_id, status_id, hrh):
     logger.debug("processing unknown user")
+    logger.debug(f"hrh.hashtag_mi_lst: {hrh.hashtag_mi_lst}")
     dct_lst = Retweet.objects.filter(retweet=True) \
                                 .filter(hashtag__in=hrh.hashtag_mi_lst) \
                                 .values(
@@ -22,7 +23,7 @@ def process_unknown_user(user_id, status_id, hrh):
                                     username=F('community__account__username')
                                 ) \
                                 .distinct()
-    logger.debug(dct_lst)
+    logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
         logger.debug(dct)
         try:

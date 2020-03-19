@@ -102,6 +102,7 @@ def create_update_socialuser_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):
     if created:
+        logger.debug("inside sendmoderationdm()")
         transaction.on_commit(
             lambda: handle_sendmoderationdm.apply_async(
                 args=[],

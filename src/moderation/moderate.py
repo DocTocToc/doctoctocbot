@@ -22,7 +22,9 @@ def process_unknown_user(user_id, status_id, hrh):
                                     username=F('community__account__username')
                                 ) \
                                 .distinct()
+    logger.debug(dct_lst)
     for dct in dct_lst:
+        logger.debug(dct)
         try:
             community = Community.objects.get(name=dct['community_name'])
         except Community.DoesNotExist:

@@ -67,6 +67,9 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    allow_unknown = models.BooleanField(
+        default=False,
+    )
 
     def __str__(self):
         return self.name
@@ -87,9 +90,18 @@ def get_default_community():
 class Retweet(models.Model):
     community = models.ForeignKey('Community', on_delete=models.CASCADE)
     hashtag = models.ForeignKey('conversation.Hashtag', on_delete=models.CASCADE)
-    category = models.ForeignKey('moderation.Category', on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        'moderation.Category',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     retweet = models.BooleanField(default=False)
     moderation = models.BooleanField(default=True)
+    require_question = models.BooleanField(default=True)
+    allow_retweet = models.BooleanField(default=False)
+    allow_quote = models.BooleanField(default=False)
+
 
     def __str__(self):
         return "{} - {} - {} : {}".format(self.community, self.hashtag, self.category, self.retweet)

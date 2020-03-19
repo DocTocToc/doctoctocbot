@@ -28,7 +28,11 @@ def process_unknown_user(user_id, status_id, hrh):
         except Community.DoesNotExist:
             continue
         bot_screen_name = community.account.username
-        follower_id_lst = update_followersids(dct['username'], cached=False, bot_screen_name=bot_screen_name)
+        follower_id_lst = update_followersids(
+            dct['username'],
+            cached=False,
+            bot_screen_name=bot_screen_name
+        )
         if not follower_id_lst:
             logger.warn(f"{dct['username']} does not have any followers.")
             continue

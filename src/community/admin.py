@@ -32,6 +32,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'helper',
         'created',
         'site',
+        'allow_unknown',
     )
     fields = (
         'name',
@@ -44,6 +45,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'created',
         'site',
         'crowdfunding',
+        'allow_unknown',
     )
     readonly_fields = (
         'created',

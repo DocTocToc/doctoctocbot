@@ -35,15 +35,15 @@ def triage(statusid):
     logger.info(f"2° has_retweet_hashtag(sjson): {bool(has_retweet_hashtag(sjson))}")
     logger.info(f"4° not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}")
 
-    if is_following_rules(sjson):
-        create_tree(statusid)
-        hrh = has_retweet_hashtag(sjson)
-        userid = sjson['user']['id']
-        if (not isreplacement(sjson)
-            and not isquote(sjson)
-            and hrh):
-            logger.info("Retweeting status %s: %s ", status.id, status.full_text)
-            community_retweet(status.id, userid, hrh)
+    create_tree(statusid)
+    hrh = has_retweet_hashtag(sjson)
+    userid = sjson['user']['id']
+    if (
+        not isreplacement(sjson)
+        and hrh
+    ):
+        logger.info("Retweeting status %s: %s ", status.id, status.full_text)
+        community_retweet(status.id, userid, hrh)
 
 def triage_status(status_id):
     try:
@@ -52,8 +52,7 @@ def triage_status(status_id):
         triage(status_id)
         return
     hrh = has_retweet_hashtag(sjson)
-    if (is_following_rules(sjson)
-        and not isreplacement(sjson)
+    if (not isreplacement(sjson)
         and not isquote(sjson)
         and hrh):
         logger.info(

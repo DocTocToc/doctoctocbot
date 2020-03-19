@@ -22,7 +22,7 @@ from tweepy.error import TweepError
 import unidecode
 from typing import List
 
-from django.db.models import F
+from django.db.models import F, Q
 from django.db.utils import DatabaseError
 from django.conf import settings
 
@@ -138,19 +138,28 @@ def isquestion ( status ):
 def isretweeted(status):
     return status['retweeted']
 
-def is_following_rules(status):
+def is_following_rules(statusid, dct):
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+        return is_following_rules_json(tweetdj.json, dct)
+    except Tweetdj.DoesNotExist:
+        return False
+
+def is_following_rules_json(status, dct):
     """
     Does this status follow the structural rules?
     * Is Not a retweet
     * Is a question
     * Is not a reply
     """  
-    if isrt(status):
+    if isrt(status) and not dct["_allow_retweet"]:
         return False
+    if isquote(status) and not dct["_allow_quote"]:
+        return
     if isreply(status):
         handle_retweetroot.apply_async(args=(status['id'],))
         return False
-    if not isquestion(status):
+    if dct["_require_question"] and not isquestion(status):
         handle_question.apply_async(args=(status['id'],), countdown=10, expires=300) 
         return False
     return True
@@ -255,35 +264,64 @@ def create_update_retweeted(statusid, community, retweet_status):
         return
 
 def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
+    logger.debug("Inside community_retweet()")
+    logger.debug(statusid)
+    logger.debug(userid)
+    logger.debug(f"hrh: {hrh}; hrh.hashtag_mi_lst: {hrh.hashtag_mi_lst}")
     try:
         social_user = SocialUser.objects.get(user_id=userid)
+        logger.debug(social_user)
     except SocialUser.DoesNotExist as e:
         logger.warn(f"SocialUser {userid} does not exist.", e)
-        return
-    category_qs = social_user.category.all()
+        social_user = None
+    
+    if social_user:
+        category_qs = social_user.category.all()
+        logger.debug(f"category_qs: {category_qs}")
+    else:
+        category_qs = []
+        logger.debug(f"category_qs: {category_qs}")
+
+    # Process unknown social user without any category
     if not category_qs:
-        process_unknown_user(userid, statusid, hrh)
-        return
+        if Retweet.objects.filter(
+            retweet=True,
+            hashtag__in=hrh.hashtag_mi_lst,
+            community__allow_unknown=False,
+        ).exists():
+            process_unknown_user(userid, statusid, hrh)
     dct_lst = Retweet.objects.filter(retweet=True) \
-                               .filter(category__in=category_qs) \
-                               .filter(hashtag__in=hrh.hashtag_mi_lst) \
-                               .values(
-                                   _community=F('community'),
-                                   _category=F('category'),
-                                   _bot_screen_name=F('community__account__username'),
-                                   _moderation=F('moderation'),
-                                ) \
-                               .distinct()
+        .filter(Q(category__isnull=True) | Q(category__in=category_qs)) \
+        .filter(hashtag__in=hrh.hashtag_mi_lst) \
+        .values(
+            _community=F('community'),
+            _category=F('category'),
+            _bot_screen_name=F('community__account__username'),
+            _moderation=F('moderation'),
+            _require_question=F('require_question'),
+            _allow_retweet=F('allow_retweet'),
+            _allow_quote=F('allow_quote'),
+            _allow_unknown=F('community__allow_unknown'),
+        ).distinct()
+    logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
+        logger.debug(f"dct: {dct}")
         logger.debug(
             f'community: {dct["_community"]}, '
             f'category: {dct["_category"]}, '
             f'bot_screen_name: {dct["_bot_screen_name"]}',
             f'moderation: {dct["_moderation"]}',
+            f'allow_retweet: {dct["_allow_retweet"]}',
+            f'allow_quote: {dct["_allow_quote"]}',
+            f'allow_unknown: {dct["_allow_unknown"]}',
         )
+
         community = Community.objects.get(pk=dct['_community'])
         if not dct["_moderation"]:
-            rt(statusid, dct, community)
+            if is_following_rules(statusid, dct):
+                rt(statusid, dct, community)
+        elif not social_user:
+            continue
         elif is_follower(userid, dct["_bot_screen_name"]):
             category = Category.objects.get(pk=dct["_category"])
             trusted_community_qs = community.trust.filter(category=category)
@@ -301,14 +339,17 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                     trust = True
             
             if trust:
-                rt(statusid, dct, community)
+                if is_following_rules(statusid, dct):
+                    rt(statusid, dct, community)
             else:
                 addtoqueue(userid, statusid, community.name)
 
 def rt(statusid, dct, community):
+    logger.debug("Inside rt()")
     username = dct["_bot_screen_name"]
     try:
         retweet = get_api(username=username, backend=True).retweet(statusid)
+        logger.debug(f"I just retweeted this: {retweet}")
         logger.debug(retweet)
     except TweepError:
         retweet = None

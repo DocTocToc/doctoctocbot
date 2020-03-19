@@ -596,5 +596,5 @@ THIS_SOCIAL_MEDIA =  config('THIS_SOCIAL_MEDIA', default='this_social_media')
 COVID19_CATEGORIES = config(
     'COVID19_CATEGORIES',
     cast=Csv(),
-    default=['physician', 'midwife', 'pharmacist',]
+    default='physician, midwife, pharmacist'
 )

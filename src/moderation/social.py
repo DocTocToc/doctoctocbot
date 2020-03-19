@@ -18,6 +18,7 @@ from django.conf import settings
 from django.utils import timezone, translation
 from tweepy import TweepError
 from django.core.exceptions import ObjectDoesNotExist
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -238,7 +239,12 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
         user_screen_name = screen_name(user_id)
         file = pie_plot(graph(user_id, community))
         if not file:
-            return False
+            logger.debug("no file")
+            try:
+                su = SocialUser.objects.get(user_id=user_id)
+                file = Image.open(su.profile.normalavatar)
+            except:
+                return False
         media_id = get_dm_media_id(file, bot_screen_name)
         attachment = {"type": "media",
                       "media": {

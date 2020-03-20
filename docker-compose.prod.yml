@@ -91,3 +91,6 @@ services:
   stream_2:
     image: dtn_prod
     restart: always
+  stream_3:
+    image: dtn_prod
+    restart: always

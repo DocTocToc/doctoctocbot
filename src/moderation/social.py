@@ -19,6 +19,7 @@ from django.utils import timezone, translation
 from tweepy import TweepError
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image
+from django.core.files import File
 
 logger = logging.getLogger(__name__)
 
@@ -242,9 +243,13 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
             logger.debug("no file")
             try:
                 su = SocialUser.objects.get(user_id=user_id)
-                file = Image.open(su.profile.normalavatar)
+                normalavatar = su.profile.normalavatar
             except:
                 return False
+            im = Image.open(normalavatar)
+            thumb_io = io.BytesIO()
+            im.save(thumb_io, 'JPEG', quality=85)
+            file = File(thumb_io, name=normalavatar.name)
         media_id = get_dm_media_id(file, bot_screen_name)
         attachment = {"type": "media",
                       "media": {

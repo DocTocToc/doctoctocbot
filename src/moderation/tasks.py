@@ -84,7 +84,7 @@ def handle_check_all_profile_pictures():
     for userid in userid_lst:
         check_profile_pictures(userid)
 
-@shared_task(bind=True)
+@shared_task(bind=True, max_retries=2)
 def handle_sendmoderationdm(self, mod_instance_id):
     logger.debug("inside handle_sendmodarationdm()")
     try:
@@ -113,7 +113,7 @@ def handle_sendmoderationdm(self, mod_instance_id):
     )
     logger.info(ok)
     if not ok:
-        self.retry(countdown= 2 ** self.request.retries)
+        self.retry(countdown = 2 ** self.request.retries)
     ok = senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            screen_name=mod_mi.queue.community.account.username,

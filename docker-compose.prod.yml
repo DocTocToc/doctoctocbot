@@ -56,27 +56,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-  letsencrypt:
-    restart: always
-    build:
-      context: docker/letsencrypt
-      dockerfile: ./Dockerfile
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${LETSENCRYPT_LOG}:/var/log/letsencrypt
-      - ${LETSENCRYPT_CONF}:/etc/letsencrypt
-      - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
-    depends_on:
-      - nginx
-    environment:
-      - DOMAINS=${DOMAINS}
-      - EMAIL=${EMAIL}
-      - WEBROOT_PATH=/tmp/letsencrypt
-      - EXP_LIMIT=30
-      - CHECK_FREQ=${CHECK_FREQ}
-      - CHICKENEGG=${CHICKENEGG}
-      - STAGING=${STAGING}
   celery_retweet_worker:
     image: dtn_prod
   celery_tree_worker:

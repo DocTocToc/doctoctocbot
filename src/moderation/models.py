@@ -238,6 +238,7 @@ class Category(models.Model):
         'mesh.Mesh',
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         help_text="Category as a MeSH heading",
         related_name="category"
     ) 
@@ -245,6 +246,7 @@ class Category(models.Model):
         'mesh.Mesh',
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         help_text="Field as a MeSH heading",
         related_name="category_field",
     )
@@ -286,6 +288,7 @@ class UserCategoryRelationship(models.Model):
         on_delete=models.CASCADE,
         related_name='moderated',
         null=True,
+        blank=True,
     )
     community = models.ForeignKey(
         'community.Community',

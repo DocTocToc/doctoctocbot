@@ -22,6 +22,7 @@ from moderation.models import (
     DoNotRetweet,
     SocialMedia
 )
+from modeltranslation.admin import TranslationAdmin
 
 logger = logging.getLogger(__name__)
 
@@ -158,11 +159,11 @@ class SocialUserAdmin(admin.ModelAdmin):
 
     profile_link.short_description = 'Profile'
     
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(TranslationAdmin):
     list_display = (
         'name',
-        'label',
-        'description',
+        'label_fr',
+        'label_en',
         'show_relationships_count',
     )
     inlines = (CategoryRelationshipInline,)
@@ -171,9 +172,10 @@ class CategoryAdmin(admin.ModelAdmin):
         'label',
         'show_relationships_count',
         'description',
+        'mesh',
         'field',
     )
-    search_fields = ['field',]
+    search_fields = ['name', 'label', 'description', 'field',]
     autocomplete_fields = ['field',]
     
     def get_queryset(self, request):

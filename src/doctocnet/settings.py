@@ -140,6 +140,7 @@ WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 INSTALLED_APPS = [
     'invitations',
     'users',
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -309,6 +310,7 @@ LANGUAGE_CODE = 'fr'
 
 LANGUAGES = [
     ('fr', _('French')),
+    ('en', _('English')),
 ]
 
 LOCALE_PATHS = [

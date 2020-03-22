@@ -282,16 +282,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
         category_qs = []
         logger.debug(f"category_qs: {category_qs}")
 
-    # Process unknown social user without any category
-    if not category_qs:
-        if Retweet.objects.filter(
-            retweet=True,
-            hashtag__in=hrh.hashtag_mi_lst,
-            community__allow_unknown=False,
-        ).exists():
-            process_unknown_user(userid, statusid, hrh)
-    dct_lst = Retweet.objects.filter(retweet=True) \
-        .filter(Q(category__isnull=True) | Q(category__in=category_qs)) \
+    process_unknown_lst = Retweet.objects.filter(retweet=True) \
         .filter(hashtag__in=hrh.hashtag_mi_lst) \
         .values(
             _community=F('community'),
@@ -303,8 +294,20 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             _allow_quote=F('allow_quote'),
             _allow_unknown=F('community__allow_unknown'),
         ).distinct()
-    logger.debug(f"dct_lst: {dct_lst}")
-    for dct in dct_lst:
+    logger.debug(f"process_unknown_lst: {process_unknown_lst}")
+    #process unknown user
+    for dct in process_unknown_lst:
+        if (is_following_rules(statusid, dct)
+            and not category_qs
+            and not dct["_allow_unknown"]):
+            process_unknown_user(userid, statusid, hrh)
+    # process retweet
+    process_retweet_lst = process_unknown_lst.filter(
+        Q(category__isnull=True) | Q(category__in=category_qs)
+    )
+    logger.debug(f"process_retweet_lst: {process_retweet_lst}")
+    for dct in process_retweet_lst:
+        # process unknown user
         logger.debug(f"dct: {dct}")
         logger.debug(
             f'community: {dct["_community"]}, '

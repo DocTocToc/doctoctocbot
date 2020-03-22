@@ -16,6 +16,11 @@ class QueueAdmin(VersionedAdmin):
         'community',
         'socialmedia',
     )
+    list_filter = (
+        'state',
+        'community',
+        'socialmedia',
+    )
     readonly_fields = (
         'mini_image_tag',
         'screen_name_link',

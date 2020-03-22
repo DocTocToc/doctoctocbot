@@ -261,10 +261,12 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
             _("Social graph of user @{screen_name}.{txt}")
             .format(screen_name=user_screen_name, txt=(text))
         )
-        return senddm(dm_text,
+        res = senddm(dm_text,
                       user_id=dest_user_id,
                       screen_name=bot_screen_name,
                       attachment=attachment)
+        logger.debug(res)
+        return res
         
 def order_dict(dct, reverse=False):
     return OrderedDict(sorted(dct.items(), key=operator.itemgetter(1), reverse=reverse))

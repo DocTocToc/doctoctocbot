@@ -3,6 +3,7 @@ import logging
 from django.db.utils import IntegrityError, DatabaseError
 from django.db.models import F
 from django.conf import settings
+from django.utils.translation import activate
 
 from moderation.models import Queue, Moderation
 from moderation.social import update_followersids
@@ -71,6 +72,8 @@ def quickreply(moderation_instance_id):
     except Moderation.DoesNotExist:
         return
     community=moderation_instance.queue.community
+    if community.language:
+        activate(community.language)
     for ccr in CommunityCategoryRelationship.objects.filter(
         quickreply=True,
         community=community

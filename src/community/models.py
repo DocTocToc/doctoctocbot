@@ -70,6 +70,11 @@ class Community(models.Model):
     allow_unknown = models.BooleanField(
         default=False,
     )
+    language = models.CharField(
+        max_length=3,
+        blank=True,
+        help_text="ISO language code",
+    )
 
     def __str__(self):
         return self.name

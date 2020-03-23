@@ -227,13 +227,30 @@ class SocialUser(models.Model):
         ordering = ('user_id',)
 
 
-class Category(models.Model):
+class CategoryBase(models.Model):
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    label = models.CharField(
+        max_length=36,
+        unique=True
+    )
+    description = models.CharField(
+        max_length=72,
+        blank=True,
+        null=True
+    )
+
+
+    class Meta:
+        abstract = True
+
+
+class Category(CategoryBase):
     """
     TODO: link to future community fk, make (label, community) unique together
     """
-    name = models.CharField(max_length=255, unique=True)
-    label = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True, null=True)
     mesh = models.ForeignKey(
         'mesh.Mesh',
         on_delete=models.CASCADE,
@@ -259,18 +276,23 @@ class Category(models.Model):
         if not communities:
             return
         return communities[0].account.username
-    #def clean(self):
-    #    if (self.quickreply and
-    #            Category.objects.filter(quickreply=True).count() > 20):
-    #        raise ValidationError(_('Maximum number of category instances '
-    #                                ' that can be included in a quickreply is 20.'))
+
     
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "categories"
 
 
-#limit_user_category_relationship_moderator = None
+class CategoryMetadata(CategoryBase):
+    """Manage metadata answers for Quick Replies such as "stop", "I don't know"
+    """
+    pass
+
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name_plural = "Category Metadata"
+
 
 class UserCategoryRelationship(models.Model):
     social_user = models.ForeignKey(

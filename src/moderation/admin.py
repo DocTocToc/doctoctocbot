@@ -1,11 +1,12 @@
 import logging
-from functools import partial
 from django.contrib import admin
 from django.db.models import Q
 from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+from django.forms import TextInput, Textarea
+from django.db import models
 from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
 from moderation.models import (
@@ -20,7 +21,8 @@ from moderation.models import (
     Moderator,
     Image,
     DoNotRetweet,
-    SocialMedia
+    SocialMedia,
+    CategoryMetadata,
 )
 from modeltranslation.admin import TranslationAdmin
 
@@ -177,6 +179,9 @@ class CategoryAdmin(TranslationAdmin):
     )
     search_fields = ['name', 'label', 'description', 'field',]
     autocomplete_fields = ['field',]
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size':'72'})},
+    }
     
     def get_queryset(self, request):
         qs = super(CategoryAdmin, self).get_queryset(request)
@@ -478,6 +483,22 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
         'comment',    
     )
 
+
+class CategoryMetadataAdmin(TranslationAdmin):
+    list_display = (
+        'name',
+        'label_fr',
+        'label_en',
+    )
+    fields = (
+        'name',
+        'label',
+        'description',
+    )
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size':'72'})},
+    }
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 
@@ -491,3 +512,4 @@ admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
 admin.site.register(DoNotRetweet, DoNotRetweetAdmin)
 admin.site.register(SocialMedia)
+admin.site.register(CategoryMetadata, CategoryMetadataAdmin)

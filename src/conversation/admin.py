@@ -181,7 +181,9 @@ class TweetdjAdmin(admin.ModelAdmin):
     def retweeted_by_screen_name(self, obj):
         rtby_lst = []
         for rtby in obj.retweeted_by.all():
-            rtby_lst.append(rtby.screen_name_tag())
+            snt = rtby.screen_name_tag()
+            if snt:
+                rtby_lst.append(snt)
         return "\n".join(rtby_lst)
             
 

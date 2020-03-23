@@ -293,7 +293,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             _allow_retweet=F('allow_retweet'),
             _allow_quote=F('allow_quote'),
             _allow_unknown=F('community__allow_unknown'),
-        ).distinct()
+        ).order_by('community').distinct('community')
     logger.debug(f"process_unknown_lst: {process_unknown_lst}")
     #process unknown user
     for dct in process_unknown_lst:

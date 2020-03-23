@@ -5,7 +5,7 @@ from django.db.models import F
 from django.conf import settings
 from django.utils.translation import activate
 
-from moderation.models import Queue, Moderation
+from moderation.models import Queue, Moderation, CategoryMetadata
 from moderation.social import update_followersids
 from community.models import Retweet
 from conversation.models import Hashtag
@@ -84,7 +84,13 @@ def quickreply(moderation_instance_id):
         opt["metadata"] = f"moderation{moderation_instance_id}{ccr.category.name}"
         opt["description"] = ccr.category.description or ccr.category.label
         options.append(opt)
-
+    
+    for cm in CategoryMetadata.objects.all():
+        opt = dict(option)
+        opt["label"] = cm.label
+        opt["metadata"] = f"moderation{moderation_instance_id}{cm.name}"
+        opt["description"] = cm.description
+        options.append(opt)
     qr["options"] = options
     logger.debug(f"qr: {qr}")
     return qr

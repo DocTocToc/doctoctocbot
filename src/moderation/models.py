@@ -292,6 +292,9 @@ class CategoryMetadata(CategoryBase):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "Category Metadata"
+        
+    def __str__(self):
+        return self.name
 
 
 class UserCategoryRelationship(models.Model):
@@ -473,10 +476,22 @@ class Queue(Versionable):
      
     
 class Moderation(Versionable):
-    moderator = models.ForeignKey(SocialUser,
-                                  on_delete=models.CASCADE,
-                                  related_name='moderations')
-    queue = VersionedForeignKey(Queue, on_delete=models.CASCADE)
+    moderator = models.ForeignKey(
+        SocialUser,
+        on_delete=models.CASCADE,
+        related_name='moderations'
+    )
+    queue = VersionedForeignKey(
+        Queue,
+        on_delete=models.CASCADE
+    )
+    state = models.ForeignKey(
+        CategoryMetadata,
+        on_delete=models.CASCADE,
+        related_name='moderations',
+        null=True,
+        blank=True,
+    )
     
     def __str__(self):
         try:

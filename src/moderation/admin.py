@@ -1,6 +1,8 @@
 import logging
+from django.utils.translation import ugettext_lazy as _
+from typing import List,Tuple
 from django.contrib import admin
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models import Count
 from versions.admin import VersionedAdmin
 from django.utils.safestring import mark_safe
@@ -274,9 +276,35 @@ class ProfileAdmin(admin.ModelAdmin):
 
     socialuser_link.short_description = 'SocialUser'
 
+
+class ModerationStateListFilter(admin.SimpleListFilter):
+    title = _('state')
+    parameter_name = 'state'
+    
+    def lookups(self, request, model_admin):
+        state: List[Tuple] = list(
+            CategoryMetadata.objects.values_list(
+                'name',
+                'label',
+            )
+        )
+        state.append( ('pending', _('Pending'),) )
+        return state
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        elif self.value()=='pending':
+            return queryset.filter(state=None)
+        else:
+            return queryset.filter(
+                state__name=self.value()
+            )
+
+
 class ModerationAdmin(VersionedAdmin):
     pass
     list_display = (
+        'state',
         'queue_link',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
@@ -287,6 +315,7 @@ class ModerationAdmin(VersionedAdmin):
         'status_object',
     )
     fields = (
+        'state',
         'queue_link',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
@@ -307,6 +336,9 @@ class ModerationAdmin(VersionedAdmin):
         'status_tag',
         'tweet_link',
         'status_object',    
+    )
+    list_filter = (
+        ModerationStateListFilter,    
     )
     list_display_show_identity = True
     list_display_show_end_date = True

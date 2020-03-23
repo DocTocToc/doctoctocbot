@@ -111,17 +111,17 @@ def handle_sendmoderationdm(self, mod_instance_id):
         _("You will soon receive a moderation request for this user."),
         mod_mi.queue.community
     )
-    logger.info(ok)
-    if not ok:
-        self.retry(countdown = 2 ** self.request.retries)
+    logger.info(f"graph: {ok}")
+    #if not ok:
+    #    self.retry(countdown = 2 ** self.request.retries)
     ok = senddm(dm_txt,
            user_id=mod_mi.moderator.user_id,
            screen_name=mod_mi.queue.community.account.username,
            return_json=True,
            quick_reply=qr)
-    logger.info(ok)
-    if not ok:
-        self.retry(countdown= 2 ** self.request.retries)
+    logger.info(f"dm:{ok}")
+    #if not ok:
+    #    self.retry(countdown= 2 ** self.request.retries)
 
 
 @shared_task

@@ -283,6 +283,9 @@ DATABASES = {
         'PASSWORD': config('DATABASE_PASSWORD', default=''),
         'HOST': config('DATABASE_HOST', default='database'),
         'PORT': config('DATABASE_PORT', cast=int, default=5432),
+        'OPTIONS': {
+            'connect_timeout': config('DATABASE_CONNECTION_TIMEOUT', default=10),
+        },
     }
 }
 

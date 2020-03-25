@@ -85,7 +85,7 @@ def quickreply(moderation_instance_id):
         opt["description"] = ccr.category.description or ccr.category.label
         options.append(opt)
     
-    for cm in CategoryMetadata.objects.all():
+    for cm in CategoryMetadata.objects.filter(dm=True):
         opt = dict(option)
         opt["label"] = cm.label
         opt["metadata"] = f"moderation{moderation_instance_id}{cm.name}"

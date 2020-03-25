@@ -302,7 +302,6 @@ class ModerationStateListFilter(admin.SimpleListFilter):
 
 
 class ModerationAdmin(VersionedAdmin):
-    pass
     list_display = (
         'state',
         'queue_link',
@@ -343,6 +342,8 @@ class ModerationAdmin(VersionedAdmin):
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
+    
+    ordering = ['-version_start_date',]
     
     def screen_name_link(self, obj):
         try:
@@ -452,6 +453,7 @@ class ModeratorAdmin(admin.ModelAdmin):
         'socialuser',
         'active',
         'public',
+        'senior',
         'community',
     )
     fields = (
@@ -459,6 +461,7 @@ class ModeratorAdmin(admin.ModelAdmin):
         'socialuser',
         'active',
         'public',
+        'senior',
         'community',
     )
     readonly_fields = (
@@ -466,6 +469,12 @@ class ModeratorAdmin(admin.ModelAdmin):
     )
     search_fields = ['socialuser',]
     autocomplete_fields = ['socialuser',]
+    list_filter = (
+        'active',
+        'public',
+        'senior',
+        'community',
+    )
 """    
     def community_tag(self, obj):
         return list(obj.community.values_list('name', flat=True))
@@ -521,11 +530,13 @@ class CategoryMetadataAdmin(TranslationAdmin):
         'name',
         'label_fr',
         'label_en',
+        'dm',
     )
     fields = (
         'name',
         'label',
         'description',
+        'dm',
     )
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size':'72'})},

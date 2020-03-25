@@ -102,7 +102,7 @@ class AuthorizedManager(models.Manager):
                 (SELECT id FROM moderation_category WHERE name = 'moderator')
                 );""")
             result = cursor.fetchall()
-            logging.debug(result)
+            #logging.debug(result)
         return [row[0] for row in result]
     
     def devs(self):
@@ -119,7 +119,7 @@ class AuthorizedManager(models.Manager):
                 (SELECT id FROM moderation_category WHERE name = 'dev')
                 );""")
             result = cursor.fetchall()
-            logging.debug(result)
+            #logging.debug(result)
         return [row[0] for row in result]
 
 
@@ -130,7 +130,7 @@ class AuthorizedManager(models.Manager):
         with connection.cursor() as cursor:
             cursor.execute("""SELECT user_id FROM moderation_socialuser;""")
             result = cursor.fetchall()
-            logging.debug(result)
+            #logging.debug(result)
         return [row[0] for row in result]
 
 class SocialUser(models.Model):
@@ -234,7 +234,7 @@ class CategoryBase(models.Model):
     )
     label = models.CharField(
         max_length=36,
-        unique=True
+        unique=True,
     )
     description = models.CharField(
         max_length=72,
@@ -286,7 +286,10 @@ class Category(CategoryBase):
 class CategoryMetadata(CategoryBase):
     """Manage metadata answers for Quick Replies such as "stop", "I don't know"
     """
-    pass
+    dm = models.BooleanField(
+        default=False,
+        help_text="Add to DM Quick Reply list?"
+    )
 
 
     class Meta:
@@ -493,6 +496,11 @@ class Moderation(Versionable):
         blank=True,
     )
     
+
+    class Meta:
+        ordering = ['-version_start_date']
+
+    
     def __str__(self):
         try:
             return f'{self.moderator.profile.json["screen_name"]} {self.version_birth_date}'
@@ -516,7 +524,7 @@ class Moderation(Versionable):
     def moderator_mini_image_tag(self):
         from django.contrib.staticfiles.templatetags.staticfiles import static
         p = getattr(self.moderator, 'profile', None)
-        logging.debug(f"profile: {p}")
+        #logging.debug(f"profile: {p}")
         if p is not None:
             url = p.miniavatar.url
         else:
@@ -530,7 +538,7 @@ class Moderation(Versionable):
         userid = self.queue.user_id
         su = SocialUser.objects.get(user_id=userid)
         p = getattr(su, 'profile', None)
-        logging.debug(f"profile: {p}")
+        #logging.debug(f"profile: {p}")
         if p is not None:
             url = p.miniavatar.url
         else:
@@ -545,7 +553,7 @@ class Moderation(Versionable):
         except Profile.DoesNotExist as e:
             logger.warn(e)
             return
-        logging.debug(f"profile: {p}")
+        #logging.debug(f"profile: {p}")
         if p is not None:
             screen_name = p.json.get("screen_name", None)
             return screen_name
@@ -558,7 +566,7 @@ class Moderation(Versionable):
         userid = self.queue.user_id
         su = SocialUser.objects.get(user_id=userid)
         p = getattr(su, 'profile', None)
-        logging.debug(f"profile: {p}")
+        #logging.debug(f"profile: {p}")
         if p is not None:
             screen_name = p.json.get("screen_name", None)
             return screen_name
@@ -632,6 +640,11 @@ class Moderator(models.Model):
         on_delete=models.CASCADE,
         default=get_default_community,
     )
+    senior = models.BooleanField(
+        default=False,
+        help_text="Is this moderator a seasoned moderator?",
+    )
+
 
     class Meta:
         unique_together = ("socialuser", "community")

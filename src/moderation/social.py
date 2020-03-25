@@ -231,41 +231,66 @@ def pie_plot(dct):
 
 def get_dm_media_id(file, bot_screen_name):
     api = get_api(username=bot_screen_name, backend=True)
-    res = api.media_upload(file.name, media_category="dm_image")
-    file.close()
-    return res.media_id
+    logger.debug(api)
+    try:
+        res = api.media_upload(file.name, media_category="dm_image")
+        file.close()
+    except:
+        res = None
+    if res:
+        try:
+            return res.media_id
+        except:
+            return    
+    
     
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
     with translation.override(settings.TRANSLATION_OVERRIDE):
         user_screen_name = screen_name(user_id)
+        logger.debug(f"user_screen_name:{user_screen_name}")
         file = pie_plot(graph(user_id, community))
         if not file:
             logger.debug("no file")
             try:
                 su = SocialUser.objects.get(user_id=user_id)
-                normalavatar = su.profile.normalavatar
+                if su.profile:
+                    normalavatar = su.profile.normalavatar
+                    logger.debug(normalavatar)
             except:
                 return False
-            im = Image.open(normalavatar)
-            thumb_io = io.BytesIO()
-            im.save(thumb_io, 'JPEG', quality=85)
-            file = File(thumb_io, name=normalavatar.name)
-        media_id = get_dm_media_id(file, bot_screen_name)
-        attachment = {"type": "media",
-                      "media": {
-                          "id": media_id }
-                      }
+            if normalavatar:
+                try:
+                    file = open(normalavatar.path, 'rb')
+                except:
+                    file = None
+        if file:
+            media_id = get_dm_media_id(file, bot_screen_name)
+            logger.debug(f"media_id: {media_id}")
+            if media_id:
+                attachment = {
+                    "type": "media",
+                    "media": {
+                        "id": media_id
+                    }
+                }
+        else:
+            attachment = None
         if text:
             text = " " + text
         dm_text = (
             _("Social graph of user @{screen_name}.{txt}")
-            .format(screen_name=user_screen_name, txt=(text))
+            .format(
+                screen_name=user_screen_name,
+                txt=text
+            )
         )
-        res = senddm(dm_text,
-                      user_id=dest_user_id,
-                      screen_name=bot_screen_name,
-                      attachment=attachment)
-        logger.debug(res)
+        res = senddm(
+            dm_text,
+            user_id=dest_user_id,
+            screen_name=bot_screen_name,
+            attachment=attachment
+        )
+        logger.debug(f"res: {res}")
         return res
         
 def order_dict(dct, reverse=False):

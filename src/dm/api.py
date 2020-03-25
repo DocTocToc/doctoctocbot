@@ -74,11 +74,13 @@ def senddm(text,
     if not api_:
         return
     try:
-        response = api_.PostDirectMessage(text=text,
-                           user_id=user_id,
-                           return_json=True,
-                           quick_reply=quick_reply,
-                           attachment=attachment)
+        response = api_.PostDirectMessage(
+            text=text,
+            user_id=user_id,
+            return_json=True,
+            quick_reply=quick_reply,
+            attachment=attachment,
+        )
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
         response = str(e)

@@ -1,4 +1,4 @@
-from moderation.models import SocialUser, Follower, Category
+from moderation.models import SocialUser, Follower, Friend, Category
 from bot.tweepy_api import get_api
 from bot.models import Account
 from django.db.utils import DatabaseError
@@ -48,17 +48,35 @@ def get_socialuser(user):
 
 
 # TODO: fix type to accept string for username
-def update_followersids(user, cached=False, bot_screen_name=None):
+def update_social_ids(user, cached=False, bot_screen_name=None, relationship=None):
+    if relationship is None:
+        return
+    if not relationship in ['friends', 'followers']:
+        return
+    if relationship == 'followers':
+        followers = True
+    else:
+        followers = False
     su = get_socialuser(user)
     logger.debug(f"SocialUser: {su}")
     if not su:
         return
-    hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
+    if followers:
+        hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
+    else:
+        hourdelta = settings.FRIEND_TIMEDELTA_HOUR
     datetime_limit = timezone.now() - timedelta(hours=hourdelta)
-    try:
-        fi = Follower.objects.filter(user=su).last()
-    except Follower.DoesNotExist:
-        fi = None
+
+    if followers:
+        try:
+            si = Follower.objects.filter(user=su).last()
+        except Follower.DoesNotExist:
+            si = None
+    else:
+        try:
+            si = Friend.objects.filter(user=su).last()
+        except Friend.DoesNotExist:
+            si = None
 
     try:
         bot_cat = Category.objects.get(name='bot')
@@ -69,28 +87,44 @@ def update_followersids(user, cached=False, bot_screen_name=None):
         ok = True 
     else:
         try:
-            ok = fi.created > datetime_limit and not (bot_cat in user.category.all())
+            ok = si.created > datetime_limit and not (bot_cat in user.category.all())
         except AttributeError:
             ok = False
     if ok:
-        return fi.followers
+        return si.id_list
 
+    if followers:
+        usersids = _followersids(su.user_id, bot_screen_name)
+    else:
+        usersids = _friendsids(su.user_id, bot_screen_name)
 
-    followersids = _followersids(su.user_id, bot_screen_name)
-    if followersids is None:
+    if usersids is None:
         return
 
-    record_followersids(su, followersids)
-    return followersids
+    if followers:
+        record_followersids(su, usersids)
+    else:
+        record_friendsids(su, usersids)
 
-def record_followersids(su, followersids):
+    return usersids
+
+def record_followersids(su, usersids):
     try:
         Follower.objects.create(
             user = su,
-            followers = followersids
+            id_list = usersids
         )
     except DatabaseError as e:
         logger.error(f"Database error while saving Followers of user.user_id: {e}")
+
+def record_friendsids(su, usersids):
+    try:
+        Friend.objects.create(
+            user = su,
+            id_list = usersids
+        )
+    except DatabaseError as e:
+        logger.error(f"Database error while saving Friends of user.user_id: {e}")
 
 def _followersids(user_id, bot_screen_name):
     api = get_api(bot_screen_name)
@@ -98,7 +132,13 @@ def _followersids(user_id, bot_screen_name):
         return api.followers_ids(user_id)
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
-        
+
+def _friendsids(user_id, bot_screen_name):
+    api = get_api(bot_screen_name)
+    try:
+        return api.friends_ids(user_id)
+    except TweepError as e:
+        logger.error("Tweepy Error: %s", e)
 
 def graph(user, community):
     with translation.override(settings.TRANSLATION_OVERRIDE):

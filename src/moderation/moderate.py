@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils.translation import activate
 
 from moderation.models import Queue, Moderation, CategoryMetadata
-from moderation.social import update_followersids
+from moderation.social import update_social_ids
 from community.models import Retweet
 from conversation.models import Hashtag
 from community.models import Community
@@ -32,7 +32,7 @@ def process_unknown_user(user_id, status_id, hrh):
         except Community.DoesNotExist:
             continue
         bot_screen_name = community.account.username
-        follower_id_lst = update_followersids(
+        follower_id_lst = update_social_ids(
             dct['username'],
             cached=False,
             bot_screen_name=bot_screen_name

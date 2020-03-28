@@ -601,7 +601,7 @@ class Follower(models.Model):
         SocialUser,
         on_delete=models.CASCADE
     )
-    followers = ArrayField(
+    id_list = ArrayField(
         models.BigIntegerField(),
         null=True,
         blank=True
@@ -620,7 +620,33 @@ class Follower(models.Model):
         
         name = screen_name or str(self.user.user_id)
         return "followers of %s " % name
-    
+
+class Friend(models.Model):
+    user = models.ForeignKey(
+        SocialUser,
+        on_delete=models.CASCADE
+    )
+    id_list = ArrayField(
+        models.BigIntegerField(),
+        null=True,
+        blank=True
+        )
+    created = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        get_latest_by = 'created'
+
+
+    def __str__(self):
+        screen_name = None
+        if hasattr(self.user, "profile"):
+            screen_name = self.user.profile.json.get("screen_name", None)
+        
+        name = screen_name or str(self.user.user_id)
+        return "friends of %s " % name
+
+
 class Moderator(models.Model):
     socialuser = models.ForeignKey(
         'moderation.SocialUser',

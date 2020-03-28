@@ -30,7 +30,7 @@ from bot.addstatusdj import addstatus
 from moderation.moderate import addtoqueue
 from bot.tweepy_api import getAuth
 from moderation.models import SocialUser, Category, SocialMedia
-from moderation.social import update_followersids
+from moderation.social import update_social_ids
 from community.models import Community, Retweet
 from conversation.models import Hashtag, Tweetdj, Retweeted
 from .tasks import handle_retweetroot, handle_question
@@ -155,7 +155,7 @@ def is_following_rules_json(status, dct):
     if isrt(status) and not dct["_allow_retweet"]:
         return False
     if isquote(status) and not dct["_allow_quote"]:
-        return
+        return False
     if isreply(status):
         handle_retweetroot.apply_async(args=(status['id'],))
         return False
@@ -216,7 +216,12 @@ def isreplacement( status ):
 
 def is_follower(userid, bot_screen_name):
     try:
-        _is_follower = userid in update_followersids(bot_screen_name, cached=False, bot_screen_name=bot_screen_name)
+        _is_follower = userid in update_social_ids(
+            bot_screen_name,
+            cached=False,
+            bot_screen_name=bot_screen_name,
+            relationship='followers',
+        )
         logger.debug(f"_is_follower: {_is_follower}")
         return _is_follower
     except TypeError:

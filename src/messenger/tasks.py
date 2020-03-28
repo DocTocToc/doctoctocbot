@@ -5,7 +5,7 @@ from moderation.models import SocialUser, Follower, addsocialuser_from_userid
 from messenger.models import Campaign, Message, Receipt
 from dm.api import senddm
 from celery.utils.log import get_task_logger
-from moderation.social import update_followersids
+from moderation.social import update_social_ids
 import logging
 import random
 import time
@@ -44,7 +44,11 @@ def handle_campaign(name, userid_lst=None):
         logger.debug(f"No account set for campaign {campaign.name}, aborting.")
         return
     bot_screen_name = bot_su.screen_name_tag()
-    update_followersids(bot_su, bot_screen_name=bot_screen_name)
+    update_social_ids(
+        bot_su,
+        bot_screen_name=bot_screen_name,
+        relationship="followers",    
+    )
     bot_followers = Follower.objects.filter(user=bot_su).latest().followers
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))

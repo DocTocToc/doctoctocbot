@@ -8,7 +8,7 @@ from community.helpers import get_community
 from crowdfunding.project import get_project
 from crowdfunding.project import get_total_investor_count
 from moderation.models import UserCategoryRelationship
-from moderation.social import update_followersids
+from moderation.social import update_social_ids
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,12 @@ def investor_progress_bar(context):
     bot_screen_name = community.account.username
     logger.info(f"bot_screen_name {bot_screen_name}")
     logger.info(f"bot_userid {bot_userid}")
-    followers_userid_lst = update_followersids(bot_screen_name, cached=True, bot_screen_name=bot_screen_name)
+    followers_userid_lst = update_social_ids(
+        bot_screen_name,
+        cached=True,
+        bot_screen_name=bot_screen_name,
+        relationship='followers',
+        )
     logger.info(f"followers_userid_lst {followers_userid_lst}")
     active_member_count = get_active_member_count(members_userid_lst, followers_userid_lst)
     try:

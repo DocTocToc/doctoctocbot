@@ -20,6 +20,7 @@ from moderation.models import (
     Moderation,
     TwitterList,
     Follower,
+    Friend,
     Moderator,
     Image,
     DoNotRetweet,
@@ -436,9 +437,14 @@ class FollowerAdmin(admin.ModelAdmin):
     readonly_fields = (
         'id',
         'user',
-        'followers',
+        'id_list',
         'created'
     )
+
+
+class FriendAdmin(FollowerAdmin):
+    pass
+
 
 #class CommunityInline(admin.TabularInline):
 #    model = Moderator.community.through
@@ -551,6 +557,7 @@ admin.site.register(Queue, QueueAdmin)
 admin.site.register(Moderation, ModerationAdmin)
 admin.site.register(TwitterList, TwitterListAdmin)
 admin.site.register(Follower, FollowerAdmin)
+admin.site.register(Friend, FriendAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
 admin.site.register(DoNotRetweet, DoNotRetweetAdmin)

@@ -11,6 +11,7 @@ from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
 
+from django.utils.translation import activate
 from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
 from moderation.models import (
@@ -111,14 +112,24 @@ def handle_sendmoderationdm(self, mod_instance_id):
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
     sn = screen_name(mod_mi.queue.status_id)
     status_id = mod_mi.queue.status_id
-    dm_txt = (_("Please moderate this user: @{screen_name} "
+    try:
+        community = mod_mi.queue.community
+    except:
+        return
+    try:
+        language = community.language
+    except:
+        return
+    if language:
+        activate(community.language)
+    dm_txt = (_("Please verify this user: @{screen_name} "
               "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
               .format(screen_name=sn, status_id=status_id))
     ok = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,
         mod_mi.queue.community.account.username,
-        _("You will soon receive a moderation request for this user."),
+        _("You will soon receive a verification request for this user."),
         mod_mi.queue.community
     )
     logger.info(f"graph: {ok}")

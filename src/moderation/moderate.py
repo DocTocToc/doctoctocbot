@@ -35,7 +35,8 @@ def process_unknown_user(user_id, status_id, hrh):
         follower_id_lst = update_social_ids(
             dct['username'],
             cached=False,
-            bot_screen_name=bot_screen_name
+            bot_screen_name=bot_screen_name,
+            relationship='followers',
         )
         if not follower_id_lst:
             logger.warn(f"{dct['username']} does not have any followers.")

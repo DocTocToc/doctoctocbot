@@ -283,6 +283,8 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
     if social_user:
         category_qs = social_user.category.all()
         logger.debug(f"category_qs: {category_qs}")
+        logger.debug(f"bool(category_qs): {bool(category_qs)}")
+
     else:
         category_qs = []
         logger.debug(f"category_qs: {category_qs}")
@@ -302,9 +304,14 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
     logger.debug(f"process_unknown_lst: {process_unknown_lst}")
     #process unknown user
     for dct in process_unknown_lst:
-        if (is_following_rules(statusid, dct)
+        logger.debug(f"process_unknown dct: {dct}")
+        rules = is_following_rules(statusid, dct)
+        logger.debug(f"rules: {rules}")
+        logger.debug(f"dct['_allow_unknown']: {dct['_allow_unknown']}")
+        if (rules
             and not category_qs
             and not dct["_allow_unknown"]):
+            logger.debug("calling process_unknown_user() ...")
             process_unknown_user(userid, statusid, hrh)
     # process retweet
     process_retweet_lst = process_unknown_lst.filter(

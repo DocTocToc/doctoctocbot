@@ -304,5 +304,7 @@ def screen_name(statusid):
             return
         row = cursor.fetchone()
     if row:
-        return row[0]
+        screen_name= row[0]
+        logger.debug(screen_name)
+        return screen_name
     

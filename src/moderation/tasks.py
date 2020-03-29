@@ -121,10 +121,12 @@ def handle_sendmoderationdm(self, mod_instance_id):
     except:
         return
     if language:
-        activate(community.language)
+        logger.debug(f"language code: {language}")
+        activate(language)
     dm_txt = (_("Please verify this user: @{screen_name} "
               "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
               .format(screen_name=sn, status_id=status_id))
+    logger.debug(f"dm_txt: {dm_txt}")
     ok = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,

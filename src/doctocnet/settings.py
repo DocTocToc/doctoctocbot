@@ -112,6 +112,10 @@ DICT_CONFIG = {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,
         },
+        "moderation.social": {
+            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "level": LOG_LEVEL,
+        },
         "dm": {
             "handlers": ["console", "console_debug_false", "mail_admins"],
             "level": LOG_LEVEL,

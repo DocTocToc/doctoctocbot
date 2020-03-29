@@ -615,3 +615,8 @@ COVID19_CATEGORIES = config(
     cast=Csv(),
     default='physician, midwife, pharmacist'
 )
+DATA_UPLOAD_MAX_NUMBER_FIELDS = config(
+    'DATA_UPLOAD_MAX_NUMBER_FIELDS',
+    cast=int,
+    default=1000
+) # higher than the count of fields

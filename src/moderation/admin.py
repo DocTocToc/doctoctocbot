@@ -27,6 +27,7 @@ from moderation.models import (
     SocialMedia,
     CategoryMetadata,
 )
+from community.models import Community
 from modeltranslation.admin import TranslationAdmin
 
 logger = logging.getLogger(__name__)
@@ -291,6 +292,7 @@ class ModerationStateListFilter(admin.SimpleListFilter):
         )
         state.append( ('pending', _('Pending'),) )
         return state
+
     def queryset(self, request, queryset):
         if not self.value():
             return queryset
@@ -299,6 +301,28 @@ class ModerationStateListFilter(admin.SimpleListFilter):
         else:
             return queryset.filter(
                 state__name=self.value()
+            )
+
+
+class CommunityListFilter(admin.SimpleListFilter):
+    title = _('community')
+    parameter_name = 'queue'
+    
+    def lookups(self, request, model_admin):
+        state: List[Tuple] = list(
+            Community.objects.values_list(
+                'name',
+                'name',
+            )
+        )
+        return state
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        else:
+            return queryset.filter(
+                queue__community__name=self.value()
             )
 
 
@@ -313,6 +337,7 @@ class ModerationAdmin(VersionedAdmin):
         'status_tag',
         'tweet_link',
         'status_object',
+        'community',
     )
     fields = (
         'state',
@@ -338,7 +363,8 @@ class ModerationAdmin(VersionedAdmin):
         'status_object',    
     )
     list_filter = (
-        ModerationStateListFilter,    
+        ModerationStateListFilter,
+        CommunityListFilter,
     )
     list_display_show_identity = True
     list_display_show_end_date = True
@@ -387,6 +413,15 @@ class ModerationAdmin(VersionedAdmin):
             )
         )
     tweet_link.short_description = "Tweet"
+    
+    def community(self, obj):
+        try:
+            return obj.queue.community.name
+        except:
+            return
+
+    community.short_description = "Community"
+
 
 class TwitterListAdmin(admin.ModelAdmin):
     list_display = (

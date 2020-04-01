@@ -23,36 +23,24 @@ def process_unknown_user(user_id, status_id, hrh):
                                     community_name=F('community__name'),
                                     username=F('community__account__username')
                                 ) \
-                                .distinct()
+                                .order_by('community').distinct('community')
     logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
         logger.debug(dct)
-        try:
-            community = Community.objects.get(name=dct['community_name'])
-        except Community.DoesNotExist:
-            continue
-        bot_screen_name = community.account.username
-        follower_id_lst = update_social_ids(
-            dct['username'],
-            cached=False,
-            bot_screen_name=bot_screen_name,
-            relationship='followers',
-        )
-        if not follower_id_lst:
-            logger.warn(f"{dct['username']} does not have any followers.")
-            continue
-        if user_id in follower_id_lst:
-            addtoqueue(user_id, status_id, dct['community_name'])
+        addtoqueue(user_id, status_id, dct['community_name'])
 
 def addtoqueue(user_id, status_id, community_name):
     try:
         community = Community.objects.get(name=community_name)
     except Community.DoesNotExist as e:
-        logger.error(e)   
+        logger.error(e)
+        return
     try:
-        Queue.objects.create(user_id = user_id,
-                             status_id = status_id,
-                             community = community)
+        Queue.objects.create(
+            user_id = user_id,
+            status_id = status_id,
+            community = community
+        )
     except DatabaseError as e:
         logger.error(e)
 

@@ -60,8 +60,3 @@ def triage_status(status_id):
             sjson["full_text"]
         )
         community_retweet(sjson["id"], sjson["user"]["id"], hrh)
-       
-def triage_user(sjson):
-    hrh = has_retweet_hashtag(sjson)
-    if (hrh and not ('retweeted_status' in sjson)):
-        process_unknown_user(sjson["user"]["id"], sjson["id"], hrh)

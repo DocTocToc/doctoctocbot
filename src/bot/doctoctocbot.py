@@ -353,6 +353,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
         trusted_community_qs = community.trust.filter(category=category)
         trusted_community_lst = list(trusted_community_qs)
         logger.debug(f"trusted_community_lst:{trusted_community_lst}")
+        # if community forgot to trust itself:
         trusted_community_lst.append(community)
         logger.debug(f"trusted_community_lst:{trusted_community_lst}")
         

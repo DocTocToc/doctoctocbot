@@ -106,6 +106,7 @@ class Retweet(models.Model):
     require_question = models.BooleanField(default=True)
     allow_retweet = models.BooleanField(default=False)
     allow_quote = models.BooleanField(default=False)
+    require_follower = models.BooleanField(default=True)
 
 
     def __str__(self):

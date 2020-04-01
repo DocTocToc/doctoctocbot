@@ -138,14 +138,14 @@ def isquestion ( status ):
 def isretweeted(status):
     return status['retweeted']
 
-def is_following_rules(statusid, dct):
+def is_following_rules(statusid, userid, dct):
     try:
         tweetdj = Tweetdj.objects.get(statusid=statusid)
-        return is_following_rules_json(tweetdj.json, dct)
+        return is_following_rules_json(tweetdj.json, userid, dct)
     except Tweetdj.DoesNotExist:
         return False
 
-def is_following_rules_json(status, dct):
+def is_following_rules_json(status, userid, dct):
     """
     Does this status follow the structural rules?
     * Is Not a retweet
@@ -161,6 +161,9 @@ def is_following_rules_json(status, dct):
         return False
     if dct["_require_question"] and not isquestion(status):
         handle_question.apply_async(args=(status['id'],), countdown=10, expires=300) 
+        return False
+    author_is_follower: bool =  is_follower(userid, dct["_bot_screen_name"])
+    if dct["_require_follower"] and not author_is_follower:
         return False
     return True
 
@@ -300,12 +303,13 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             _allow_retweet=F('allow_retweet'),
             _allow_quote=F('allow_quote'),
             _allow_unknown=F('community__allow_unknown'),
+            _require_follower=F('require_follower'),
         ).order_by('community').distinct('community')
     logger.debug(f"process_unknown_lst: {process_unknown_lst}")
     #process unknown user
     for dct in process_unknown_lst:
         logger.debug(f"process_unknown dct: {dct}")
-        rules = is_following_rules(statusid, dct)
+        rules = is_following_rules(statusid, userid, dct)
         logger.debug(f"rules: {rules}")
         logger.debug(f"dct['_allow_unknown']: {dct['_allow_unknown']}")
         if (rules
@@ -322,42 +326,52 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
         # process unknown user
         logger.debug(f"dct: {dct}")
         logger.debug(
-            f'community: {dct["_community"]}, '
-            f'category: {dct["_category"]}, '
-            f'bot_screen_name: {dct["_bot_screen_name"]}',
-            f'moderation: {dct["_moderation"]}',
-            f'allow_retweet: {dct["_allow_retweet"]}',
-            f'allow_quote: {dct["_allow_quote"]}',
-            f'allow_unknown: {dct["_allow_unknown"]}',
+            f'community: {dct["_community"]},\n'
+            f'category: {dct["_category"]},\n'
+            f'bot_screen_name: {dct["_bot_screen_name"]},\n'
+            f'moderation: {dct["_moderation"]},\n'
+            f'allow_retweet: {dct["_allow_retweet"]},\n'
+            f'allow_quote: {dct["_allow_quote"]},\n'
+            f'allow_unknown: {dct["_allow_unknown"]},\n'
+            f'require_follower: {dct["_require_follower"]}'
         )
-
-        community = Community.objects.get(pk=dct['_community'])
-        if not dct["_moderation"]:
-            if is_following_rules(statusid, dct):
-                rt(statusid, dct, community)
-        elif not social_user:
+        try:
+            community = Community.objects.get(pk=dct['_community'])
+            logger.debug(f"community: {community}")
+        except Community.DoesNotExist:
+            logger.error(f"Community {dct['_community']} does not exist.")
             continue
-        elif is_follower(userid, dct["_bot_screen_name"]):
-            category = Category.objects.get(pk=dct["_category"])
-            trusted_community_qs = community.trust.filter(category=category)
-            trusted_community_lst = list(trusted_community_qs)
-            trusted_community_lst.append(community)
-            
-            trust = False
-            crs_lst = (
-                social_user.categoryrelationships
-                .filter(category=category)
-                .exclude(moderator=social_user)
-            )
-            for crs in crs_lst:
-                if crs.community in trusted_community_lst:
-                    trust = True
-            
-            if trust:
-                if is_following_rules(statusid, dct):
-                    rt(statusid, dct, community)
-            else:
-                addtoqueue(userid, statusid, community.name)
+        if not dct["_moderation"]:
+            if is_following_rules(statusid, userid, dct):
+                rt(statusid, dct, community)
+
+        if not social_user:
+            continue
+
+        category = Category.objects.get(pk=dct["_category"])
+        logger.debug(f"category:{category}")
+        trusted_community_qs = community.trust.filter(category=category)
+        trusted_community_lst = list(trusted_community_qs)
+        logger.debug(f"trusted_community_lst:{trusted_community_lst}")
+        trusted_community_lst.append(community)
+        logger.debug(f"trusted_community_lst:{trusted_community_lst}")
+        
+        trust = False
+        crs_lst = (
+            social_user.categoryrelationships
+            .filter(category=category)
+            .exclude(moderator=social_user)
+        )
+        logger.debug(f"crs_lst:{crs_lst}")
+        for crs in crs_lst:
+            if crs.community in trusted_community_lst:
+                trust = True
+        
+        if trust:
+            if is_following_rules(statusid, userid, dct):
+                rt(statusid, dct, community)
+        #else:
+        #    addtoqueue(userid, statusid, community.name)
 
 def rt(statusid, dct, community):
     logger.debug("Inside rt()")

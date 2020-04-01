@@ -2,7 +2,6 @@ import logging
 import tweepy
 
 from bot.doctoctocbot import (
-    is_following_rules,
     community_retweet,
     isreplacement,
     isquote,

@@ -18,7 +18,7 @@ def handle_incoming_friendship():
             if accept_pending_q_exists:
                 continue
 
-            decline_q_exists = Queue.objects.get(
+            decline_q_exists = Queue.objects.filter(
                 uid=uid,
                 community=community,
                 state=Queue.DECLINE
@@ -26,7 +26,7 @@ def handle_incoming_friendship():
             if decline_q_exists:
                 continue
             
-            cancel_q_exists = Queue.objects.get(
+            cancel_q_exists = Queue.objects.filter(
                 uid=uid,
                 community=community,
                 state=Queue.CANCEL,

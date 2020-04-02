@@ -140,55 +140,63 @@ def _friendsids(user_id, bot_screen_name):
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
 
-def graph(user, community):
-    with translation.override(settings.TRANSLATION_OVERRIDE):
-        try:
-            categories = CommunityCategoryRelationship.objects.filter(
-                socialgraph=True,
-                community=community
-            ).values_list('category__name', 'color')
-        except CommunityCategoryRelationship.DoesNotExist as e:
-            logger.error(f"No category set to appear on social graph. Exception:{e}")
-            return
+def graph(user, community, bot_screen_name):
+    try:
+        categories = CommunityCategoryRelationship.objects.filter(
+            socialgraph=True,
+            community=community
+        ).values_list('category__name', 'color')
+    except CommunityCategoryRelationship.DoesNotExist as e:
+        logger.error(f"No category set to appear on social graph. Exception:{e}")
+        return
+    logger.debug(f"{categories}")
+    logger.debug(f"{bot_screen_name}")
+
+    followers = update_social_ids(
+        user,
+        cached=False,
+        bot_screen_name=bot_screen_name,
+        relationship='followers',
+    )
+    if not followers:
+        logger.debug("No followers.")
+        return
     
-        followers = update_followersids(user)
-        if not followers:
-            return
+    logger.debug(f"{followers}")
+
+    followers_cnt = len(followers)
+  
+    graph_dct = OrderedDict(
+        {
+            "title": _("Followers"),
+            "categories": {},
+            "global": {}
+        }
+    )
+    _sum = 0
+    categories_dct = {}
     
-        followers_cnt = len(followers)
-      
-        graph_dct = OrderedDict(
-            {
-                "title": _("Followers"),
-                "categories": {},
-                "global": {}
-            }
+    for cat, color in categories:
+        cat_ids = SocialUser.objects.category_users(cat)
+        cat_cnt = intersection_count(cat_ids, followers)
+        cat_dct = {cat: {"count": cat_cnt, "color": color}}
+        categories_dct.update(cat_dct)
+        _sum += cat_cnt
+    
+    others = followers_cnt - _sum
+    global_dct = OrderedDict({_('Verified'): _sum, _('Others'): others})
+    
+    #graph_dct["categories"].update(order_dict(categories_dct, reverse=True))
+    graph_dct["categories"].update(
+        OrderedDict(sorted(categories_dct.items(),
+        key=lambda k: k[1]["count"],
+        reverse=True)
         )
-        sum = 0
-        categories_dct = {}
-        
-        for cat, color in categories:
-    
-            cat_ids = SocialUser.objects.category_users(cat)
-            cat_cnt = intersection_count(cat_ids, followers)
-            cat_dct = {cat: {"count": cat_cnt, "color": color}}
-            categories_dct.update(cat_dct)
-            sum += cat_cnt
-        
-        others = followers_cnt - sum
-        global_dct = OrderedDict({_('Verified'): sum, _('Others'): others})
-        
-        #graph_dct["categories"].update(order_dict(categories_dct, reverse=True))
-        graph_dct["categories"].update(
-            OrderedDict(sorted(categories_dct.items(),
-            key=lambda k: k[1]["count"],
-            reverse=True)
-            )
-        )
-    
-        graph_dct["global"].update(global_dct)
-        graph_dct.update({"total": followers_cnt})
-        graph_dct.update({"screen_name": screen_name(user)})
+    )
+
+    graph_dct["global"].update(global_dct)
+    graph_dct.update({"total": followers_cnt})
+    graph_dct.update({"screen_name": screen_name(user)})
 
     return graph_dct
 
@@ -286,14 +294,26 @@ def get_dm_media_id(file, bot_screen_name):
     
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
     logger.debug("Inside send_graph_dm()")
+
     user_screen_name = screen_name(user_id)
     logger.debug(f"user_screen_name:{user_screen_name}")
+
     try:
-        file = pie_plot(graph(user_id, community))
+        _graph = graph(user_id, community, bot_screen_name)
+    except:
+        _graph = None
+
+    if not _graph:
+        logger.debug("_graph is Falsy")
+        return 
+
+    try:
+        file = pie_plot(_graph)
     except:
         file = None
+
     if not file:
-        logger.debug("no file")
+        logger.debug("file is Falsy")
         try:
             su = SocialUser.objects.get(user_id=user_id)
             if su.profile:

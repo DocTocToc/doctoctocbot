@@ -98,20 +98,17 @@ def handle_check_all_profile_pictures():
 @shared_task(bind=True, max_retries=2)
 def handle_sendmoderationdm(self, mod_instance_id):
     logger.debug("inside handle_sendmodarationdm()")
+    
+    # community
     try:
         mod_mi = Moderation.objects.get(pk=mod_instance_id)
     except Moderation.DoesNotExist:
         logger.error(f"Moderation with id={id} does not exist.")
         return
-    qr = quickreply(mod_instance_id)
-    logger.debug(f"qr:{qr}")
-    logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
-    #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")
-    mod_mi.refresh_from_db()
-    logger.info(f"mod_mi.queue.user_id {mod_mi.queue.user_id}")
+
     handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
-    sn = screen_name(mod_mi.queue.status_id)
-    status_id = mod_mi.queue.status_id
+
+    # select language
     try:
         community = mod_mi.queue.community
     except:
@@ -123,10 +120,21 @@ def handle_sendmoderationdm(self, mod_instance_id):
     if language:
         logger.debug(f"language code: {language}")
         activate(language)
+
+    qr = quickreply(mod_instance_id)
+    logger.debug(f"qr:{qr}")
+    logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
+    #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")
+    logger.info(f"mod_mi.queue.user_id {mod_mi.queue.user_id}")
+    sn = screen_name(mod_mi.queue.status_id)
+    status_id = mod_mi.queue.status_id
+
     dm_txt = (_("Please verify this user: @{screen_name} "
               "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
               .format(screen_name=sn, status_id=status_id))
     logger.debug(f"dm_txt: {dm_txt}")
+    
+    # social graph DM
     ok = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,
@@ -135,8 +143,8 @@ def handle_sendmoderationdm(self, mod_instance_id):
         mod_mi.queue.community
     )
     logger.info(f"graph: {ok}")
-    #if not ok:
-    #    self.retry(countdown = 2 ** self.request.retries)
+
+    # verification DM
     ok = senddm(
         dm_txt,
         user_id=mod_mi.moderator.user_id,
@@ -145,9 +153,6 @@ def handle_sendmoderationdm(self, mod_instance_id):
         quick_reply=qr
     )
     logger.info(f"dm:{ok}")
-    #if not ok:
-    #    self.retry(countdown= 2 ** self.request.retries)
-
 
 @shared_task
 def poll_moderation_dm():

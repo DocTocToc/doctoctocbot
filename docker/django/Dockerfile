@@ -4,7 +4,9 @@ ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
 
 RUN apt-get clean && apt-get update && apt-get install -y \
-  locales
+  locales \
+  python-pygraphviz \
+  libgraphviz-dev
 #  build-essential \
 #  python3-dev \
 #  python3-pip \
@@ -47,8 +49,6 @@ ENV DJANGO_SETTINGS_MODULE doctocnet.settings
 FROM prod AS dev
 
 RUN apt-get clean && apt-get update && apt-get install -y \
-  python-pygraphviz \
-  libgraphviz-dev \
   postgresql-client \
   gettext
 

@@ -9,6 +9,7 @@ from django.template import Template, Context
 from community.helpers import site_url
 from django.urls import reverse
 from bot.tweepy_api import get_api
+from community.helpers import activate_language
 
 logger = logging.getLogger(__name__) 
 
@@ -23,6 +24,7 @@ def dm_admin(sender, instance, created, **kwargs):
             screen_name = instance.socialuser.screen_name_tag()
         except:
             screen_name = None
+        activate_language(instance.community)
         community_name = instance.community.name
         if screen_name:
             text = _("Please handle @{screen_name} follow request for {community_name} community.").format(

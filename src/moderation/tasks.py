@@ -37,8 +37,9 @@ from moderation.profile import (
     create_update_profile_twitter,
     create_update_profile_local,
     )
-
+from community.helpers import activate_language
 from celery.utils.log import get_task_logger
+
 logger = get_task_logger(__name__)
 
 
@@ -112,14 +113,8 @@ def handle_sendmoderationdm(self, mod_instance_id):
     try:
         community = mod_mi.queue.community
     except:
-        return
-    try:
-        language = community.language
-    except:
-        return
-    if language:
-        logger.debug(f"language code: {language}")
-        activate(language)
+        community = None
+    activate_language(community)
 
     qr = quickreply(mod_instance_id)
     logger.debug(f"qr:{qr}")

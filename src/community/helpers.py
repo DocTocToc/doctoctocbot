@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from django.db.utils import DatabaseError
 from django.conf import settings
 from django.utils.safestring import mark_safe
-
+from django.utils.translation import activate
 from community.models import Community
 
 logger = logging.getLogger(__name__)
@@ -37,3 +37,14 @@ def site_url(community):
     else:
         protocol="https://"
     return mark_safe(f"{protocol}{community.site.domain}")
+
+def activate_language(community):
+    if not community:
+        return
+    if not isinstance(community, Community):
+        return
+    language = community.language
+    if not language:
+        return
+    logger.debug(f"language code: {language}")
+    activate(language)

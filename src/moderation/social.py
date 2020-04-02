@@ -20,6 +20,7 @@ from tweepy import TweepError
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image
 from django.core.files import File
+from community.helpers import activate_language
 
 logger = logging.getLogger(__name__)
 
@@ -293,6 +294,7 @@ def get_dm_media_id(file, bot_screen_name):
     
     
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
+    activate_language(community)
     logger.debug("Inside send_graph_dm()")
 
     user_screen_name = screen_name(user_id)

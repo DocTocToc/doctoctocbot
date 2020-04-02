@@ -11,6 +11,7 @@ from community.models import Retweet
 from conversation.models import Hashtag
 from community.models import Community
 from community.models import CommunityCategoryRelationship
+from community.helpers import activate_language
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +61,13 @@ def quickreply(moderation_instance_id):
         moderation_instance=Moderation.objects.get(id=moderation_instance_id)
     except Moderation.DoesNotExist:
         return
-    community=moderation_instance.queue.community
-    if community.language:
-        activate(community.language)
+    try:
+        community=moderation_instance.queue.community
+    except:
+        community=None
+    if community:
+        activate_language(community)
+
     for ccr in CommunityCategoryRelationship.objects.filter(
         quickreply=True,
         community=community

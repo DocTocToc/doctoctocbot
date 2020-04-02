@@ -6,13 +6,11 @@ import requests
 from urllib.parse import urlparse
 
 from django.core.files.base import ContentFile
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
 from django.conf import settings
-from moderation.models import SocialUser
+from moderation.models import SocialUser, Profile, SocialMedia
 from conversation.models import Tweetdj
-from moderation.models import Profile
 
 
 logger = logging.getLogger('root')
@@ -55,7 +53,6 @@ def profile(backend, user, response, *args, **kwargs):
         avatar(p, response)
 
 def twitterprofile(jsn):
-    from .models import SocialUser, Profile, SocialMedia
     if jsn is None:
         logger.debug("jsn is None")
         return

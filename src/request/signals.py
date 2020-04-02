@@ -20,7 +20,7 @@ def dm_admin(sender, instance, created, **kwargs):
         and (instance.id == instance.identity)
     ):
         try:
-            screen_name = instance.socialuser.profile.screen_name_tag()
+            screen_name = instance.socialuser.screen_name_tag()
         except:
             screen_name = None
         community_name = instance.community.name

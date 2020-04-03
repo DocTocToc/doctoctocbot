@@ -1,5 +1,6 @@
 import os
 import random
+import time
 from unicodedata import category
 
 from versions.exceptions import DeletionOfNonCurrentVersionError
@@ -38,6 +39,7 @@ from moderation.profile import (
     create_update_profile_local,
     )
 from community.helpers import activate_language
+from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
@@ -375,3 +377,18 @@ def get_category_metadata_done():
         return CategoryMetadata.objects.get(name='done')
     except CategoryMetadata.DoesNotExist:
         return None
+    
+def update_moderators_friends():
+    for dct in Moderator.objects.filter(active=True).values(
+        'socialuser',
+        'community'
+    ).order_by('socialuser__id').distinct('socialuser'):
+        su = SocialUser.objects.get(id=dct["socialuser"])
+        community = Community.objects.get(id=dct["community"])
+        update_social_ids(
+            su,
+            cached=False,
+            bot_screen_name=community.account.username,
+            relationship='friends',
+        )
+        time.sleep(settings.API_FRIENDS_PERIOD)

@@ -221,7 +221,7 @@ def is_follower(userid, bot_screen_name):
     try:
         _is_follower = userid in update_social_ids(
             bot_screen_name,
-            cached=False,
+            cached=True,
             bot_screen_name=bot_screen_name,
             relationship='followers',
         )

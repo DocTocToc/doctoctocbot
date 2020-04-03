@@ -155,7 +155,7 @@ def graph(user, community, bot_screen_name):
 
     followers = update_social_ids(
         user,
-        cached=False,
+        cached=True,
         bot_screen_name=bot_screen_name,
         relationship='followers',
     )
@@ -198,6 +198,7 @@ def graph(user, community, bot_screen_name):
     graph_dct["global"].update(global_dct)
     graph_dct.update({"total": followers_cnt})
     graph_dct.update({"screen_name": screen_name(user)})
+    graph_dct.update({"commmunity": community})
 
     return graph_dct
 
@@ -207,75 +208,76 @@ def intersection_count(a, b):
 def pie_plot(dct):
     if not dct:
         return
-    with translation.override(settings.TRANSLATION_OVERRIDE):
-        def func(pct, allvals):
-            absolute = int(pct/100.*np.sum(allvals))
-            return "{:.1f}% ({:d})".format(pct, absolute)
-        
-        fig, ax = plt.subplots(2, 1, figsize=(6, 12), subplot_kw=dict(aspect="equal"))
+
+    def func(pct, allvals):
+        absolute = int(pct/100.*np.sum(allvals))
+        return "{:.1f}% ({:d})".format(pct, absolute)
     
-        dct_cat = dct["categories"]
-        dct_glob = dct["global"]
+    activate_language(dct["community"])
+    fig, ax = plt.subplots(2, 1, figsize=(6, 12), subplot_kw=dict(aspect="equal"))
+
+    dct_cat = dct["categories"]
+    dct_glob = dct["global"]
+
+    labels1 = list(dct_cat.keys())
+    labels2 = list(dct_glob.keys())
     
-        labels1 = list(dct_cat.keys())
-        labels2 = list(dct_glob.keys())
-        
-        data1 = [t["count"] for t in dct_cat.values()]
-        colors1 = [t["color"] for t in dct_cat.values()]
-        
-        data2 = list(dct_glob.values())
+    data1 = [t["count"] for t in dct_cat.values()]
+    colors1 = [t["color"] for t in dct_cat.values()]
     
-        wedges, texts, autotexts  = ax[0].pie(data1,
-                                              autopct=lambda pct: func(pct, data1),
-                                              textprops=dict(color="w"),
-                                              startangle=0,
-                                              colors=colors1)
-        
-        ax[0].legend(wedges,
-                     labels1,
-                     title="Categories",
-                     loc="center left",
-                     bbox_to_anchor=(1, 0, 0.5, 1))
-        
-        wedges, texts, autotexts  = ax[1].pie(data2,
-                                              autopct=lambda pct: func(pct, data2),
-                                              textprops=dict(color="w"),
-                                              startangle=0)
-        
-        ax[1].legend(wedges,
-                     labels2,
-                     title=dct["title"],
-                     loc="center left",
-                     bbox_to_anchor=(1, 0, 0.5, 1))
-        
-        plt.setp(autotexts, size=12, color='black')
+    data2 = list(dct_glob.values())
+
+    wedges, texts, autotexts  = ax[0].pie(data1,
+                                          autopct=lambda pct: func(pct, data1),
+                                          textprops=dict(color="w"),
+                                          startangle=0,
+                                          colors=colors1)
     
-        ax[0].set_title(
-            _("Categories of verified {title}").format(title = dct["title"])
+    ax[0].legend(wedges,
+                 labels1,
+                 title="Categories",
+                 loc="center left",
+                 bbox_to_anchor=(1, 0, 0.5, 1))
+    
+    wedges, texts, autotexts  = ax[1].pie(data2,
+                                          autopct=lambda pct: func(pct, data2),
+                                          textprops=dict(color="w"),
+                                          startangle=0)
+    
+    ax[1].legend(wedges,
+                 labels2,
+                 title=dct["title"],
+                 loc="center left",
+                 bbox_to_anchor=(1, 0, 0.5, 1))
+    
+    plt.setp(autotexts, size=12, color='black')
+
+    ax[0].set_title(
+        _("Categories of verified {title}").format(title = dct["title"])
+    )
+    ax[1].set_title(
+        _("Share of verified {title}").format(title = dct["title"])
+    )
+
+    title_str = (
+        _('{title} of {screen_name}: {total}')
+        .format(
+            title = dct["title"],
+            screen_name=dct["screen_name"],
+            total=dct["total"]
         )
-        ax[1].set_title(
-            _("Share of verified {title}").format(title = dct["title"])
-        )
-    
-        title_str = (
-            _('{title} of {screen_name}: {total}')
-            .format(
-                title = dct["title"],
-                screen_name=dct["screen_name"],
-                total=dct["total"]
-            )
-        )
-        fig.suptitle(title_str, fontsize=12)
-        fig.subplots_adjust(top=0.88)
-        plt.tight_layout()
-    
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format = 'png')
-        buffer.seek(0)
-        f = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-        f.write(buffer.read())
-        buffer.close()
-        f.close()
+    )
+    fig.suptitle(title_str, fontsize=12)
+    fig.subplots_adjust(top=0.88)
+    plt.tight_layout()
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format = 'png')
+    buffer.seek(0)
+    f = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+    f.write(buffer.read())
+    buffer.close()
+    f.close()
     return f
 
 def get_dm_media_id(file, bot_screen_name):

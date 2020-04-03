@@ -46,6 +46,7 @@ def handle_campaign(name, userid_lst=None):
     bot_screen_name = bot_su.screen_name_tag()
     update_social_ids(
         bot_su,
+        cached=True,
         bot_screen_name=bot_screen_name,
         relationship="followers",    
     )

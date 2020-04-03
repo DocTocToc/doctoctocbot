@@ -377,7 +377,8 @@ def get_category_metadata_done():
         return CategoryMetadata.objects.get(name='done')
     except CategoryMetadata.DoesNotExist:
         return None
-    
+
+@shared_task
 def update_moderators_friends():
     for dct in Moderator.objects.filter(active=True).values(
         'socialuser',

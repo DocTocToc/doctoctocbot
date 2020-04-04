@@ -34,6 +34,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'site',
         'allow_unknown',
         'language',
+        'pending_moderation_period',
     )
     fields = (
         'name',
@@ -48,6 +49,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'crowdfunding',
         'allow_unknown',
         'language',
+        'pending_moderation_period',
     )
     readonly_fields = (
         'created',

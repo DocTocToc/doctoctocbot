@@ -1,8 +1,9 @@
 import os
 import random
 import time
+import datetime
 from unicodedata import category
-
+from typing import List
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from celery import shared_task
@@ -355,10 +356,20 @@ def create_moderation(community, queue, exclude=None, senior=False):
         active=True,
     )
     if senior:
-        qs= qs.filter(senior=True)
+        qs = qs.filter(senior=True)
     logger.debug(f"create_moderation QuerySet (before excluding {exclude}): {qs}")
     if isinstance(exclude, SocialUser):
         qs=qs.exclude(socialuser=exclude)
+    elif isinstance(exclude, list):
+        qs=qs.exclude(socialuser__id__in=exclude)
+    if not qs:
+        qs = Moderator.objects.filter(
+            community=community,
+            active=True,
+            senior=True,
+        )
+    if not qs:
+        return
     logger.debug(f"create_moderation QuerySet (after excluding {exclude}): {qs}")
     random.seed(os.urandom(128))
     new_moderator_mi = random.choice(list(qs))
@@ -393,3 +404,36 @@ def update_moderators_friends():
             relationship='friends',
         )
         time.sleep(settings.API_FRIENDS_PERIOD)
+
+@shared_task
+def handle_pending_moderations():
+    logger.debug("handle_pending_moderations()")
+    for mod in Moderation.objects.current.filter(state__isnull=True):
+        community = mod.queue.community
+        period : int = community.pending_moderation_period
+        if not period:
+            continue
+        dtnow = datetime.datetime.now(tz=datetime.timezone.utc)
+        delta = datetime.timedelta(hours=period)
+        dt = dtnow - delta
+        if mod.version_start_date > dt:
+            continue
+        moderator_exclude: List[int] = list(
+            Moderation.objects.filter(queue=mod.queue)
+            .values_list('moderator__id', flat=True)
+            .order_by('moderator__id').distinct('moderator')
+        )
+        logger.debug(f"moderator_exclude: {moderator_exclude}")
+        create_moderation(
+            mod.queue.community,
+            mod.queue,
+            exclude=moderator_exclude,
+            senior=False,
+        )
+        try:
+            state = CategoryMetadata.objects.get(name='expired')
+        except CategoryMetadata.DoesNotExist:
+            state = None
+        mod.state = state
+        mod.save()
+        mod.delete()

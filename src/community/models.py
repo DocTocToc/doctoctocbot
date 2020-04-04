@@ -75,6 +75,10 @@ class Community(models.Model):
         blank=True,
         help_text="ISO language code",
     )
+    pending_moderation_period = models.PositiveIntegerField(
+        default = 0,
+        help_text = "Pending moderation period (hour)"
+    )
 
     def __str__(self):
         return self.name

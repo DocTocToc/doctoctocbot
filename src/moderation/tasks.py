@@ -12,6 +12,7 @@ from .profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
+from moderation.moderate import  handle_twitter_dm_response
 
 from django.utils.translation import activate
 from django.db import transaction, DatabaseError
@@ -133,24 +134,30 @@ def handle_sendmoderationdm(self, mod_instance_id):
     logger.debug(f"dm_txt: {dm_txt}")
     
     # social graph DM
-    ok = send_graph_dm(
+    res = send_graph_dm(
         mod_mi.queue.user_id,
         mod_mi.moderator.user_id,
         mod_mi.queue.community.account.username,
         _("You will soon receive a verification request for this user."),
         mod_mi.queue.community
     )
-    logger.info(f"graph: {ok}")
-
+    logger.info(f"graph: {res}")
+    handle_twitter_dm_response(
+        res,
+        mod_mi.moderator.id,
+        mod_mi.queue.community.id
+    )
     # verification DM
-    ok = senddm(
+    res = senddm(
         dm_txt,
         user_id=mod_mi.moderator.user_id,
         screen_name=mod_mi.queue.community.account.username,
         return_json=True,
         quick_reply=qr
     )
-    logger.info(f"dm:{ok}")
+    logger.info(f"dm:{res}")
+    handle_twitter_dm_response(res, mod_mi.moderator.id)
+
 
 @shared_task
 def poll_moderation_dm():

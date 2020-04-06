@@ -83,10 +83,7 @@ def senddm(text,
         )
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
-        response = str(e)
     
-    logger.debug(response)
-
     try:
         response["event"]["created_timestamp"]
     except KeyError:

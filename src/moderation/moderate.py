@@ -37,6 +37,15 @@ def addtoqueue(user_id, status_id, community_name):
     except Community.DoesNotExist as e:
         logger.error(e)
         return
+    # Is there already a queue for this user and this community?
+    if Queue.objects.current.filter(
+        user_id = user_id,
+        community = community,
+    ).exists():
+        logger.info(
+            f"Current queue for user {user_id} with {community} exists."
+        )
+        return
     try:
         Queue.objects.create(
             user_id = user_id,

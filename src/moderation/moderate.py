@@ -5,7 +5,13 @@ from django.db.models import F
 from django.conf import settings
 from django.utils.translation import activate
 
-from moderation.models import Queue, Moderation, CategoryMetadata, Moderator
+from moderation.models import (
+    Queue,
+    Moderation,
+    CategoryMetadata,
+    Moderator,
+    UserCategoryRelationship,
+)
 from moderation.social import update_social_ids
 from community.models import Retweet
 from conversation.models import Hashtag
@@ -123,3 +129,31 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
                 moderator_mi.active = False
                 moderator_mi.public = False
                 moderator_mi.save()
+                
+def remove_done_moderations(community_name):
+    try:
+        community = Community.objects.get(name=community_name)
+    except Community.DoesNotExist as e:
+        logger.error(e)
+        return
+    moderation_qs = Moderation.objects.current.filter(
+        queue__community__id=community.id,
+        state__isnull=True,
+    )
+    counter = 0
+    for moderation in moderation_qs:
+        ucr_qs = UserCategoryRelationship.objects.filter(
+            social_user__user_id = moderation.queue.user_id,
+            community = community,
+        )
+        for ucr in ucr_qs:
+            # if there is a ucr that is not a self moderation
+            if ucr.moderator.user_id != ucr.social_user.user_id:
+                moderation.queue.delete()
+                counter += 1
+                break
+    return counter
+            
+        
+        
+        

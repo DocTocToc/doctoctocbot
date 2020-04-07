@@ -112,4 +112,5 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
             )
             if moderator_mi:
                 moderator_mi.active = False
+                moderator_mi.public = False
                 moderator_mi.save()

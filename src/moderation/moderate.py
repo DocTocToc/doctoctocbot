@@ -200,6 +200,7 @@ def viral_moderation(socialuser_id):
                             socialuser_id,
                             ucr.community.id
                         )
+                    return True
                 else:
                     logger.debug(
                         f"{ucr.social_user} is not following "

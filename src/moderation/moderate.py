@@ -11,6 +11,7 @@ from moderation.models import (
     CategoryMetadata,
     Moderator,
     UserCategoryRelationship,
+    SocialUser,
 )
 from moderation.social import update_social_ids
 from community.models import Retweet
@@ -18,7 +19,7 @@ from conversation.models import Hashtag
 from community.models import Community
 from community.models import CommunityCategoryRelationship
 from community.helpers import activate_language
-
+from dm.api import senddm
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +155,53 @@ def remove_done_moderations(community_name):
                 break
     return counter
             
-        
-        
-        
+def viral_moderation(socialuser_id):
+    """ Once categorized, a social user belonging to an approved category
+    becomes a moderator.
+    """
+    ucr_qs = UserCategoryRelationship.objects.filter(
+        social_user__id = socialuser_id ,
+        community__in = Community.objects.filter(viral_moderation=True)
+    )
+    logger.debug(ucr_qs)
+    for ucr in ucr_qs:
+        if ucr.category in ucr.community.viral_moderation_category.all():
+            if not Moderator.objects.filter(
+                socialuser=ucr.social_user,
+                community=ucr.community,
+            ).exists():
+                if ucr.social_user.user_id in update_social_ids(
+                    ucr.community.account.userid,
+                    cached=False,
+                    bot_screen_name=ucr.community.account.username,
+                    relationship='followers',
+                ):
+                    try:
+                        Moderator.objects.create(
+                            socialuser = ucr.social_user,
+                            active = True,
+                            public = False,
+                            community = ucr.community,
+                        )
+                        logger.debug(
+                            f"{ucr.social_user} added to Moderator"
+                        )
+                    except DatabaseError:
+                        continue
+                    msg = ucr.community.viral_moderation_message
+                    if msg:
+                        res = senddm(
+                            msg,
+                            user_id=ucr.social_user.user_id,
+                            screen_name=ucr.community.account.username,
+                        )
+                        handle_twitter_dm_response(
+                            res,
+                            socialuser_id,
+                            ucr.community.id
+                        )
+                else:
+                    logger.debug(
+                        f"{ucr.social_user} is not following "
+                        f"@{ucr.community.account.username}"
+                    )

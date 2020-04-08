@@ -35,6 +35,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'allow_unknown',
         'language',
         'pending_moderation_period',
+        'viral_moderation',
     )
     fields = (
         'name',
@@ -50,6 +51,9 @@ class CommunityAdmin(admin.ModelAdmin):
         'allow_unknown',
         'language',
         'pending_moderation_period',
+        'viral_moderation',
+        'viral_moderation_category',
+        'viral_moderation_message',
     )
     readonly_fields = (
         'created',

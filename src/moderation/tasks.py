@@ -43,6 +43,7 @@ from moderation.profile import (
 from community.helpers import activate_language
 from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
+from moderation.moderate import viral_moderation
 
 logger = get_task_logger(__name__)
 
@@ -260,8 +261,9 @@ def delete_moderation_queue(mod_mi):
 def process_cat_mi(cat_mi, moderated_su_mi, moderator_su_mi, mod_mi):        
     #Check if relationship already exists for the given community
     #if cat_mi in moderated_su_mi.category.all():
+    community = mod_mi.queue.community
     if (moderated_su_mi.categoryrelationships
-        .filter(community=mod_mi.queue.community,category=cat_mi)
+        .filter(community=community,category=cat_mi)
         .exclude(moderator=moderated_su_mi)
         .exists()):
         logger.info(f"{moderated_su_mi} is already a {cat_mi} for community {mod_mi.queue.community}")
@@ -281,7 +283,7 @@ def process_cat_mi(cat_mi, moderated_su_mi, moderator_su_mi, mod_mi):
               social_user = moderated_su_mi,
               category = cat_mi,
               moderator = moderator_su_mi,
-              community = mod_mi.queue.community
+              community = community
             )
         except DatabaseError as e:
             logger.error(e)
@@ -290,14 +292,17 @@ def process_cat_mi(cat_mi, moderated_su_mi, moderator_su_mi, mod_mi):
         logger.info(f"ucr creation successful: {ucr}")
         mod_mi.state = get_category_metadata_done()
         mod_mi.save()
-        mod_mi.delete()
         status_id = mod_mi.queue.status_id
         # delete queue object corresponding to this moderation
+        # linked moderations will be deleted too
         delete_moderation_queue(mod_mi)
         # send status to triage, it will be retweeted according to retweet rules of communities
         triage_status(status_id)
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM
+        # viral:
+        if community.viral_moderation:
+            handle_viral_moderation.apply_async(args=(moderated_su_mi.id,))
 
 def process_meta_mi(meta_mi, moderated_su_mi, moderator_su_mi, mod_mi):
     """Process meta moderation anwsers such as 'stop', 'fail' or 'busy'
@@ -444,3 +449,7 @@ def handle_pending_moderations():
         mod.state = state
         mod.save()
         mod.delete()
+
+@shared_task   
+def handle_viral_moderation(socialuser_id):
+    viral_moderation(socialuser_id)

@@ -79,6 +79,19 @@ class Community(models.Model):
         default = 0,
         help_text = "Pending moderation period (hour)"
     )
+    viral_moderation = models.BooleanField(
+        default=False,
+        help_text = "Does a verified follower immediately become a moderator?",
+    )
+    viral_moderation_category = models.ManyToManyField(
+        'moderation.Category',
+        related_name='viral_moderation_community',
+        blank=True,
+    )
+    viral_moderation_message = models.TextField(
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.name

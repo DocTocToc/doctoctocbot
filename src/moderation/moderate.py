@@ -155,7 +155,7 @@ def remove_done_moderations(community_name):
                 break
     return counter
             
-def viral_moderation(socialuser_id):
+def viral_moderation(socialuser_id, cached=True):
     """ Once categorized, a social user belonging to an approved category
     becomes a moderator.
     """
@@ -170,12 +170,15 @@ def viral_moderation(socialuser_id):
                 socialuser=ucr.social_user,
                 community=ucr.community,
             ).exists():
-                if ucr.social_user.user_id in update_social_ids(
+                followers = update_social_ids(
                     ucr.community.account.userid,
-                    cached=False,
+                    cached=cached,
                     bot_screen_name=ucr.community.account.username,
                     relationship='followers',
-                ):
+                )
+                if not followers:
+                    return
+                if ucr.social_user.user_id in followers:
                     try:
                         Moderator.objects.create(
                             socialuser = ucr.social_user,

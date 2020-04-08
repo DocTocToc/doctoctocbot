@@ -50,7 +50,7 @@ class Command(BaseCommand):
         )
         counter = 0
         for socialuser in socialuser_qs:
-            ok = viral_moderation(socialuser.id)
+            ok = viral_moderation(socialuser.id, cached=True)
             if ok:
                 counter += 1
         self.stdout.write(

@@ -452,4 +452,4 @@ def handle_pending_moderations():
 
 @shared_task   
 def handle_viral_moderation(socialuser_id):
-    viral_moderation(socialuser_id)
+    viral_moderation(socialuser_id, cached=False)

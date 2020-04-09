@@ -52,6 +52,7 @@ services:
       - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
       - ${NGINX_LOG_DIR}:/var/log/nginx
       - ${LETSENCRYPT_CONF}:/etc/letsencrypt
+      - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     ports:
       - "80:80"

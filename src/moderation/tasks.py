@@ -26,6 +26,7 @@ from moderation.models import (
     Moderator,
     Queue,
 )
+from bot.models import Account
 
 from common.utils import trim_grouper
 from django.utils.translation import gettext as _
@@ -416,6 +417,21 @@ def update_moderators_friends():
             relationship='friends',
         )
         time.sleep(settings.API_FRIENDS_PERIOD)
+
+@shared_task
+def update_bots_followers():
+    for account in Account.objects.filter(active=True):
+        try:
+            su = SocialUser.objects.get(user_id=account.userid)
+        except SocialUser.DoesNotExist:
+            continue
+        update_social_ids(
+            su,
+            cached=False,
+            bot_screen_name=account.username,
+            relationship='followers',
+        )
+        time.sleep(settings.API_FOLLOWERS_PERIOD)
 
 @shared_task
 def handle_pending_moderations():

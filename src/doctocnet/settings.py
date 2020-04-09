@@ -623,3 +623,4 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = config(
 
 # Time in seconds between two Friends API requests
 API_FRIENDS_PERIOD = config('API_FRIENDS_PERIOD', cast=int, default=70)
+API_FOLLOWERS_PERIOD = config('API_FOLLOWERS_PERIOD', cast=int, default=70)

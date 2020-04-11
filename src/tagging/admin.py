@@ -289,7 +289,11 @@ class CategoryAdmin(admin.ModelAdmin):
         'hashtag',
         'summary',
         'description',
+        'community',
         'order',   
+    )
+    list_filter = (
+        'community',
     )
 
 admin.site.register(Queue, QueueAdmin)

@@ -82,9 +82,20 @@ def tag_dm_text(process):
     # underscore will be replaced by Twitter with the screen name of the user
     screen_name = tweetdj.socialuser.screen_name_tag() or "_"
     logger.debug(screen_name)
+    sample_category = Category.objects.filter(
+        community=process.queue.community,
+        hashtag=True,
+    ).first()
+    if sample_category:
+        sample_tag = sample_category.tag
+    else:
+        sample_tag = ""
     categories_link = f"{site_url(process.queue.community)}{reverse('landing:categories')}"
     text = (
         _(
+            "🆕 You can tag your tweet with the corresponding category hashtag.\n"
+            "For instance, add #{sample_tag} in your next tweet and you "
+            "will not receive this DM.\n"
             "Please help us find the best category for this tweet "
             "https://twitter.com/{screen_name}/status/{statusid}\n"
             "Please choose a category by clicking on one of the buttons bellow.\n"
@@ -93,7 +104,8 @@ def tag_dm_text(process):
         ).format(
             screen_name=screen_name,
             statusid=statusid,
-            categories_link=categories_link
+            categories_link=categories_link,
+            sample_tag=sample_tag,
         )
     )
     logger.debug(text)
@@ -329,4 +341,4 @@ def diacriticless_category_tags(community):
         community=community,
         hashtag=True,
     ).values_list('tag', flat=True)
-    return [unidecode.unidecode(tag).lower() for tag in tags]    
+    return [unidecode.unidecode(tag).lower() for tag in tags]

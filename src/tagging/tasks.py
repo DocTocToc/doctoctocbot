@@ -78,7 +78,7 @@ def tag_dm_text(process):
     except Tweetdj.DoesNotExist as e:
         logger.warn(e)
         return
-    activate_language(process.community)    
+    activate_language(process.queue.community)    
     # underscore will be replaced by Twitter with the screen name of the user
     screen_name = tweetdj.socialuser.screen_name_tag() or "_"
     logger.debug(screen_name)

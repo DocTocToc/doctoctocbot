@@ -21,6 +21,7 @@ from optin.authorize import has_authorized, create_opt_in
 from optin.models import Option
 from tagging.models import TagKeyword, Category
 from bot.tweet import hashtag_list
+from community.helpers import activate_language
 
 logger = get_task_logger(__name__)
 
@@ -77,6 +78,7 @@ def tag_dm_text(process):
     except Tweetdj.DoesNotExist as e:
         logger.warn(e)
         return
+    activate_language(process.community)    
     # underscore will be replaced by Twitter with the screen name of the user
     screen_name = tweetdj.socialuser.screen_name_tag() or "_"
     logger.debug(screen_name)

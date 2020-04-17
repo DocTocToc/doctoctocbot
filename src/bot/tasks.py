@@ -4,6 +4,8 @@ from celery import shared_task
 
 import logging
 import requests
+import random
+import time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -13,20 +15,20 @@ def handle_retweetroot(statusid: int):
     from .bin.thread import retweetroot
     retweetroot(statusid)
     
-@shared_task(bind=True)
-def handle_question(self, statusid: int):
-    from .bin.thread import question_api
-    ok = question_api(statusid) 
-    if not ok:
-        self.retry(
-            args=(statusid,),
-            countdown=(10 + 2 ** self.request.retries),
-            max_retries=10
-        )
+@shared_task
+def handle_question(statusid: int):
+    from bot.bin.thread import question_api
+    for i in range(1,5):
+        ok = question_api(statusid)
+        if ok:
+            break
+        else:
+            time.sleep(30*2**i)
+
         
 @shared_task
 def handle_on_status(statusid: int):
-    from .onstatus import triage
+    from bot.onstatus import triage
     logger.info("handling status %d" % statusid)
     triage(statusid)
     

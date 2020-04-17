@@ -18,13 +18,16 @@ from django.conf import settings
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
-from community.models import Community, get_default_community
+from community.models import Community
 from django.contrib.sites.shortcuts import get_current_site
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
 import logging
 logger = logging.getLogger(__name__)
+
+def get_default_community():
+    return None
 
 class AuthorizedManager(models.Manager):
     def category_users(self, category):
@@ -219,7 +222,7 @@ class SocialUser(models.Model):
     def community(self) -> List:
         community_lst = []
         for category in self.category.all():
-            for community in category.community.all():
+            for community in category.member_of.all():
                 community_lst.append(community)
         return community_lst
 
@@ -321,7 +324,8 @@ class UserCategoryRelationship(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        default=get_default_community,
+        null=True,
+        blank=True,
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
@@ -419,7 +423,8 @@ class Queue(Versionable):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        default=get_default_community
+        null=True,
+        blank=True,
     )
     
     def __str__(self):
@@ -587,7 +592,8 @@ class TwitterList(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        default=get_default_community,
+        null=True,
+        blank=True,
     )
     
     def __str__(self):
@@ -664,7 +670,8 @@ class Moderator(models.Model):
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
-        default=get_default_community,
+        null=True,
+        blank=True,
     )
     senior = models.BooleanField(
         default=False,
@@ -673,7 +680,7 @@ class Moderator(models.Model):
 
 
     class Meta:
-        unique_together = ("socialuser", "community")
+        pass
 
 
     def __str__(self):
@@ -759,7 +766,8 @@ class DoNotRetweet(models.Model):
         verbose_name='Moderator',
         on_delete=models.CASCADE,
         related_name='donotretweet_moderations',
-        default=1
+        null=True,
+        blank=True,
     )
 
 

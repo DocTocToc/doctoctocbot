@@ -18,14 +18,17 @@ import tweepy
 from conversation.models import Tweetdj
 
 from .lib.statusdb import Addstatus
-from bot.tweepy_api import getAuth
+from bot.tweepy_api import get_api
 from bot.tweepy_api import statuses_lookup
 
 
 logger = logging.getLogger(__name__)
 
-def addstatus(statusid):
-    API = tweepy.API(getAuth())
+def addstatus(statusid, bot_username=None):
+    API = get_api(
+            username=bot_username,
+            backend=True,
+    )
     status = API.get_status(statusid, tweet_mode='extended')
     db = Addstatus(status._json)
     db.addtweetdj()

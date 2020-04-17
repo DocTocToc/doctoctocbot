@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='moderator',
             name='community',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='community.Community'),
         ),
     ]

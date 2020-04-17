@@ -148,9 +148,6 @@ def is_following_rules(statusid, userid, dct):
 def is_following_rules_json(status, userid, dct):
     """
     Does this status follow the structural rules?
-    * Is Not a retweet
-    * Is a question
-    * Is not a reply
     """  
     if isrt(status) and not dct["_allow_retweet"]:
         return False
@@ -160,7 +157,8 @@ def is_following_rules_json(status, userid, dct):
         handle_retweetroot.apply_async(args=(status['id'],))
         return False
     if dct["_require_question"] and not isquestion(status):
-        handle_question.apply_async(args=(status['id'],), countdown=10, expires=300) 
+        logger.debug(f"status['id']: {status['id']}")
+        handle_question.apply_async(args=(status['id'],), countdown=30, expires=900) 
         return False
     author_is_follower: bool =  is_follower(userid, dct["_bot_screen_name"])
     if dct["_require_follower"] and not author_is_follower:
@@ -271,7 +269,11 @@ def create_update_retweeted(statusid, community, retweet_status):
     except:
         return
 
-def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
+def community_retweet(
+        statusid: int,
+        userid: int, hrh: HasRetweetHashtag,
+        skip_rules=False
+    ):
     logger.debug("Inside community_retweet()")
     logger.debug(statusid)
     logger.debug(userid)
@@ -309,7 +311,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
     #process unknown user
     for dct in process_unknown_lst:
         logger.debug(f"process_unknown dct: {dct}")
-        rules = is_following_rules(statusid, userid, dct)
+        rules =  skip_rules or is_following_rules(statusid, userid, dct)
         logger.debug(f"rules: {rules}")
         logger.debug(f"dct['_allow_unknown']: {dct['_allow_unknown']}")
         if (rules
@@ -342,12 +344,10 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
             logger.error(f"Community {dct['_community']} does not exist.")
             continue
         if not dct["_moderation"]:
-            if is_following_rules(statusid, userid, dct):
+            if skip_rules or is_following_rules(statusid, userid, dct):
                 rt(statusid, dct, community)
-
         if not social_user:
             continue
-
         category = Category.objects.get(pk=dct["_category"])
         logger.debug(f"category:{category}")
         trusted_community_qs = community.trust.filter(category=category)
@@ -369,7 +369,7 @@ def community_retweet(statusid: int, userid: int, hrh: HasRetweetHashtag):
                 trust = True
         
         if trust:
-            if is_following_rules(statusid, userid, dct):
+            if skip_rules or is_following_rules(statusid, userid, dct):
                 rt(statusid, dct, community)
         #else:
         #    addtoqueue(userid, statusid, community.name)

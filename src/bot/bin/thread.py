@@ -69,31 +69,44 @@ def retweetroot(statusid: int):
                 if (hrh \
                     and not isreplacement(parent_mi.json) \
                     and not isquote(parent_mi.json)):
-                    community_retweet(parent_mi.statusid, parent_mi.userid, hrh)
+                    community_retweet(
+                        parent_mi.statusid,
+                        parent_mi.userid,
+                        hrh,
+                        skip_rules=True
+                    )
                     break
             else:
-                handle_question.apply_async(args=(statusid,), countdown=10, expires=300)
+                handle_question.apply_async(args=(statusid,), countdown=30, expires=900)
                 break
         
         current_mi = parent_mi
         
     return
 
-def tree_has_question_mark(tweetdj: Tweetdj):
+def tree_has_question_mark(tweetdj: Tweetdj, bot_username=None):
     if tweetdj_has_q_m(tweetdj):
         return True
     if not tweetdj.parentid:
         return False
-    parent: Tweetdj = getorcreate(tweetdj.parentid)
+    parent: Tweetdj = getorcreate(
+        tweetdj.parentid,
+        bot_username=bot_username
+    )
+    if not parent:
+        return False
     return tree_has_question_mark(parent)
         
-def get_root_status(tweetdj: Tweetdj):
+def get_root_status(tweetdj: Tweetdj, bot_username=None):
     if not tweetdj.parentid:
         return tweetdj
-    parent_mi = getorcreate(tweetdj.parentid)
+    parent_mi = getorcreate(
+        tweetdj.parentid,
+        bot_username=bot_username,
+    )
     if not parent_mi:
         return tweetdj
-    return get_root_status(parent_mi)
+    return get_root_status(parent_mi, bot_username=bot_username)
 
 def add_root_to_tree(statusid):
     try:
@@ -101,14 +114,17 @@ def add_root_to_tree(statusid):
     except DatabaseError as e:
         logger.error(str(e))
         
-def getorcreate(statusid: int) -> Tweetdj:  
+def getorcreate(statusid: int, bot_username=None) -> Tweetdj:  
     # Is status in database? If not, add it.
     if statusid is None:
         return None
     try:
         return Tweetdj.objects.get(pk=statusid)
     except Tweetdj.DoesNotExist:
-        addstatus(statusid)
+        addstatus(
+            statusid,
+            bot_username=bot_username
+        )
         try:
             return Tweetdj.objects.get(pk=statusid)
         except Tweetdj.DoesNotExist:
@@ -146,13 +162,15 @@ def question_api(start_status_id: int) -> bool:
         start_tweetdj = Tweetdj.objects.get(statusid=start_status_id)
     except Tweetdj.DoesNotExist:
         return
+    logger.debug(f'start_tweetdj: {start_tweetdj}')
     socialuser = start_tweetdj.socialuser
+    logger.debug(f'socialuser: {socialuser}')
     if not socialuser:
         return
     userid = socialuser.user_id
-    #logger.debug(f'userid: {userid}')
+    logger.debug(f'userid: {userid}')
     community = socialuser.community()
-    #logger.debug(f'community: {community}')
+    logger.debug(f'community: {community}')
     if not community:
         return
     community = community[0]
@@ -160,13 +178,23 @@ def question_api(start_status_id: int) -> bool:
         bot_username = community.account.username
     except:
         return
-    #logger.debug(f'bot_username: {bot_username}')
-    api = get_api(username=bot_username, backend=True)
-    root_tweetdj = get_root_status(start_tweetdj)
-    tree_has_q_m: bool = tree_has_question_mark(start_tweetdj)
+    logger.debug(f'bot_username: {bot_username}')
+    api = get_api(
+        username=bot_username,
+        backend=True
+    )
+    root_tweetdj = get_root_status(
+        start_tweetdj,
+        bot_username=bot_username,
+    )
+    tree_has_q_m: bool = tree_has_question_mark(
+        start_tweetdj,
+        bot_username=bot_username
+    )
     hrh = tree_hrh(start_tweetdj)
     if tree_has_q_m and hrh: 
-        community_retweet(root_tweetdj.statusid, userid, hrh)
+        community_retweet(root_tweetdj.statusid, userid, hrh, skip_rules=True)
+        return True
     treedj, _created = Treedj.objects.get_or_create(statusid=root_tweetdj.statusid)
     descendants_id_lst = (
         treedj.get_descendants(include_self=True)
@@ -181,25 +209,31 @@ def question_api(start_status_id: int) -> bool:
                         exclude_replies=False,
                         ).items():
         reply_id = status._json.get("in_reply_to_status_id", None)
-        #logger.debug(f'reply_id: {reply_id}')
+        logger.debug(f'reply_id: {reply_id}')
         if not reply_id:
             continue
         if reply_id in descendants_id_lst:
             status_id = status._json["id"]
             add_leaf(status_id, reply_id)
-            tweetdj = getorcreate(status_id)
+            tweetdj = getorcreate(status_id, bot_username=bot_username)
             if not tweetdj:
                 continue
             hrh = tree_hrh(tweetdj)
-            #logger.debug(f'hrh: {hrh}')
+            logger.debug(f'hrh: {hrh}')
             q = tree_has_question_mark(tweetdj)
-            #logger.debug(f'q:{q}')
+            logger.debug(f'q:{q}')
             if q and hrh:
                 #logger.debug(
                 #    f'status {status._json["id"]} '
                 #    f'{status._json["text"]} is ?'
                 #)
-                community_retweet(root_tweetdj.statusid, userid, hrh)
+                community_retweet(
+                    root_tweetdj.statusid,
+                    userid,
+                    hrh,
+                    skip_rules=True
+                )
+                return True
                          
 def question(statusid: int) -> bool:
     logger.debug(f"Running question() with statusid {statusid}")

@@ -46,3 +46,6 @@ django_celery_beat.schedulers:DatabaseScheduler.db
 #mypy
 src/.mypy_cache
 src/*/.mypy_cache
+
+# coverage
+src/.coverage

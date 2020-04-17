@@ -21,7 +21,7 @@ class Community(models.Model):
     created =  models.DateTimeField(auto_now_add=True)
     site = models.ForeignKey(
         Site,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=True,
         related_name="community",
     )
@@ -101,12 +101,7 @@ class Community(models.Model):
 
 
 def get_default_community():
-    try:
-        community = Community.objects.first()
-        if community:
-            return community.pk
-    except Community.DoesNotExist as e:
-        logger.debug("Create a default Community object with pk equal to one.", e)
+    return None
 
 
 class Retweet(models.Model):

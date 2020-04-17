@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='moderator',
-            unique_together={('socialuser', 'community')},
-        ),
+    #    migrations.AlterUniqueTogether(
+    #        name='moderator',
+    #        unique_together={('socialuser', 'community')},
+    #    ),
     ]

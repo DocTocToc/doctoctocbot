@@ -437,7 +437,19 @@ def update_bots_followers():
 def handle_pending_moderations():
     logger.debug("handle_pending_moderations()")
     for mod in Moderation.objects.current.filter(state__isnull=True):
-        community = mod.queue.community
+        try:
+            queue = mod.queue
+            if not queue:
+                continue
+        except KeyError:
+            logger.warn(f"No Queue for Moderation {mod}")
+            continue
+        try:
+            community = queue.community
+            if not community:
+                continue
+        except KeyError:
+            continue
         period : int = community.pending_moderation_period
         if not period:
             continue

@@ -9,14 +9,17 @@ from bot.tweepy_api import get_api
 
 logger = logging.getLogger(__name__)
 
-def getuser(user_id: int):
+def getuser(user_id: int, bot_screen_name=None):
     "Get one Twitter user object from one user id."
     if not user_id:
         return
     if not isinstance(user_id, int):
         return
 
-    api = get_api()
+    api = get_api(
+        username=bot_screen_name,
+        backend=True,
+    )
     return api.get_user(user_id)._json
 
 def getuser_lst(user_id_lst: List[int]):

@@ -141,21 +141,20 @@ class Tweetdj(models.Model):
     #    super(Tweetdj, self).save(*args, **kwargs)
 
     @classmethod
-    def getstatustext(cls, id) -> str:
+    def getstatustext(cls, statusid: int) -> str:
+        if not statusid:
+            return ""
         try:
-            status_mi = cls.objects.get(statusid = id)
+            status_mi = cls.objects.get(statusid = statusid)
         except cls.DoesNotExist:
-            return None
+            return ""
         status = status_mi.json
-        if 'full_text' in status:  
-            status_str = status.get("full_text")
+        if 'full_text' in status: 
+            return status.get("full_text") or ""
         elif 'text' in status:
-            status_str = status.get("text")
+            return status.get("text") or ""
         else:
-            status_str = ""
-            
-        return status_str
-
+            return ""
 
 class Treedj(MPTTModel):
     statusid = models.BigIntegerField(unique=True)

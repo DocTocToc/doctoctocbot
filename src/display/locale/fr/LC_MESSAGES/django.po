@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 03:05+0100\n"
+"POT-Creation-Date: 2020-04-20 05:34+0200\n"
 "PO-Revision-Date: 2020-02-28 03:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: display/templates/display/all.html:16
+#: display/templates/display/all.html:24
 msgid "Home"
 msgstr "Accueil"
 
@@ -42,7 +42,7 @@ msgstr "Questions avec peu de réponses"
 msgid "All tweets"
 msgstr "Toutes les questions"
 
-#: display/views.py:199
+#: display/views.py:207
 #, python-format
 msgid ""
 "We couldn't find a tweet with id %s. This tweet might not be in our archive "
@@ -52,6 +52,6 @@ msgstr ""
 "être pas encore dans notre archive, ou il a été effacé, ou l'identifiant "
 "n'est pas correct. Nous vous prions de nous excuser!"
 
-#: display/views.py:284
+#: display/views.py:312
 msgid "covid-19 tweets"
 msgstr "tweets au sujet de covid-19"

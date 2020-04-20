@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 03:05+0100\n"
+"POT-Creation-Date: 2020-04-20 05:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,4 +108,14 @@ msgstr ""
 
 #: messenger/models.py:131
 msgid "Campaign Messages"
+msgstr ""
+
+#: request/signals.py:30
+#, python-brace-format
+msgid ""
+"Please handle @{screen_name} follow request for {community_name} community."
+msgstr ""
+
+#: request/signals.py:35
+msgid "You have a new follow request."
 msgstr ""

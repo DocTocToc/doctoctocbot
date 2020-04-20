@@ -1,9 +1,13 @@
 import logging
 import ast
+import random
+import os
+from typing import List
 from django.db.utils import IntegrityError, DatabaseError
 from django.db.models import F
 from django.conf import settings
 from django.utils.translation import activate
+from community.models import Trust
 
 from moderation.models import (
     Queue,
@@ -36,7 +40,11 @@ def process_unknown_user(user_id, status_id, hrh):
     logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
         logger.debug(dct)
-        addtoqueue(user_id, status_id, dct['community_name'])
+        addtoqueue(
+            user_id,
+            status_id,
+            dct['community_name']
+        )
 
 def addtoqueue(user_id, status_id, community_name):
     try:
@@ -113,6 +121,8 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
     {"errors": [{"code": 349, "message": "You cannot send messages to this user."}]}
     {"errors": [{"code": 150, "message": "You cannot send messages to users who are not following you."}]}
     """
+    if not res:
+        return
     if not isinstance(res, dict):
         res = ast.literal_eval(res)
     if not "errors" in res.keys():
@@ -209,3 +219,104 @@ def viral_moderation(socialuser_id, cached=True):
                         f"{ucr.social_user} is not following "
                         f"@{ucr.community.account.username}"
                     )
+                    
+def create_moderation(queue):
+    """
+    MODERATOR = 'moderator'
+    SENIOR = 'senior'
+    DEVELOPER = 'developer'
+    FOLLOWER = 'follower'
+    """
+    random.seed(os.urandom(128))
+    if settings.MODERATION["dev"]:
+        developer_mod(queue)
+        return
+    if queue.type == Queue.MODERATOR:
+        developer_mod(queue)
+    elif queue.type == Queue.SENIOR:
+        senior_mod(queue)
+    elif queue.type == Queue.DEVELOPER:
+        developer_mod(queue)
+    elif queue.type == Queue.FOLLOWER:
+        follower_mod(queue)
+
+def developer_mod(queue):
+    uid: List = SocialUser.objects.devs()
+    logger.debug(f"SocialUser.objects.devs(): {uid}")
+    if not uid:
+        return senior_mod(queue)
+    chosen_mod_uid = random.choice(SocialUser.objects.devs())
+    create_moderation_instance(chosen_mod_uid, queue)
+
+def senior_mod(queue):
+    uid: List = SocialUser.objects.active_moderators(
+        queue.community,
+        senior=True
+    )
+    logger.debug(
+        f"SocialUser.objects.active_moderators(queue.community, senior=True): "
+        f"{uid}"
+    )
+    if not uid:
+        return moderator_mod(queue)
+    chosen_mod_uid = random.choice(uid)
+    create_moderation_instance(chosen_mod_uid, queue)
+
+def moderator_mod(queue):
+    uid: List = SocialUser.objects.active_moderators(
+        queue.community,
+    )
+    logger.debug(
+        f"SocialUser.objects.active_moderators(queue.community, senior=False): "
+        f"{uid}"
+    )
+    if not uid:
+        return
+    chosen_mod_uid = random.choice(uid)
+    create_moderation_instance(chosen_mod_uid, queue)
+
+def follower_mod(queue):
+    try:
+        su = SocialUser.objects.get(user_id=queue.user_id)
+    except SocialUser.DoesNotExist:
+        return
+    uid = verified_follower(su, queue.community)
+    logger.debug(f"{uid}")
+    if not uid:
+        senior_mod(queue)
+    chosen_mod_uid = random.choice(uid)
+    create_moderation_instance(chosen_mod_uid, queue)
+
+def create_moderation_instance(userid: int, queue: Queue):
+    try:
+        moderator_mi = SocialUser.objects.get(user_id = userid)
+    except SocialUser.DoesNotExist:
+        return
+    Moderation.objects.create(moderator = moderator_mi, queue = queue)
+    
+def verified_follower(su: SocialUser, community) -> List[int]:
+    try:
+        bot_screen_name = community.account.username
+    except:
+        bot_screen_name = None 
+    followers = update_social_ids(
+        su,
+        bot_screen_name=bot_screen_name,
+        relationship='followers',
+    )
+    # who do we trust?
+    ucr_qs = UserCategoryRelationship.objects.none()
+    logger.debug(f"{ucr_qs}")
+    for trust in Trust.objects.filter(from_community=community):
+        ucr_qs |= UserCategoryRelationship.objects.filter(
+            category = trust.category,
+            community = trust.to_community,
+        )
+        logger.debug(f"{ucr_qs}")
+    # exclude self moderations
+    ucr_qs = ucr_qs.exclude(social_user=F('moderator'))
+    logger.debug(f"{ucr_qs}")
+    return SocialUser.objects.filter(
+        user_id__in=followers,
+        id__in=ucr_qs.values_list('social_user', flat=True)
+    ).values_list('user_id', flat=True)

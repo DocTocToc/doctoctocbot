@@ -1,12 +1,11 @@
 import logging
-import random
-import os
 from django.db.utils import DatabaseError
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
+from moderation.moderate import create_moderation
 
 from moderation.models import (
     Queue,
@@ -26,28 +25,10 @@ from moderation.tasks import (
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Queue)
-def create_moderation(sender, instance, created, **kwargs):
+def create_moderation_receiver(sender, instance, created, **kwargs):
     if created:
-        logger.debug(f"inside create_moderation {sender}, {instance}, {created}")
         logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
-        moderatorid_int_lst = []
-        if settings.MODERATION["moderator"]:
-            moderatorid_int_lst.extend(SocialUser.objects.active_moderators(instance.community))
-        elif settings.MODERATION["dev"]:
-            logger.debug(f"SocialUser.objects.devs(): {SocialUser.objects.devs()}")
-            moderatorid_int_lst.extend(SocialUser.objects.devs())
-        else:
-            return
-        logger.debug(f"moderatorid_int_lst: {moderatorid_int_lst}")
-        if not moderatorid_int_lst:
-            moderatorid_int_lst.extend(SocialUser.objects.devs())
-        if not moderatorid_int_lst:
-            return
-        random.seed(os.urandom(128))
-        chosenmoderatorid_int = random.choice(moderatorid_int_lst)
-        logger.debug(f"chosenmoderatorid_int: {chosenmoderatorid_int}")
-        moderator_mi = SocialUser.objects.get(user_id = chosenmoderatorid_int)
-        Moderation.objects.create(moderator = moderator_mi, queue = instance)
+        create_moderation(instance)
 
 @receiver(post_save, sender=Queue)
 def createprofile_queue(sender, instance, created, **kwargs):

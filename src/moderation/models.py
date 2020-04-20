@@ -22,8 +22,8 @@ from community.models import Community
 from django.contrib.sites.shortcuts import get_current_site
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
+from conversation.models import Tweetdj
 
-import logging
 logger = logging.getLogger(__name__)
 
 def get_default_community():
@@ -81,11 +81,16 @@ class AuthorizedManager(models.Manager):
             result = cursor.fetchall()
         return [row[0] for row in result]
 
-    def active_moderators(self, community: Community):
+    def active_moderators(self, community: Community, senior=False):
+        mod_qs = Moderator.objects.filter(
+            active=True,
+            community=community
+        )
+        if senior:
+            mod_qs = mod_qs.filter(senior=True)
         try:
             return SocialUser.objects.filter(
-                moderator__in=Moderator.objects.filter(active=True,
-                                                       community=community),
+                moderator__in=mod_qs
                 ).values_list('user_id', flat=True)
         except:
             return []
@@ -418,17 +423,34 @@ class Profile(models.Model):
 
 
 class Queue(Versionable):
+    MODERATOR = 'moderator'
+    SENIOR = 'senior'
+    DEVELOPER = 'developer'
+    FOLLOWER = 'follower'
+    QUEUE_TYPE_CHOICES = [
+        (MODERATOR, 'Moderator'),
+        (SENIOR, 'Senior'),
+        (DEVELOPER, 'Developer'),
+        (FOLLOWER, 'Follower'),
+    ]
     user_id = models.BigIntegerField()
-    status_id = models.BigIntegerField()
+    status_id = models.BigIntegerField(
+        null=True,
+    )
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
+    type = models.CharField(
+        max_length=9,
+        choices=QUEUE_TYPE_CHOICES,
+        default=MODERATOR,
+    )
     
     def __str__(self):
-        return (f"{self.user_id} {self.status_id}")
+        return (f"Queue {self.user_id} {self.status_id} {self.type}")
     
     def profile(self):
         try:
@@ -475,14 +497,11 @@ class Queue(Versionable):
     name_tag.short_description = 'Name'      
     
     def status_tag(self):
-        from conversation.models import Tweetdj
         return Tweetdj.getstatustext(self.status_id)[:140]
 
     status_tag.short_description = 'Status'      
 
-    
-     
-    
+
 class Moderation(Versionable):
     moderator = models.ForeignKey(
         SocialUser,
@@ -514,7 +533,6 @@ class Moderation(Versionable):
         
     def status_tag(self):
         status_id = self.queue.status_id
-        from conversation.models import Tweetdj
         return Tweetdj.getstatustext(status_id)[:140]
     
     status_tag.short_description = 'Status'      

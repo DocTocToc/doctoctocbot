@@ -210,6 +210,7 @@ class QueueAdmin(VersionedAdmin):
         'status_tag',
         'tweet_link',
         'status_object',
+        'type',
         'community',
     )
     readonly_fields = (
@@ -221,6 +222,18 @@ class QueueAdmin(VersionedAdmin):
         'status_tag',
         'tweet_link',
         'status_object',
+        'community',    
+    )
+    fields = (
+        'status_id',
+        'mini_image_tag',
+        'screen_name_link',
+        'name_tag',
+        'user_id',
+        'status_tag',
+        'tweet_link',
+        'status_object',
+        'type',
         'community',    
     )
     list_display_show_identity = False
@@ -330,6 +343,7 @@ class ModerationAdmin(VersionedAdmin):
     list_display = (
         'state',
         'queue_link',
+        'queue_type',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
         'moderated_mini_image_tag',
@@ -342,6 +356,7 @@ class ModerationAdmin(VersionedAdmin):
     fields = (
         'state',
         'queue_link',
+        'queue_type',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
         'moderated_mini_image_tag',
@@ -354,6 +369,7 @@ class ModerationAdmin(VersionedAdmin):
     )
     readonly_fields = (
         'queue_link',
+        'queue_type',
         'moderator_mini_image_tag',
         'moderator_screen_name_tag',
         'moderated_mini_image_tag',
@@ -371,6 +387,13 @@ class ModerationAdmin(VersionedAdmin):
     list_display_show_start_date = True
     
     ordering = ['-version_start_date',]
+    
+    def queue_type(self, obj):
+        type = obj.queue.type or ""
+        return type
+
+    queue_type.admin_order_field  = 'queue'  #Allows column order sorting
+    queue_type.short_description = 'Queue type'  #Renames column head
     
     def screen_name_link(self, obj):
         try:

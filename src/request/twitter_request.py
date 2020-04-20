@@ -1,9 +1,57 @@
-from bot.python_twitter_api import get_api
+from django.urls import reverse
+from django.template import Template, Context
+
+from bot.tweepy_api import get_api as tweepy_api
+from bot.python_twitter_api import get_api as twitter_api
+from community.helpers import site_url
 
 def get_incoming_friendship(community):
     try:
         screen_name=community.account.username
     except:
         return []
-    api = get_api(screen_name)
+    api = twitter_api(username=screen_name)
     return api.IncomingFriendship()
+
+def message_requestor(queue):
+    try:
+        community = queue.community
+    except:
+        return
+    try:
+        helper_username = community.helper.username
+    except:
+        return
+    if not helper_username:
+        return
+    try:
+        requestor_screen_name = queue.socialuser.screen_name_tag()
+    except:
+        return
+    if not requestor_screen_name:
+        return
+    try:
+        bot_username = community.account.username
+    except:
+        return
+    
+    helper_message = get_helper_message(
+        community=community,
+        requestor_screen_name=requestor_screen_name,
+        bot_username=bot_username,            
+    )
+    api = tweepy_api(username=helper_username, backend=True)
+    api.update_status(helper_message)
+
+def get_helper_message(community, requestor_screen_name, bot_username):
+    db_message = community.helper_message
+    if not db_message:
+        return
+    url = f"{site_url(community)}{reverse('moderation:self')}"
+    context = {
+        'requestor': requestor_screen_name,
+        'bot': bot_username,
+        'url': url,
+    }
+    db_template = Template(db_message)
+    return db_template.render(Context(context))

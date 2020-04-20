@@ -11,7 +11,7 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 from moderation.models import SocialUser, Profile, SocialMedia
 from conversation.models import Tweetdj
-
+from bot.bin.user import getuser
 
 logger = logging.getLogger('root')
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
@@ -181,15 +181,17 @@ def update_profile_pictures(socialuser):
         if img_url:
             save_profile_pictures(img_url, profile)
 
-def create_update_profile_twitter(su: SocialUser):
+def create_update_profile_twitter(su: SocialUser, bot_screen_name=None):
     userid = su.user_id
     try:
         tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
     except Tweetdj.DoesNotExist:
         tweetdj_mi = None
-    if tweetdj_mi is None:
-        from bot.bin.user import getuser
-        userjson = getuser(userid)
+    if tweetdj_mi is None or not tweetdj_mi.json.get("user"):
+        userjson = getuser(
+            userid,
+            bot_screen_name=bot_screen_name
+        )
     else:
         userjson = tweetdj_mi.json.get("user")
     twitterprofile(userjson)

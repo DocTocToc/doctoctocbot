@@ -127,12 +127,29 @@ def handle_sendmoderationdm(self, mod_instance_id):
     logger.info(f"mod_mi.moderator.user_id: {mod_mi.moderator.user_id}")
     #logger.debug(f"moderator profile: {mod_mi.moderator.profile}")
     logger.info(f"mod_mi.queue.user_id {mod_mi.queue.user_id}")
-    sn = screen_name(mod_mi.queue.status_id)
-    status_id = mod_mi.queue.status_id
 
-    dm_txt = (_("Please verify this user: @{screen_name} "
-              "Tweet: https://twitter.com/{screen_name}/status/{status_id}")
-              .format(screen_name=sn, status_id=status_id))
+    status_id = mod_mi.queue.status_id
+    if status_id:
+        sn = screen_name(mod_mi.queue.status_id)
+        status_str = (
+            _("\n Tweet: https://twitter.com/{screen_name}/status/{status_id}")
+            .format(status_id=status_id)
+        )
+    else:
+        try:
+            su = SocialUser.objects.get(user_id=mod_mi.queue.user_id)
+            sn = su.screen_name_tag()
+        except SocialUser.DoesNotExist:
+            return
+        status_str = ""
+    if not sn:
+        return
+    dm_txt = (
+        _(
+            "Please help us verify this user: @{screen_name} "
+            "{status_str}"
+        ).format(screen_name=sn, status_str=status_str)
+    )
     logger.debug(f"dm_txt: {dm_txt}")
     
     # social graph DM

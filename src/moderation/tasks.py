@@ -133,7 +133,10 @@ def handle_sendmoderationdm(self, mod_instance_id):
         sn = screen_name(mod_mi.queue.status_id)
         status_str = (
             _("\n Tweet: https://twitter.com/{screen_name}/status/{status_id}")
-            .format(status_id=status_id)
+            .format(
+                screen_name=sn,
+                status_id=status_id,
+            )
         )
     else:
         try:
@@ -402,7 +405,7 @@ def create_moderation(community, queue, exclude=None, senior=False):
         return
     logger.debug(f"create_moderation QuerySet (after excluding {exclude}): {qs}")
     random.seed(os.urandom(128))
-    new_moderator_mi = random.choice(list(qs))
+    new_moderator_mi = random.choice(qs)
     logger.debug(f"new_moderator_mi: {new_moderator_mi}")
     try:
         new_mod_mi = Moderation.objects.create(

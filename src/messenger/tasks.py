@@ -50,7 +50,7 @@ def handle_campaign(name, userid_lst=None):
         bot_screen_name=bot_screen_name,
         relationship="followers",    
     )
-    bot_followers = Follower.objects.filter(user=bot_su).latest().followers
+    bot_followers = Follower.objects.filter(user=bot_su).latest().id_list
 
     receipts = Receipt.objects.filter(created__gte=hoursago(24))
     try:

@@ -22,5 +22,7 @@ def handle_scrape_web_timeline(hourdelta=None):
 @shared_task
 def handle_scrape_status(statusid: int):
             tweet = get_tweet(statusid)
+            if not tweet:
+                return
             logger.debug(f"{tweet} {tweet.bodyhtml} {tweet.statusid}")
             create_or_update_webtweet(tweet)

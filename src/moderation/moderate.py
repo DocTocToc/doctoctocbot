@@ -232,7 +232,7 @@ def create_moderation(queue):
         developer_mod(queue)
         return
     if queue.type == Queue.MODERATOR:
-        developer_mod(queue)
+        moderator_mod(queue)
     elif queue.type == Queue.SENIOR:
         senior_mod(queue)
     elif queue.type == Queue.DEVELOPER:
@@ -245,8 +245,9 @@ def developer_mod(queue):
     logger.debug(f"SocialUser.objects.devs(): {uid}")
     if not uid:
         return senior_mod(queue)
-    chosen_mod_uid = random.choice(SocialUser.objects.devs())
-    create_moderation_instance(chosen_mod_uid, queue)
+    else:
+        chosen_mod_uid = random.choice(uid)
+        create_moderation_instance(chosen_mod_uid, queue)
 
 def senior_mod(queue):
     uid: List = SocialUser.objects.active_moderators(
@@ -259,8 +260,9 @@ def senior_mod(queue):
     )
     if not uid:
         return moderator_mod(queue)
-    chosen_mod_uid = random.choice(uid)
-    create_moderation_instance(chosen_mod_uid, queue)
+    else:
+        chosen_mod_uid = random.choice(uid)
+        create_moderation_instance(chosen_mod_uid, queue)
 
 def moderator_mod(queue):
     uid: List = SocialUser.objects.active_moderators(
@@ -284,8 +286,9 @@ def follower_mod(queue):
     logger.debug(f"{uid}")
     if not uid:
         senior_mod(queue)
-    chosen_mod_uid = random.choice(uid)
-    create_moderation_instance(chosen_mod_uid, queue)
+    else:
+        chosen_mod_uid = random.choice(uid)
+        create_moderation_instance(chosen_mod_uid, queue)
 
 def create_moderation_instance(userid: int, queue: Queue):
     try:

@@ -62,7 +62,11 @@ def message_requestor_slot(sender, instance, created, **kwargs):
     
 @receiver(post_save, sender=Queue)
 def create_moderation_queue(sender, instance, created, **kwargs):
-    if created:
+    if (
+        created
+        and (instance.state == Queue.PENDING)
+        and (instance.id == instance.identity)
+    ):
         try:
             ModerationQueue.objects.create(
                 user_id= instance.uid,

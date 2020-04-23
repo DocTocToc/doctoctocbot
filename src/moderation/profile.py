@@ -53,12 +53,11 @@ def profile(backend, user, response, *args, **kwargs):
         avatar(p, response)
 
 def twitterprofile(jsn):
-    if jsn is None:
-        logger.debug("jsn is None")
+    if not jsn or not isinstance(jsn, dict):
         return
-    logger.debug("inside twitterprofile %s" % jsn)
-    logger.debug("jsn['id'] : %s" % jsn['id'])
-    logger.debug("type jsn['id'] : %s" % type(jsn['id']))
+    user_id = jsn.get("id")
+    if not user_id:
+        return
     try:
         su = SocialUser.objects.get(user_id=jsn["id"])
     except SocialUser.DoesNotExist:
@@ -67,7 +66,10 @@ def twitterprofile(jsn):
         except DatabaseError:
             return
         try:
-            su, _ = SocialUser.objects.get_or_create(user_id=jsn["id"], social_media = sm)
+            su, _ = SocialUser.objects.get_or_create(
+                user_id=user_id,
+                social_media = sm,
+            )
         except DatabaseError:
             return
             
@@ -85,7 +87,7 @@ def twitterprofile(jsn):
     avatar(p, jsn)
             
 def avatar(profile, response):
-    img_url = response["profile_image_url_https"]
+    img_url = response.get("profile_image_url_https")
     name = urlparse(img_url).path.split('/')[-1]
     logger.debug(f"name (Twitter): {name}, name (Database): {profile.normalavatar.name.split('/')[-1]}")
     name_twitter_uid = name.split('_')[0]
@@ -187,7 +189,7 @@ def create_update_profile_twitter(su: SocialUser, bot_screen_name=None):
         tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
     except Tweetdj.DoesNotExist:
         tweetdj_mi = None
-    if tweetdj_mi is None or not tweetdj_mi.json.get("user"):
+    if not tweetdj_mi or not tweetdj_mi.json.get("user"):
         userjson = getuser(
             userid,
             bot_screen_name=bot_screen_name

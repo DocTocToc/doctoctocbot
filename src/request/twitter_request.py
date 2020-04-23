@@ -36,9 +36,9 @@ def message_requestor(queue):
         return
     
     helper_message = get_helper_message(
-        community=community,
-        requestor_screen_name=requestor_screen_name,
-        bot_username=bot_username,            
+        community,
+        requestor_screen_name,
+        bot_username, 
     )
     api = tweepy_api(username=helper_username, backend=True)
     api.update_status(helper_message)

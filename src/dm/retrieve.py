@@ -1,4 +1,5 @@
 import logging
+import time
 
 from dm.api import getdm
 from dm.models import DirectMessage
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def savedm():
     # Determine id of latest DM present in DM table
-    for community in Community.objects.all():
+    for community in Community.objects.filter(active=True):
         userid = community.account.userid
         screen_name = community.account.username
         lastids_mi = DirectMessage.objects.filter(recipient_id=userid)[:49]
@@ -38,3 +39,4 @@ def savedm():
                 #logger.debug(f'Type of dm: {type(dm)}, dm id: {dm["id"]} text:{dm["message_create"]["message_data"]["text"]}')
                 DirectMessage.objects.createdm(kwargs=dm)
                 #logger.debug(f'created new record for {dm["id"]} text:{dm["message_create"]["message_data"]["text"]}')
+        time.sleep(60)

@@ -7,7 +7,7 @@ from dm.api import senddm
 from django.utils.translation import gettext as _
 from moderation.models import Category
 from moderation.models import Queue as ModerationQueue
-
+from moderation.twitter.user import TwitterUser
 from community.helpers import activate_language
 from request.twitter_request import message_requestor
 
@@ -76,6 +76,17 @@ def create_moderation_queue(sender, instance, created, **kwargs):
             )
         except DatabaseError:
             return
+        
+@receiver(post_save, sender=Queue)
+def follower_protected_requestor(sender, instance, created, **kwargs):
+    if (
+        created
+        and (instance.state == Queue.PENDING)
+        and (instance.id == instance.identity)
+    ):
+        twitter_user = TwitterUser(socialuser=instance.socialuser)
+        if twitter_user.is_protected():
+            twitter_user.friend(instance.community)
 
 
 

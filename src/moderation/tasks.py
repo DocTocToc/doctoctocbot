@@ -178,7 +178,11 @@ def handle_sendmoderationdm(self, mod_instance_id):
         quick_reply=qr
     )
     logger.info(f"dm:{res}")
-    handle_twitter_dm_response(res, mod_mi.moderator.id)
+    handle_twitter_dm_response(
+        res,
+        mod_mi.moderator.id,
+        community.id,
+    )
 
 
 @shared_task

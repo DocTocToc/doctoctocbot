@@ -211,7 +211,7 @@ def viral_moderation(socialuser_id, cached=True):
                         handle_twitter_dm_response(
                             res,
                             socialuser_id,
-                            ucr.community.id
+                            ucr.community.id,
                         )
                     return True
                 else:

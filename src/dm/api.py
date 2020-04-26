@@ -3,6 +3,7 @@ from .pythontwitter import twitter
 from bot.models import Account
 import logging
 import typing
+from bot.tweepy_api import get_api as get_tweepy_api
 
 from django.conf import settings
 
@@ -40,7 +41,14 @@ def getapi(__screen_name: typing.Optional[str]=None):
     if api_dict:    
         return twitter.Api(**api_dict)
 
-def getdm(dmid, screen_name):
+def getdm(bot_screen_name):
+    count=50
+    api = get_tweepy_api(username=bot_screen_name, backend=True)
+    dms = api.list_direct_messages(count=count)
+    return dms
+
+"""
+def _getdm(dmid, screen_name):
     dm_lst = []
     count = 49
     cursor = -1
@@ -63,6 +71,7 @@ def getdm(dmid, screen_name):
         if cursor == 0 or dmid in ids:
             break
     return dm_lst
+"""
 
 def senddm(text,
            user_id=None,

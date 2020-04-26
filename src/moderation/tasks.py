@@ -189,8 +189,11 @@ def handle_sendmoderationdm(self, mod_instance_id):
 def poll_moderation_dm():
 
     def get_moderation_metadata(dm):
-        return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
-    
+        try:
+            return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
+        except:
+            return dm.jsn['quick_reply_response']['metadata']
+
     def get_moderation_id(dm):
         return get_moderation_metadata(dm)[10:46]
     
@@ -204,11 +207,19 @@ def poll_moderation_dm():
         return
     bot_id_lst = Community.objects.values_list("account__userid", flat=True)
     #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
-    dms = DirectMessage.objects\
-        .filter(recipient_id__in=bot_id_lst)\
-        .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation")
+    try:
+        dms = (
+            DirectMessage.objects
+            .filter(recipient_id__in=bot_id_lst)
+            .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation")
+        )
+    except:
+        dms = (
+            DirectMessage.objects
+            .filter(recipient_id__in=bot_id_lst)
+            .filter(jsn__quick_reply_response__metadata__startswith="moderation")
+        )
     logger.info(f"all moderation direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
-    #dmsgs_current = [dmsg for dmsg in dmsgs if (dmsg.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] in current_moderations_uuid_str_lst)]
 
     dms_current = []
     for dm in dms:

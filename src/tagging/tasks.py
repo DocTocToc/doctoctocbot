@@ -230,7 +230,10 @@ def poll_tag_dm():
                 logger.info(f"Tag process instance {process_mi} was already processed. %s" % e)
 
     def get_tag_metadata(dm):
-        return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
+        try:
+            return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
+        except:
+            return dm.jsn['quick_reply_response']['metadata']
     
     def get_process_id(dm):
         begin_idx = len(CATEGORY_TAG)
@@ -262,11 +265,15 @@ def poll_tag_dm():
         return
     
     bot_id_lst = Community.objects.values_list("account__userid", flat=True)
-    dms = DirectMessage.objects\
-        .filter(recipient_id__in=bot_id_lst)\
-        .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith=CATEGORY_TAG)
+    try:
+        dms = DirectMessage.objects\
+            .filter(recipient_id__in=bot_id_lst)\
+            .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith=CATEGORY_TAG)
+    except:
+        dms = DirectMessage.objects\
+            .filter(recipient_id__in=bot_id_lst)\
+            .filter(jsn__quick_reply_response__metadata__startswith=CATEGORY_TAG)
     logger.info(f"all {CATEGORY_TAG} direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
-    #dmsgs_current = [dmsg for dmsg in dmsgs if (dmsg.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata'].split("_")[1] in current_moderations_uuid_str_lst)]
 
     dms_current = []
     for dm in dms:

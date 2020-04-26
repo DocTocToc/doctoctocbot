@@ -307,6 +307,8 @@ def verified_follower(su: SocialUser, community) -> List[int]:
         bot_screen_name=bot_screen_name,
         relationship='followers',
     )
+    if not followers:
+        return
     # who do we trust?
     ucr_qs = UserCategoryRelationship.objects.none()
     logger.debug(f"{ucr_qs}")
@@ -319,6 +321,8 @@ def verified_follower(su: SocialUser, community) -> List[int]:
     # exclude self moderations
     ucr_qs = ucr_qs.exclude(social_user=F('moderator'))
     logger.debug(f"{ucr_qs}")
+    if not ucr_qs:
+        return
     return SocialUser.objects.filter(
         user_id__in=followers,
         id__in=ucr_qs.values_list('social_user', flat=True)

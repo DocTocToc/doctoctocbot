@@ -403,8 +403,16 @@ BROKER_TRANSPORT_OPTIONS = {
     'fanout_prefix': True,
     'fanout_patterns': True} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_TASK_SOFT_TIME_LIMIT = 1010
-CELERY_TASK_TIME_LIMIT = 1020
+CELERY_TASK_SOFT_TIME_LIMIT = config(
+    'CELERY_TASK_SOFT_TIME_LIMIT',
+    cast = int,
+    default = 1500
+)
+CELERY_TASK_TIME_LIMIT = config(
+    'CELERY_TASK_TIME_LIMIT',
+    cast = int,
+    default = 1750,
+)
 CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 CELERY_TASK_ROUTES = {

@@ -474,10 +474,8 @@ def handle_pending_moderations():
     for mod in Moderation.objects.current.filter(state__isnull=True):
         try:
             queue = mod.queue
-            if not queue:
-                continue
-        except KeyError:
-            logger.warn(f"No Queue for Moderation {mod}")
+        except (KeyError, Queue.DoesNotExist) as e:
+            logger.warn(f"No Queue for Moderation {mod} {e}")
             continue
         try:
             community = queue.community

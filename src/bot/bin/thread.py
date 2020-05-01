@@ -48,19 +48,15 @@ def retweetroot(statusid: int):
     
     while True:    
         parent_mi = getorcreate(current_mi.parentid)
-
         if parent_mi is None:
-            break      
-      
+            break
         if not hasquestionmark:
             hasquestionmark = isquestion(parent_mi.json)
             logger.debug(f"hasquestionmark:{hasquestionmark}")
-        
         try:
             logger.debug(f"parent_mi.userid:{parent_mi.userid}") 
         except AttributeError:
             pass
-        
         if not (parent_mi.userid == authorid):
             break
         if parent_mi.parentid is None:
@@ -79,9 +75,7 @@ def retweetroot(statusid: int):
             else:
                 handle_question.apply_async(args=(statusid,), countdown=30, expires=900)
                 break
-        
         current_mi = parent_mi
-        
     return
 
 def tree_has_question_mark(tweetdj: Tweetdj, bot_username=None):

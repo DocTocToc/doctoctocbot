@@ -149,6 +149,9 @@ def is_following_rules_json(status, userid, dct):
     """
     Does this status follow the structural rules?
     """  
+    author_is_follower: bool =  is_follower(userid, dct["_bot_screen_name"])
+    if dct["_require_follower"] and not author_is_follower:
+        return False
     if isrt(status) and not dct["_allow_retweet"]:
         return False
     if isquote(status) and not dct["_allow_quote"]:
@@ -159,9 +162,6 @@ def is_following_rules_json(status, userid, dct):
     if dct["_require_question"] and not isquestion(status):
         logger.debug(f"status['id']: {status['id']}")
         handle_question.apply_async(args=(status['id'],), countdown=30, expires=900) 
-        return False
-    author_is_follower: bool =  is_follower(userid, dct["_bot_screen_name"])
-    if dct["_require_follower"] and not author_is_follower:
         return False
     return True
 

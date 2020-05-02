@@ -207,20 +207,28 @@ def poll_moderation_dm():
         return
     bot_id_lst = Community.objects.values_list("account__userid", flat=True)
     #logger.info(f"current_moderations_uuid_str_lst: {current_moderations_uuid_str_lst}")
+    """
     try:
-        dms = (
+        dms_old = (
             DirectMessage.objects
             .filter(recipient_id__in=bot_id_lst)
             .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith="moderation")
         )
     except:
+        pass
+    """
+    try:
         dms = (
             DirectMessage.objects
             .filter(recipient_id__in=bot_id_lst)
             .filter(jsn__quick_reply_response__metadata__startswith="moderation")
         )
+    except:
+        logger.error("Could not get the moderation DMs.")
+        return
     logger.info(f"all moderation direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
-
+    if not dms:
+        return
     dms_current = []
     for dm in dms:
         uid = get_moderation_id(dm)

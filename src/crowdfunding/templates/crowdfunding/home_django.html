@@ -1,26 +1,20 @@
 {% extends "doctocnet/base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
-
 {% block head_meta %}
 {{ block.super }}
 {% include "crowdfunding/twitter_card.html" %}
 {% endblock head_meta %}
-
 {% block head_css %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/css/button.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "/crowdfunding/crowdfunding.css" %}"/>
 {% endblock head_css %}
-
 {% block header_javascript %}
 {{ block.super }}
 {% endblock header_javascript %}
-
 {% block title %}Financement participatif{% endblock %}
-
 {% block content %}
-
 {% include 'landing/donate.html' %}
 {% include 'crowdfunding/twitter_signin.html' %}
 <div id="donate"></div>
@@ -28,14 +22,7 @@
 {% if frontend_error_msg %}
 <p>❌ {{ frontend_error_msg }}</p>
 {% endif %}
-
 {% crispy form %}
-
-  <!--form action="." method="post">{% csrf_token %}
-    {{ form|crispy }}
-    <p class="submit"><button type="submit">Submit</button></p>
-  </form-->
 {% include "crowdfunding/project.html" %}
 <script src="{% static 'crowdfunding/javascript/tiers.js' %}" type="text/javascript"></script>
-
 {% endblock %}

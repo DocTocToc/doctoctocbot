@@ -4,7 +4,7 @@ Vous venez de vous inscrire sur le site {{ site.domain }}.
 
 Merci de bien vouloir ouvrir ce lien sécurisé pour activer votre compte:
 
-https://{{ site.domain }}{% url 'registration:django_registration_activate' activation_key %}
+https://{{ site.domain }}/accounts/activate/{{ activation_key }}
 
 Ce lien restera valable pendant {{ activation_days }} jour{{ activation_days|pluralize }}.
 

@@ -14,7 +14,7 @@ router.register(r'projectinvestment', ProjectInvestmentViewSet)
 
 
 urlpatterns = [
-    path('', login_required(InvestViewBase.as_view()), name='start'),
+    path('', InvestViewBase.as_view(), name='start'),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('presentation/', TemplateView.as_view(template_name="crowdfunding/crowdfunding.html")),

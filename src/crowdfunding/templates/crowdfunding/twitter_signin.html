@@ -1,21 +1,23 @@
 {% load static %}
 {% load landing_tags %}
 {% if 'twitter' in backends.not_associated %}
-<div class="container-fluid bg-1">
-  <p>Vous avez un compte Twitter? Merci de vous authentifier!
-    <a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">
+<div class="container-fluid">
+  <p><strong>Vous avez un compte Twitter? C'est la méthode la plus simple et la plus rapide pour créer votre compte!
+    Merci de vous authentifier en cliquant ici: ▶️<a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">
       <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
-    </a></p>
+    </a>◀️</strong><p>
   {% if not user.is_authenticated %}
-  <p>
+  <p><small>
   Vous n'avez pas de compte Twitter mais vous avez un compte sur
   {% site_text %}? Merci de vous
   <a href="{% url 'login' %}?next={% url 'crowdfunding:start' %}">
   connecter!
   </a>
-  </p>
-  <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir 1 nom d'utilisateur.
-  <p>⚠️ Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</p></p>
+  </small><p>
+  <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir un nom d'utilisateur et indiquer votre email.
+  Un compte sera créé automatiquement pour que vous puissiez obtenir votre facture dans votre espace utilisateur.
+  Nous vous enverrons un mail de confirmation.
+  <p><small>⚠️Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</small></p>
   {% endif %}
 </div>
 {% endif %}

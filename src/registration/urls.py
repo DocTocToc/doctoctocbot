@@ -7,9 +7,20 @@ from registration.forms import RegistrationFormPasswordless, RegistrationFormPas
 from registration.forms import RegistrationFormInviteEmail
 
 
-app_name = 'registration'
+#app_name = 'registration'
 
 urlpatterns = [
+    path(
+        'accounts/activate/complete/',
+        TemplateView.as_view(
+            template_name='django_registration/activation_complete.html'
+        ),
+        name='django_registration_activation_complete',
+    ),
+    path('accounts/',
+        include('django_registration.backends.activation.urls')
+    ),
+
     path('accounts/register/',
         RegistrationView.as_view(
             form_class=RegistrationFormPasswordless
@@ -25,9 +36,6 @@ urlpatterns = [
             form_class=RegistrationFormPasswordlessCaseInsensitiveSocial
         ),
         name='django_registration_register_social',
-    ),
-    path('accounts/',
-        include('django_registration.backends.activation.urls')
     ),
     path('accounts/',
         include('django_registration.backends.one_step.urls')

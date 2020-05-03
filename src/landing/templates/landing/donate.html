@@ -2,18 +2,20 @@
 {% load landing_links %}
 {% load landing_tags %}
 <!-- First Container -->
-<div class="container-fluid bg-1">
-  <h3 class="margin"><img src="{% static "/landing/images/brick_128x128.png" %}" class="float-right" alt="brick icon" width="128" height="128">Construisons ensemble un réseau social professionnel indépendant!</h3>
-  <p>
-  Nous, professionnels de santé, participons bénévolement au réseau {% hashtag_lst %}
-  et souhaitons continuer à échanger et à nous entraider efficacement et en
-  toute indépendance, sans publicité, ni spam.
-  Nous voulons investir dans le développement de nos outils:
-  <ul>
-  <li>{% bot_link_text %}</li>
-  <li>applications web {% site_link_text %}</li>
+<div class="container-fluid">
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">🏗️ Construisons ensemble un réseau social professionnel indépendant!</h5>
+    <p class="card-text">
+    Nous, professionnels de santé, participons bénévolement au réseau {% hashtag_lst %}
+    et souhaitons continuer à échanger et à nous entraider efficacement et en
+    toute indépendance, sans publicité, ni spam.
+    Nous voulons investir dans le développement de nos outils.
+   </p>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{% bot_link_text %}</li>
+    <li class="list-group-item">📱web apps {% site_link_text %}</li>
+    <li class="list-group-item"><a href="https://discussion.doctoctoc.net">🙊forum interprofessionnel SantéTocToc</a></li>
   </ul>
-  Pour télécharger votre facture, rendez-vous dans votre espace utilisateur après le règlement.
-  </p>
-  <!--button id="donate" type="button" class="btn btn-outline-primary">Je soutiens!</button-->
+</div>
 </div>

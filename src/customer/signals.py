@@ -42,6 +42,10 @@ def create_customer_and_draft_invoice(sender, instance, created, **kwargs):
             return
         # add silver_id to draft customer
         doctocnet_customer.silver_id = silver_customer.id
+        # add email to draft customer
+        email = instance.user.email
+        if email:
+            doctocnet_customer.email = email
         doctocnet_customer.save()
         project = instance.project
         if not project:
@@ -111,7 +115,7 @@ def customer_instance_is_complete(instance):
         instance.first_name and
         instance.last_name and
         #instance.company and
-        instance.email and
+        #instance.email and
         instance.address_1 and
         instance.country and
         instance.city and

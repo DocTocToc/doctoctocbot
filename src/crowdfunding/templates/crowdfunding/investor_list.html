@@ -1,0 +1,15 @@
+<ul>
+    {% for tier in tiers %}
+      <li><h2>{{ tier.title }} {{ tier.emoji}}</h2>
+      {{ tier.description }}   
+         <ul>
+            {% for funder in tier.funder_lst %}
+              <li>{{ funder.user.username }} {{ tier.emoji}}</li>
+            {% endfor %}
+          </ul>
+      </li>
+    {% endfor %}
+    {% for funder in funders %}
+      <li>{{ funder.user.username }}</li>
+    {% endfor %}  
+</ul>

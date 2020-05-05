@@ -5,7 +5,12 @@ from crowdfunding.api.views import ProjectInvestmentViewSet
 from django.contrib.auth.decorators import login_required
 #import djstripe
 #from crowdfunding.views3 import show_checkout, new_checkout, create_checkout
-from crowdfunding.views import stripe_checkout, ProjectInvestmentView, InvestViewBase
+from crowdfunding.views import (
+    stripe_checkout,
+    ProjectInvestmentView,
+    InvestViewBase,
+    ProjectProgressView,
+)
 from crowdfunding.views import charge
 app_name = 'crowdfunding'
 
@@ -25,7 +30,7 @@ urlpatterns = [
     #path('payment-done/', payment_done, name='payment_done'),
     #path('payment-cancelled/', payment_canceled, name='payment_cancelled'),
     path('fund/', ProjectInvestmentView.as_view(), name="fund"),
-    path('progress/', TemplateView.as_view(template_name='crowdfunding/progress_template.html'), name='progress'),
+    path('progress/', ProjectProgressView.as_view(), name='progress'),
     #path('stripe/', include("djstripe.urls", namespace="djstripe")),
     #path('checkouts/new', new_checkout, name="new-checkout"),
     #path('checkouts/<transaction_id>', show_checkout, name="show-checkout"),

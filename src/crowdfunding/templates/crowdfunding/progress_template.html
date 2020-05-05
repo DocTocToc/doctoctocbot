@@ -1,8 +1,18 @@
 {% extends "doctocnet/base.html" %}
 {% load crowdfunding_progress %}
 {% load i18n %}
+{% load humanize %}
+{% load crowdfunding_progress %}
 <h2> {% block title %} {% trans 'Progress' %} {% endblock %} </h2>
 {% block content %}
 
-{% progress_bar %}
+{% for year in year_range %}
+  {% project_start_date as start_date %}
+  {% project_end_date as end_date %}
+  {% if forloop.first %}
+  <h3>{{ year|add:1|ordinal }} campagne du {{ start_date|date:"SHORT_DATE_FORMAT" }} au {{ end_date|date:"SHORT_DATE_FORMAT" }}</h3>
+  {% progress_bar %}
+  {% endif %}
+{% endfor %}
+
 {% endblock %}

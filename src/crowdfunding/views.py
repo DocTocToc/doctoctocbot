@@ -1,6 +1,6 @@
 from decimal import *
 from uuid import UUID
-
+import pytz
 from django.core import signing
 from django.conf import settings
 from django.shortcuts import render
@@ -17,6 +17,8 @@ from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.db import DatabaseError
+from dateutil.relativedelta import relativedelta
+import datetime
 
 import stripe
 #from paypal.standard.forms import PayPalPaymentsForm
@@ -508,6 +510,15 @@ class ProjectInvestmentView(ListView):
         project = get_project(self.request)
         if not project:
             return
+        # year range
+        start_dt = project.start_date
+        difference_in_years = relativedelta(
+            datetime.datetime.now(pytz.utc),
+            start_dt
+        ).years
+        year_range = reversed(range(difference_in_years+1))
+        context["year_range"] = year_range
+        """
         tier_lst = []
         if Tier.objects.filter(project=project).count():
             for t in Tier.objects.filter(project=project):
@@ -528,13 +539,37 @@ class ProjectInvestmentView(ListView):
                                           filter(project=project).
                                           order_by('name').
                                           distinct('name'))
-        context['tier_lst'] = tier_lst
-        
+        context['tier_lst'] = tier_lst        
         # Replaced by custom templatetag
         #context['investor_count'] = (ProjectInvestment
         #                             .objects
         #                             .filter(paid=True)
         #                             .filter(project=project)
         #                             .distinct('user')
-        #                             .count())   
+        #  
+        #                           .count())
+        """   
+        return context
+
+
+class ProjectProgressView(ListView):
+
+    context_object_name = 'investment_list'
+    queryset = ProjectInvestment.objects.all()
+    template_name = 'crowdfunding/progress_template.html'
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        project = get_project(self.request)
+        if not project:
+            return
+        # year range
+        start_dt = project.start_date
+        difference_in_years = relativedelta(
+            datetime.datetime.now(pytz.utc),
+            start_dt
+        ).years
+        year_range = reversed(range(difference_in_years+1))
+        context["year_range"] = year_range
         return context

@@ -224,6 +224,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'request',
     'invite',
+    'django.contrib.humanize',
 ]
 
 if DEBUG:

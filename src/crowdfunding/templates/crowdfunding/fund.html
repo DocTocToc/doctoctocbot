@@ -1,36 +1,47 @@
 {% extends "doctocnet/base.html" %}
 {% load i18n %}
+{% load humanize %}
 {% load crowdfunding_progress %}
-{% load landing_investors %}
 {% block content %}
 <h2> {% block title %} {% trans 'Funding' %} {% project_name %} {% endblock %} </h2>
-{% now "SHORT_DATETIME_FORMAT" as now %}
-{% progress_bar %}
-{% investor_progress_bar %}
-{% total_investor_count as tic %}
-{% public_investor_count as pic %}
-{% if tic %}
-<p>{% blocktrans count investor_cnt=tic %}{{ investor_cnt }} person invested in our project. Thank you!{% plural %}{{ investor_cnt }} persons invested in our project. Thank you!{% endblocktrans %}<p>
-{% if pic %}
-<p>{% blocktrans count public_investor_cnt=pic %}{{ public_investor_cnt }} person accepted to appear on this list.{% plural %}{{ public_investor_cnt }} persons accepted to appear on this list.{% endblocktrans %}<p>
-<ul>
-    {% for tier in tier_lst %}
-      <li><h2>{{ tier.title }} {{ tier.emoji}}</h2>
-      {{ tier.description }}   
-         <ul>
-            {% for funder in tier.funder_lst %}
-              <li>{{ funder.user.username }} {{ tier.emoji}}</li>
-            {% endfor %}
-          </ul>
-      </li>
-    {% endfor %}
-    {% for funder in funder_lst %}
-      <li>{{ funder.user.username }}</li>
-    {% endfor %}  
-</ul>
-{% endif %}
-{% else %}
-<p>{% blocktrans %}Be the first to invest in our project!{% endblocktrans %}<p>
- <a href="{% url 'crowdfunding:start' %}" role="button" class="btn btn-outline-primary">{% trans "I want to fund!" %}</a>
-{% endif %}
+<div id="accordion">
+{% for year in year_range %}
+  {% project_start_date as start_date %}
+  {% project_end_date as end_date %}
+    <div class="card">
+    <div class="card-header" id="heading{{ year }}">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ year }}" aria-expanded="true" aria-controls="collapse{{ year }}">
+        <h3>{{ year|add:1|ordinal }} campagne du {{ start_date|date:"SHORT_DATE_FORMAT" }} au {{ end_date|date:"SHORT_DATE_FORMAT" }}</h3>
+        </button>
+      </h5>
+    </div>
+    <div id="collapse{{ year }}" class="collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ year }}" data-parent="#accordion">
+      <div class="card-body">
+      {% progress_bar %}
+      {% investor_progress_bar %}
+      {% year_total_investor_count as tic %}
+      {% year_public_investor_count as pic %}
+      {% if tic %}
+        <p>{% blocktrans count investor_cnt=tic %}{{ investor_cnt }} person invested in our project. Thank you!{% plural %}{{ investor_cnt }} persons invested in our project. Thank you!{% endblocktrans %}<p>
+        {% if pic %}
+          <p>{% blocktrans count public_investor_cnt=pic %}{{ public_investor_cnt }} person accepted to appear on this list.{% plural %}{{ public_investor_cnt }} persons accepted to appear on this list.{% endblocktrans %}<p>
+          {% investor_list %}
+        {% endif %}
+      {% else %}
+        <p>{% blocktrans %}Be the first to invest in our project!{% endblocktrans %}<p>
+        <a href="{% url 'crowdfunding:start' %}" role="button" class="btn btn-outline-primary">{% trans "I want to fund!" %}</a>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
 {% endblock %}
+
+
+
+
+
+
+

@@ -30,9 +30,9 @@ def get_default_community():
     return None
 
 class AuthorizedManager(models.Manager):
-    def category_users(self, category):
+    def category_users(self, category: str):
         """
-        Return list of users bigint user_id from a category.
+        Return list of users bigint user_id from a category name
         """
         with connection.cursor() as cursor:
             cursor.execute(

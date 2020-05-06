@@ -1,3 +1,4 @@
+import pytz
 from moderation.models import SocialUser, Follower, Friend, Category
 from bot.tweepy_api import get_api
 from bot.models import Account
@@ -24,9 +25,10 @@ from community.helpers import activate_language
 
 logger = logging.getLogger(__name__)
 
-def get_socialuser_from_id(id):
+def get_socialuser_from_user_id(user_id):
+    """ Get a SocialUser object from its user_id"""
     try:
-        return SocialUser.objects.get(user_id=id)
+        return SocialUser.objects.get(user_id=user_id)
     except SocialUser.DoesNotExist:
         return
     
@@ -42,7 +44,7 @@ def get_socialuser(user):
         return user
     elif isinstance(user, int):
         logger.debug("user is a int")
-        return get_socialuser_from_id(user)
+        return get_socialuser_from_user_id(user)
     elif isinstance(user, str):
         logger.debug("user is a string")
         return get_socialuser_from_screen_name(user)
@@ -66,17 +68,20 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
         hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
     else:
         hourdelta = settings.FRIEND_TIMEDELTA_HOUR
-    datetime_limit = timezone.now() - timedelta(hours=hourdelta)
+    datetime_limit = datetime.now(pytz.utc) - timedelta(hours=hourdelta)
+    logger.debug(f"{datetime_limit}")
 
     if followers:
         try:
             si = Follower.objects.filter(user=su).last()
         except Follower.DoesNotExist:
             si = None
+            logger.debug(f"Follower instance does not exist for {su}")
     else:
         try:
             si = Friend.objects.filter(user=su).last()
         except Friend.DoesNotExist:
+            logger.debug(f"Friend instance does not exist for {su}")
             si = None
 
     try:
@@ -84,14 +89,13 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     except Category.DoesNotExist:
         return 
 
-    if cached:
-        ok = True 
-    else:
-        try:
-            ok = si.created > datetime_limit and not (bot_cat in user.category.all())
-        except AttributeError:
-            ok = False
-    if ok:
+    ok = False
+    try:
+        ok = si.created > datetime_limit and not (bot_cat in user.category.all())
+    except AttributeError:
+        pass
+
+    if ok and si:
         return si.id_list
 
     if followers:
@@ -141,7 +145,7 @@ def _friendsids(user_id, bot_screen_name):
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
 
-def graph(user, community, bot_screen_name):
+def graph(user_id, community, bot_screen_name):
     try:
         categories = CommunityCategoryRelationship.objects.filter(
             socialgraph=True,
@@ -154,7 +158,7 @@ def graph(user, community, bot_screen_name):
     logger.debug(f"{bot_screen_name}")
 
     followers = update_social_ids(
-        user,
+        user_id,
         cached=True,
         bot_screen_name=bot_screen_name,
         relationship='followers',
@@ -163,17 +167,18 @@ def graph(user, community, bot_screen_name):
         logger.debug("No followers.")
         return
     
-    logger.debug(f"{followers}")
+    logger.debug(f"{followers[0:10]}")
 
     followers_cnt = len(followers)
   
     graph_dct = OrderedDict(
         {
             "title": _("Followers"),
-            "categories": {},
-            "global": {}
+            "categories": None,
+            "global": None,
         }
     )
+    logger.debug(graph_dct)
     _sum = 0
     categories_dct = {}
     
@@ -188,18 +193,27 @@ def graph(user, community, bot_screen_name):
     global_dct = OrderedDict({_('Verified'): _sum, _('Others'): others})
     
     #graph_dct["categories"].update(order_dict(categories_dct, reverse=True))
-    graph_dct["categories"].update(
-        OrderedDict(sorted(categories_dct.items(),
-        key=lambda k: k[1]["count"],
-        reverse=True)
-        )
+    graph_dct.update(
+        {
+            "categories": OrderedDict(
+                sorted(
+                    categories_dct.items(),
+                    key=lambda k: k[1]["count"],
+                    reverse=True
+                )
+            )
+        }
     )
 
-    graph_dct["global"].update(global_dct)
+    graph_dct.update(
+        {
+            "global": global_dct
+        }
+    )
     graph_dct.update({"total": followers_cnt})
-    graph_dct.update({"screen_name": screen_name(user)})
-    graph_dct.update({"commmunity": community})
-
+    graph_dct.update({"screen_name": screen_name(user_id)})
+    graph_dct.update({"community": community})
+    logger.debug(graph_dct)
     return graph_dct
 
 def intersection_count(a, b):
@@ -298,19 +312,12 @@ def get_dm_media_id(file, bot_screen_name):
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
     activate_language(community)
     logger.debug("Inside send_graph_dm()")
-
     user_screen_name = screen_name(user_id)
     logger.debug(f"user_screen_name:{user_screen_name}")
-
-    try:
-        _graph = graph(user_id, community, bot_screen_name)
-    except:
-        _graph = None
-
+    _graph = graph(user_id, community, bot_screen_name)
     if not _graph:
         logger.debug("_graph is Falsy")
         return 
-
     try:
         file = pie_plot(_graph)
     except:

@@ -491,6 +491,8 @@ def handle_pending_moderations():
                 continue
         except KeyError:
             continue
+        # TODO: add default pending moderation period in settings
+        # return if not set
         period : int = community.pending_moderation_period
         if not period:
             continue
@@ -498,6 +500,10 @@ def handle_pending_moderations():
         delta = datetime.timedelta(hours=period)
         dt = dtnow - delta
         if mod.version_start_date > dt:
+            continue
+        # don't reallocate queues with type "SENIOR" or "DEVELOPER"
+        # TODO: recheck followers and send moderation to verified follower
+        if queue.type in [Queue.SENIOR, Queue.DEVELOPER]:
             continue
         moderator_exclude: List[int] = list(
             Moderation.objects.filter(queue=mod.queue)

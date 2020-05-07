@@ -398,6 +398,14 @@ class Profile(models.Model):
     
     screen_name_tag.short_description = 'Screen name'
     
+    def follower_count(self):
+        try:
+            return self.json.get("followers_count")
+        except AttributeError:
+            return
+
+    follower_count.short_description = "Follower count"
+
     def name_tag(self):
         if self.json is not None:
             name = self.json.get("name", None)

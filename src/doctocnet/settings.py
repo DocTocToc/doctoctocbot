@@ -640,3 +640,10 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = config(
 # Time in seconds between two Friends API requests
 API_FRIENDS_PERIOD = config('API_FRIENDS_PERIOD', cast=int, default=70)
 API_FOLLOWERS_PERIOD = config('API_FOLLOWERS_PERIOD', cast=int, default=70)
+
+# default for verification_threshold_follower (int)
+VERIFICATION_THRESHOLD_FOLLOWER = config(
+    'VERIFICATION_THRESHOLD_FOLLOWER',
+    cast=int,
+    default=1
+)

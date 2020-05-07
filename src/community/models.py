@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.sites.models import Site
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +92,10 @@ class Community(models.Model):
     viral_moderation_message = models.TextField(
         blank=True,
         null=True,
+    )
+    verification_threshold_follower = models.PositiveIntegerField(
+        default = settings.VERIFICATION_THRESHOLD_FOLLOWER,
+        help_text = "Start verification if follower count superior or equal to"
     )
 
     def __str__(self):

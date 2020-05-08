@@ -501,10 +501,26 @@ def handle_pending_moderations():
         dt = dtnow - delta
         if mod.version_start_date > dt:
             continue
-        # don't reallocate queues with type "SENIOR" or "DEVELOPER"
+        # don't reallocate queues with type SENIOR or DEVELOPER
         # TODO: recheck followers and send moderation to verified follower
         if queue.type in [Queue.SENIOR, Queue.DEVELOPER]:
             continue
+        moderator_is_senior = Moderator.objects.filter(
+            community=community,
+            socialuser=mod.moderator,
+            senior=True,
+        ).exist()
+        # give pending FOLLOWER moderation to senior moderator
+        if queue.type == Queue.FOLLOWER:
+            if moderator_is_senior:
+                continue
+            else:
+                create_moderation(
+                    mod.queue.community,
+                    mod.queue,
+                    senior=True,
+                )
+                expire_and_delete(mod)
         moderator_exclude: List[int] = list(
             Moderation.objects.filter(queue=mod.queue)
             .values_list('moderator__id', flat=True)
@@ -517,13 +533,16 @@ def handle_pending_moderations():
             exclude=moderator_exclude,
             senior=False,
         )
+        expire_and_delete(mod)
+        
+def expire_and_delete(moderation):
         try:
             state = CategoryMetadata.objects.get(name='expired')
         except CategoryMetadata.DoesNotExist:
             state = None
-        mod.state = state
-        mod.save()
-        mod.delete()
+        moderation.state = state
+        moderation.save()
+        moderation.delete()
 
 @shared_task   
 def handle_viral_moderation(socialuser_id):

@@ -141,6 +141,26 @@ class AuthorizedManager(models.Manager):
             #logging.debug(result)
         return [row[0] for row in result]
 
+
+class Human(models.Model):
+    socialuser = models.ManyToManyField(
+        'SocialUser',
+        blank=True,
+    )
+    djangouser = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+    )
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        pk = self.pk
+        su = "-".join( [str(su) for su in self.socialuser.all()] )
+        user = "-".join( [str(user) for user in self.djangouser.all()] )
+        return f"{pk} / {su} / {user}"
+
+
 class SocialUser(models.Model):
     user_id = models.BigIntegerField(unique=True)
     social_media = models.ForeignKey('SocialMedia', related_name='users', on_delete=models.CASCADE)
@@ -151,7 +171,7 @@ class SocialUser(models.Model):
     
     def __str__(self):
         try:
-            return f'{self.pk} | {self.profile.json.get("screen_name", None)} | {self.user_id})'
+            return f'{self.pk} | {self.profile.json.get("screen_name", None)} | {self.user_id}'
         except Profile.DoesNotExist:
             return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
 

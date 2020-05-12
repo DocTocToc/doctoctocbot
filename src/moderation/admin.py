@@ -13,6 +13,7 @@ from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
 from moderation.models import (
     SocialUser,
+    Human,
     UserCategoryRelationship,
     Category,
     Profile,
@@ -606,6 +607,37 @@ class CategoryMetadataAdmin(TranslationAdmin):
         models.CharField: {'widget': TextInput(attrs={'size':'72'})},
     }
 
+class HumanAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'socialuser_tag',
+        'djangouser_tag',
+        'created',
+        'updated',
+    )
+    fields = (
+        'pk',
+        'socialuser',
+        'djangouser',
+        'created',
+        'updated',
+    )
+    readonly_fields = (
+        'pk',
+        'created',
+        'updated',    
+    )
+    
+    def socialuser_tag(self, obj):
+        return [su for su in obj.socialuser.all()]
+    
+    socialuser_tag.short_description = 'SocialUser'
+    
+    def djangouser_tag(self, obj):
+        return [user for user in obj.djangouser.all()]
+    
+    djangouser_tag.short_description = 'Django user'
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 
@@ -621,3 +653,4 @@ admin.site.register(Image)
 admin.site.register(DoNotRetweet, DoNotRetweetAdmin)
 admin.site.register(SocialMedia)
 admin.site.register(CategoryMetadata, CategoryMetadataAdmin)
+admin.site.register(Human, HumanAdmin)

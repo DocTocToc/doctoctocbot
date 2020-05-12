@@ -225,6 +225,7 @@ INSTALLED_APPS = [
     'request',
     'invite',
     'django.contrib.humanize',
+    'hcp',
 ]
 
 if DEBUG:
@@ -332,6 +333,8 @@ LANGUAGES = [
     ('fr', _('French')),
     ('en', _('English')),
 ]
+# Model Translation
+MODELTRANSLATION_FALLBACK_LANGUAGES = {'default': ('en', 'fr'), 'fr': ('en',)}
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),

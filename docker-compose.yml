@@ -124,3 +124,19 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
+
+  stream_4:
+    env_file:
+      - .env
+    command: bash -c "python manage.py run_bot_stream $STREAM_4 --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src

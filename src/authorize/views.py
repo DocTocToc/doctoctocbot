@@ -24,7 +24,7 @@ class Request(TemplateView):
             auth = tweepy.OAuthHandler(
                 settings.TWITTER_APP_CONSUMER_KEY,
                 settings.TWITTER_APP_CONSUMER_SECRET,
-                reverse('authorize:callback')
+                self.request.build_absolute_uri(reverse('authorize:callback'))
             )
             try:
                 redirect_url = auth.get_authorization_url()

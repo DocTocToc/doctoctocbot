@@ -24,14 +24,14 @@ class Request(TemplateView):
             auth = tweepy.OAuthHandler(
                 settings.TWITTER_APP_CONSUMER_KEY,
                 settings.TWITTER_APP_CONSUMER_SECRET,
-                reverse('request:callback')
+                reverse('authorize:callback')
             )
             try:
                 redirect_url = auth.get_authorization_url()
                 context["redirect_url"] = redirect_url
             except tweepy.TweepError:
                 print('Error! Failed to get request token.')
-                return redirect(reverse('request:error'))
+                return redirect(reverse('authorize:error'))
         return context
 
 

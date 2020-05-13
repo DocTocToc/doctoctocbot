@@ -37,7 +37,7 @@ class Request(TemplateView):
 
 
 def Callback(request):
-    return redirect("authorize:success")
+    return redirect(reverse("authorize:success"))
 
             
         

@@ -225,6 +225,7 @@ INSTALLED_APPS = [
     'request',
     'invite',
     'django.contrib.humanize',
+    'authorize',
 ]
 
 if DEBUG:
@@ -547,6 +548,10 @@ BOT_IMAGES_PATH = config('BOT_IMAGES_PATH')
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""
 TWEET_LENGTH = 280
+
+# APP
+TWITTER_APP_CONSUMER_KEY = config('TWITTER_APP_CONSUMER_KEY')
+TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')

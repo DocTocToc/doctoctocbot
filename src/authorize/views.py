@@ -31,7 +31,8 @@ class Request(TemplateView):
                 context["redirect_url"] = redirect_url
             except tweepy.TweepError:
                 print('Error! Failed to get request token.')
-                return redirect(reverse('authorize:error'))
+                context["redirect_url"] = None
+                context["error"] = True
         return context
 
 

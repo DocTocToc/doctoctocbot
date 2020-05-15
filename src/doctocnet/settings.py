@@ -497,10 +497,16 @@ STATUS_DISPLAY_HOUR = {
 MESSENGER_DM_LIMIT = 15
 
 # django-meta
+DEBUG_HTTPS = config('DEBUG_HTTPS', default=False, cast=bool)
+
 if DEBUG:
-    META_SITE_PROTOCOL = 'http'
+    if DEBUG_HTTPS:
+        META_SITE_PROTOCOLE = "https"
+    else:
+        META_SITE_PROTOCOL = 'http'
 else:
     META_SITE_PROTOCOL = 'https'
+
 META_USE_SITES = True
 META_USE_TWITTER_PROPERTIES = True
 

@@ -27,11 +27,11 @@ class Request(TemplateView):
         if is_twitter_auth(user):
             callback_url = self.request.build_absolute_uri(reverse('authorize:callback'))
             logger.debug(f"callback url: {callback_url}")
-            t = urlparse(callback_url)
-            if t.scheme == "http":
-                t.scheme = "https"
-            callback_url = urlunparse(t)
-            logger.debug(f"callback url: {callback_url}")
+            parsed = urlparse(callback_url)
+            callback_url_https = urlunparse(
+                ['https' if i==0 else e for i,e in enumerate(parsed)]
+            )
+            logger.debug(f"callback url https: {callback_url_https}")
             try:
                 auth = tweepy.OAuthHandler(
                     settings.TWITTER_APP_CONSUMER_KEY,

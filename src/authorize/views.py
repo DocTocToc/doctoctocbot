@@ -24,6 +24,7 @@ class Request(TemplateView):
         context = super(Request, self).get_context_data(*args, **kwargs)
         user = self.request.user
         if is_twitter_auth(user):
+            #"<a href="{{ request.scheme }}://{{ request.get_host }}{% url url_name %}">click here</a>"
             callback_url = self.request.build_absolute_uri(reverse('authorize:callback'))
             logger.debug(f"callback url: {callback_url}")
             try:

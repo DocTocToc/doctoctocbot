@@ -18,6 +18,8 @@ config = AutoConfig(search_path = CONFIG_DIR)
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+DEBUG_HTTPS = config('DEBUG_HTTPS', default=False, cast=bool)
+
 LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
 
 DICT_CONFIG = {
@@ -142,7 +144,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
 
-if not DEBUG:
+if not DEBUG or DEBUG_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
@@ -497,7 +499,6 @@ STATUS_DISPLAY_HOUR = {
 MESSENGER_DM_LIMIT = 15
 
 # django-meta
-DEBUG_HTTPS = config('DEBUG_HTTPS', default=False, cast=bool)
 
 if DEBUG:
     if DEBUG_HTTPS:

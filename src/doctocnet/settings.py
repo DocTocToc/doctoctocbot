@@ -146,6 +146,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
 
 if not DEBUG or DEBUG_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    ABSOLUTEURI_PROTOCOL = 'https'
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 

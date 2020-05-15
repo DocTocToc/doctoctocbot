@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.shortcuts import redirect
 from django.utils.translation import gettext as _
+from urllib.parse import urlparse, urlunparse
 
 import tweepy
 
@@ -25,6 +26,11 @@ class Request(TemplateView):
         user = self.request.user
         if is_twitter_auth(user):
             callback_url = self.request.build_absolute_uri(reverse('authorize:callback'))
+            logger.debug(f"callback url: {callback_url}")
+            t = urlparse(callback_url)
+            if t.scheme == "http":
+                t.scheme = "https"
+            callback_url = urlunparse(t)
             logger.debug(f"callback url: {callback_url}")
             try:
                 auth = tweepy.OAuthHandler(

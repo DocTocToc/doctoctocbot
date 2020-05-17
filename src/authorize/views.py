@@ -21,7 +21,10 @@ def is_twitter_auth(user):
 
 def verify_account_credentials(screen_name):
     api = get_api(username=screen_name, backend=True)
-    return api.verify_credentials()
+    try:
+        return api.verify_credentials()
+    except tweepy.TweepError:
+        return False
 
 class Request(TemplateView):
     title = _("Authorize our app")
@@ -73,11 +76,13 @@ def Callback(request):
     user = request.user
     if is_twitter_auth(user):
         verifier = request.GET.get('oauth_verifier')
+        logger.debug(f"verifier: {verifier}")
         auth = tweepy.OAuthHandler(
             settings.TWITTER_APP_CONSUMER_KEY,
             settings.TWITTER_APP_CONSUMER_SECRET,
         )
         token = request.session.get('request_token')
+        logger.debug(f"token: {token}")
         request.session.delete('request_token')
         auth.request_token = { 'oauth_token' : token,
                              'oauth_token_secret' : verifier }
@@ -90,7 +95,8 @@ def Callback(request):
                 username=screen_name,
                 userid=uid
             )
-        if verify_account_credentials(screen_name):
+        verify_credentials = verify_account_credentials(screen_name)
+        if verify_credentials:
             return redirect(reverse("authorize:success"))
         try:
             auth.get_access_token(verifier)

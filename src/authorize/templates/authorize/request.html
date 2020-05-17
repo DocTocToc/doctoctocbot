@@ -1,6 +1,34 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load cache %}
 {% load static %}
 {% load landing_tags %}
-In order to user our community bot service, you need to authorize our Twitter app.
+
+{% block head_meta %}
+{% static "doctocnet/bot_logo_400x400.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image_url %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net" og_title="🤖 DocTocToc.net" og_description="Votre réseau social professionnel libre, ouvert, indépendant et sans publicité." og_image=og_image_url %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
+
+{% block style %}
+  <style>
+  </style>
+{{ block.super }}  
+{% endblock style %}
+
+{% endblock head_meta %}
+
+{% block title %}{% trans "Authorization request" %}{% endblock title %}
+
+{% block content %}
+
+<p>
+In order to use our community bot service, you need to authorize our Twitter app.
+</p>
+
 {% if 'twitter' in backends.not_associated %}
 <div class="container-fluid">
   <p><strong>First, please connect with the Twitter account that you want to turn into a bot: ▶️<a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">
@@ -11,8 +39,12 @@ In order to user our community bot service, you need to authorize our Twitter ap
     {% if redirect_url and not error %}
         <a href="{{ redirect_url }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Authorize</a>
     {% elif not redirect_url and not error and verify_credentials %}
-        Your account has already authorized our app. You're all good! Thank you.
+        <p>Your account has already authorized our app. You're all good! Thank you.</p>
     {% else %}
+        <p>
         <b>An error has occurred. The authorization process cannot continue. Please <a href="{% url 'gpgcontact:contact-form' %}">contact us</a>.</b>
+        </p>
     {% endif %}
 {% endif %}
+
+{% endblock content %}

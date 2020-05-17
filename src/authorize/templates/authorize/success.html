@@ -1,1 +1,40 @@
-All good!
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load cache %}
+{% load static %}
+{% load landing_tags %}
+
+{% block head_meta %}
+{% static "doctocnet/bot_logo_400x400.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image_url %}
+{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net" og_title="🤖 DocTocToc.net" og_description="Votre réseau social professionnel libre, ouvert, indépendant et sans publicité." og_image=og_image_url %}
+{{ block.super }}
+{% include "doctocnet/twitter_opengraph.html" %}
+{% endwith %}
+{% endwith %}
+
+{% block style %}
+  <style>
+  </style>
+{{ block.super }}  
+{% endblock style %}
+
+{% endblock head_meta %}
+
+{% block title %}{% trans "Authorization successful" %}{% endblock title %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    Success!
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">You successfully authorized our app!</h5>
+    <p class="card-text">
+    Your account has been created. @{{ request.user.username }} will soon be able to use its new bot superpowers! 🤖
+    </p>
+    <a href="/" class="btn btn-primary">Go to home page</a>
+  </div>
+</div>
+
+{% endblock content %}

@@ -103,16 +103,14 @@ def Callback(request):
         except tweepy.TweepError:
             logger.error('Failed to get access token.')
             return redirect(reverse("authorize:error"))
-        consumer_key = settings.TWITTER_APP_CONSUMER_KEY
-        consumer_secret = settings.TWITTER_APP_CONSUMER_SECRET,
-        account.twitter_consumer_key = consumer_key
-        account.twitter_consumer_secret =  consumer_secret
+        account.twitter_consumer_key = settings.TWITTER_APP_CONSUMER_KEY
+        account.twitter_consumer_secret = settings.TWITTER_APP_CONSUMER_SECRET
         account.twitter_access_token = auth.access_token
         account.twitter_access_token_secret = auth.access_token_secret
-        account.backend_twitter_consumer_key = consumer_key
-        account.bachend_twitter_consumer_secret = consumer_secret
-        account.bachend_twitter_access_token = auth.access_token
-        account.bachend_twitter_access_token_secret = auth.access_token_secret
+        account.backend_twitter_consumer_key = settings.TWITTER_APP_CONSUMER_KEY
+        account.backend_twitter_consumer_secret = settings.TWITTER_APP_CONSUMER_SECRET
+        account.backend_twitter_access_token = auth.access_token
+        account.backend_twitter_access_token_secret = auth.access_token_secret
         account.save()
         return redirect(reverse("authorize:success"))
     else:

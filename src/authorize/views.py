@@ -61,7 +61,7 @@ class Request(TemplateView):
             try:
                 redirect_url = auth.get_authorization_url()
                 context["redirect_url"] = redirect_url
-                self.request.session.set('request_token', auth.request_token['oauth_token'])
+                self.request.session['request_token'] = auth.request_token['oauth_token']
             except tweepy.TweepError:
                 print('Error! Failed to get request token.')
                 context["redirect_url"] = None
@@ -70,6 +70,7 @@ class Request(TemplateView):
 
 
 def Callback(request):
+    user = request.user
     if is_twitter_auth(user):
         verifier = request.GET.get('oauth_verifier')
         auth = tweepy.OAuthHandler(
@@ -80,7 +81,6 @@ def Callback(request):
         request.session.delete('request_token')
         auth.request_token = { 'oauth_token' : token,
                              'oauth_token_secret' : verifier }
-        user = request.user
         uid = user.social_auth.get(provider="twitter").uid
         screen_name = user.social_auth.get(provider="twitter").extra_data["access_token"]["screen_name"]
         try:

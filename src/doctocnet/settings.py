@@ -18,6 +18,8 @@ config = AutoConfig(search_path = CONFIG_DIR)
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+DEBUG_HTTPS = config('DEBUG_HTTPS', default=False, cast=bool)
+
 LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
 
 DICT_CONFIG = {
@@ -142,7 +144,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
 
-if not DEBUG:
+if not DEBUG or DEBUG_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
@@ -226,6 +228,7 @@ INSTALLED_APPS = [
     'invite',
     'django.contrib.humanize',
     'hcp',
+    'authorize',
 ]
 
 if DEBUG:
@@ -499,10 +502,15 @@ STATUS_DISPLAY_HOUR = {
 MESSENGER_DM_LIMIT = 15
 
 # django-meta
+
 if DEBUG:
-    META_SITE_PROTOCOL = 'http'
+    if DEBUG_HTTPS:
+        META_SITE_PROTOCOLE = "https"
+    else:
+        META_SITE_PROTOCOL = 'http'
 else:
     META_SITE_PROTOCOL = 'https'
+
 META_USE_SITES = True
 META_USE_TWITTER_PROPERTIES = True
 
@@ -550,6 +558,10 @@ BOT_IMAGES_PATH = config('BOT_IMAGES_PATH')
 NUMBER_OF_RT = 20
 TWEET_LANGUAGE = ""
 TWEET_LENGTH = 280
+
+# APP
+TWITTER_APP_CONSUMER_KEY = config('TWITTER_APP_CONSUMER_KEY')
+TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
@@ -649,4 +661,4 @@ VERIFICATION_THRESHOLD_FOLLOWER = config(
     'VERIFICATION_THRESHOLD_FOLLOWER',
     cast=int,
     default=1
-)
+src/doctocnet/settings.py)

@@ -54,6 +54,7 @@ urlpatterns = [
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),
     path('invitations/', include('invitations.urls', namespace='invitations')),
+    path('authorize/', include('authorize.urls')),
     # wagtail
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),

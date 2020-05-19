@@ -77,3 +77,6 @@ services:
   stream_3:
     image: dtn_prod
     restart: always
+  stream_4:
+    image: dtn_prod
+    restart: always

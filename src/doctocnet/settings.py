@@ -661,4 +661,4 @@ VERIFICATION_THRESHOLD_FOLLOWER = config(
     'VERIFICATION_THRESHOLD_FOLLOWER',
     cast=int,
     default=1
-src/doctocnet/settings.py)
+)

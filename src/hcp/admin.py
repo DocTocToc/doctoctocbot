@@ -29,6 +29,7 @@ class HealthCareProviderInline(admin.TabularInline):
         'created',
         'updated',
     )
+    autocomplete_fields = ['taxonomy']
 
 class TaxonomyAdmin(TranslationAdmin):
     list_display = (
@@ -49,7 +50,6 @@ class TaxonomyAdmin(TranslationAdmin):
         'code',
     )
     search_fields = (
-        'code',
         'grouping',
         'classification',
         'specialization',
@@ -80,6 +80,9 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
         'human',
     )
     inlines = (HealthCareProviderInline,)
+
+    autocomplete_fields = ['human']
+
 
     def taxonomy_tag(self, obj):
         return " ".join( [str(taxonomy) for taxonomy in obj.taxonomy.all()] )

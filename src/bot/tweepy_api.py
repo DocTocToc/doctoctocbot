@@ -75,7 +75,7 @@ def getSocialDjangoAuth(username):
 
 def get_api(username=None, backend=False):
     api = tweepy.API(getAuth(username, backend), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-    verify_credentials(api, username, backend)
+    #verify_credentials(api, username, backend)
     return api
 
 def statuses_lookup(statusid):

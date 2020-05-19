@@ -627,6 +627,7 @@ class HumanAdmin(admin.ModelAdmin):
         'created',
         'updated',    
     )
+    search_fields = ['socialuser__profile__json__screen_name', 'djangouser__username']
     
     def socialuser_tag(self, obj):
         return [su for su in obj.socialuser.all()]

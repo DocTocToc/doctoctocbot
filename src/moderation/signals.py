@@ -13,7 +13,8 @@ from moderation.models import (
     SocialUser,
     UserCategoryRelationship,
     Category,
-    Moderator
+    Moderator,
+    Human,
 )
 
 from moderation.tasks import (
@@ -79,6 +80,23 @@ def create_update_socialuser_profile(sender, instance, created, **kwargs):
         if not hasattr(instance, 'profile'):
             logger.debug(f"instance.user_id: {instance.user_id}")
             handle_create_update_profile.apply_async(args=(instance.user_id,))
+
+@receiver(post_save, sender=SocialUser)
+def create_human(sender, instance, created, **kwargs):
+    if created:
+        try:
+            human = Human.objects.get(socialuser=instance)
+        except Human.DoesNotExist:
+            try:
+                human = Human()
+                human.save()
+                human.socialuser.add(instance)
+                human.save()
+            except:
+                logger.error(
+                    f'Database error occured while creating Human object for '
+                    f'{instance}.'
+                )
 
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):

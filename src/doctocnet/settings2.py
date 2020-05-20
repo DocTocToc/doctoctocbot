@@ -1,3 +1,3 @@
 from doctocnet.settings import *
 
-SITE_ID = config('SITE_ID_2', cast=int, default=2)
+SITE_ID = config('SITE_ID_3', cast=int, default=3)

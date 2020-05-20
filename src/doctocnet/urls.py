@@ -18,6 +18,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
+from django.conf.urls.i18n import i18n_patterns
 # wagtail start
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
@@ -28,10 +29,13 @@ from doctocnet.views import media_access
 
 app_name = 'doctocnet'
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
+    path('admin/', admin.site.urls),
+)
+
+urlpatterns += [
     re_path(r'^media/(?P<path>.*)', media_access, name='media'),
     path('silver/', include('silver.urls')),
-    path('admin/', admin.site.urls),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
     path('', include('ip.urls')),
@@ -60,6 +64,8 @@ urlpatterns = [
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'', include(wagtail_urls)),
 ]
+
+
 
 # Use static() to add url mappings to serve static files during development (only)
 from django.conf import settings

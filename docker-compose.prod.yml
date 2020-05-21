@@ -73,6 +73,23 @@ services:
       - database
       - redis
     working_dir: /code/src
+  django_5:
+    restart: always
+    env_file:
+      - .env
+    image: dtn_prod
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings5 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
+      - ${GNUPGHOME}:${GNUPGHOME}
+    depends_on:
+      - database
+      - redis
+    working_dir: /code/src
   nginx:
     restart: on-failure
     env_file:
@@ -112,5 +129,8 @@ services:
     image: dtn_prod
     restart: always
   stream_4:
+    image: dtn_prod
+    restart: always
+  stream_5:
     image: dtn_prod
     restart: always

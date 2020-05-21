@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 05:34+0200\n"
+"POT-Creation-Date: 2020-05-21 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: authorize/templates/authorize/error.html:24
+msgid "Authorization error"
+msgstr ""
+
+#: authorize/templates/authorize/request.html:24
+msgid "Authorization request"
+msgstr ""
+
+#: authorize/templates/authorize/success.html:24
+msgid "Authorization successful"
+msgstr ""
+
+#: authorize/views.py:30
+msgid "Authorize our app"
+msgstr ""
 
 #: messenger/admin.py:19
 msgid "Has event Id"

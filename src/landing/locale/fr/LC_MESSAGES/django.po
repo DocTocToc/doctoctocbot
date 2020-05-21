@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 05:35+0200\n"
-"PO-Revision-Date: 2020-04-20 06:41+0300\n"
+"POT-Creation-Date: 2020-05-21 18:11+0200\n"
+"PO-Revision-Date: 2020-05-21 19:11+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -27,17 +27,41 @@ msgstr "Catégories"
 msgid "Description of categories."
 msgstr "Description des catégories."
 
+#: landing/templates/landing/funding.html:5
+msgid "Hello, I am"
+msgstr "Salut, je suis"
+
+#: landing/templates/landing/funding.html:7
+msgid "I retweet questions tagged with"
+msgstr "Je retweete les questions"
+
+#: landing/templates/landing/funding.html:9
+msgid "from healthcare professionals"
+msgstr "des professionnels de santé"
+
+#: landing/templates/landing/funding.html:10
+msgid "who are following me."
+msgstr "qui me suivent."
+
+#: landing/templates/landing/funding.html:11
+msgid "I'm online since"
+msgstr "Je suis en ligne depuis"
+
+#: landing/templates/landing/funding.html:17
+msgid ""
+"I run without ads or sponsors. I need your support to stay online and offer "
+"new services."
+msgstr ""
+"Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien pour "
+"continuer à exister et à progresser."
+
+#: landing/templates/landing/funding.html:18
+msgid "I give my support!"
+msgstr "Je soutiens!"
+
 #: landing/templates/landing/index.html:6
 msgid "Home"
 msgstr "Accueil"
-
-#: landing/templates/landing/investor_progress_bar.html:6
-msgid "Active members"
-msgstr "Membres actifs"
-
-#: landing/templates/landing/investor_progress_bar.html:7
-msgid "Investors"
-msgstr "Investisseurs"
 
 #: landing/templates/landing/network_navbar.html:5
 msgid "Network"
@@ -145,6 +169,28 @@ msgstr "Invitation"
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid ""
+#~ "Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien "
+#~ "pour continuer à exister et à progresser."
+#~ msgstr ""
+#~ "I'm functioning without ads or sponsors. I need your support to stay "
+#~ "online and offer new services."
+
+#~ msgid "Je soutiens!"
+#~ msgstr "I give my support!"
+
+#~ msgid "des professionnels de santé"
+#~ msgstr "from healthcare professionals"
+
+#~ msgid "qui me suivent, depuis"
+#~ msgstr "who are following me, since"
+
+#~ msgid "Active members"
+#~ msgstr "Membres actifs"
+
+#~ msgid "Investors"
+#~ msgstr "Investisseurs"
 
 #~ msgid "Other info"
 #~ msgstr "Autres infos"

@@ -106,3 +106,5 @@ services:
     image: dtn_dev
   stream_4:
     image: dtn_dev
+  stream_5:
+    image: dtn_dev

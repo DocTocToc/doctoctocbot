@@ -9,9 +9,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
 from community.models import Community
 from django.conf import settings
+from django.utils.translation import get_language
 
 
-from community.helpers import get_community
+from community.helpers import get_community, activate_language
 from community.models import Retweet
 
 logger = logging.getLogger(__name__)
@@ -33,9 +34,11 @@ def community_name(context):
 def hashtag_lst(context):
     community = get_community(context)
     try:
-        hashtag_lst= Retweet.objects.filter(
-                    community=community,
-                    retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
+        hashtag_lst= list(
+            Retweet.objects.filter(
+                community=community,
+                retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
+        )
     except DatabaseError:
         hashtag_lst=None
     logger.debug(f"hashtag_lst: {hashtag_lst}")
@@ -52,11 +55,12 @@ def membership_category_or(context):
 
 def retweeted_category_values_list(context):
     community = get_community(context)
-    lst = list(Retweet.objects.filter(
-                community=community,
-                retweet=True).values_list('category__label', flat=True).distinct().order_by()
+    activate_language(community)
+    rt_qs = Retweet.objects.filter(
+        community=community,
+        retweet=True
     )
-    logger.debug(lst)
+    lst = [rt.category.label for rt in rt_qs]
     return lst
     
 @register.inclusion_tag('landing/category_or_lst.html', takes_context=True)

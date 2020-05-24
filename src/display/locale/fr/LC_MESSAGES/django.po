@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-21 18:11+0200\n"
-"PO-Revision-Date: 2020-02-28 03:08+0100\n"
+"POT-Creation-Date: 2020-05-23 05:35+0200\n"
+"PO-Revision-Date: 2020-05-23 06:35+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -22,27 +22,49 @@ msgstr ""
 msgid "Home"
 msgstr "Accueil"
 
-#: display/views.py:53
-msgid "Status"
-msgstr "Tweet"
-
-#: display/views.py:77
+#: display/templates/display/all.html:33 display/views.py:81
 msgid "Last tweets"
 msgstr "Dernières questions"
 
-#: display/views.py:103
+#: display/templates/display/all.html:36
+msgid "Last #covid19 tweets"
+msgstr "Derniers tweets #covid19"
+
+#: display/templates/display/all.html:52
+#, python-format
+msgid "Last %(hashtag_lst)s tweets"
+msgstr "Derniers tweets %(hashtag_lst)s"
+
+#: display/templates/display/all.html:54
+msgid "See more"
+msgstr "Voir plus"
+
+#: display/templates/display/all.html:60
+msgid "#covid19 tweets"
+msgstr "tweets #covid19"
+
+#: display/templates/display/all.html:62
+msgctxt "see more tweets"
+msgid "See more"
+msgstr "Voir plus"
+
+#: display/views.py:57
+msgid "Status"
+msgstr "Tweet"
+
+#: display/views.py:107
 msgid "Top tweets"
 msgstr "Questions populaires"
 
-#: display/views.py:129
+#: display/views.py:133
 msgid "Help tweets"
 msgstr "Questions avec peu de réponses"
 
-#: display/views.py:155
+#: display/views.py:159
 msgid "All tweets"
 msgstr "Toutes les questions"
 
-#: display/views.py:207
+#: display/views.py:216
 #, python-format
 msgid ""
 "We couldn't find a tweet with id %s. This tweet might not be in our archive "
@@ -52,6 +74,13 @@ msgstr ""
 "être pas encore dans notre archive, ou il a été effacé, ou l'identifiant "
 "n'est pas correct. Nous vous prions de nous excuser!"
 
-#: display/views.py:312
+#: display/views.py:321
 msgid "covid-19 tweets"
 msgstr "tweets au sujet de covid-19"
+
+#~ msgctxt "plural"
+#~ msgid "Last"
+#~ msgstr "Derniers"
+
+#~ msgid "tweets"
+#~ msgstr "tweets"

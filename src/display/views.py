@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import get_template
 
 from timeline.models import last_retweeted_statusid_lst
 from conversation.tree.tweet_parser import Tweet
@@ -22,11 +23,14 @@ from moderation.profile import is_profile_uptodate
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.translation import get_language_from_request
 from django.utils.text import slugify
+from django.template import Context, Template
 
 from moderation.models import SocialUser, Category
 from display.models import WebTweet, create_or_update_webtweet
 from community.helpers import get_community
 from display.tasks import  handle_scrape_status
+
+from landing.templatetags.landing_tags import hashtag_lst
 
 
 logger = logging.getLogger(__name__)
@@ -201,6 +205,11 @@ class All(TemplateView):
         tweet_lst_dic['covid19']=covid19_tweet_lst
         
         context['display'] = tweet_lst_dic
+        # get hashtag list into template variable hashtag_lst
+        template = get_template('landing/hashtag_lst.html')
+        cntxt = hashtag_lst(context)
+        logger.debug(f"context: {cntxt}")
+        context['hashtag_lst'] = template.render(cntxt)
         return context
 
 def notfound(sid):

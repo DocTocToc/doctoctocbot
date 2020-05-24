@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-23 05:35+0200\n"
-"PO-Revision-Date: 2020-05-23 06:34+0300\n"
+"POT-Creation-Date: 2020-05-24 18:43+0200\n"
+"PO-Revision-Date: 2020-05-24 20:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -165,6 +165,11 @@ msgstr "Compte"
 #: landing/templates/landing/usernav.html:42
 msgid "Invitation"
 msgstr "Invitation"
+
+#: landing/templatetags/opengraph_tags.py:40
+#, python-format
+msgid "Welcome to %(twitter_site)s companion website."
+msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 
 #: landing/views.py:39
 msgid "User"

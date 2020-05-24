@@ -9,7 +9,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
 from community.models import Community
 from django.conf import settings
-from django.utils.translation import get_language
 
 
 from community.helpers import get_community, activate_language

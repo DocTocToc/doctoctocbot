@@ -21,7 +21,7 @@ from django.conf import settings
 from django.utils.translation import gettext as _
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.staticfiles.storage import staticfiles_storage
-from community.helpers import get_community
+from community.helpers import get_community, activate_language
 from community.models import Retweet
 
 logger = logging.getLogger(__name__)
@@ -33,10 +33,11 @@ register = template.Library()
 @register.inclusion_tag('landing/twitter_opengraph.html', takes_context=True)
 def opengraph(context):
     community = get_community(context)
+    activate_language(community)
     twitter_site = f"@{community.account.username}"
     twitter_creator = "@MedecineLibre"
     og_url = f"https://{community.site.domain}"
-    og_title = f"https://{community.site.name}"
+    og_title = community.site.name
     og_description = _('Welcome to %(twitter_site)s companion website.' % {'twitter_site': twitter_site})
     request = context['request']
     og_image = request.build_absolute_uri(staticfiles_storage.url('doctocnet/bot_logo_400x400.jpg'))

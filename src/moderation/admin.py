@@ -339,7 +339,6 @@ class CommunityListFilter(admin.SimpleListFilter):
                 queue__community__name=self.value()
             )
 
-
 class ModerationAdmin(VersionedAdmin):
     list_display = (
         'state',
@@ -382,6 +381,7 @@ class ModerationAdmin(VersionedAdmin):
     list_filter = (
         ModerationStateListFilter,
         CommunityListFilter,
+        'queue__type',
     )
     list_display_show_identity = True
     list_display_show_end_date = True

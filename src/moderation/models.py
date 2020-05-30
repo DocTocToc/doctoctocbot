@@ -456,10 +456,10 @@ class Queue(Versionable):
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
     QUEUE_TYPE_CHOICES = [
-        (MODERATOR, 'Moderator'),
-        (SENIOR, 'Senior'),
-        (DEVELOPER, 'Developer'),
-        (FOLLOWER, 'Follower'),
+        (MODERATOR, _('Moderator')),
+        (SENIOR, _('Senior')),
+        (DEVELOPER, _('Developer')),
+        (FOLLOWER, _('Follower')),
     ]
     user_id = models.BigIntegerField()
     status_id = models.BigIntegerField(

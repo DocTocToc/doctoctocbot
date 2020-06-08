@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 import logging
 
-from dm.api import getdm
-from dm.models import DirectMessage
 from dm.retrieve import savedm
 
 

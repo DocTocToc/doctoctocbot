@@ -166,6 +166,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'constance',
     'rest_framework',
     'doctocnet',
     'landing',
@@ -229,6 +230,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'hcp',
     'authorize',
+    'constance.backends.database',
+    'autotweet',
 ]
 
 if DEBUG:
@@ -662,3 +665,24 @@ VERIFICATION_THRESHOLD_FOLLOWER = config(
     cast=int,
     default=1
 )
+
+#Constance
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
+
+CONSTANCE_CONFIG = {
+    'email_verification': (
+        "Verify your identity by entering the email address associated with "
+        "your Twitter account",
+        "Document source text to identify email verification page"
+    ),
+    "follower_requests_url": (
+        "https://mobile.twitter.com/follower_requests?commit=Follower+requests",
+        "URL of the page to accept follower requests"
+    ),
+    "selenium_firefox_headers": (
+        "",
+        "Firefox headers sent by Selenium"
+    ),
+}

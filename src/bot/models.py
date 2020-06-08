@@ -23,6 +23,18 @@ class Account(models.Model):
     backend_twitter_consumer_secret = models.CharField(max_length=100)
     backend_twitter_access_token = models.CharField(max_length=100)
     backend_twitter_access_token_secret = models.CharField(max_length=100)
+    password = models.CharField(
+        max_length=128,
+        blank=True
+    )
+    email = models.CharField(
+        max_length=128,
+        blank=True,
+    )
+    protected = models.BooleanField(
+        default=False,
+        help_text="Is this Twitter account protected (locked)?",
+    )
 
     def __str__(self):
         return self.username

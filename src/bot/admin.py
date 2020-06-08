@@ -6,6 +6,8 @@ class AccountAdmin(admin.ModelAdmin):
     fields = (
         'userid',
         'username',
+        'password',
+        'email',
         'twitter_consumer_key',
         'twitter_consumer_secret',
         'twitter_access_token',
@@ -17,6 +19,7 @@ class AccountAdmin(admin.ModelAdmin):
         'backend_twitter_consumer_secret',
         'backend_twitter_access_token',
         'backend_twitter_access_token_secret',
+        'protected',
     )
     readonly_fields = (
         'userid',

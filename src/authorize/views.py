@@ -25,6 +25,8 @@ def verify_account_credentials(screen_name):
         return api.verify_credentials()
     except tweepy.TweepError:
         return False
+    except AttributeError:
+        return False
 
 class Request(TemplateView):
     title = _("Authorize our app")

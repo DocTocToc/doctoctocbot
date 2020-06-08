@@ -382,12 +382,13 @@ def rt(statusid, dct, community):
         logger.debug(f"I just retweeted this: {retweet}")
         logger.debug(retweet)
     except TweepError:
-        retweet = None
-    if retweet:
-        set_retweeted_by(statusid, community)
-        create_update_retweeted(statusid, community, retweet._json)
-        tag(statusid, community)
-        keyword_tag(statusid, community)
+        return
+    except AttributeError:
+        return
+    set_retweeted_by(statusid, community)
+    create_update_retweeted(statusid, community, retweet._json)
+    tag(statusid, community)
+    keyword_tag(statusid, community)
 
 def set_retweeted_by(statusid: int, community):
     try:
@@ -436,7 +437,9 @@ def timeline_iterator():
     # Tweet language (empty = all languages)
     tweetLanguage = settings.TWEET_LANGUAGE
     
-    api = get_api()    
+    api = get_api()
+    if not api:
+        return   
     return tweepy.Cursor(api.search,
                          q=get_search_string(),
                          lang=tweetLanguage,
@@ -467,6 +470,8 @@ def retweet_lst(lst):
             err_counter += 1
             logger.debug("error: %s", e)
             continue
+        except AttributeError:
+            return
     
     logger.info("Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter))
         

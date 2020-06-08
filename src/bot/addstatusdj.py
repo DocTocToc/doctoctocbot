@@ -29,7 +29,10 @@ def addstatus(statusid, bot_username=None):
             username=bot_username,
             backend=True,
     )
-    status = API.get_status(statusid, tweet_mode='extended')
+    try:
+        status = API.get_status(statusid, tweet_mode='extended')
+    except AttributeError:
+        return
     db = Addstatus(status._json)
     db.addtweetdj()
 

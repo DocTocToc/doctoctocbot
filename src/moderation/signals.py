@@ -19,7 +19,8 @@ from moderation.models import (
 
 from moderation.tasks import (
     handle_create_update_profile,
-    handle_sendmoderationdm
+    handle_sendmoderationdm,
+    handle_accept_follower,
 )
 
 
@@ -115,3 +116,10 @@ def sendmoderationdm(sender, instance, created, **kwargs):
                     countdown=5
                     )
                 )
+            
+@receiver(post_save, sender=UserCategoryRelationship)
+def accept_follower(sender, instance, created, **kwargs):
+    if instance.moderator != instance.social_user:
+        handle_accept_follower.apply_async(
+            args=[instance.pk],
+        )

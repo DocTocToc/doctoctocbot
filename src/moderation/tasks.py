@@ -25,7 +25,9 @@ from moderation.models import (
     CategoryMetadata,
     Moderator,
     Queue,
+    SocialMedia,
 )
+from request.models import Queue as Request_Queue
 from bot.models import Account
 
 from common.utils import trim_grouper
@@ -45,6 +47,7 @@ from community.helpers import activate_language
 from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
+from autotweet.accept import accept_follower
 
 logger = get_task_logger(__name__)
 
@@ -547,3 +550,56 @@ def expire_and_delete(moderation):
 @shared_task   
 def handle_viral_moderation(socialuser_id):
     viral_moderation(socialuser_id, cached=False)
+
+"""handle_accept_follower
+
+Process newly categorized social user to check if they should be allowed
+in as follower by protected social media accounts.
+
+ucr: pk of UserCategoryRelationship instance
+"""
+@shared_task
+def handle_accept_follower(ucr_pk: int):
+    try:
+        ucr = UserCategoryRelationship.objects.get(pk=ucr_pk)
+        logger.debug(f"ucr: {ucr}")
+    except UserCategoryRelationship.DoesNotExist:
+        return
+    # return if community account is not protected 
+    try:
+        protected = ucr.community.account.protected
+        logger.debug(f"{protected =}")
+    except:
+        return
+    if not protected:
+        return
+    # Is there a pending request queue for this socialuser and this community?
+    for pending_request in Request_Queue.objects.filter(
+        socialuser = ucr.social_user,
+        community = ucr.community,
+        state = Request_Queue.PENDING,
+        ):
+        if pending_request.socialmedia.name == 'twitter':
+            handle_accept_follower_twitter.apply_async(
+                args=[ucr.pk],
+            )
+        
+"""handle_accept_follower_twitter
+
+Process newly categorized social user to check if they should be allowed
+in as follower by protected social media accounts.
+
+ucr: pk of UserCategoryRelationship instance
+"""
+@shared_task
+def handle_accept_follower_twitter(ucr_pk: int):
+    try:
+        ucr = UserCategoryRelationship.objects.get(pk=ucr_pk)
+    except UserCategoryRelationship.DoesNotExist:
+        return
+    if ucr.category in ucr.community.follower.all():
+        accept_follower(
+            ucr.social_user.user_id,
+            ucr.community.account.username,
+        )
+    

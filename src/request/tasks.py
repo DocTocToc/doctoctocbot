@@ -13,8 +13,11 @@ def handle_incoming_friendship():
         try:
             bot_screen_name = community.account.username
         except:
-            bot_screen_name = None
-        for uid in get_incoming_friendship(community):
+            continue
+        ifs = get_incoming_friendship(community)
+        if not ifs:
+            continue
+        for uid in ifs:
             accept_pending_q_exists = Queue.objects.filter(
                 uid=uid,
                 community=community,

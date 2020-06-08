@@ -54,6 +54,8 @@ def update_retweet(days: int):
     count = 200
     for account in Account.objects.filter(active=True):
         api = get_api(username=account.username)
+        if not api:
+            continue
         start_tweetdj = (
             Tweetdj.objects
                 .filter(socialuser__user_id=account.userid)

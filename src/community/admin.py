@@ -45,6 +45,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'helper_message',
         'hashtag',
         'membership',
+        'follower',
         'created',
         'site',
         'crowdfunding',

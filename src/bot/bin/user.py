@@ -20,7 +20,10 @@ def getuser(user_id: int, bot_screen_name=None):
         username=bot_screen_name,
         backend=True,
     )
-    return api.get_user(user_id)._json
+    try:
+        return api.get_user(user_id)._json
+    except AttributeError:
+        return
 
 def getuser_lst(user_id_lst: List[int]):
     "Get a list of Twitter user objects from list of user ids."
@@ -34,5 +37,7 @@ def getuser_lst(user_id_lst: List[int]):
         users = api.lookup_users(user_id_lst)
     except tweepy.error.TweepError as e:
         logger.error("Tweepy or Twitter API error: %s" % e)
-        return    
+        return
+    except AttributeError:
+        return 
     return [user._json for user in users]

@@ -49,3 +49,6 @@ src/*/.mypy_cache
 
 # coverage
 src/.coverage
+
+# geckodriver logs (selenium)
+src/geckodriver.log

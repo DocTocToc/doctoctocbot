@@ -78,6 +78,13 @@ class Command(BaseCommand):
         n = 100
         split: List[List[int]] = [inter_ids[i:i+n] for i in range(0, len(inter_ids), n)]
         api = get_api(username=bot_username)
+        if not api:
+            self.stdout.write(
+                self.style.ERROR(
+                    "Error. Invalid API."
+                )
+            )
+            return
         try:
             twitter = SocialMedia.objects.get(name='twitter')
         except SocialMedia.DoesNotExist:

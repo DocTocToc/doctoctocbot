@@ -97,6 +97,12 @@ class Community(models.Model):
         default = settings.VERIFICATION_THRESHOLD_FOLLOWER,
         help_text = "Start verification if follower count superior or equal to"
     )
+    follower = models.ManyToManyField(
+        'moderation.Category',
+        related_name='follower_of',
+        blank=True,
+        help_text='Categories authorized to follow the account if protected'
+    )
 
     def __str__(self):
         return self.name

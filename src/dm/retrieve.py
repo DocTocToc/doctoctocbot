@@ -22,7 +22,10 @@ def savedm():
         #logger.debug(f"lastids: {lastids}")
         #logger.debug(f"lastids[0]: {lastids[0]}")
         #logger.debug(f"type of lastids[0]: {type(lastids[0])}")
-        for dm in getdm(bot_screen_name):
+        dms = getdm(bot_screen_name)
+        if not dms:
+            continue
+        for dm in dms:
             dm_id = int(dm.id)
             if dm_id in lastids:
                 continue

@@ -11,7 +11,10 @@ logger = logging.getLogger(__name__)
 
 def get_timeline_with_rts(screen_name):
     API = get_api(username=screen_name)
-    return API.user_timeline(include_rts=True)
+    try:
+        return API.user_timeline(include_rts=True)
+    except AttributeError:
+        return
 
 def record_timeline():
     for community in Community.objects.filter(active=True):
@@ -51,6 +54,8 @@ def record_user_timeline(user_id, count=200, force=False):
             break
         except tweepy.RateLimitError as e:
             logger.debug(e.response.text)
+        except AttributeError:
+            return
         max_statusid -= 1
             
 def get_timeline_id_lst(n=None) -> List:

@@ -137,6 +137,8 @@ def _followersids(user_id, bot_screen_name):
         return api.followers_ids(user_id)
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
+    except AttributeError as e:
+        logger.error(f"Attribute Error ({api =}): {e}")
 
 def _friendsids(user_id, bot_screen_name):
     api = get_api(bot_screen_name)
@@ -144,6 +146,8 @@ def _friendsids(user_id, bot_screen_name):
         return api.friends_ids(user_id)
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
+    except AttributeError as e:
+        logger.error(f"Attribute Error ({api =}): {e}")
 
 def graph(user_id, community, bot_screen_name):
     try:
@@ -300,13 +304,21 @@ def get_dm_media_id(file, bot_screen_name):
     try:
         res = api.media_upload(file.name, media_category="dm_image")
         file.close()
+    except TweepError as e:
+        logger.error("Tweepy Error: %s", e)
+        file.close()
+        return
+    except AttributeError as e:
+        logger.error(f"Attribute Error ({api =}): {e}")
+        file.close()
+        return
     except:
-        res = None
-    if res:
-        try:
-            return res.media_id
-        except:
-            return    
+        file.close()
+        return
+    try:
+        return res.media_id
+    except AttributeError as e:
+        logger.error(f"AttributeError: {e}")
     
     
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):

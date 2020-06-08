@@ -18,6 +18,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         truncated_count_start = truncated_count()
         api = get_api()
+        if not api:
+            self.stdout.write(self.style.ERROR("Invalid Twitter API"))
+            return
         ids = Tweetdj.objects.filter(json__truncated=True).values_list('statusid', flat=True)
         for i in range(0, len(ids), 100):
             try:

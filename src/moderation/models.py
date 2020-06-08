@@ -163,7 +163,11 @@ class Human(models.Model):
 
 class SocialUser(models.Model):
     user_id = models.BigIntegerField(unique=True)
-    social_media = models.ForeignKey('SocialMedia', related_name='users', on_delete=models.CASCADE)
+    social_media = models.ForeignKey(
+        'SocialMedia',
+        related_name='users',
+        on_delete=models.CASCADE
+    )
     category = models.ManyToManyField('Category',
                                       through='UserCategoryRelationship',
                                       through_fields=('social_user', 'category'))
@@ -241,7 +245,11 @@ class SocialUser(models.Model):
             return
         try:
             api.create_friendship(user_id=self.user_id)
-        except TweepError:
+        except TweepError as e:
+            logger.error(f"Tweepy Error: {e}")
+            return
+        except AttributeError as e:
+            logger.error(f"Attribute Error: {e}")
             return
 
     def community(self) -> List:

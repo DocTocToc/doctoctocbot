@@ -6,7 +6,8 @@ ENV DOCKER_CONTAINER 1
 RUN apt-get clean && apt-get update && apt-get install -y \
   locales \
   python-pygraphviz \
-  libgraphviz-dev
+  libgraphviz-dev \
+  firefox-esr
 #  build-essential \
 #  python3-dev \
 #  python3-pip \
@@ -45,6 +46,11 @@ WORKDIR /code/src
 
 ENV PYTHONPATH "$PYTHONPATH:/code/src/doctocnet:/code/src"
 ENV DJANGO_SETTINGS_MODULE doctocnet.settings
+
+RUN mkdir /geckodriver
+ADD https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz /geckodriver
+RUN cd /geckodriver && tar -xzf *.tar.gz && rm geckodriver-v0.26.0-linux64.tar.gz
+ENV PATH "$PATH:/geckodriver"
 
 FROM prod AS dev
 

@@ -1,10 +1,13 @@
 """ Create a Twitter SocialUser object from userid or screen_name """
 
+import logging
 from django.core.management.base import BaseCommand, CommandError
 
 from moderation.models import SocialUser, SocialMedia
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = 'Create SocialUser object from userid or screen name'
@@ -28,6 +31,9 @@ class Command(BaseCommand):
                 tweepy_user = get_api().get_user(screen_name=screen_name)
             except TweepError as e:
                 raise CommandError('Tweepy error "%s' % e)
+            except AttributeError as e:
+                logger.error(f"AttributeError: {e}")
+                return
             userid=tweepy_user.id
             self.stdout.write(f"user id: {userid}")
         try:

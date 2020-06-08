@@ -44,8 +44,8 @@ def getapi(__screen_name: typing.Optional[str]=None):
 def getdm(bot_screen_name):
     count=50
     api = get_tweepy_api(username=bot_screen_name, backend=True)
-    dms = api.list_direct_messages(count=count)
-    return dms
+    if api:
+        return api.list_direct_messages(count=count)
 
 """
 def _getdm(dmid, screen_name):

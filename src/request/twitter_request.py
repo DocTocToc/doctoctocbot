@@ -11,7 +11,8 @@ def get_incoming_friendship(community):
     except:
         return []
     api = twitter_api(username=screen_name)
-    return api.IncomingFriendship()
+    if api:
+        return api.IncomingFriendship()
 
 def message_requestor(queue):
     try:

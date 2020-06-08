@@ -1,9 +1,13 @@
+import logging
 from bot.tweepy_api import get_api
 from celery import shared_task
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from crowdfunding.models import Project
+from tweepy.error import TweepError
+
+logger = logging.getLogger(__name__)
 
 @shared_task
 def handle_tweet_investment(userid: int,
@@ -62,5 +66,12 @@ def handle_tweet_investment(userid: int,
                 rank=rank,
                 domain_name=domain_name,
             )
-        )        
-    api.update_status(status)
+        )
+    try:
+        api.update_status(status)
+    except TweepError as e:
+        logger.error(f"Error creating status update: {e}")
+        return
+    except AttributeError:
+        logger.error(f"{api =}")
+        return

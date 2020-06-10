@@ -1,0 +1,8 @@
+{% load i18n %}
+<div class="alert alert-warning" role="alert">
+{% blocktrans with uri=request.build_absolute_uri %}
+This page will only work with a real, fully-fledged mobile or desktop browser (Firefox, Chrome, Safari...).
+It will not work if you open it with the in-app browser of Twitter (iOS or Android app).
+Please open your favourite browser and copy / paste or type this url in the address bar: {{ uri }}
+{% endblocktrans %}
+</div>

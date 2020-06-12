@@ -32,6 +32,8 @@ from display.tasks import  handle_scrape_status
 
 from landing.templatetags.landing_tags import hashtag_lst
 
+from conversation.utils import screen_name, name, full_text, created_at
+from bot.lib.datetime import get_datetime_tz_from_twitter_str
 
 logger = logging.getLogger(__name__)
 
@@ -176,7 +178,7 @@ class All(TemplateView):
         for sid in sid_lst:
             last_tweet_lst.append(statuscontext(sid))
         for tweet in last_tweet_lst:
-            logger.debug(f"last_tweet: {tweet.html}")
+            logger.debug(f'{tweet["text"]=}')
         tweet_lst_dic['last']= last_tweet_lst
         """
         #help
@@ -223,26 +225,54 @@ def notfound(sid):
     return tweet
 
 def statuscontext(sid):
+    """
+    {
+        "statusid": int,
+        "screen_name": str,
+        "name": str,
+        "biggeravatar": str,
+        "normalavatar": str,
+        "text": str,
+        "like": int,
+        "retweet": int,
+        "reply": int,
+        "node": int,
+        "utcdatetime": str,
+    }   
+    """
     try:
-        tweet_mi = WebTweet.objects.get(statusid=sid)
-    except WebTweet.DoesNotExist:
+        tweetdj_mi = Tweetdj.objects.get(statusid=sid)
+    except Tweetdj.DoesNotExist:
         handle_scrape_status.apply_async(args=(sid,))
         return notfound(sid)
-
-    if not is_profile_uptodate(tweet_mi.userid):
-        handle_create_update_profile.apply_async(args=(tweet_mi.userid,))
-
-    logger.debug(f"tweet_mid: {tweet_mi}")
-    localdatetime: str = time.strftime('%H:%M - %d %b %Y', tweet_mi.localtime())
-    utcdatetime: str = time.strftime('%d %B %Y %H:%M:%S', tweet_mi.utctime())
-    html = addurl(tweet_mi.html, "https://twitter.com")    
-    setattr(tweet_mi, 'localdatetime', localdatetime)
-    setattr(tweet_mi, 'utcdatetime', utcdatetime)
-    setattr(tweet_mi, 'node', get_descendant_count(sid))
-    setattr(tweet_mi, 'biggeravatar', get_biggeravatar_url(tweet_mi.userid))
-    setattr(tweet_mi, 'normalavatar', get_normalavatar_url(tweet_mi.userid))
-    tweet_mi.html = mark_safe(html)
-    return tweet_mi
+    logger.debug(f"{tweetdj_mi=}")
+    _screen_name = screen_name(sid)
+    _name = name(sid)
+    _biggeravatar = get_biggeravatar_url(tweetdj_mi.userid)
+    _normalavatar = get_normalavatar_url(tweetdj_mi.userid)
+    _text = full_text(sid)
+    _like = tweetdj_mi.like
+    _retweet = tweetdj_mi.retweet
+    _reply = tweetdj_mi.reply
+    _node = get_descendant_count(sid)
+    _created_at = created_at(sid)
+    _utcdatetime = get_datetime_tz_from_twitter_str(_created_at)
+    tweet_dct = {
+        "statusid": sid,
+        "screen_name": _screen_name,
+        "name": _name,
+        "biggeravatar": _biggeravatar,
+        "normalavatar": _normalavatar,
+        "text": _text,
+        "like": _like or "",
+        "retweet": _retweet or "",
+        "reply": _reply or "",
+        "node": _node or "",
+        "utcdatetime": _utcdatetime,
+    }
+    if not is_profile_uptodate(tweetdj_mi.userid):
+        handle_create_update_profile.apply_async(args=(tweetdj_mi.userid,))
+    return tweet_dct
 
 def get_biggeravatar_url(userid):
     try:

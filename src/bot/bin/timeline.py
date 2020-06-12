@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_timeline_with_rts(screen_name):
-    API = get_api(username=screen_name)
+    API = get_api(username=screen_name, backend=True)
     try:
         return API.user_timeline(include_rts=True)
     except AttributeError:
@@ -18,8 +18,10 @@ def get_timeline_with_rts(screen_name):
 
 def record_timeline():
     for community in Community.objects.filter(active=True):
-        for status in get_timeline_with_rts(community.account.username):
-            add_status_tl(status, community)
+        status_lst = get_timeline_with_rts(community.account.username)
+        if status_lst:
+            for status in status_lst:
+                add_status_tl(status, community)
         
         
 def record_user_timeline(user_id, count=200, force=False):

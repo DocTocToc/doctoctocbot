@@ -289,7 +289,7 @@ def help_statusid_lst(hourdelta, community):
 
 def screen_name(statusid):
     """
-    Get Twitter screen_name from statusid.
+    Get Twitter user screen_name from statusid.
     TODO: Improve by fetching screen_name from the last status corresponding
     to the userid in order to avoid obsolete screen_name?
     Requires 3 queries: benchmark this.
@@ -298,7 +298,7 @@ def screen_name(statusid):
         try:
             cursor.execute("SELECT json -> 'user' ->> 'screen_name' from conversation_tweetdj where statusid = %s", [statusid])
         except Error as e:
-            err_msg = f'''Error while retrieving screen_name for status 
+            err_msg = f'''Error while retrieving user screen_name for status 
                       {statusid}: {str(e)}'''
             logger.error(err_msg)
             return
@@ -307,4 +307,58 @@ def screen_name(statusid):
         screen_name= row[0]
         logger.debug(screen_name)
         return screen_name
+    
+def name(statusid):
+    """
+    Get Twitter user name from statusid.
+    """
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("SELECT json -> 'user' ->> 'name' from conversation_tweetdj where statusid = %s", [statusid])
+        except Error as e:
+            err_msg = f'''Error while retrieving name of user for status 
+                      {statusid}: {str(e)}'''
+            logger.error(err_msg)
+            return
+        row = cursor.fetchone()
+    if row:
+        name= row[0]
+        logger.debug(name)
+        return name
+    
+def full_text(statusid):
+    """
+    Get Twitter full_text from statusid.
+    """
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("SELECT json -> 'full_text' from conversation_tweetdj where statusid = %s", [statusid])
+        except Error as e:
+            err_msg = f'''Error while retrieving full_text for status 
+                      {statusid}: {str(e)}'''
+            logger.error(err_msg)
+            return
+        row = cursor.fetchone()
+    if row:
+        full_text= row[0]
+        logger.debug(full_text)
+        return full_text
+    
+def created_at(statusid):
+    """
+    Get Twitter created_at (date time creation string) from statusid.
+    """
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute("SELECT json -> 'created_at' from conversation_tweetdj where statusid = %s", [statusid])
+        except Error as e:
+            err_msg = f'''Error while retrieving created_at for status 
+                      {statusid}: {str(e)}'''
+            logger.error(err_msg)
+            return
+        row = cursor.fetchone()
+    if row:
+        created_at= row[0]
+        logger.debug(created_at)
+        return created_at
     

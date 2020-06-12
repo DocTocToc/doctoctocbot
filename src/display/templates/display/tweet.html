@@ -1,4 +1,5 @@
 {% load static %}
+{% load tz %}
 {% for tweet in tweet_lst %}
   <twitter-widget class="twitter-tweet twitter-tweet-rendered"
     id="twitter-widget-0"
@@ -59,7 +60,7 @@
             <div class="Tweet-body e-entry-content"
               data-scribe="component:tweet">
               <div class="u-hiddenVisually js-inViewportScribingTarget"></div>
-              <p class="Tweet-text e-entry-title" dir="ltr" lang="fr">{{ tweet.html }}</p>
+              <p class="Tweet-text e-entry-title" dir="ltr" lang="fr">{{ tweet.text }}</p>
               <div class="TweetInfo">
                 <div class="TweetInfo-like">
                   <a class="TweetInfo-heart" title="Like"
@@ -115,16 +116,8 @@
                     href="https://twitter.com/{{ tweet.screen_name }}/status/{{ tweet.statusid }}">
                     <time class="dt-updated" datetime="1970-01-01T00:00:00+0000"
                       pubdate=""
-                      title="Time posted: {{ tweet.utcdatetime }} (UTC)">{{ tweet.localdatetime }}</time>
+                      title="Time posted: {{ tweet.utcdatetime }} (UTC)">{{ tweet.utcdatetime|localtime }}</time>
                   </a>
-                </div>
-                <div
-                  class="tweet-InformationCircle--bottomWithCTA tweet-InformationCircle"
-                  data-scribe="element:notice">
-                  <a href="https://support.twitter.com/articles/20175256"
-                    class="Icon Icon--informationCircleWhite js-inViewportScribingTarget"
-                    title="Twitter Ads info and privacy"><span
-                    class="u-hiddenVisually">Twitter Ads info and privacy</span></a>
                 </div>
               </div>
             </div>

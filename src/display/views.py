@@ -177,8 +177,6 @@ class All(TemplateView):
         logger.debug(f"id_list: {sid_lst}")
         for sid in sid_lst:
             last_tweet_lst.append(statuscontext(sid))
-        for tweet in last_tweet_lst:
-            logger.debug(f'{tweet["text"]=}')
         tweet_lst_dic['last']= last_tweet_lst
         """
         #help

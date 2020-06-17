@@ -2,10 +2,11 @@ import logging
 import tweepy
 from tweepy.streaming import StreamListener
 from bot.tweepy_api import get_api
-from conversation.models import Hashtag
+from conversation.models import Hashtag, Tweetdj
 from bot.tasks import handle_on_status
 from bot.lib.status import status_json_log
 from community.models import Community
+from bot.bin.search import retweet_recent
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +35,13 @@ def main(community=None):
         screen_name = Community.objects.get(name=community).account.username
     except:
         screen_name = None
-    api = get_api(screen_name)
+    api = get_api(screen_name, backend=True)
     l = StdOutListener()
-    stream = tweepy.Stream(auth = api.auth, listener=l)
+    try:
+        stream = tweepy.Stream(auth = api.auth, listener=l)
+    except AttributeError as e:
+        logger.error(f"{e}")
+        return
     #This line filter Twitter Streams to capture data by the keywords
     track_list = []
     if community is None:
@@ -49,6 +54,8 @@ def main(community=None):
     for hashtag in hashtags:
         track_list.append(f"#{hashtag}")
     stream.filter(track = track_list)
+    # search for tweets containing the hashtags sent while server was down
+    retweet_recent(track_list, api)
 
 if __name__ == '__main__':
     main()

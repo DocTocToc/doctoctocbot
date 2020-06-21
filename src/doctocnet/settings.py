@@ -232,6 +232,8 @@ INSTALLED_APPS = [
     'authorize',
     'constance.backends.database',
     'autotweet',
+    'reversion',
+    'markdown',
 ]
 
 if DEBUG:

@@ -3,6 +3,7 @@
 {% load static %}
 {% load landing_links %}
 {% load landing_tags %}
+{% load community_text %}
 
 {% block head_meta %}
 {% static "landing/images/magna_carta.jpg" as og_image_static %}
@@ -25,14 +26,7 @@
 <p>Cette charte est le fruit d’une réflexion collective menée avec les modérateurs du bot. Tout professionnel de santé peut participer à son évolution en rejoignant le DM collectif des modérateurs: il suffit d’en faire la demande en envoyant 1 DM à {% bot_link_text %}</p>
 <p>Vous pouvez également consulter les <a href="/rules">règles de fonctionnement du robot</a>.</p>
 
-{% community_name as community %}
-{% with community|cut:"test" as community_root %}
-  {% if community_root == "doctoctoc" %}
-    {% include "landing/guidelines/doctoctoc.html" %}
-  {% elif community_root == "pharmatoctoc" %}
-    {% include "landing/guidelines/pharmatoctoc.html" %}
-  {% endif %}
-{% endwith %}
+{% guidelines %}
 
 {% endblock content %}
 

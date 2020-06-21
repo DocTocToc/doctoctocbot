@@ -1,5 +1,16 @@
 from django.contrib import admin
-from community.models import Community, Retweet, Trust, Cooperation, CommunityCategoryRelationship
+from modeltranslation.admin import TranslationAdmin
+from reversion.admin import VersionAdmin
+
+from community.models import (
+    Community,
+    Retweet,
+    Trust,
+    Cooperation,
+    CommunityCategoryRelationship,
+    TextDescription,
+    Text,
+)
 
 
 class TrustInline(admin.TabularInline):
@@ -69,5 +80,17 @@ class RetweetAdmin(admin.ModelAdmin):
         'retweet',  
     )
 
+
+class TextDescriptionAdmin(TranslationAdmin):
+    pass
+
+
+@admin.register(Text)
+class TextAdmin(VersionAdmin):
+
+    pass
+
+
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(Retweet, RetweetAdmin)
+admin.site.register(TextDescription, TextDescriptionAdmin)

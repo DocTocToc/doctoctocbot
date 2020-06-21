@@ -52,3 +52,4 @@ django-modeltranslation
 python-dateutil
 selenium
 django-constance[database]
+django-reversion

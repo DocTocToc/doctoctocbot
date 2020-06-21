@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.sites.models import Site
 import logging
 from django.conf import settings
+import reversion
 
 logger = logging.getLogger(__name__)
 
@@ -232,3 +233,45 @@ class CommunityCategoryRelationship(models.Model):
     
     class Meta:
         unique_together = ("community", "category")
+
+
+class TextDescription(models.Model):
+    name = models.CharField(
+        max_length=254,
+        unique=True,
+    )
+    label = models.CharField(
+        max_length=254,
+    )
+    description = models.TextField(
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"{self.label}"
+
+
+@reversion.register(fields='content')
+class Text(models.Model):
+    community = models.ForeignKey(
+        'Community',
+        on_delete=models.CASCADE,
+        related_name='text',
+    )
+    type = models.ForeignKey(
+        'TextDescription',
+        on_delete=models.CASCADE,
+        related_name='text',
+    )
+    content = models.TextField(
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"Text: community = {self.community} type = {self.type}"
+
+
+    class Meta:
+        unique_together = ("community", "type")

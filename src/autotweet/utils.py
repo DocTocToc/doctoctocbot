@@ -29,7 +29,19 @@ def ok_click():
     
 def get_selenium_firefox_headers():
     headers: str = config.selenium_firefox_headers
-    return ast.literal_eval(headers)
+    try:
+        return ast.literal_eval(headers)
+    except SyntaxError as e:
+        if not headers:
+            logger.error(
+                f"'headers' constance setting string appears to be empty"
+            )
+        else:
+            logger.error(f"error while evaluating headers string: {e}")
+        return {}
+    except Exception as e:
+        logger.error(f"{e}")
+        return {}
 
 def send_post_request(auth_token=None, url=None, commit=None, referer=None):
     headers = get_selenium_firefox_headers()

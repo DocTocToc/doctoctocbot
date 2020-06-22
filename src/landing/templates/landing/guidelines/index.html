@@ -1,6 +1,8 @@
 {% extends "doctocnet/base.html" %}
 
 {% load static %}
+{% load i18n %}
+
 {% load landing_links %}
 {% load landing_tags %}
 {% load community_text %}
@@ -19,7 +21,7 @@
 
 {% block content %}
 
-<h1>{% block title %} Charte des utilisateurs {% endblock title %}</h1>
+<h1>{% block title %} {% trans "Community guidelines" %} {% endblock title %}</h1>
 
 {% guidelines %}
 

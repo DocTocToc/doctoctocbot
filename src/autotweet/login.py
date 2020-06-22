@@ -48,8 +48,13 @@ class AutoLogin:
         self._authenticity_token = None
         self._driver = getOrCreateWebdriver(js=False)
     def ok_email(self):
+        if not self._email:
+            logger.error(f"Email field for  @{self._username} is empty.")
+            return
         sleep()
-        if config.email_verification in self._driver.page_source:
+        source = self._driver.page_source
+        logger.warn(f" Page source: {source}")
+        if config.email_verification in source:
             try:
                 self._driver.find_element_by_xpath(
                     '//input[@id="challenge_response"]'
@@ -76,6 +81,9 @@ class AutoLogin:
         self._authenticity_token = auth_token
         return auth_token
     def login_mobile_twitter(self):
+        if not self._password:
+            logger.error(f"Password field for  @{self._username} is empty.")
+            return
         #driver = getOrCreateWebdriver(js=False)
         self._driver.get("https://mobile.twitter.com/login")
         ok_click()
@@ -85,6 +93,7 @@ class AutoLogin:
         login_button = self._driver.find_element_by_xpath('//input[@name="commit"]')
         username_input.send_keys(self._username)
         sleep()
+
         password_input.send_keys(self._password)
         sleep()
         login_button.click()

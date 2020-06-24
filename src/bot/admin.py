@@ -8,6 +8,7 @@ class AccountAdmin(admin.ModelAdmin):
         'username',
         'password',
         'email',
+        'phone',
         'twitter_consumer_key',
         'twitter_consumer_secret',
         'twitter_access_token',

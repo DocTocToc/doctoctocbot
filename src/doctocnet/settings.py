@@ -238,6 +238,7 @@ INSTALLED_APPS = [
     'autotweet',
     'reversion',
     'markdown',
+    'phonenumber_field',
 ]
 
 if DEBUG:
@@ -678,7 +679,7 @@ CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
 CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
 
 CONSTANCE_CONFIG = {
-    'email_verification': (
+    "email_verification": (
         "Verify your identity by entering the email address associated with "
         "your Twitter account",
         "Document source text to identify email verification page"
@@ -690,5 +691,9 @@ CONSTANCE_CONFIG = {
     "selenium_firefox_headers": (
         "",
         "Firefox headers sent by Selenium"
+    ),
+    "phone_verification": (
+        "RetypePhoneNumber",
+        "Document source text to identify phone verification page"
     ),
 }

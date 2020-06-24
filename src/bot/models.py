@@ -1,5 +1,5 @@
 from django.db import models
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Account(models.Model):
     userid = models.BigIntegerField(unique=True)
@@ -29,6 +29,9 @@ class Account(models.Model):
     )
     email = models.CharField(
         max_length=128,
+        blank=True,
+    )
+    phone = PhoneNumberField(
         blank=True,
     )
     protected = models.BooleanField(

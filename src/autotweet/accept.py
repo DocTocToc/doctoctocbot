@@ -14,6 +14,14 @@ def accept_follower_requests(uids, auth_token):
         accept_follower_request(uid, auth_token)
         sleep()
         
+def decline_follower_requests(uids, auth_token):
+    if not uids:
+        return
+    sleep()
+    for uid in uids:
+        decline_follower_request(uid, auth_token)
+        sleep()
+
 def accept_follower_request(uid, auth_token):
     if not uid:
         return
@@ -21,6 +29,17 @@ def accept_follower_request(uid, auth_token):
         auth_token=auth_token,
         url=f'https://mobile.twitter.com/follower_requests/{uid}/accept',
         commit="Accept",
+        referer=config.follower_requests_url,
+    )
+    logger.info(f" response of {uid} POST: {response}")
+
+def decline_follower_request(uid, auth_token):
+    if not uid:
+        return
+    response = send_post_request(
+        auth_token=auth_token,
+        url=f'https://mobile.twitter.com/follower_requests/{uid}/deny',
+        commit="Decline",
         referer=config.follower_requests_url,
     )
     logger.info(f" response of {uid} POST: {response}")
@@ -34,4 +53,13 @@ def accept_follower(uid, account_username):
     logger.info(f" response of {uid} POST: {response}")
     sleep()
     autologin.logout()
-    
+
+def decline_follower(uid, account_username):
+    autologin = AutoLogin(account_username)
+    sleep()
+    autologin.login_mobile_twitter()
+    sleep()
+    response = decline_follower_request(uid, autologin._authenticity_token)
+    logger.info(f" response of {uid} POST: {response}")
+    sleep()
+    autologin.logout()

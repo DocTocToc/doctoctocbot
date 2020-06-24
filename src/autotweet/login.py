@@ -33,6 +33,7 @@ def rnd_str_gen(size=6, chars= string.ascii_letters + string.digits):
 
 
 class AutoLogin:
+
     def __init__(self, username):
         if not username:
             return
@@ -45,16 +46,18 @@ class AutoLogin:
             return
         self._password = account.password
         self._email = account.email
+        self._phone = account.phone.as_e164
         self._authenticity_token = None
         self._driver = getOrCreateWebdriver(js=False)
+
     def ok_email(self):
-        if not self._email:
-            logger.error(f"Email field for  @{self._username} is empty.")
-            return
         sleep()
         source = self._driver.page_source
         logger.warn(f" Page source: {source}")
         if config.email_verification in source:
+            if not self._email:
+                logger.error(f"Email field for  @{self._username} is empty.")
+                return
             try:
                 self._driver.find_element_by_xpath(
                     '//input[@id="challenge_response"]'
@@ -67,6 +70,28 @@ class AutoLogin:
                 logger.error('Email verification failed')
                 return
             sleep()
+
+    def ok_phone(self):
+        sleep()
+        source = self._driver.page_source
+        logger.warn(f" Page source: {source}")
+        if config.phone_verification in source:
+            if not self._phone:
+                logger.error(f"Phone field for  @{self._username} is empty.")
+                return
+            try:
+                self._driver.find_element_by_xpath(
+                    '//input[@id="challenge_response"]'
+                    ).send_keys(self._phone)
+                sleep()
+                self._driver.find_element_by_xpath(
+                    '//input[@id="email_challenge_submit"]'
+                    ).click()
+            except NoSuchElementException:
+                logger.error('Phone verification failed')
+                return
+            sleep()
+
     def get_authenticity_token(self):
         if self._authenticity_token:
             return self._authenticity_token
@@ -80,6 +105,7 @@ class AutoLogin:
         auth_token = auth_elem.get_attribute('value')
         self._authenticity_token = auth_token
         return auth_token
+
     def login_mobile_twitter(self):
         if not self._password:
             logger.error(f"Password field for  @{self._username} is empty.")
@@ -98,6 +124,7 @@ class AutoLogin:
         sleep()
         login_button.click()
         self.ok_email()
+        self.ok_phone()
         self.get_authenticity_token()
 
     def login_twitter(self):
@@ -146,7 +173,6 @@ def tweet(txt):
     sleep()
     #driver.find_element_by_class_name('SendTweetsButton').click()
     driver.find_element_by_xpath("//div[@data-testid='tweetButton']").click()
-    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Authorize this Twitter userid.')

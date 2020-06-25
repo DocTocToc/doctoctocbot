@@ -46,11 +46,15 @@ class AutoLogin:
             return
         self._password = account.password
         self._email = account.email
-        self._phone = account.phone.as_e164
+        try:
+            self._phone = account.phone.as_e164
+        except AttributeError:
+            self._phone = ""
         self._authenticity_token = None
         self._driver = getOrCreateWebdriver(js=False)
 
     def ok_email(self):
+        logger.debug("...")
         sleep()
         source = self._driver.page_source
         logger.warn(f" Page source: {source}")
@@ -72,6 +76,7 @@ class AutoLogin:
             sleep()
 
     def ok_phone(self):
+        logger.debug("...")
         sleep()
         source = self._driver.page_source
         logger.warn(f" Page source: {source}")
@@ -104,6 +109,7 @@ class AutoLogin:
             return            
         auth_token = auth_elem.get_attribute('value')
         self._authenticity_token = auth_token
+        logger.debug(f"{auth_token=}")
         return auth_token
 
     def login_mobile_twitter(self):
@@ -119,7 +125,6 @@ class AutoLogin:
         login_button = self._driver.find_element_by_xpath('//input[@name="commit"]')
         username_input.send_keys(self._username)
         sleep()
-
         password_input.send_keys(self._password)
         sleep()
         login_button.click()

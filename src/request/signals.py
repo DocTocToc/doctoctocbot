@@ -10,6 +10,10 @@ from moderation.models import Queue as ModerationQueue
 from moderation.twitter.user import TwitterUser
 from community.helpers import activate_language
 from request.twitter_request import message_requestor
+from request.tasks import (
+    handle_accept_follower_twitter,
+    handle_decline_follower_twitter,
+)
 
 logger = logging.getLogger(__name__) 
 
@@ -50,7 +54,7 @@ def dm_admin(sender, instance, created, **kwargs):
                 screen_name=screen_name
             )
             logger.debug(dm)
-    
+
 @receiver(post_save, sender=Queue)
 def message_requestor_slot(sender, instance, created, **kwargs):
     if (
@@ -59,7 +63,7 @@ def message_requestor_slot(sender, instance, created, **kwargs):
         and (instance.id == instance.identity)
     ):
         message_requestor(instance)
-    
+
 @receiver(post_save, sender=Queue)
 def create_moderation_queue(sender, instance, created, **kwargs):
     if (
@@ -76,7 +80,7 @@ def create_moderation_queue(sender, instance, created, **kwargs):
             )
         except DatabaseError:
             return
-        
+
 @receiver(post_save, sender=Queue)
 def follower_protected_requestor(sender, instance, created, **kwargs):
     if (
@@ -88,6 +92,24 @@ def follower_protected_requestor(sender, instance, created, **kwargs):
         if twitter_user.is_protected():
             twitter_user.friend(instance.community)
 
-
-
+@receiver(post_save, sender=Queue)
+def accept_decline_autotweet(sender, instance, created, **kwargs):
+    is_twitter = instance.socialmedia.name == 'twitter'
+    current_version = Queue.objects.current_version(instance)
+    if (
+        instance.state == Queue.ACCEPT
+        and is_twitter
+        and current_version
+    ):
+        handle_accept_follower_twitter.apply_async(
+            args=[instance.uid, instance.community.id]
+        )
+    elif (
+        instance.state == Queue.DECLINE
+        and is_twitter
+        and current_version
+    ):
+        handle_decline_follower_twitter.apply_async(
+            args=[instance.uid, instance.community.id]
+        )
                 

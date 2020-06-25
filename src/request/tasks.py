@@ -1,3 +1,4 @@
+import logging
 from celery import shared_task
 from community.models import Community
 from request.twitter_request import get_incoming_friendship
@@ -6,6 +7,10 @@ from moderation.models import addsocialuser_from_userid, SocialMedia
 from moderation.tasks import handle_create_update_profile
 from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
+from autotweet.accept import accept_follower, decline_follower
+from moderation.social import update_social_ids
+
+logger = logging.getLogger(__name__)
 
 @shared_task
 def handle_incoming_friendship():
@@ -18,7 +23,7 @@ def handle_incoming_friendship():
         if not ifs:
             continue
         for uid in ifs:
-            accept_pending_q_exists = Queue.objects.filter(
+            accept_pending_q_exists = Queue.objects.current.filter(
                 uid=uid,
                 community=community,
                 state__in=[Queue.ACCEPT, Queue.PENDING],
@@ -26,7 +31,7 @@ def handle_incoming_friendship():
             if accept_pending_q_exists:
                 continue
 
-            decline_q_exists = Queue.objects.filter(
+            decline_q_exists = Queue.objects.current.filter(
                 uid=uid,
                 community=community,
                 state=Queue.DECLINE
@@ -34,7 +39,7 @@ def handle_incoming_friendship():
             if decline_q_exists:
                 continue
             
-            cancel_q_exists = Queue.objects.filter(
+            cancel_q_exists = Queue.objects.current.filter(
                 uid=uid,
                 community=community,
                 state=Queue.CANCEL,
@@ -66,3 +71,43 @@ def handle_incoming_friendship():
                 )
             except DatabaseError:
                 continue
+
+@shared_task
+def handle_accept_follower_twitter(userid: int, community__id: int):
+    try:
+        community = Community.objects.get(id=community__id)
+    except Community.DoesNotExist:
+        return
+    try:
+        username = community.account.username
+    except AttributeError as e:
+        logger.error(f"Could not get username from community's account: {e}")
+        return
+    if userid in update_social_ids(
+        user=userid,
+        cached=False,
+        bot_screen_name=username,
+        relationship="followers"
+    ):
+        return
+    accept_follower(
+        userid,
+        username,
+    )
+
+@shared_task
+def handle_decline_follower_twitter(userid: int, community__id: int):
+    try:
+        community = Community.objects.get(id=community__id)
+    except Community.DoesNotExist as e:
+        logger.error(f"Community does not exist: {e}")
+        return
+    try:
+        username = community.account.username
+    except AttributeError as e:
+        logger.error(f"Could not get username from community's account: {e}")
+        return
+    decline_follower(
+        userid,
+        username,
+    )

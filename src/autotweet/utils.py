@@ -19,6 +19,7 @@ def sleep():
     time.sleep(randinterval())
     
 def ok_click():
+    logger.debug("...")
     driver = getOrCreateWebdriver(js=False)
     sleep()
     try:

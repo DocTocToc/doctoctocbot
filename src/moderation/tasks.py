@@ -512,7 +512,7 @@ def handle_pending_moderations():
             community=community,
             socialuser=mod.moderator,
             senior=True,
-        ).exist()
+        ).exists()
         # give pending FOLLOWER moderation to senior moderator
         if queue.type == Queue.FOLLOWER:
             if moderator_is_senior:

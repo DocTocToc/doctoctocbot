@@ -47,7 +47,7 @@ from community.helpers import activate_language
 from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
-from autotweet.accept import accept_follower
+from autotweet.accept import accept_follower, decline_follower
 
 logger = get_task_logger(__name__)
 
@@ -599,6 +599,11 @@ def handle_accept_follower_twitter(ucr_pk: int):
         return
     if ucr.category in ucr.community.follower.all():
         accept_follower(
+            ucr.social_user.user_id,
+            ucr.community.account.username,
+        )
+    else:
+        decline_follower(
             ucr.social_user.user_id,
             ucr.community.account.username,
         )

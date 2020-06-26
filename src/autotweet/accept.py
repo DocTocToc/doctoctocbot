@@ -31,7 +31,13 @@ def accept_follower_request(uid, auth_token):
         commit="Accept",
         referer=config.follower_requests_url,
     )
-    logger.info(f" response of {uid} POST: {response}")
+    logger.debug(
+        f" response of {uid} POST:\n"
+        f"code: {response.status_code}\n"
+        f"json: {response.text}\n"
+        f"headers: {response.headers}\n"
+    )
+    return response
 
 def decline_follower_request(uid, auth_token):
     if not uid:
@@ -42,7 +48,13 @@ def decline_follower_request(uid, auth_token):
         commit="Decline",
         referer=config.follower_requests_url,
     )
-    logger.info(f" response of {uid} POST: {response}")
+    logger.debug(
+        f" response of {uid} POST:\n"
+        f"code: {response.status_code}\n"
+        f"json: {response.text}\n"
+        f"headers: {response.headers}\n"
+    )
+    return response
         
 def accept_follower(uid, account_username):
     autologin = AutoLogin(account_username)
@@ -50,9 +62,20 @@ def accept_follower(uid, account_username):
     autologin.login_mobile_twitter()
     sleep()
     response = accept_follower_request(uid, autologin._authenticity_token)
-    logger.info(f" response of {uid} POST: {response}")
+    logger.debug(
+        f"response of {uid} POST:\n"
+        f"{response.code}\n"
+        f"{response.text}\n"
+    )
     sleep()
     autologin.logout()
+    if (
+        response.code == 200
+        and "Follower request has been approved" in response.text
+    ):
+        return True
+    else:
+        return False
 
 def decline_follower(uid, account_username):
     autologin = AutoLogin(account_username)
@@ -60,6 +83,6 @@ def decline_follower(uid, account_username):
     autologin.login_mobile_twitter()
     sleep()
     response = decline_follower_request(uid, autologin._authenticity_token)
-    logger.info(f" response of {uid} POST: {response}")
+    logger.debug(f" response of {uid} POST:\n {response}")
     sleep()
     autologin.logout()

@@ -57,7 +57,7 @@ class AutoLogin:
         logger.debug("...")
         sleep()
         source = self._driver.page_source
-        logger.warn(f" Page source: {source}")
+        logger.warn(f" Page source: {source[:500]}")
         if config.email_verification in source:
             if not self._email:
                 logger.error(f"Email field for  @{self._username} is empty.")
@@ -79,7 +79,7 @@ class AutoLogin:
         logger.debug("...")
         sleep()
         source = self._driver.page_source
-        logger.warn(f" Page source: {source}")
+        logger.warn(f" Page source: {source[:500]}")
         if config.phone_verification in source:
             if not self._phone:
                 logger.error(f"Phone field for  @{self._username} is empty.")

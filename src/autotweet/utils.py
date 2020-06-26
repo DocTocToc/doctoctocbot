@@ -60,7 +60,11 @@ def send_post_request(auth_token=None, url=None, commit=None, referer=None):
         },
         headers=headers
     )
-    logger.debug(response)
+    logger.debug(
+        f"code: {response.status_code}\n"
+        f"json: {response.text}\n"
+        f"headers: {response.headers}\n"
+    )
     return response
 
 def rnd_str_gen(size=6, chars= string.ascii_letters + string.digits):

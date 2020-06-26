@@ -1,9 +1,13 @@
+import logging
 from django.urls import reverse
 from django.template import Template, Context
 
 from bot.tweepy_api import get_api as tweepy_api
 from bot.python_twitter_api import get_api as twitter_api
 from community.helpers import site_url
+from tweepy.error import TweepError
+
+logger = logging.getLogger(__name__)
 
 def get_incoming_friendship(community):
     try:
@@ -42,7 +46,10 @@ def message_requestor(queue):
         bot_username, 
     )
     api = tweepy_api(username=helper_username, backend=True)
-    api.update_status(helper_message)
+    try:
+        api.update_status(helper_message)
+    except TweepError as e:
+        logger.error(f"Error while trying to send the helper status: {e}")
 
 def get_helper_message(community, requestor_screen_name, bot_username):
     db_message = community.helper_message

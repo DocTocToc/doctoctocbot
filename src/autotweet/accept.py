@@ -64,13 +64,13 @@ def accept_follower(uid, account_username):
     response = accept_follower_request(uid, autologin._authenticity_token)
     logger.debug(
         f"response of {uid} POST:\n"
-        f"{response.code}\n"
+        f"{response.status_code}\n"
         f"{response.text}\n"
     )
     sleep()
     autologin.logout()
     if (
-        response.code == 200
+        response.status_code == 200
         and "Follower request has been approved" in response.text
     ):
         return True

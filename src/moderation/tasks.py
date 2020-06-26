@@ -28,6 +28,7 @@ from moderation.models import (
     SocialMedia,
 )
 from request.models import Queue as Request_Queue
+from request.utils import accept_delete_queue
 from bot.models import Account
 
 from common.utils import trim_grouper
@@ -152,7 +153,11 @@ def handle_sendmoderationdm(self, mod_instance_id):
         return
     dm_txt = (
         _(
-            "Please help us verify this user: @{screen_name} "
+            "Please help us verify this user: @{screen_name} \n"
+            "According to your knowledge or your review of the account, "
+            "in which category would you put this user: @{screen_name} ?\n"
+            "Please choose the most appropriate category by pushing one of the"
+            " buttons below. "
             "{status_str}"
         ).format(screen_name=sn, status_str=status_str)
     )
@@ -494,6 +499,15 @@ def handle_pending_moderations():
                 continue
         except KeyError:
             continue
+        # check if category already exists:
+        user_id = mod.queue.user_id
+        su = SocialUser.objects.get(user_id=user_id)
+        if (
+            UserCategoryRelationship.objects
+            .filter(social_user=su, community=community)
+            .exclude(moderator=su).exists()
+        ):
+            continue
         # TODO: add default pending moderation period in settings
         # return if not set
         period : int = community.pending_moderation_period
@@ -574,7 +588,7 @@ def handle_accept_follower(ucr_pk: int):
     if not protected:
         return
     # Is there a pending request queue for this socialuser and this community?
-    for pending_request in Request_Queue.objects.filter(
+    for pending_request in Request_Queue.objects.current.filter(
         socialuser = ucr.social_user,
         community = ucr.community,
         state = Request_Queue.PENDING,
@@ -598,10 +612,18 @@ def handle_accept_follower_twitter(ucr_pk: int):
     except UserCategoryRelationship.DoesNotExist:
         return
     if ucr.category in ucr.community.follower.all():
-        accept_follower(
-            ucr.social_user.user_id,
-            ucr.community.account.username,
+        uid = ucr.social_user.user_id
+        username = ucr.community.account.username
+        success = accept_follower(
+            uid,
+            username,
         )
+        if success:
+            accept_delete_queue(
+                uid=uid,
+                community=ucr.community
+            )
+            
     else:
         decline_follower(
             ucr.social_user.user_id,

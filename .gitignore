@@ -52,3 +52,6 @@ src/.coverage
 
 # geckodriver logs (selenium)
 src/geckodriver.log
+
+# eggs cache
+.eggs

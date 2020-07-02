@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-24 18:43+0200\n"
+"POT-Creation-Date: 2020-07-02 23:45+0300\n"
 "PO-Revision-Date: 2020-02-18 18:06+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: templates/404.html:7
+#: src/templates/404.html:7
 msgid ""
 "\n"
 "<h1>4🧐4 Page Not Found</h1>\n"
@@ -28,107 +28,107 @@ msgstr ""
 "<h1>4🧐4 Page non trouvée</h1>\n"
 "<p>Cette page n'existe pas encore!</p>\n"
 
-#: templates/billing_documents/invoice_pdf.html:6
-#: templates/billing_documents/invoice_pdf.html:117
+#: src/templates/billing_documents/invoice_pdf.html:6
+#: src/templates/billing_documents/invoice_pdf.html:117
 msgid "Canceled"
 msgstr "Annulée"
 
-#: templates/billing_documents/invoice_pdf.html:6
+#: src/templates/billing_documents/invoice_pdf.html:6
 msgid "storno of"
 msgstr "extourne de"
 
-#: templates/billing_documents/invoice_pdf.html:124
+#: src/templates/billing_documents/invoice_pdf.html:124
 msgid "Number"
 msgstr "Numéro"
 
-#: templates/billing_documents/invoice_pdf.html:128
+#: src/templates/billing_documents/invoice_pdf.html:128
 msgid "Issue date"
 msgstr "Date d'émission"
 
-#: templates/billing_documents/invoice_pdf.html:133
+#: src/templates/billing_documents/invoice_pdf.html:133
 msgid "Due date"
 msgstr "Échéance"
 
-#: templates/billing_documents/invoice_pdf.html:157
+#: src/templates/billing_documents/invoice_pdf.html:157
 msgid "Issuer"
 msgstr "Prestataire"
 
-#: templates/billing_documents/invoice_pdf.html:161
-#: templates/billing_documents/invoice_pdf.html:184
+#: src/templates/billing_documents/invoice_pdf.html:161
+#: src/templates/billing_documents/invoice_pdf.html:184
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/billing_documents/invoice_pdf.html:180
+#: src/templates/billing_documents/invoice_pdf.html:180
 msgid "Customer"
 msgstr "Client"
 
-#: templates/billing_documents/invoice_pdf.html:182
+#: src/templates/billing_documents/invoice_pdf.html:182
 msgid "Tax ID"
 msgstr "ID taxe"
 
-#: templates/billing_documents/invoice_pdf.html:196
+#: src/templates/billing_documents/invoice_pdf.html:196
 msgid "Email"
 msgstr "Courriel"
 
-#: templates/billing_documents/invoice_pdf.html:199
+#: src/templates/billing_documents/invoice_pdf.html:199
 msgid "Name"
 msgstr "Nom"
 
-#: templates/billing_documents/invoice_pdf.html:202
+#: src/templates/billing_documents/invoice_pdf.html:202
 msgid "Customer Reference"
 msgstr "Référence client"
 
-#: templates/billing_documents/invoice_pdf.html:214
+#: src/templates/billing_documents/invoice_pdf.html:214
 msgid "Service"
 msgstr "Service"
 
-#: templates/billing_documents/invoice_pdf.html:215
+#: src/templates/billing_documents/invoice_pdf.html:215
 msgid "Start date"
 msgstr "Début"
 
-#: templates/billing_documents/invoice_pdf.html:216
+#: src/templates/billing_documents/invoice_pdf.html:216
 msgid "End date"
 msgstr "Fin"
 
-#: templates/billing_documents/invoice_pdf.html:217
+#: src/templates/billing_documents/invoice_pdf.html:217
 msgid "Unit"
 msgstr "Unité"
 
-#: templates/billing_documents/invoice_pdf.html:218
+#: src/templates/billing_documents/invoice_pdf.html:218
 msgid "Qty"
 msgstr "Qté"
 
-#: templates/billing_documents/invoice_pdf.html:219
+#: src/templates/billing_documents/invoice_pdf.html:219
 msgid "Unit price"
 msgstr "Prix unitaire"
 
-#: templates/billing_documents/invoice_pdf.html:220
+#: src/templates/billing_documents/invoice_pdf.html:220
 msgid "Total Amount"
 msgstr "Montant total"
 
-#: templates/billing_documents/invoice_pdf.html:240
+#: src/templates/billing_documents/invoice_pdf.html:240
 msgid "Total"
 msgstr "Total"
 
-#: templates/billing_documents/invoice_pdf.html:250
+#: src/templates/billing_documents/invoice_pdf.html:250
 msgid "Date of payment"
 msgstr "Date du règlement"
 
-#: templates/billing_documents/invoice_pdf.html:254
+#: src/templates/billing_documents/invoice_pdf.html:254
 msgid "Payment method"
 msgstr "Méthode de paiement"
 
-#: templates/billing_documents/invoice_pdf.html:255
+#: src/templates/billing_documents/invoice_pdf.html:255
 msgid "Debit card"
 msgstr "Carte bancaire"
 
-#: templates/registration/login.html:12
+#: src/templates/registration/login.html:12
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Votre nom d'utilisateur et votre mot de passe ne correspondent à aucun "
 "compte connu. Merci de réessayer."
 
-#: templates/registration/login.html:17
+#: src/templates/registration/login.html:17
 msgid ""
 "Your account doesn't have access to this page. To proceed, please login with "
 "an account that has access."
@@ -136,27 +136,27 @@ msgstr ""
 "Votre compte n'a pas accès à cette page. Pour continuer, vous devez être "
 "connecté avec un compte qui a un accès."
 
-#: templates/registration/login.html:19
+#: src/templates/registration/login.html:19
 msgid "Please login"
 msgstr "Connectez-vous s'il vous plaît"
 
-#: templates/registration/login.html:25
+#: src/templates/registration/login.html:25
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
-#: templates/registration/login.html:45
+#: src/templates/registration/login.html:45
 msgid "Reset your password"
 msgstr "Réinitialiser votre mot de passe"
 
-#: templates/registration/password_reset_complete.html:4
+#: src/templates/registration/password_reset_complete.html:4
 msgid "The password has been changed!"
 msgstr "Votre mot de passe a été mis à jour!"
 
-#: templates/registration/password_reset_complete.html:5
+#: src/templates/registration/password_reset_complete.html:5
 msgid "Log in again?"
 msgstr "Se connecter à nouveau?"
 
-#: templates/registration/password_reset_done.html:4
+#: src/templates/registration/password_reset_done.html:4
 msgid ""
 "We've emailed you instructions for setting your password. If they haven't "
 "arrived in a few minutes, check your spam folder."
@@ -165,31 +165,31 @@ msgstr ""
 "votre mot de passe. Si le mail n'arrive pas dans quelques minutes, vérifiez "
 "votre dossier spam."
 
-#: templates/registration/password_reset_email.html:2
+#: src/templates/registration/password_reset_email.html:2
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: templates/registration/password_reset_email.html:4
+#: src/templates/registration/password_reset_email.html:4
 msgid "Someone asked for password reset. Follow the link below:"
 msgstr ""
 "Quelqu'un a demandé la réinitialisation du mot de passe. Merci de suivre le "
 "lien ci-dessous:"
 
-#: templates/registration/password_reset_form.html:4
+#: src/templates/registration/password_reset_form.html:4
 msgid "Please enter the email you used to register your account."
 msgstr ""
 "Merci d'indiquer l'adresse mail que vous avez utilisée pour créer votre "
 "compte."
 
-#: templates/versions/datetimefilter.html:2
+#: src/templates/versions/datetimefilter.html:2
 #, python-format
 msgid " By %(filter_title)s "
 msgstr " Par %(filter_title)s "
 
-#: templates/versions/datetimefilter.html:29
+#: src/templates/versions/datetimefilter.html:29
 msgid "Search"
 msgstr "Recherche"
 
-#: templates/versions/datetimefilter.html:30
+#: src/templates/versions/datetimefilter.html:30
 msgid "Clear"
 msgstr "Effacer"

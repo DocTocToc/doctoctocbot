@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-22 05:11+0200\n"
+"POT-Creation-Date: 2020-07-02 23:45+0300\n"
 "PO-Revision-Date: 2020-06-22 06:12+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,36 +18,36 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: templates/landing/categories/index.html:9
-#: templates/landing/categories/index.html:25
+#: src/landing/templates/landing/categories/index.html:9
+#: src/landing/templates/landing/categories/index.html:25
 msgid "Categories"
 msgstr "Catégories"
 
-#: templates/landing/categories/index.html:10
+#: src/landing/templates/landing/categories/index.html:10
 msgid "Description of categories."
 msgstr "Description des catégories."
 
-#: templates/landing/funding.html:5
+#: src/landing/templates/landing/funding.html:5
 msgid "Hello, I am"
 msgstr "Salut, je suis"
 
-#: templates/landing/funding.html:7
+#: src/landing/templates/landing/funding.html:7
 msgid "I retweet questions tagged with"
 msgstr "Je retweete les questions"
 
-#: templates/landing/funding.html:9
+#: src/landing/templates/landing/funding.html:9
 msgid "from healthcare professionals"
 msgstr "des professionnels de santé"
 
-#: templates/landing/funding.html:10
+#: src/landing/templates/landing/funding.html:10
 msgid "who are following me."
 msgstr "qui me suivent."
 
-#: templates/landing/funding.html:11
+#: src/landing/templates/landing/funding.html:11
 msgid "I'm online since"
 msgstr "Je suis en ligne depuis"
 
-#: templates/landing/funding.html:17
+#: src/landing/templates/landing/funding.html:17
 msgid ""
 "I run without ads or sponsors. I need your support to stay online and offer "
 "new services."
@@ -55,59 +55,62 @@ msgstr ""
 "Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien pour "
 "continuer à exister et à progresser."
 
-#: templates/landing/funding.html:18
+#: src/landing/templates/landing/funding.html:18
 msgid "I give my support!"
 msgstr "Je soutiens!"
 
-#: templates/landing/guidelines/index.html:24
+#: src/landing/templates/landing/guidelines/index.html:24
 msgid "Community guidelines"
 msgstr "Charte de la communauté"
 
-#: templates/landing/index.html:6
+#: src/landing/templates/landing/index.html:6
 msgid "Home"
 msgstr "Accueil"
 
-#: templates/landing/network_navbar.html:5
+#: src/landing/templates/landing/network_navbar.html:5
 msgid "Network"
 msgstr "Réseau"
 
-#: templates/landing/user.html:33 templates/landing/usernav.html:15 views.py:73
+#: src/landing/templates/landing/user.html:33
+#: src/landing/templates/landing/usernav.html:15 src/landing/views.py:73
 msgid "Profile"
 msgstr "Profil"
 
-#: templates/landing/user.html:36
+#: src/landing/templates/landing/user.html:36
 msgid "Contact info"
 msgstr "Info de contact"
 
-#: templates/landing/user.html:39
+#: src/landing/templates/landing/user.html:39
 msgid "Social authentication"
 msgstr "Authentification sociale (Twitter)"
 
-#: templates/landing/user.html:42
+#: src/landing/templates/landing/user.html:42
 msgid "Receipt"
 msgstr "Facture"
 
-#: templates/landing/user.html:45 templates/landing/usernav.html:27
+#: src/landing/templates/landing/user.html:45
+#: src/landing/templates/landing/usernav.html:27
 msgid "Options"
 msgstr "Options"
 
-#: templates/landing/user.html:49 templates/landing/usernav.html:32
+#: src/landing/templates/landing/user.html:49
+#: src/landing/templates/landing/usernav.html:32
 msgid "Moderation"
 msgstr "Modération"
 
-#: templates/landing/user/account.html:29
+#: src/landing/templates/landing/user/account.html:29
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: templates/landing/user/billing.html:41
+#: src/landing/templates/landing/user/billing.html:41
 msgid "Edit"
 msgstr "Éditer"
 
-#: templates/landing/user/moderation.html:29
+#: src/landing/templates/landing/user/moderation.html:29
 msgid "Collective moderation"
 msgstr "Modération collective"
 
-#: templates/landing/user/moderation.html:31
+#: src/landing/templates/landing/user/moderation.html:31
 msgid ""
 "You can suspend or resume your participation to collective moderation "
 "through the on/off switch."
@@ -115,7 +118,7 @@ msgstr ""
 "Vous pouvez suspendre ou reprendre votre participation à la modération "
 "collective via l'interrupteur on/off."
 
-#: templates/landing/user/moderation.html:32
+#: src/landing/templates/landing/user/moderation.html:32
 msgid ""
 "Set if you want to appear on the public list of moderators with the public/"
 "private switch."
@@ -123,56 +126,56 @@ msgstr ""
 "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
 "modérateurs via l'interrupteur public / private."
 
-#: templates/landing/user/profile.html:30
+#: src/landing/templates/landing/user/profile.html:30
 msgid "User Profile"
 msgstr "Profil utilisateur"
 
-#: templates/landing/user/profile.html:33
+#: src/landing/templates/landing/user/profile.html:33
 msgid "Twitter screen name:"
 msgstr "Nom d'utilisateur Twitter:"
 
-#: templates/landing/user/profile.html:35
+#: src/landing/templates/landing/user/profile.html:35
 msgid "Category"
 msgstr "Catégorie"
 
-#: templates/landing/user/profile.html:44
+#: src/landing/templates/landing/user/profile.html:44
 msgid "Recent badges"
 msgstr "Badges récents"
 
-#: templates/landing/user/profile.html:47
+#: src/landing/templates/landing/user/profile.html:47
 msgid "Question(s)"
 msgstr "Question(s)"
 
-#: templates/landing/user/profile.html:57
+#: src/landing/templates/landing/user/profile.html:57
 msgid "Recent Activity"
 msgstr "Activité récente"
 
-#: templates/landing/user/social.html:30
+#: src/landing/templates/landing/user/social.html:30
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 
-#: templates/landing/usernav.html:18
+#: src/landing/templates/landing/usernav.html:18
 msgid "Social"
 msgstr "Social"
 
-#: templates/landing/usernav.html:22
+#: src/landing/templates/landing/usernav.html:22
 msgid "Billing"
 msgstr "Facturation"
 
-#: templates/landing/usernav.html:37
+#: src/landing/templates/landing/usernav.html:37
 msgid "Account"
 msgstr "Compte"
 
-#: templates/landing/usernav.html:42
+#: src/landing/templates/landing/usernav.html:42
 msgid "Invitation"
 msgstr "Invitation"
 
-#: templatetags/opengraph_tags.py:41
+#: src/landing/templatetags/opengraph_tags.py:41
 #, python-format
 msgid "Welcome to %(twitter_site)s companion website."
 msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 
-#: views.py:39
+#: src/landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
 

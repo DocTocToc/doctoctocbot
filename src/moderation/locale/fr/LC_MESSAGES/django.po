@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-24 18:43+0200\n"
-"PO-Revision-Date: 2020-04-20 06:38+0300\n"
+"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,35 +18,35 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:297
+#: src/moderation/admin.py:297
 msgid "state"
 msgstr "état"
 
-#: moderation/admin.py:307
+#: src/moderation/admin.py:307
 msgid "Pending"
 msgstr "En attente"
 
-#: moderation/admin.py:322
+#: src/moderation/admin.py:322
 msgid "community"
 msgstr "communauté"
 
-#: moderation/forms.py:18
+#: src/moderation/forms.py:18
 msgid "Submit"
 msgstr "Envoyer"
 
-#: moderation/forms.py:27
+#: src/moderation/forms.py:27
 msgid "None of those categories"
 msgstr "Aucune de ces catégories"
 
-#: moderation/forms.py:29
+#: src/moderation/forms.py:29
 msgid "Please choose a category"
 msgstr "Merci de choisir une catégorie"
 
-#: moderation/forms.py:34
+#: src/moderation/forms.py:34
 msgid "I hereby certify that I do belong to this category."
 msgstr "Je certifie que j'appartiens bien à cette catégorie."
 
-#: moderation/forms.py:39
+#: src/moderation/forms.py:39
 msgid ""
 "This community is mostly comprised of people belonging to the listed "
 "categories. If you don't belong to any of them but you still want to join, "
@@ -57,51 +57,67 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:801
+#: src/moderation/models.py:467
+msgid "Moderator"
+msgstr "Modérateur"
+
+#: src/moderation/models.py:468
+msgid "Senior"
+msgstr "Senior"
+
+#: src/moderation/models.py:469
+msgid "Developer"
+msgstr "Développeur"
+
+#: src/moderation/models.py:470
+msgid "Follower"
+msgstr "Abonné"
+
+#: src/moderation/models.py:809
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:802
+#: src/moderation/models.py:810
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:803
+#: src/moderation/models.py:811
 msgid "Ban"
 msgstr "Exclure"
 
-#: moderation/social.py:176
+#: src/moderation/social.py:180
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:193
+#: src/moderation/social.py:197
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:193
+#: src/moderation/social.py:197
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:270
+#: src/moderation/social.py:274
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:273
+#: src/moderation/social.py:277
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:277
+#: src/moderation/social.py:281
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:356
+#: src/moderation/social.py:368
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:135
+#: src/moderation/tasks.py:139
 #, python-brace-format
 msgid ""
 "\n"
@@ -110,19 +126,34 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:152
+#: src/moderation/tasks.py:156
 #, python-brace-format
-msgid "Please help us verify this user: @{screen_name} {status_str}"
-msgstr "Merci de nous aider à vérifier ce compte: @{screen_name} {status_str}"
+msgid ""
+"Please help us verify this user: @{screen_name} \n"
+"According to your knowledge or your review of the account, in which category "
+"would you put this user: @{screen_name} ?\n"
+"Please choose the most appropriate category by pushing one of the buttons "
+"below. {status_str}"
+msgstr ""
+"Merci de nous aider à vérifier cet utilisateur: @{screen_name} \n"
+"D'après ce que vous savez, ou d'après ce que vous pouvez lire sur son fil "
+"Twitter, quelle catégorie convient le mieux à cet utilisateur: "
+"@{screen_name} ?\n"
+"Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
+"boutons ci-dessous. {status_str}"
 
-#: moderation/tasks.py:163
+#: src/moderation/tasks.py:171
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/views.py:58
+#: src/moderation/views.py:58
 msgid "Moderators"
 msgstr "Modérateurs"
+
+#~ msgid "Please help us verify this user: @{screen_name} {status_str}"
+#~ msgstr ""
+#~ "Merci de nous aider à vérifier ce compte: @{screen_name} {status_str}"
 
 #~ msgid ""
 #~ "Maximum number of category instances  that can be included in a "

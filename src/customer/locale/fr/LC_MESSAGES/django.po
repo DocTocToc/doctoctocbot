@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-24 18:43+0200\n"
+"POT-Creation-Date: 2020-07-02 23:45+0300\n"
 "PO-Revision-Date: 2019-12-18 16:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,70 +18,70 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: customer/forms.py:28 customer/models.py:64 customer/models.py:65
+#: src/customer/forms.py:28 src/customer/models.py:64 src/customer/models.py:65
 msgid "Country"
 msgstr "Pays"
 
-#: customer/forms.py:47 customer/models.py:30 customer/models.py:31
+#: src/customer/forms.py:47 src/customer/models.py:30 src/customer/models.py:31
 msgid "First name"
 msgstr "Prénom"
 
-#: customer/forms.py:52 customer/models.py:35 customer/models.py:36
+#: src/customer/forms.py:52 src/customer/models.py:35 src/customer/models.py:36
 msgid "Last name"
 msgstr "Nom"
 
-#: customer/forms.py:57 customer/models.py:41 customer/models.py:42
+#: src/customer/forms.py:57 src/customer/models.py:41 src/customer/models.py:42
 msgid "Company"
 msgstr "Entreprise"
 
-#: customer/forms.py:62 customer/forms.py:67
+#: src/customer/forms.py:62 src/customer/forms.py:67
 msgid "Address"
 msgstr "Adresse"
 
-#: customer/forms.py:73
+#: src/customer/forms.py:73
 msgid "(select country)"
 msgstr "(Sélectionner le pays)"
 
-#: customer/forms.py:76
+#: src/customer/forms.py:76
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: customer/forms.py:82 customer/models.py:47 customer/models.py:48
+#: src/customer/forms.py:82 src/customer/models.py:47 src/customer/models.py:48
 msgid "Email"
 msgstr "Courriel"
 
-#: customer/forms.py:87 customer/models.py:69 customer/models.py:70
+#: src/customer/forms.py:87 src/customer/models.py:69 src/customer/models.py:70
 msgid "City"
 msgstr "Ville"
 
-#: customer/forms.py:92 customer/models.py:75 customer/models.py:76
+#: src/customer/forms.py:92 src/customer/models.py:75 src/customer/models.py:76
 msgid "State"
 msgstr "Région"
 
-#: customer/forms.py:98 customer/models.py:80 customer/models.py:81
+#: src/customer/forms.py:98 src/customer/models.py:80 src/customer/models.py:81
 msgid "ZIP code"
 msgstr "Code postal"
 
-#: customer/models.py:18
+#: src/customer/models.py:18
 msgid "Id of corresponding Silver Customer record."
 msgstr "Id de l'enregistrement Silver Customer correspondant."
 
-#: customer/models.py:25
+#: src/customer/models.py:25
 msgid "Django user"
 msgstr "Utilisateur Django"
 
-#: customer/models.py:26
+#: src/customer/models.py:26
 msgid "User"
 msgstr "Utilisateur"
 
-#: customer/models.py:52 customer/models.py:53
+#: src/customer/models.py:52 src/customer/models.py:53
 msgid "Address Line 1"
 msgstr "Adresse Ligne 1"
 
-#: customer/models.py:58 customer/models.py:59
+#: src/customer/models.py:58 src/customer/models.py:59
 msgid "Address Line 2 (optional)"
 msgstr "Adresse Ligne 2 (optionnelle)"
 
-#: customer/templates/customer/update_customer.html:6
+#: src/customer/templates/customer/update_customer.html:6
 msgid "Add your billing data"
 msgstr "Ajoutez vos informations de facturation"

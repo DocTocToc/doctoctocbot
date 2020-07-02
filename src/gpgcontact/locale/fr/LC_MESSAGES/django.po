@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-24 18:43+0200\n"
+"POT-Creation-Date: 2020-07-02 23:45+0300\n"
 "PO-Revision-Date: 2019-04-04 23:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,37 +18,37 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: gpgcontact/forms.py:55
+#: src/gpgcontact/forms.py:55
 msgid "NO SPAM ALLOWED ON THIS SERVER SORRY!"
 msgstr ""
 
-#: gpgcontact/forms.py:66 gpgcontact/forms.py:76
+#: src/gpgcontact/forms.py:66 src/gpgcontact/forms.py:76
 #, python-format
 msgid "The message must be encrypted Header %(begin)s is missing"
 msgstr ""
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:17
-#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
+#: src/gpgcontact/templates/gpg_contact_form/contact_form.html:17
+#: src/gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
 msgid "Contact"
 msgstr "Contact"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:32
+#: src/gpgcontact/templates/gpg_contact_form/contact_form.html:32
 msgid "Your name"
 msgstr "Votre nom"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:40
+#: src/gpgcontact/templates/gpg_contact_form/contact_form.html:40
 msgid "Your email address"
 msgstr "Votre adresse e-mail"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:48
+#: src/gpgcontact/templates/gpg_contact_form/contact_form.html:48
 msgid "Your message"
 msgstr "Votre message"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:58
+#: src/gpgcontact/templates/gpg_contact_form/contact_form.html:58
 msgid "Encrypt & Send"
 msgstr "Chiffrer & Envoyer"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:6
+#: src/gpgcontact/templates/gpg_contact_form/contact_form_sent.html:6
 msgid "Thank you. Your message is on its way. We'll get back to you ASAP."
 msgstr ""
 "Merci. Votre message a été chiffré puis délivré dans notre boîte de "

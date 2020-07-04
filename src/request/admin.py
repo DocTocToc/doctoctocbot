@@ -33,7 +33,7 @@ class QueueAdmin(VersionedAdmin):
         'socialuser__profile__json__screen_name',
     )
     list_display_show_identity = False
-    list_display_show_end_date = False
+    list_display_show_end_date = True
     list_display_show_start_date = True
 
     def state_tag(self, obj):
@@ -69,5 +69,9 @@ class QueueAdmin(VersionedAdmin):
         return mark_safe('<img src="%s"/>' % url)
     
     mini_image_tag.short_description = 'Image'
+
+    def get_ordering(self, request):
+        return ['-version_start_date']
+
 
 admin.site.register(Queue, QueueAdmin)

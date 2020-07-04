@@ -104,6 +104,20 @@ class Community(models.Model):
         blank=True,
         help_text='Categories authorized to follow the account if protected'
     )
+    follow_request_backoff = models.PositiveIntegerField(
+        default = 1,
+        help_text = (
+            "Period in hour during which a follow request will be "
+            "automatically declined if the previous one was declined."
+        )
+    )
+    request_queue_backoff = models.PositiveIntegerField(
+        default = 30,
+        help_text = (
+            "For a given user, wait this amount of time after one of its "
+            " queues was modified before a new queue can be created."
+        )
+    )
 
     def __str__(self):
         return self.name

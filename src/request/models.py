@@ -48,6 +48,7 @@ class Queue(Versionable):
     
     class Meta:
         unique_together: ('uid', 'socialmedia', 'community')
+        ordering = ['version_start_date']
 
 """
 class Process(Versionable):

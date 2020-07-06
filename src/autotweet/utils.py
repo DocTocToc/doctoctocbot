@@ -13,7 +13,7 @@ from autotweet.driver import getOrCreateWebdriver
 logger = logging.getLogger(__name__)
 
 def randinterval():
-    return random.randint(10, 30)/10
+    return random.randint(15, 20)/10
 
 def sleep():
     time.sleep(randinterval())
@@ -89,4 +89,3 @@ def tweet(txt):
         driver.find_element_by_xpath('//input[@value="Tweet"]').click()
     except NoSuchElementException:
         return
-    

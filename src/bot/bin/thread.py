@@ -1,4 +1,4 @@
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, IntegrityError
 import logging
 
 from bot.tasks import handle_question
@@ -105,8 +105,10 @@ def get_root_status(tweetdj: Tweetdj, bot_username=None):
 def add_root_to_tree(statusid):
     try:
         Treedj.objects.create(statusid=statusid)
+    except IntegrityError as e:
+        logger.error(f"Integrity error: {e}")
     except DatabaseError as e:
-        logger.error(str(e))
+        logger.error(f" Database error: {e}")
         
 def getorcreate(statusid: int, bot_username=None) -> Tweetdj:  
     # Is status in database? If not, add it.
@@ -148,8 +150,10 @@ def add_leaf(node_id, parent_id):
             statusid=node_id,
             parent=parent
         )
-    except DatabaseError:
-        return
+    except IntegrityError as e:
+        logger.error(f"Integrity error: {e}")
+    except DatabaseError as e:
+        logger.error(f" Database error: {e}")
 
 def question_api(start_status_id: int) -> bool:
     try:
@@ -189,7 +193,14 @@ def question_api(start_status_id: int) -> bool:
     if tree_has_q_m and hrh: 
         community_retweet(root_tweetdj.statusid, userid, hrh, skip_rules=True)
         return True
-    treedj, _created = Treedj.objects.get_or_create(statusid=root_tweetdj.statusid)
+    try:
+        treedj, _created = Treedj.objects.get_or_create(
+            statusid=root_tweetdj.statusid
+        )
+    except IntegrityError as e:
+        logger.error(f"Integrity error: {e}")
+    except DatabaseError as e:
+        logger.error(f" Database error: {e}")
     descendants_id_lst = (
         treedj.get_descendants(include_self=True)
         .values_list("statusid", flat=True)

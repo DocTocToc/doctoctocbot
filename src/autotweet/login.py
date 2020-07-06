@@ -18,7 +18,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common import action_chains, keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
-
 from bot.models import Account
 
 from autotweet.driver import getOrCreateWebdriver
@@ -116,13 +115,45 @@ class AutoLogin:
         if not self._password:
             logger.error(f"Password field for  @{self._username} is empty.")
             return
-        #driver = getOrCreateWebdriver(js=False)
         self._driver.get("https://mobile.twitter.com/login")
         ok_click()
         sleep()
-        username_input = self._driver.find_element_by_xpath('//input[@id="session[username_or_email]"]')
-        password_input = self._driver.find_element_by_xpath('//input[@id="session[password]"]')
-        login_button = self._driver.find_element_by_xpath('//input[@name="commit"]')
+        try:
+            username_input = self._driver.find_element_by_xpath(
+                '//input[@id="session[username_or_email]"]'
+            )
+        except NoSuchElementException as e:
+            source = self._driver.page_source
+            logger.error(
+                f"Could not find this element: \n"
+                f"//input[@id='session[username_or_email]']\n"
+                f"Error: {e}\n"
+                f"Page source: {source}"
+            )
+        try:
+            password_input = self._driver.find_element_by_xpath(
+                '//input[@id="session[password]"]'
+            )
+        except NoSuchElementException as e:
+            source = self._driver.page_source
+            logger.error(
+                f"Could not find this element: \n"
+                f"//input[@id='session[username_or_email]']\n"
+                f"Error: {e}\n"
+                f"Page source: {source}"
+            )
+        try:
+            login_button = self._driver.find_element_by_xpath(
+                '//input[@name="commit"]'
+            )
+        except NoSuchElementException as e:
+            source = self._driver.page_source
+            logger.error(
+                f"Could not find this element: \n"
+                f"//input[@id='session[username_or_email]']\n"
+                f"Error: {e}\n"
+                f"Page source: {source}"
+            )
         username_input.send_keys(self._username)
         sleep()
         password_input.send_keys(self._password)

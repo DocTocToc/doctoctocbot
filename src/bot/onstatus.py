@@ -49,9 +49,7 @@ def triage_status(status_id):
         triage(status_id)
         return
     hrh = has_retweet_hashtag(sjson)
-    if (not isreplacement(sjson)
-        and not isquote(sjson)
-        and hrh):
+    if hrh:
         logger.info(
             "Sending status %s: %s to function community_retweet()",
             sjson["id"],

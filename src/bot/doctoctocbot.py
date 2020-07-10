@@ -375,15 +375,21 @@ def community_retweet(
         #    addtoqueue(userid, statusid, community.name)
 
 def rt(statusid, dct, community):
-    logger.debug("Inside rt()")
+    logger.info(
+        f"Retweeting status: {statusid}\n"
+        f"for community: {community.name}\n"
+        f"with dct: {dct}\n"
+    )
     username = dct["_bot_screen_name"]
+    api = get_api(username=username, backend=True)
     try:
-        retweet = get_api(username=username, backend=True).retweet(statusid)
-        logger.debug(f"I just retweeted this: {retweet}")
-        logger.debug(retweet)
-    except TweepError:
-        return
-    except AttributeError:
+        retweet = api.retweet(statusid)
+        logger.info(
+            f"I just retweeted status {statusid}\n"
+            f"Response: {retweet}"
+        )
+    except TweepError as e:
+        logger.error(f"Error during retweet of status {statusid}:\n{e}")
         return
     set_retweeted_by(statusid, community)
     create_update_retweeted(statusid, community, retweet._json)

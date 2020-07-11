@@ -63,6 +63,7 @@ def accept_follower(uid, account_username):
     sleep()
     response = accept_follower_request(uid, autologin._authenticity_token)
     logger.debug(
+        "accept_follower()\n"
         f"response of {uid} POST:\n"
         f"{response.status_code}\n"
         f"{response.text}\n"
@@ -83,6 +84,18 @@ def decline_follower(uid, account_username):
     autologin.login_mobile_twitter()
     sleep()
     response = decline_follower_request(uid, autologin._authenticity_token)
-    logger.debug(f" response of {uid} POST:\n {response}")
+    logger.debug(
+        "decline_follower()\n"
+        f"response of {uid} POST:\n"
+        f"{response.status_code}\n"
+        f"{response.text}\n"
+    )
     sleep()
     autologin.logout()
+    if (
+        response.status_code == 200
+        and "Follower request has been declined" in response.text
+    ):
+        return True
+    else:
+        return False

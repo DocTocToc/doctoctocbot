@@ -130,6 +130,7 @@ class AutoLogin:
                 f"Error: {e}\n"
                 f"Page source: {source}"
             )
+            return
         try:
             password_input = self._driver.find_element_by_xpath(
                 '//input[@id="session[password]"]'
@@ -142,6 +143,7 @@ class AutoLogin:
                 f"Error: {e}\n"
                 f"Page source: {source}"
             )
+            return
         try:
             login_button = self._driver.find_element_by_xpath(
                 '//input[@name="commit"]'
@@ -154,6 +156,7 @@ class AutoLogin:
                 f"Error: {e}\n"
                 f"Page source: {source}"
             )
+            return
         username_input.send_keys(self._username)
         sleep()
         password_input.send_keys(self._password)

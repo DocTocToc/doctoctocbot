@@ -2,6 +2,18 @@
 
 {% block content %}
 <h2>Merci d'accepter les cookies sur votre navigateur.</h2>
+
+<p>⚠️ La page de paiement ne fonctionne pas avec le navigateur intégré à l'app Twitter.</p>
+
+<div class="alert alert-warning" role="alert">
+Cette page fonctionne seulement avec un vrai navigateur (mobile ou PC) comme
+Firefox, Chrome, Safari, etc.
+Elle ne fonctionnera pas avec le navigateur intégré à l'app Twitter
+sur smartphone iOS ou Android.
+Merci d'ouvrir votre navigateur favori puis de copier / coller ou taper cette
+url dans la barre d'adresse: https://doctoctoc.net/financement/
+</div>
+ 
 <p>
 Merci d'accepter les cookies en provenance de doctoctoc.net sur votre navigateur
 web.
@@ -10,6 +22,8 @@ participatif doivent déposer des cookies temporaires sur votre navigateur.
 Ces cookies ne contiennent aucune donnée sensible.
 Vous pourrez les effacer immédiatement après la validation de votre contribution.
 </p>
+
 <p>Veuillez autoriser les cookies puis <a href="{% url "crowdfunding:start" %}">essayer à nouveau.</p>
+
 <p><a href="{% url "gpgcontact:contact-form" %}">Nous contacter.</a></p>
 {% endblock %}

@@ -26,6 +26,12 @@ urlpatterns = [
     path('charge/', charge, name='stripe-charge'),
     #path('pay/', process_payment, name="pay"),
     path('pay/', stripe_checkout, name="stripe-checkout"),
+    path(
+        'pay/stripe-cookies-failure/',
+        TemplateView.as_view(
+            template_name="crowdfunding/stripe_cookies_failure.html"
+        )
+    ),
     #path('paypal/', include('paypal.standard.ipn.urls'), name="paypal-ipn"),
     #path('payment-done/', payment_done, name='payment_done'),
     #path('payment-cancelled/', payment_canceled, name='payment_cancelled'),

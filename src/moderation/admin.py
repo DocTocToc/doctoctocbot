@@ -386,8 +386,29 @@ class ModerationAdmin(VersionedAdmin):
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
-    
+    search_fields = (
+        'queue__user_id',
+    )
     ordering = ['-version_start_date',]
+
+    def get_search_results(self, request, queryset, search_term):
+        # search_term is what you input in admin site
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        user_ids = list(
+            Profile.objects.filter(
+                json__screen_name__icontains=search_term
+            ).values_list("json__id", flat=True)
+        )
+        try:
+            user_id = int(search_term)
+            user_ids.append(user_id)
+        except ValueError:
+            pass
+        queryset |= self.model.objects.filter(
+            queue__user_id__in=user_ids
+        )
+        return queryset, use_distinct
     
     def queue_type(self, obj):
         type = obj.queue.type or ""

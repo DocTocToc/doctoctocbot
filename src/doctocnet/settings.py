@@ -696,4 +696,12 @@ CONSTANCE_CONFIG = {
         "RetypePhoneNumber",
         "Document source text to identify phone verification page"
     ),
+    "normalize_soft_time_limit": (
+        3600,
+        "normalize Celery task soft time limit in seconds"
+    ),
+    "normalize_time_limit": (
+        3600,
+        "normalize Celery task time limit in seconds"
+    ),
 }

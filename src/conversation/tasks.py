@@ -3,6 +3,8 @@ import tweepy
 from datetime import timedelta
 from django.utils import timezone
 from celery import shared_task
+from constance import config
+
 from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
 from bot.tweepy_api import get_api
@@ -17,7 +19,10 @@ def handle_normalize(statusid):
     normalize(statusid)
     
 
-@shared_task
+@shared_task(
+    soft_time_limit=config.normalize_soft_time_limit,
+    time_limit=config.normalize_time_limit
+)
 def handle_allnormalize():
     from .utils import allnormalize
     allnormalize()

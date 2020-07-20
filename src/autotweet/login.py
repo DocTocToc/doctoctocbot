@@ -116,7 +116,8 @@ class AutoLogin:
             logger.error(f"Password field for  @{self._username} is empty.")
             return
         self._driver.get("https://mobile.twitter.com/login")
-        ok_click()
+        if "JavaScript is disabled" in self._driver.page_source:
+            ok_click(self._driver)
         sleep()
         try:
             username_input = self._driver.find_element_by_xpath(

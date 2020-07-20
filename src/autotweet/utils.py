@@ -18,12 +18,13 @@ def randinterval():
 def sleep():
     time.sleep(randinterval())
     
-def ok_click():
-    logger.debug("...")
-    driver = getOrCreateWebdriver(js=False)
+def ok_click(driver=None):
+    if not driver:
+        driver = getOrCreateWebdriver(js=False)
     sleep()
     try:
-        driver.find_element_by_xpath('//button[@type="submit"]').click()
+        button = driver.find_element_by_xpath('//button[@type="submit"]')
+        button.click()
     except NoSuchElementException:
         return
     sleep()

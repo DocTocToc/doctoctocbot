@@ -169,12 +169,20 @@ def handle_accept_follower_twitter(userid: int, community__id: int):
     except AttributeError as e:
         logger.error(f"Could not get username from community's account: {e}")
         return
-    if userid in update_social_ids(
+    followers = update_social_ids(
         user=userid,
         cached=False,
         bot_screen_name=username,
         relationship="followers"
-    ):
+    )
+    if not followers:
+        followers = update_social_ids(
+            user=userid,
+            cached=True,
+            bot_screen_name=username,
+            relationship="followers"
+        )
+    if followers and userid in followers:
         return
     accept_follower(
         userid,

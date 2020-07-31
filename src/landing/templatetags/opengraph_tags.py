@@ -36,11 +36,23 @@ def opengraph(context):
     activate_language(community)
     twitter_site = f"@{community.account.username}"
     twitter_creator = "@MedecineLibre"
-    og_url = f"https://{community.site.domain}"
-    og_title = community.site.name
-    og_description = _('Welcome to %(twitter_site)s companion website.' % {'twitter_site': twitter_site})
+    og_title = (
+        context.get("og_title")
+        or community.site.name
+    )
+    og_description = (
+        context.get("og_description")
+        or _('Welcome to %(twitter_site)s companion website.' % {'twitter_site': twitter_site})
+    )
     request = context['request']
-    og_image = request.build_absolute_uri(staticfiles_storage.url('doctocnet/bot_logo_400x400.jpg'))
+    og_url = (
+        context.get("og_url")
+        or request.build_absolute_uri()
+    )
+    og_image = (
+        context.get("og_image")
+        or request.build_absolute_uri(staticfiles_storage.url('doctocnet/bot_logo_400x400.jpg'))
+    )
     return {
         'twitter_site': twitter_site,
         'twitter_creator': twitter_creator,

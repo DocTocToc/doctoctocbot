@@ -1,7 +1,15 @@
 {% load static %}
+{% load opengraph_tags %}
+{% load landing_links %}
+
 {% static "doctocnet/piggy-bank-bot-2.jpg" as og_image_static %}
+{% bot_screen_name_arobase as bot %} 
+{% with "🤖 Financement "|add:bot as og_title %} 
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image_url %}
-{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="https://doctoctoc.net/financement/" og_title="🤖 Financement @DocTocTocBot" og_description="Pour qu'il continue à exister et à progresser, financez votre bot d'entraide indépendant et sans publicité!" og_image=og_image_url %}
-{% include "doctocnet/twitter_opengraph.html" %}
+{% with og_description="Pour qu'il continue à exister et à progresser, financez votre bot d'entraide indépendant et sans publicité!" og_image=og_image_url %}
+
+{% opengraph %}
+
+{% endwith %}
 {% endwith %}
 {% endwith %}

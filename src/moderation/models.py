@@ -175,7 +175,7 @@ class SocialUser(models.Model):
     
     def __str__(self):
         try:
-            return f'{self.pk} | {self.profile.json.get("screen_name", None)} | {self.user_id}'
+            return f'{self.pk} | {self.screen_name_tag()} | {self.user_id}'
         except Profile.DoesNotExist:
             return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
 
@@ -399,7 +399,7 @@ def get_default_socialmedia():
      
 class Profile(models.Model):
     socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
-    json = JSONField()
+    json = JSONField(default=dict)
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
     normalavatar = models.ImageField(upload_to='twitter/profile/images/normal',

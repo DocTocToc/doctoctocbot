@@ -38,6 +38,7 @@ from bot.tweepy_api import get_api
 from moderation.moderate import process_unknown_user
 from bot.tweet import hashtag_list
 from tagging.tasks import handle_create_tag_queue, keyword_tag
+from bot.models import Account
 
 logger = logging.getLogger(__name__)
 
@@ -216,17 +217,38 @@ def isreplacement( status ):
     return bool(replacement)
 
 def is_follower(userid, bot_screen_name):
+    logger.debug("hello is_follower()!")
     try:
-        _is_follower = userid in update_social_ids(
-            bot_screen_name,
-            cached=True,
-            bot_screen_name=bot_screen_name,
-            relationship='followers',
-        )
-        logger.debug(f"_is_follower: {_is_follower}")
-        return _is_follower
-    except TypeError:
-        return False
+        account = Account.objects.get(username=bot_screen_name)
+        logger.debug(f"{account}")
+    except Account.DoesNotExist:
+        return
+    community = account.community
+    logger.debug(f"{community}")
+    if not community:
+        return
+    follower_common_accounts = [account]
+    logger.debug(f"{follower_common_accounts}")
+    follower_common_accounts.extend(list(community.follower_common_account.all()))
+    logger.debug(f"{follower_common_accounts}")
+    _is_follower = False
+    for follower_common_account in follower_common_accounts:
+        bot_screen_name = follower_common_account.username
+        bot_userid = follower_common_account.userid
+        try:
+            _is_follower = userid in update_social_ids(
+                bot_userid,
+                cached=True,
+                bot_screen_name=bot_screen_name,
+                relationship='followers',
+            )
+            logger.debug(f"_is_follower: {_is_follower}")
+            # break early if True
+            if _is_follower:
+                return _is_follower
+        except TypeError:
+            continue
+    return _is_follower
 
 def retweet(status_id) -> bool:
     api = tweepy.API(getAuth())

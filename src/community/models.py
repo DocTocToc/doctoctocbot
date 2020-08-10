@@ -12,7 +12,8 @@ class Community(models.Model):
     active = models.BooleanField(default=False)
     account = models.OneToOneField(
         'bot.Account',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='community',
     )
     hashtag = models.ManyToManyField('conversation.Hashtag')
     membership = models.ManyToManyField(
@@ -117,6 +118,15 @@ class Community(models.Model):
             "For a given user, wait this amount of time after one of its "
             " queues was modified before a new queue can be created."
         )
+    )
+    follower_common_account = models.ManyToManyField(
+        'bot.Account',
+        related_name='follower_common_account_community',
+        help_text = (
+            "These Accounts are part of a common follower community for "
+            "retweeting purpose. If a user follows one of those accounts, she "
+            "will be retweeted by the current Account."    
+        )   
     )
 
     def __str__(self):

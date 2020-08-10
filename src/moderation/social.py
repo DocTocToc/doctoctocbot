@@ -74,21 +74,24 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     if followers:
         try:
             si = Follower.objects.filter(user=su).last()
+            if si:
+                logger.debug(f"Followers id_list: {si.id_list}")
         except Follower.DoesNotExist:
             si = None
-            logger.debug(f"Follower instance does not exist for {su}")
+            logger.debug(f"Follower instance does not exist for user {su.user_id}")
     else:
         try:
             si = Friend.objects.filter(user=su).last()
         except Friend.DoesNotExist:
-            logger.debug(f"Friend instance does not exist for {su}")
+            logger.debug(f"Friend instance does not exist for {su.user_id}")
             si = None
 
-    try:
-        bot_cat = Category.objects.get(name='bot')
-    except Category.DoesNotExist:
-        return 
-
+    if settings.UPDATE_SOCIAL_IDS_FORCE_CACHE:
+        if si:
+            return si.id_list
+        else:
+            return []
+    bot_cat, _ = Category.objects.get_or_create(name='bot')
     ok = False
     try:
         ok = si.created > datetime_limit and not (bot_cat in user.category.all())

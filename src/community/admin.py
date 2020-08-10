@@ -68,6 +68,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'viral_moderation_message',
         'follow_request_backoff',
         'request_queue_backoff',
+        'follower_common_account',
     )
     readonly_fields = (
         'created',

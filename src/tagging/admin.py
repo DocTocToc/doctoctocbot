@@ -40,10 +40,10 @@ def mini_image_tag(obj):
         if profile(obj) is not None:
             p = profile(obj)
             url = p.miniavatar.url
-        else:
-            url = static("moderation/twitter_unknown_images/egg24x24.png")
+            return mark_safe('<img src="%s"/>' % url)
+
+    return static("moderation/twitter_unknown_images/egg24x24.png")
     
-    return mark_safe('<img src="%s"/>' % url)
 
 def profile(obj):
     su = get_socialuser(obj)

@@ -13,10 +13,12 @@ def rnd_str_gen(size=15, chars= string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 def get_test_api():
-    return get_api(TEST_ACCOUNT)
+    return get_api(TEST_ACCOUNT, backend=True)
 
 def main(hashtag):
     api = get_test_api()
+    if not api:
+        return
     text = "[#{hashtag}] test ? [{rnd_str}]".format(hashtag=hashtag, rnd_str=rnd_str_gen())
     api.update_status(text)
     

@@ -10,7 +10,6 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, connection
-from django.db.models import Q
 from django.db.utils import DatabaseError
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe

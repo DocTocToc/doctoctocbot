@@ -1,14 +1,14 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from . import views
 from . import api_views
 
 router = routers.DefaultRouter()
-router.register(r'hashtags', views.HashtagViewSet)
-router.register(r'tweets', api_views.TweetdjViewSet)
+router.register(r'categories', api_views.CategoryViewSet)
+router.register(r'tags', api_views.TagKeywordViewSet)
 
-app_name = 'conversation'
+
+app_name = 'tagging'
 
 urlpatterns = [
     #path('', views.show_conversations, name='conversations'),

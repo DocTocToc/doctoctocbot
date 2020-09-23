@@ -12,6 +12,8 @@ from taggit.managers import TaggableManager
 from conversation.models import GenericBigIntTaggedItem
 from django.contrib.postgres.fields import ArrayField
 
+from taggit.models import Tag
+
 
 class Queue(Versionable):
     uid = models.BigIntegerField()
@@ -51,6 +53,9 @@ def max_value():
     except DatabaseError:
         return 0
 
+
+
+
 class Category(models.Model):
     tag = models.CharField(
         max_length=36,
@@ -76,14 +81,31 @@ class Category(models.Model):
         default=False,
         null=True
     )
-    
+    taggit_tag = models.ForeignKey(
+        Tag,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='tagging_category'
+    )
+    is_category = models.BooleanField(
+        default=True,
+        null=True
+    )
+
     class Meta:
         verbose_name_plural = "categories"
         ordering = ["order", "tag"]
 
 
 class TagKeyword(models.Model):
-    tag = TaggableManager(through=GenericBigIntTaggedItem)
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='tagging_tagkeyword'
+    )
     keyword = ArrayField(
         models.CharField(
             max_length=255,
@@ -96,7 +118,4 @@ class TagKeyword(models.Model):
     )
 
     def __str__(self):
-        tags = []
-        for tag in self.tag.all():
-            tags.append(str(tag))
-        return ', '.join(tags)
+        return self.tag.name

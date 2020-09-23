@@ -287,10 +287,12 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = (
         'tag',
         'hashtag',
+        'is_category',
         'summary',
         'description',
         'community',
-        'order',   
+        'order',
+        'taggit_tag',
     )
     list_filter = (
         'community',

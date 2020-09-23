@@ -147,7 +147,6 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quotedstatus',
         'retweetedstatus',
         'parentid',
-        'retweeted_by',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -159,6 +158,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'tags',
         RetweetedByListFilter,
     )
+    filter_horizontal = ('retweeted_by',)
     
     def screen_name(self, obj):
         return screen_name_link(self,obj)

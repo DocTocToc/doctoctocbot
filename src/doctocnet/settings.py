@@ -239,6 +239,7 @@ INSTALLED_APPS = [
     'reversion',
     'markdown',
     'phonenumber_field',
+    'taggit_serializer',
 ]
 
 if DEBUG:

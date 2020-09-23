@@ -54,3 +54,4 @@ selenium
 django-constance[database]
 django-reversion
 django-phonenumber-field[phonenumbers]
+django-taggit-serializer

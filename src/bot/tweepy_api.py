@@ -79,7 +79,7 @@ def get_api(username=None, backend=False):
     try:
         api.verify_credentials()
     except tweepy.TweepError as e:
-        logger.error("Error creating API with Tweepy: {e}")
+        logger.error(f"Error creating API with Tweepy: {e}")
         return
     return api
 

@@ -326,13 +326,11 @@ def keyword_tag(statusid, community):
         qs = TagKeyword.objects.filter(community__in=[community]).distinct()
         for tk in qs:
             if hashtag:
-                for tag_name in tk.tag.names():
-                    if tag_name in hashtag:
-                        tweetdj.tags.add(tag_name)
+                if tk.tag.name in hashtag:
+                    tweetdj.tags.add(tk.tag.name)
             for keyword in tk.keyword:
                 if keyword in tweetdj.json["full_text"].lower():
-                    for tag_name in tk.tag.names():
-                        tweetdj.tags.add(tag_name)
+                    tweetdj.tags.add(tk.tag.name)
     try:
         tweetdj = Tweetdj.objects.get(statusid=statusid)
     except Tweetdj.DoesNotExist:

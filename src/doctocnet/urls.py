@@ -54,6 +54,7 @@ urlpatterns += [
     path('oauth/', include('social_django.urls', namespace='social')),
 
     path('conversation/', include('conversation.urls')),
+    path('tagging/', include('tagging.urls')),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
     path('crowd/', TemplateView.as_view(template_name='base.html')),
     path('charts/', include('charts.urls', namespace='charts')),

@@ -275,22 +275,29 @@ def statuscontext(sid):
 def get_biggeravatar_url(userid):
     try:
         return SocialUser.objects.get(user_id=userid).profile.biggeravatar.url
-    except SocialUser.DoesNotExist:
-        pass
-    except ObjectDoesNotExist:
-        pass
-    else:
-        return static("moderation/twitter_unknown_images/egg73x73.png")
+    except:
+        return (
+        settings.MEDIA_ROOT +
+        'twitter/profile/images/bigger/default_profile_bigger.png'
+        )
 
 def get_normalavatar_url(userid):
     try:
         return SocialUser.objects.get(user_id=userid).profile.normalavatar.url
-    except SocialUser.DoesNotExist:
-        pass
-    except ObjectDoesNotExist:
-        pass
-    else:
-        return static("moderation/twitter_unknown_images/egg48x48.png")       
+    except:
+        return (
+        settings.MEDIA_ROOT +
+        'twitter/profile/images/normal/default_profile_normal.png'
+    )
+        
+def get_miniavatar_url(userid):
+    try:
+        return SocialUser.objects.get(user_id=userid).profile.miniavatar.url
+    except:
+        return (
+        settings.MEDIA_ROOT +
+        'twitter/profile/images/mini/default_profile_mini.png'
+    )
 
 def get_descendant_count(sid):
     try:

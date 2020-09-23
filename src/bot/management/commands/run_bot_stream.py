@@ -13,6 +13,6 @@ class Command(BaseCommand):
         try:
             community = options['community']
         except KeyError:
-            community = None
+            return
         main(community)
         self.stdout.write(self.style.SUCCESS(f'Done launching {community} stream.'))

@@ -30,6 +30,8 @@ class StdOutListener(StreamListener):
             return False
 
 def main(community=None):
+    if not community:
+        return
     #This handles Twitter authentication and the connection to Twitter Streaming API
     try:
         screen_name = Community.objects.get(name=community).account.username
@@ -44,13 +46,12 @@ def main(community=None):
         return
     #This line filter Twitter Streams to capture data by the keywords
     track_list = []
-    if community is None:
-        hashtags = Hashtag.objects.values_list("hashtag", flat=True)
-    else:
-        try:
-            hashtags = Community.objects.get(name=community).hashtag.all()
-        except Community.DoesNotExist:
-            hashtags = Hashtag.objects.values_list("hashtag", flat=True)
+    try:
+        hashtags = Community.objects.get(name=community).hashtag.all()
+    except Community.DoesNotExist:
+        return
+    if not hashtags:
+        return
     for hashtag in hashtags:
         track_list.append(f"#{hashtag}")
     stream.filter(track = track_list)

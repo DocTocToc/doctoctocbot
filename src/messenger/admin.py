@@ -6,13 +6,22 @@ from messenger.models import (
     Receipt,
     CampaignMessage
 )
+from moderation.models import SocialUser
+
+
+class SocialUser(admin.ModelAdmin):
+    search_fields = ['profile__json__screen_name']
+
 
 class CampaignMessageInline(admin.TabularInline):
     model = CampaignMessage
     extra = 1
 
+
 class CampaignAdmin(admin.ModelAdmin):
     inlines = (CampaignMessageInline,)
+    autocomplete_fields = ['account', 'recipients']
+
 
 class EventIdListFilter(admin.SimpleListFilter):
 

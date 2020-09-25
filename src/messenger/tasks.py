@@ -1,5 +1,6 @@
 from django.utils.formats import localize
 from django.conf import settings
+from constance import config
 from celery import shared_task
 from moderation.models import SocialUser, Follower, addsocialuser_from_userid
 from messenger.models import Campaign, Message, Receipt
@@ -27,8 +28,8 @@ def _format(message, socialuser, campaign):
     }
     return message.content.format(**d)
 
-
-@shared_task
+# time limit set in constance database table
+@shared_task(time_limit=config.messenger__tasks__handle_campaign__time_limit)
 def handle_campaign(name, userid_lst=None):
     celery_logger.debug("Task launched for campaign %s", name)
     logger.debug("Task launched for campaign %s", name)

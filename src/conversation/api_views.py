@@ -83,9 +83,19 @@ class TweetdjViewSet(viewsets.ModelViewSet):
             logger.debug(f"{req_inter_tag=}")
             if (req_inter_tag):
                 qs = self.filter_by_tags(qs, req_inter_tag)
+
+            # filter out tweets authored by protected accounts if requesting
+            # user is not a member of the community
+            user = self.request.user
+            
         return qs
 
-    
+
+    def filter_by_protected(self, queryset):
+        """ Filter out statuses authored by protected accounts
+        """
+        return queryset.filter(json__user__protected=False)
+
     def filter_by_site(self, queryset):
         try:
             userid = get_current_site(self.request).community.first().account.userid

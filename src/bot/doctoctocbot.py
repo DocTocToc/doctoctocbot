@@ -404,17 +404,23 @@ def rt(statusid, dct, community):
     )
     username = dct["_bot_screen_name"]
     api = get_api(username=username, backend=True)
-    try:
-        retweet = api.retweet(statusid)
+    if community.active:
+        try:
+            retweet = api.retweet(statusid)
+            logger.info(
+                f"I just retweeted status {statusid}\n"
+                f"Response: {retweet}"
+            )
+        except TweepError as e:
+            logger.error(f"Error during retweet of status {statusid}:\n{e}")
+            return
+        set_retweeted_by(statusid, community)
+        create_update_retweeted(statusid, community, retweet._json)
+    else:
         logger.info(
-            f"I just retweeted status {statusid}\n"
-            f"Response: {retweet}"
+            f"I did not retweet status {statusid} because {community} "
+            f" is not active\n"
         )
-    except TweepError as e:
-        logger.error(f"Error during retweet of status {statusid}:\n{e}")
-        return
-    set_retweeted_by(statusid, community)
-    create_update_retweeted(statusid, community, retweet._json)
     tag(statusid, community)
     keyword_tag(statusid, community)
 

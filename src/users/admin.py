@@ -44,7 +44,9 @@ class CustomUserAdmin(UserAdmin):
     search_fields = (
         'email',
         'username',
-        'socialuser',
+        'socialuser__user_id',
+        'socialuser__profile__json__name',
+        'socialuser__profile__json__screen_name',
         'last_name',
         'first_name',
     )

@@ -16,7 +16,16 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'invoice',
         'invoice_pdf',
     )
-    search_fields = ['user', 'name', 'email',]
+    search_fields = [
+        'user__last_name',
+        'user__first_name',
+        'user__username',
+        'user__socialuser__user_id',
+        'user__socialuser__profile__json__name',
+        'user__socialuser__profile__json__screen_name',
+        'name',
+        'email',
+    ]
     list_filter = ['paid', 'datetime', 'public',]
     ordering = ['-datetime',]
     date_hierarchy = 'datetime'

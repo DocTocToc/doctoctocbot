@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
-
+"""
 @register.simple_tag(takes_context=True)
 def guidelines(context):
     community = get_community(context)
@@ -30,6 +30,23 @@ def guidelines(context):
         return
     try:
         md = Text.objects.get(community=community, type=type).content
+    except Text.DoesNotExist:
+        return
+    html = markdown.markdown(md)
+    processed_html = Template(html).render(context=context)
+    safe_html = mark_safe(processed_html)
+    return safe_html
+"""
+
+@register.simple_tag(takes_context=True)
+def community_text(context, name):
+    community = get_community(context)
+    try:
+        text_type = TextDescription.objects.get(name=name)
+    except TextDescription.DoesNotExist:
+        return
+    try:
+        md = Text.objects.get(community=community, type=text_type).content
     except Text.DoesNotExist:
         return
     html = markdown.markdown(md)

@@ -1,6 +1,7 @@
 {% extends "doctocnet/base.html" %}
 
 {% load static %}
+{% load opengraph_tags %}
 {% load i18n %}
 
 {% load landing_links %}
@@ -23,7 +24,7 @@
 
 <h1>{% block title %} {% trans "Community guidelines" %} {% endblock title %}</h1>
 
-{% guidelines %}
+{% community_text "guidelines" %}
 
 {% endblock content %}
 

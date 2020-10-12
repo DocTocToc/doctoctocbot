@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: 2020-04-20 06:39+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,14 +18,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: src/conversation/admin.py:63
+#: conversation/admin.py:63
 msgid "Category"
 msgstr "Catégorie"
 
-#: src/conversation/admin.py:88
+#: conversation/admin.py:88
 msgid "retweeted by"
 msgstr "retweeté par"
 
-#: src/conversation/models.py:19
+#: conversation/models.py:19
 msgid "Object id"
 msgstr "ID de l'objet"

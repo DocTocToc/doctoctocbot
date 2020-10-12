@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,122 +18,120 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/authorize/templates/authorize/error.html:24
+#: authorize/templates/authorize/error.html:24
 msgid "Authorization error"
 msgstr ""
 
-#: src/authorize/templates/authorize/request.html:24
+#: authorize/templates/authorize/request.html:24
 msgid "Authorization request"
 msgstr ""
 
-#: src/authorize/templates/authorize/success.html:24
+#: authorize/templates/authorize/success.html:24
 msgid "Authorization successful"
 msgstr ""
 
-#: src/authorize/views.py:32
+#: authorize/views.py:32
 msgid "Authorize our app"
 msgstr ""
 
-#: src/messenger/admin.py:19
+#: messenger/admin.py:28
 msgid "Has event Id"
 msgstr ""
 
-#: src/messenger/admin.py:26
+#: messenger/admin.py:35
 msgid "Yes"
 msgstr ""
 
-#: src/messenger/admin.py:27
+#: messenger/admin.py:36
 msgid "No"
 msgstr ""
 
-#: src/messenger/models.py:19 src/messenger/models.py:76
-#: src/messenger/models.py:120
+#: messenger/models.py:19 messenger/models.py:76 messenger/models.py:120
 msgid "Message"
 msgstr ""
 
-#: src/messenger/models.py:20 src/messenger/models.py:51
+#: messenger/models.py:20 messenger/models.py:51
 msgid "Messages"
 msgstr ""
 
-#: src/messenger/models.py:52
+#: messenger/models.py:52
 msgid "Messages from this Campaign"
 msgstr ""
 
-#: src/messenger/models.py:58 src/messenger/models.py:68
-#: src/messenger/models.py:114
+#: messenger/models.py:58 messenger/models.py:68 messenger/models.py:114
 msgid "Campaign"
 msgstr ""
 
-#: src/messenger/models.py:59
+#: messenger/models.py:59
 msgid "Campaigns"
 msgstr ""
 
-#: src/messenger/models.py:69
+#: messenger/models.py:69
 msgid "Campaign linked to this receipt."
 msgstr ""
 
-#: src/messenger/models.py:77
+#: messenger/models.py:77
 msgid "Receipt for this message."
 msgstr ""
 
-#: src/messenger/models.py:82
+#: messenger/models.py:82
 msgid "User"
 msgstr ""
 
-#: src/messenger/models.py:83
+#: messenger/models.py:83
 msgid "Receipt for a message sent to this user"
 msgstr ""
 
-#: src/messenger/models.py:87
+#: messenger/models.py:87
 msgid "DM event id"
 msgstr ""
 
-#: src/messenger/models.py:88
+#: messenger/models.py:88
 msgid "DM event id created if the message was successfully sent."
 msgstr ""
 
-#: src/messenger/models.py:93
+#: messenger/models.py:93
 msgid "Error message"
 msgstr ""
 
-#: src/messenger/models.py:94
+#: messenger/models.py:94
 msgid "Error message recorded if the message was not successfully sent."
 msgstr ""
 
-#: src/messenger/models.py:102
+#: messenger/models.py:102
 msgid "Receipt"
 msgstr ""
 
-#: src/messenger/models.py:103
+#: messenger/models.py:103
 msgid "Receipts"
 msgstr ""
 
-#: src/messenger/models.py:115 src/messenger/models.py:121
+#: messenger/models.py:115 messenger/models.py:121
 msgid "Messages are part of this campaign."
 msgstr ""
 
-#: src/messenger/models.py:125
+#: messenger/models.py:125
 msgid "Order"
 msgstr ""
 
-#: src/messenger/models.py:126
+#: messenger/models.py:126
 msgid "What order to display this person within the department."
 msgstr ""
 
-#: src/messenger/models.py:130
+#: messenger/models.py:130
 msgid "Campaign Message"
 msgstr ""
 
-#: src/messenger/models.py:131
+#: messenger/models.py:131
 msgid "Campaign Messages"
 msgstr ""
 
-#: src/request/signals.py:34
+#: request/signals.py:34
 #, python-brace-format
 msgid ""
 "Please handle @{screen_name} follow request for {community_name} community."
 msgstr ""
 
-#: src/request/signals.py:39
+#: request/signals.py:39
 msgid "You have a new follow request."
 msgstr ""

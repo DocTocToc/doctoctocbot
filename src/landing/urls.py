@@ -30,6 +30,7 @@ urlpatterns = [
     path('license/', TemplateView.as_view(template_name='landing/license/index.html'), name='license'),
     path('rules/', TemplateView.as_view(template_name='landing/rules/index.html'), name='rules'),
     path('values/', TemplateView.as_view(template_name='landing/values/index.html'), name='values'),
+    path('follow/', TemplateView.as_view(template_name='landing/follow/index.html'), name='follow'),
     path('guidelines/', TemplateView.as_view(template_name='landing/guidelines/index.html'), name='guidelines'),
     path('moderation/', TemplateView.as_view(template_name='landing/moderation/index.html'), name='moderation'),
     path('moderation/moderator', TemplateView.as_view(template_name='landing/moderator/index.html'), name='moderator'),

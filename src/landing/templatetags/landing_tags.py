@@ -86,6 +86,15 @@ def retweeted_category_ul(context):
     except DatabaseError:
         return
     
+@register.inclusion_tag('landing/category_ul.html', takes_context=True)
+def follower_category_ul(context):
+    try:
+        return {
+            'category_lst': follower_category_label_lst(context)
+        }
+    except DatabaseError:
+        return
+    
 @register.inclusion_tag('landing/category_lst.html', takes_context=True)
 def membership_field_lst_formatted(context):
     return {'category_lst': membership_category_field_lst(context)}
@@ -121,12 +130,36 @@ def membership_category_field_lst(context):
             community.membership.values_list(field, flat=True)
     )
     
+def follower_category_field_lst(context):
+    """
+    TODO: return in the language adapted to context or community
+    This function will return None if Mesh model is empty.
+    Please apply mesh app fixture mesh_fr_en.json first.
+    """
+    community = get_community(context)
+    try:
+        lang = context["LANGUAGE_CODE"][:2]
+        logger.debug(f"lang: '{lang}'")
+    except:
+        lang = "en"
+    field = f"field__{lang}"
+    return list(
+            community.follower.values_list(field, flat=True)
+    )
+    
 def membership_category_label_lst(context):
     """
     Return list of strings representing the different category of a community's members
     """
     community = get_community(context)
     return list(community.membership.values_list("label", flat=True))
+
+def follower_category_label_lst(context):
+    """
+    Return list of strings representing the different category of a community's allowed followers
+    """
+    community = get_community(context)
+    return list(community.follower.values_list("label", flat=True))
 
     
 def retweeted_category_field_lst(context):

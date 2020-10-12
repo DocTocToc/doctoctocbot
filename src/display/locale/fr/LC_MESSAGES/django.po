@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: 2020-05-24 22:53+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,58 +18,58 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: src/display/templates/display/all.html:21
+#: display/templates/display/all.html:21
 msgid "Home"
 msgstr "Accueil"
 
-#: src/display/templates/display/all.html:30
+#: display/templates/display/all.html:30
 #, python-format
 msgid "Last %(hashtag_lst)s tweets"
 msgstr "Derniers tweets %(hashtag_lst)s"
 
-#: src/display/templates/display/all.html:33
+#: display/templates/display/all.html:33
 msgid "Last #covid19 tweets"
 msgstr "Derniers tweets #covid19"
 
-#: src/display/templates/display/all.html:48
+#: display/templates/display/all.html:48
 #, python-format
 msgid "Latest %(hashtag_lst)s tweets"
 msgstr "Derniers tweets %(hashtag_lst)s"
 
-#: src/display/templates/display/all.html:50
+#: display/templates/display/all.html:50
 #, python-format
 msgid "See more %(hashtag_lst)s tweets"
 msgstr "Voir plus de tweets %(hashtag_lst)s"
 
-#: src/display/templates/display/all.html:55
+#: display/templates/display/all.html:55
 msgid "#covid19 tweets"
 msgstr "tweets #covid19"
 
-#: src/display/templates/display/all.html:57
+#: display/templates/display/all.html:57
 msgid "See more #covid19 tweets"
 msgstr "Voir plus de tweets #covid19"
 
-#: src/display/views.py:59
+#: display/views.py:59
 msgid "Status"
 msgstr "Tweet"
 
-#: src/display/views.py:83
+#: display/views.py:83
 msgid "Last tweets"
 msgstr "Dernières questions"
 
-#: src/display/views.py:109
+#: display/views.py:109
 msgid "Top tweets"
 msgstr "Questions populaires"
 
-#: src/display/views.py:135
+#: display/views.py:135
 msgid "Help tweets"
 msgstr "Questions avec peu de réponses"
 
-#: src/display/views.py:161
+#: display/views.py:161
 msgid "All tweets"
 msgstr "Toutes les questions"
 
-#: src/display/views.py:216
+#: display/views.py:216
 #, python-format
 msgid ""
 "We couldn't find a tweet with id %s. This tweet might not be in our archive "
@@ -79,7 +79,7 @@ msgstr ""
 "être pas encore dans notre archive, il a été effacé, ou l'identifiant n'est "
 "pas correct. Nous vous prions de nous excuser!"
 
-#: src/display/views.py:349
+#: display/views.py:356
 msgid "covid-19 tweets"
 msgstr "tweets au sujet de covid-19"
 

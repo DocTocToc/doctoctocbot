@@ -27,9 +27,8 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 
 from bot.addstatusdj import addstatus
-from moderation.moderate import addtoqueue
 from bot.tweepy_api import getAuth
-from moderation.models import SocialUser, Category, SocialMedia
+from moderation.models import SocialUser, Category
 from moderation.social import update_social_ids
 from community.models import Community, Retweet
 from conversation.models import Hashtag, Tweetdj, Retweeted
@@ -37,7 +36,7 @@ from .tasks import handle_retweetroot, handle_question
 from bot.tweepy_api import get_api
 from moderation.moderate import process_unknown_user
 from bot.tweet import hashtag_list
-from tagging.tasks import handle_create_tag_queue, keyword_tag
+from tagging.tasks import keyword_tag
 from bot.models import Account
 
 logger = logging.getLogger(__name__)
@@ -259,14 +258,6 @@ def retweet(status_id) -> bool:
         return False
     return True
 
-def tag(statusid, community):
-    logger.debug("tag()")
-    try:
-        socialmedia = SocialMedia.objects.get(name='twitter')
-    except SocialMedia.DoesNotExist:
-        logger.info("Create a twitter SocialMedia object first.")
-        return
-    handle_create_tag_queue.apply_async(args=(statusid, socialmedia.id, community.id))
 
 def create_update_retweeted(statusid, community, retweet_status):
     rt: Retweeted = Retweeted.objects.as_of().filter(
@@ -393,8 +384,6 @@ def community_retweet(
         if trust:
             if skip_rules or is_following_rules(statusid, userid, dct):
                 rt(statusid, dct, community)
-        #else:
-        #    addtoqueue(userid, statusid, community.name)
 
 def rt(statusid, dct, community):
     logger.info(
@@ -421,7 +410,6 @@ def rt(statusid, dct, community):
             f"I did not retweet status {statusid} because {community} "
             f" is not active\n"
         )
-    tag(statusid, community)
     keyword_tag(statusid, community)
 
 def set_retweeted_by(statusid: int, community):

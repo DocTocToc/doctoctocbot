@@ -1,0 +1,33 @@
+{% extends "doctocnet/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block head_meta %}
+{% static "landing/images/follow.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
+{% bot_screen_name as bot %}
+{% trans "Follow" as title %}
+{% with title|add:" @"|add:bot as og_title %}
+{% trans "How to follow the bot" as description %}
+{% with description|add:" @"|add:bot as og_description %}
+{{ block.super }}
+{% opengraph %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} {% trans "Follow" %} {% bot_screen_name_arobase %} {% endblock title %}</h1>
+
+{% community_text "follow" %}
+
+{% endblock content %}
+

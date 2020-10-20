@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: 2019-06-21 21:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,19 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: src/blog/models.py:38
+#: blog/models.py:38
 msgid "Post date"
 msgstr "Date du billet"
 
-#: src/blog/models.py:65
+#: blog/models.py:65
 msgid "Gallery images"
 msgstr "Images de la gallerie"
 
-#: src/blog/templates/blog/blog_index_page.html:19
-#: src/blog/templates/blog/blog_page.html:14
+#: blog/templates/blog/blog_index_page.html:19
+#: blog/templates/blog/blog_page.html:14
 msgid "By"
 msgstr "Par"
 
-#: src/blog/templates/blog/blog_page.html:30
+#: blog/templates/blog/blog_page.html:30
 msgid "Return to blog"
 msgstr "Retourner au blog"

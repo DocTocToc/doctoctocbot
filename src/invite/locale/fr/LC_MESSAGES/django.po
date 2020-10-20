@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: 2020-02-18 22:06+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,24 +18,24 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: src/invite/forms.py:28
+#: invite/forms.py:28
 msgid "Submit"
 msgstr "Envoyer"
 
-#: src/invite/forms.py:34
+#: invite/forms.py:34
 msgid "Email"
 msgstr "Adresse e-mail"
 
-#: src/invite/forms.py:38
+#: invite/forms.py:38
 msgid "Please choose a category for the invitee"
 msgstr "Choisir une catégorie pour la personne invitée"
 
-#: src/invite/forms.py:42
+#: invite/forms.py:42
 msgid ""
 "I hereby certify that the person I am inviting do belong to this category."
 msgstr "Je certifie que la personne invitée appartient bien à cette catégorie."
 
-#: src/invite/views.py:97
+#: invite/views.py:97
 #, python-format
 msgid "%(email)s has been invited"
 msgstr "%(email)s a été invité·e"

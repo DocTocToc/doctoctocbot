@@ -7,3 +7,4 @@ django-taggit
 django-cors-headers
 coverage
 mock
+responses

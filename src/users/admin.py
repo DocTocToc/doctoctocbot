@@ -8,15 +8,29 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+class SocialUser(admin.ModelAdmin):
+    search_fields = ['profile__json__screen_name', 'profile__json__name',]
+
+
 class CustomUserAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('username', 'email', 'is_superuser','is_active')
-    list_filter = ('is_superuser',)
+    list_display = (
+        'username',
+        'email',
+        'last_name',
+        'first_name',
+        'is_superuser',
+        'is_active',
+        'socialuser',
+    )
+    #list_filter = ('is_superuser',)
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
+        (None, {'fields': ('username', 'email', 'first_name', 'last_name' , 'password')}),
         ('Permissions', {'fields': ('is_superuser','is_active',)}),
+        ('Social User', {'fields': ('socialuser',)}),
+
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -26,9 +40,17 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('username', 'email','password',)}
          ),
     )
-
-    search_fields = ('email',)
+    autocomplete_fields = ['socialuser']
+    search_fields = (
+        'email',
+        'username',
+        'socialuser__user_id',
+        'socialuser__profile__json__name',
+        'socialuser__profile__json__screen_name',
+        'last_name',
+        'first_name',
+    )
     ordering = ('email',)
     filter_horizontal = ()
 
-admin.site.register(User, UserAdmin)
+admin.site.register(User, CustomUserAdmin)

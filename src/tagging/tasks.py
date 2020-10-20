@@ -1,6 +1,7 @@
 import os
 import unidecode
 from typing import Optional, List
+import ast
 
 from django.utils.translation import gettext as _
 from django.db import transaction, DatabaseError
@@ -9,17 +10,16 @@ from django.urls import reverse
 from celery.utils.log import get_task_logger
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
-from tagging.models import Process, Queue, Category
+from tagging.models import Process, Queue, Category, TagKeyword
 from dm.api import senddm
 from celery import shared_task
 from conversation.models import Tweetdj
-from moderation.models import SocialMedia, SocialUser
+from moderation.models import SocialMedia
 from community.models import Community
 from community.helpers import site_url
 from dm.models import DirectMessage
 from optin.authorize import has_authorized, create_opt_in
 from optin.models import Option
-from tagging.models import TagKeyword, Category
 from bot.tweet import hashtag_list
 from community.helpers import activate_language
 
@@ -168,15 +168,19 @@ def handle_create_tag_queue(statusid, socialmedia_id, community_id):
             hashtag=True,
         ).values_list('tag', flat=True)
     )
-    logger.debug(f"{category_tags}")
+    logger.debug(f"{category_tags=}")
+    category_diacriticless_tags = [unidecode.unidecode(tag).lower() for tag in category_tags]
+    logger.debug(f"{category_diacriticless_tags=}")
     
     tweet_tags = tweetdj.tags.names()
     logger.debug(f"{tweet_tags}")
+    tweet_diacriticless_tags = [unidecode.unidecode(tag).lower() for tag in tweet_tags]
+    logger.debug(f"{tweet_diacriticless_tags=}")
     
     # if status does not have any tags corresponding to a category,
     # create queue
-    logger.debug(f"{set(category_tags).isdisjoint(tweet_tags)}")
-    if set(category_tags).isdisjoint(tweet_tags):
+    logger.debug(f"{set(category_diacriticless_tags).isdisjoint(tweet_diacriticless_tags)=}")
+    if set(category_diacriticless_tags).isdisjoint(tweet_diacriticless_tags):
         queue, created = Queue.objects.get_or_create(
                 uid=statusid,
                 socialmedia=socialmedia,
@@ -230,10 +234,13 @@ def poll_tag_dm():
                 logger.info(f"Tag process instance {process_mi} was already processed. %s" % e)
 
     def get_tag_metadata(dm):
+        jsn = dm.jsn
+        if isinstance(jsn, str):
+            jsn = ast.literal_eval(jsn)
         try:
-            return dm.jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
+            return jsn['kwargs']['message_create']['message_data']['quick_reply_response']['metadata']
         except:
-            return dm.jsn['quick_reply_response']['metadata']
+            return jsn['quick_reply_response']['metadata']
     
     def get_process_id(dm):
         begin_idx = len(CATEGORY_TAG)
@@ -250,7 +257,7 @@ def poll_tag_dm():
         # Tweetdj
         try:
             tweetdj = Tweetdj.objects.get(statusid=status_id)
-            logger.info(f"tweetdj:{tweetdj}")
+            logger.debug(f"tweetdj:{tweetdj}")
         except Tweetdj.DoesNotExist:
             return
         #taggit
@@ -259,35 +266,57 @@ def poll_tag_dm():
         delete_tag_queue(process_mi)
 
     current_process_uuid_lst = [str(process.id) for process in Process.objects.current.all()]
-    logger.debug(f"current_process_uuid_lst: {current_process_uuid_lst}")
+    logger.debug(f"{current_process_uuid_lst=}")
     # return if no current Moderation object
     if not current_process_uuid_lst:
         return
     
-    bot_id_lst = Community.objects.values_list("account__userid", flat=True)
+    bot_id_lst = list(Community.objects.values_list("account__userid", flat=True))
+    logger.debug(f"{bot_id_lst=}")
+    dms_new = []
+    dms_old = []
     try:
-        dms = DirectMessage.objects\
+        dms_old = list(
+            DirectMessage.objects\
             .filter(recipient_id__in=bot_id_lst)\
             .filter(jsn__kwargs__message_create__message_data__quick_reply_response__metadata__startswith=CATEGORY_TAG)
-    except:
-        dms = DirectMessage.objects\
+        )
+        if dms_old:
+            logger.debug(f"all {CATEGORY_TAG} direct messages answers: {len(dms_old)} {[(dm.id, dm.text,) for dm in dms_old]}")
+    except Exception:
+        logger.error("dms_old exception")
+
+    try:
+        dms_new = list(
+            DirectMessage.objects\
             .filter(recipient_id__in=bot_id_lst)\
             .filter(jsn__quick_reply_response__metadata__startswith=CATEGORY_TAG)
-    logger.info(f"all {CATEGORY_TAG} direct messages answers: {len(dms)} {[dm.text + os.linesep for dm in dms]}")
+        )
+        if dms_new:
+            logger.debug(f"all {CATEGORY_TAG} direct messages answers: {len(dms_new)} {[(dm.id, dm.text,) for dm in dms_new]}")
+    except Exception:
+        logger.error("dms_new exception")
+
+    dms = dms_old + dms_new
+    logger.debug(f"{dms=}")
+
+    if not dms:
+        logger.debug("No DM!")
+        return
+    logger.info(f"all {CATEGORY_TAG} direct messages answers: {len(dms)} {[(dm.id, dm.text,) for dm in dms]}")
 
     dms_current = []
     for dm in dms:
         uid = get_process_id(dm)
-        logger.info(f"uid: {uid}")
         ok = uid in current_process_uuid_lst
-        logger.info(f"ok = uid in current_process_uuid_lst: {ok}")
+        logger.debug(f"{uid} uid in current_process_uuid_lst: {ok}")
         if ok:
             dms_current.append(dm)
-    
+    logger.debug(f"{dms_current=}")
     for dm in dms_current:
         process_id = get_process_id(dm)
         tag_name = get_tag_name(dm)
-        logger.info(f"dm process_id: {process_id}, cat: {tag_name}")
+        logger.debug(f"dm process_id: {process_id}, cat: {tag_name}")
         #retrieve moderation instance
         try:
             process_mi = Process.objects.get(pk=process_id)
@@ -295,12 +324,12 @@ def poll_tag_dm():
             logger.error(f"Process object with id {process_id} "
                          f"does not exist. Error message: {e}")
             continue
-        logger.info(f"process_mi:{process_mi}")
+        logger.debug(f"process_mi:{process_mi}")
         # if mod_mi is not the current version, current_version() returns None
         # and it means this moderation was already done and we pass
         is_current = bool(Process.objects.current_version(process_mi))
         if not is_current:    
-            logger.info(f"Process instance {process_mi} was already processed.")
+            logger.debug(f"Process instance {process_mi} was already processed.")
             continue
         
         socialuser = process_mi.processor
@@ -317,11 +346,13 @@ def opt_out(socialuser):
     
 def keyword_tag(statusid, community):
     def category_tagging(tweetdj, community, hashtag):
-        tags = diacriticless_category_tags(community)
+        tag_tpl_lst = diacriticless_category_tags(community)
         if hashtag:
-            for tag in tags:
-                if tag in hashtag:
-                    tweetdj.tags.add(tag)
+            for tag in tag_tpl_lst:
+                # tag[0] has no diacritic
+                # tag[1] potentially has 1 (or more) diacritic(s)
+                if tag[0] in hashtag:
+                    tweetdj.tags.add(tag[1])
     def keyword_tagging(tweetdj, community, hashtag):
         qs = TagKeyword.objects.filter(community__in=[community]).distinct()
         for tk in qs:
@@ -336,8 +367,16 @@ def keyword_tag(statusid, community):
     except Tweetdj.DoesNotExist:
         return
     hashtag: List = hashtag_list(tweetdj.json)
-    category_tagging(tweetdj, community, hashtag)
-    keyword_tagging(tweetdj, community, hashtag)
+    if ( len(hashtag) > 1 ):
+        category_tagging(tweetdj, community, hashtag)
+        keyword_tagging(tweetdj, community, hashtag)
+    else:
+        try:
+            socialmedia = SocialMedia.objects.get(name='twitter')
+        except SocialMedia.DoesNotExist:
+            logger.error("Create a twitter SocialMedia object first.")
+            return
+        handle_create_tag_queue.apply_async(args=(statusid, socialmedia.id, community.id))
 
 def diacriticless_category_tags(community):
     # return a list of all category tags of a community, without diacritic,
@@ -346,4 +385,6 @@ def diacriticless_category_tags(community):
         community=community,
         hashtag=True,
     ).values_list('tag', flat=True)
-    return [unidecode.unidecode(tag).lower() for tag in tags]
+    tag_tpl_lst = [(unidecode.unidecode(tag).lower(), tag) for tag in tags]
+    logger.debug(f"{tag_tpl_lst=}")
+    return tag_tpl_lst

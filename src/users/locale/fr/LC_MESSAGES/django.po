@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 23:45+0300\n"
+"POT-Creation-Date: 2020-10-12 00:52+0200\n"
 "PO-Revision-Date: 2020-05-24 22:56+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,19 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: src/users/forms.py:12
+#: users/forms.py:12
 msgid "Password"
 msgstr "Mot de passe"
 
-#: src/users/forms.py:13
+#: users/forms.py:13
 msgid "Repeat Password"
 msgstr "Répétez le mot de passe"
 
-#: src/users/forms.py:24
+#: users/forms.py:24
 msgid "Passwords don't match"
 msgstr "Les mots de passe ne correspondent pas"
 
-#: src/users/templatetags/users.py:24
+#: users/templatetags/users.py:24
 msgctxt "category"
 msgid "Unknown"
 msgstr "Inconnue"

@@ -1,0 +1,35 @@
+{
+  "name": "svelte-app",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "postcss": "^7.0.35",
+    "postcss-import": "^12.0.1",
+    "postcss-load-config": "^2.1.2",
+    "rollup": "^2.33.1",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^3.29.4",
+    "svelte-preprocess": "^4.5.2"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "date-fns": "^2.16.1",
+    "dayjs": "^1.9.4",
+    "flatpickr": "^4.6.6",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.31",
+    "sirv-cli": "^1.0.8",
+    "svelte-flatpickr": "^2.4.0",
+    "svelte-i18n": "^3.1.0"
+  }
+}

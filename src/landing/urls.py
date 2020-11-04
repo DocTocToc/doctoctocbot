@@ -10,7 +10,8 @@ from landing import views
 app_name = 'landing'
 
 urlpatterns = [
-    path('', All.as_view(), name='index'),
+    #path('', All.as_view(), name='index'),
+    path('', TemplateView.as_view(template_name='display/home.html'), name='index'),
     path('user/', RedirectView.as_view(
         url='/user/profile/',
         permanent=True

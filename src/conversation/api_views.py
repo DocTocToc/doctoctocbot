@@ -11,8 +11,13 @@ from . import models
 from . import serializers
 from rest_framework.pagination import PageNumberPagination
 
+from community.helpers import get_community
+from users.utils import get_api_level
+
 from moderation.models import SocialUser
 from tagging.models import Category, TagKeyword
+
+from conversation.serializers import get_api_access
 
 logger = logging.getLogger(__name__)
 
@@ -84,10 +89,11 @@ class TweetdjViewSet(viewsets.ModelViewSet):
             if (req_inter_tag):
                 qs = self.filter_by_tags(qs, req_inter_tag)
 
-            # filter out tweets authored by protected accounts if requesting
+            # filter out status authored by protected accounts if requesting
             # user is not a member of the community
-            user = self.request.user
-            
+            api_access = get_api_access(self.request)
+            if (api_access and not api_access.status_protected):
+                qs = self.filter_by_protected(qs)
         return qs
 
 

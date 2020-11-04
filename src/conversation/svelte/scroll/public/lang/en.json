@@ -1,0 +1,17 @@
+{
+"all_items_loaded_yes": "All items are loaded.",
+"all_items_loaded_no": "Not all items are loaded: keep scrolling!",
+"no_item_found": "No item found.",
+"yes": "Yes",
+"no": "No",
+"status_categories": "Categories",
+"status_tags": "Tags",
+"select_all": "Select all",
+"uncategorized": "not categorized",
+"uncategorized_summary": "Does not belong to any category.",
+"view_on_twitter": "View on Twitter",
+"flatpickr": {
+  "button_clear": "Clear",
+  "select": "Select dates.."
+  }
+}

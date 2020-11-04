@@ -10,6 +10,8 @@ from community.models import (
     CommunityCategoryRelationship,
     TextDescription,
     Text,
+    AccessLevel,
+    ApiAccess,
 )
 
 
@@ -90,10 +92,41 @@ class TextDescriptionAdmin(TranslationAdmin):
 
 @admin.register(Text)
 class TextAdmin(VersionAdmin):
-
     pass
+
+
+class AccessLevelAdmin(TranslationAdmin):
+    list_display = (
+        'pk',
+        'name',
+    )
+    ordering = ('pk',)
+    
+class ApiAccessAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'community',
+        'level',
+        'status_limit',
+        'status_rate',
+        'author_category',
+        'author_specialty',
+        'search_datetime',
+        'search_category',
+        'search_tag',
+        'status_category',
+        'status_tag',
+        'status_protected',
+    )
+    list_filter = (
+    'community',
+    'level',
+    )
+    ordering = ('community', 'level')
 
 
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(Retweet, RetweetAdmin)
 admin.site.register(TextDescription, TextDescriptionAdmin)
+admin.site.register(AccessLevel, AccessLevelAdmin)
+admin.site.register(ApiAccess, ApiAccessAdmin)

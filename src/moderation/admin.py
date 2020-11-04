@@ -146,12 +146,16 @@ class SocialUserAdmin(admin.ModelAdmin):
         return cat_mod_lst
     
     def social_media_profile(self, obj):
-        return mark_safe(
-            '<a href="https://twitter.com/intent/user?user_id={user_id}">{tag}</a>'.format(
-                user_id = obj.user_id,
-                tag = obj.social_media
+        if obj.social_media.name == "twitter":
+            return mark_safe(
+                '<a href="https://twitter.com/intent/user?user_id={user_id}">{tag}</a>'.format(
+                    user_id = obj.user_id,
+                    tag = obj.social_media
+                )
             )
-        )
+        elif obj.social_media.name == "santetoctoc":
+            return obj.social_media.name
+
     def profile_link(self, obj):
         try:
             su = Profile.objects.get(socialuser=obj.pk)
@@ -171,16 +175,18 @@ class CategoryAdmin(TranslationAdmin):
         'name',
         'label_fr',
         'label_en',
+        'public',
         'show_relationships_count',
     )
     inlines = (CategoryRelationshipInline,)
     fields = (
         'name',
         'label',
-        'show_relationships_count',
         'description',
         'mesh',
         'field',
+        'public',
+        'show_relationships_count',
     )
     search_fields = ['name', 'label', 'description', 'field',]
     autocomplete_fields = ['field',]

@@ -216,7 +216,6 @@ def isreplacement( status ):
     return bool(replacement)
 
 def is_follower(userid, bot_screen_name):
-    logger.debug("hello is_follower()!")
     try:
         account = Account.objects.get(username=bot_screen_name)
         logger.debug(f"{account}")

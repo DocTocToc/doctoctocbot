@@ -4,6 +4,8 @@ import logging
 from django.conf import settings
 import reversion
 
+from django.utils.translation import gettext_lazy as _
+
 logger = logging.getLogger(__name__)
 
 
@@ -299,3 +301,98 @@ class Text(models.Model):
 
     class Meta:
         unique_together = ("community", "type")
+        
+
+class AccessLevel(models.Model):
+    """API access level categories.
+    """
+    name = models.CharField(
+        max_length=254,
+        unique=True,
+    )
+    label = models.CharField(
+        max_length=254,
+    )
+    description = models.TextField(
+        null=True,
+        blank=True
+    )
+    
+    def __str__(self):
+        return f"{self.label}"
+
+
+class ApiAccess(models.Model):
+    """API access for each access level
+    """
+    community = models.ForeignKey(
+        'Community',
+        on_delete=models.CASCADE,
+        related_name='api_access',
+    )
+    level = models.ForeignKey(
+        'AccessLevel',
+        on_delete=models.CASCADE,
+        related_name='api_access',
+    )
+    status_limit = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name=_('Status limit'),
+        help_text=_('Total number of status.'),
+    )
+    status_rate = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        verbose_name=_('Status rate (per minute)'),
+        help_text=_('Number of status per minute.'),
+    )
+    author_category = models.BooleanField(
+        default=False,
+        verbose_name=_('Author category'),
+        help_text=_("Category of the author of the status."),
+    )
+    author_specialty = models.BooleanField(
+        default=False,
+        verbose_name=_('Author specialty'),
+        help_text=_("Specialty of the author of the status."),
+    )
+    search_datetime = models.BooleanField(
+        default=False,
+        verbose_name=_('Date and Time search'),
+        help_text=_("Search status by date and time."),
+    )
+    search_category = models.BooleanField(
+        default=False,
+        verbose_name=_('Category search'),
+        help_text=_("Search status by category."),
+    )
+    search_tag = models.BooleanField(
+        default=False,
+        verbose_name=_('Tag search'),
+        help_text=_("Search status by tag."),
+    )
+    status_category = models.BooleanField(
+        default=False,
+        verbose_name=_('Status category'),
+        help_text=_("Access status category."),
+    )
+    status_tag = models.BooleanField(
+        default=False,
+        verbose_name=_('Status tag'),
+        help_text=_("Access status tag."),
+    )
+    status_protected = models.BooleanField(
+        default=False,
+        verbose_name=_('Protected status'),
+        help_text=_("Access status from protected account."),
+    )
+    
+    def __str__(self):
+        return f"API Access: community = {self.community} ; level = {self.level}"
+
+
+    class Meta:
+        unique_together = ("community", "level")

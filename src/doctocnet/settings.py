@@ -710,4 +710,8 @@ CONSTANCE_CONFIG = {
         3600,
         "handle_campaign celery task (hard) time limit"
     ),
+    "local_social_media": (
+        "santetoctoc",
+        "Name of the local, in-house social media"
+    ),
 }

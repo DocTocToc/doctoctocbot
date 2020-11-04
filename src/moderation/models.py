@@ -302,6 +302,13 @@ class Category(CategoryBase):
         help_text="Field as a MeSH heading",
         related_name="category_field",
     )
+    public = models.BooleanField(
+        default=False,
+        help_text=(
+            "Should this category be public (visible to users) "
+            "or private (for internal use)?"
+        )
+    )
     
     def __str__(self):
         return self.name

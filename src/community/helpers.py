@@ -46,5 +46,4 @@ def activate_language(community):
     language = community.language
     if not language:
         return
-    logger.debug(f"language code: {language}")
     activate(language)

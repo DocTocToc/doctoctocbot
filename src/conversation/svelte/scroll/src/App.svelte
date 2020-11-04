@@ -48,7 +48,8 @@
 	let selected_tags = [];
 	let cat_query = "";
 	let tag_query = "";
-	const initialUrl = "http://local.doctoctoc.net/conversation/api/v1/tweets/?format=json&page=1";
+	//const initialUrl = "http://local.doctoctoc.net/conversation/api/v1/tweets/?format=json&page=1";
+	const initialUrl = "/conversation/api/v1/tweets/?format=json&page=1";
 	let hasMore = false;
 	
 	/* DatePickr */
@@ -72,7 +73,7 @@
 	};
 	
     async function fetchDataCategories() {
-        const response = await fetch(`http://local.doctoctoc.net/tagging/api/v1/categories/`);
+        const response = await fetch(`/tagging/api/v1/categories/`);
         resCategories = await response.json();
         categories = resCategories["results"];
         for (var i = 0; i < categories.length; i++) {
@@ -85,7 +86,7 @@
     };
     
     async function fetchDataTags() {
-        const response = await fetch(`http://local.doctoctoc.net/tagging/api/v1/tags/`);
+        const response = await fetch(`/tagging/api/v1/tags/`);
         resTags = await response.json();
         tags = resTags["results"];
         for (var i = 0; i < tags.length; i++) {

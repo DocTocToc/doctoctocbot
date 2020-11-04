@@ -32,7 +32,7 @@ def get_all_categories_from_social_user(su, community):
     return list(set(category))
 
 def member_level(user, community, category):
-    if any(cat in category for cat in community.member.all()):
+    if any(cat in category for cat in community.membership.all()):
         return access_level_object("member")
 
 def broadcast_level(user, community, category):
@@ -96,13 +96,14 @@ def twitter_categories(user, community):
 
 def twitter_categories_from_social_user(su, community):
     category: List(Category) = []
-    category.extend(
-        category_list(
-            community,
-            su.categoryrelationships.exclude(moderator=su).distinct()
+    if su and community:
+        category.extend(
+            category_list(
+                community,
+                su.categoryrelationships.exclude(moderator=su).distinct()
+            )
         )
-    )
-    logger.debug(f"{category=}")
+    #logger.debug(f"{category=}")
     return category
 
 def local_categories(user, community):
@@ -112,13 +113,14 @@ def local_categories(user, community):
 
 def local_categories_from_social_user(su, community):
     category: List(Category) = []
-    category.extend(
-        category_list(
-            community,
-            su.categoryrelationships.exclude(moderator=su).distinct()
+    if su and community:
+        category.extend(
+            category_list(
+                community,
+                su.categoryrelationships.exclude(moderator=su).distinct()
+            )
         )
-    )
-    logger.debug(f"{category=}")
+    #logger.debug(f"{category=}")
     return category
 
 def category_list(community, usercategoryrelationships):

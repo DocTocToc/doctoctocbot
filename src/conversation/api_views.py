@@ -105,7 +105,6 @@ class TweetdjViewSet(viewsets.ModelViewSet):
     def filter_by_site(self, queryset):
         try:
             userid = get_current_site(self.request).community.first().account.userid
-            logger.debug(f"userid:{userid}")
         except:
             return queryset
         try:

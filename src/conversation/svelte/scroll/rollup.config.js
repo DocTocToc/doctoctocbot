@@ -53,10 +53,11 @@ export default {
 		}),
 		nodeResolve(),
 		copy({
-            targets: [{ 
-                src: 'node_modules/bootstrap/dist/**/*', 
-                dest: 'public/vendor/bootstrap' 
-            },
+            targets: [
+            //	{ 
+            //    src: 'node_modules/bootstrap/dist/**/*', 
+            //    dest: 'public/vendor/bootstrap' 
+            //},
             { 
                 src: 'node_modules/flatpickr/dist/themes/light.css', 
                 dest: 'public/vendor/flatpickr/' 

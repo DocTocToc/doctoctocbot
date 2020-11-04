@@ -159,7 +159,7 @@ def get_local_social_user(user):
         return
     try:
         return SocialUser.objects.get(
-            user_id=user.uid,
+            user_id=user.id,
             social_media = local_soc_med,
         )
     except SocialUser.DoesNotExist:

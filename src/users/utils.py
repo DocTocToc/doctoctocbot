@@ -54,17 +54,17 @@ def follower_level(user, community, category):
     su_twitter = get_twitter_social_user(user)
     if su_twitter:
         protected = community.account.protected
-        is_follower = is_follower(
+        _is_follower = is_follower(
             su_twitter.user_id,
             community.account.username
         )
         allowed = any(cat in category for cat in follower_categories)
         if protected:
-            if allowed and is_follower:
+            if allowed and _is_follower:
                 return access_level_object("follower")
             else:
                 return
-        elif is_follower:
+        elif _is_follower:
             return access_level_object("follower")
 
 def get_api_level(user, community):

@@ -26,7 +26,6 @@ class HashtagSerializer(serializers.ModelSerializer):
         
 
 class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
-    tags = TagListSerializerField()
     avatar_normal = serializers.SerializerMethodField()
     avatar_mini = serializers.SerializerMethodField()
     user_name = serializers.SerializerMethodField()
@@ -45,13 +44,11 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
         fields = (
             'statusid',
             'id_str',
-            'userid',
             'socialuser',
             'user_name',
             'user_screen_name',
             'created_at',
             'text',
-            'tags',
             'avatar_normal',
             'avatar_mini',
             'author_category',

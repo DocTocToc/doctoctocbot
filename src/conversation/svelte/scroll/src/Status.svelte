@@ -42,6 +42,9 @@
     return dtFromNow;
   }
   function categoryOrTag(status) {
+	  if ( status.status_tag == null && status.status_category == null ) {
+		  return false
+	  }
 	  if (status.status_tag.length == 0 && status.status_category.length == 0) {
 		  return false
 	  } else {

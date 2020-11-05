@@ -31,11 +31,11 @@ def get_all_categories_from_social_user(su, community):
     # remove duplicates
     return list(set(category))
 
-def member_level(user, community, category):
+def member_level(community, category):
     if any(cat in category for cat in community.membership.all()):
         return access_level_object("member")
 
-def broadcast_level(user, community, category):
+def broadcast_level(community, category):
     broadcast_categories = [rt.category for rt in Retweet.objects.filter(
         community=community,
         retweet=True
@@ -71,10 +71,10 @@ def get_api_level(user, community):
     if not user.is_authenticated:
         return access_level_object("anonymous")
     category: List[Category] = get_all_categories(user, community)
-    member = member_level(user, community, category)
+    member = member_level(community, category)
     if member:
         return member
-    broadcast = broadcast_level(user, community, category)
+    broadcast = broadcast_level(community, category)
     if broadcast:
         return broadcast
     follower = follower_level(user, community, category)
@@ -127,7 +127,8 @@ def category_list(community, usercategoryrelationships):
     category: List[Category] = []
     for cr in usercategoryrelationships:
         if cr.community == community or cr.community in community.trust.all():
-            category.append(cr.category)
+            if cr.category.public:
+                category.append(cr.category)
     return category
 
 def get_twitter_social_user(user):

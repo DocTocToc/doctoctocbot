@@ -26,15 +26,11 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-class TweetdjViewSet(viewsets.ModelViewSet):
+class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Tweetdj.objects.all().order_by('-created_at')
     serializer_class = serializers.TweetdjSerializer
     pagination_class = StandardResultsSetPagination
-
-    if settings.DEBUG:
-        permission_classes = (AllowAny,)
-    else:
-        permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
 
     def get_queryset(self):

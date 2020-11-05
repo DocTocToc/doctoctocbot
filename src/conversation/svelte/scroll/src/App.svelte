@@ -65,7 +65,7 @@
 		resTweets = await response.json();
 		//console.log(resTweets);
 		newBatch = resTweets["results"];
-        //console.log(newBatch);
+        console.log(newBatch);
         nextUrl = resTweets["next"];
         //console.log(`nextUrl: ${nextUrl}`);
         hasMore = (nextUrl == null) ? false : true;

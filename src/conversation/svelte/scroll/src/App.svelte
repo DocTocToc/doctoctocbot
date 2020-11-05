@@ -48,7 +48,6 @@
 	let selected_tags = [];
 	let cat_query = "";
 	let tag_query = "";
-	//const initialUrl = "http://local.doctoctoc.net/conversation/api/v1/tweets/?format=json&page=1";
 	const initialUrl = "/conversation/api/v1/tweets/?format=json&page=1";
 	let hasMore = false;
 	

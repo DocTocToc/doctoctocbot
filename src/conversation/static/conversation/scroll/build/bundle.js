@@ -9185,11 +9185,11 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[36] = list[i];
+    	child_ctx[35] = list[i];
     	return child_ctx;
     }
 
-    // (229:6) {#if has_api_access("search_category")}
+    // (225:6) {#if has_api_access("search_category")}
     function create_if_block_3$1(ctx) {
     	let categories_1;
     	let updating_categories;
@@ -9198,15 +9198,15 @@ var app = (function () {
     	let current;
 
     	function categories_1_categories_binding(value) {
-    		/*categories_1_categories_binding*/ ctx[15].call(null, value);
+    		/*categories_1_categories_binding*/ ctx[14].call(null, value);
     	}
 
     	function categories_1_selected_categories_binding(value) {
-    		/*categories_1_selected_categories_binding*/ ctx[16].call(null, value);
+    		/*categories_1_selected_categories_binding*/ ctx[15].call(null, value);
     	}
 
     	function categories_1_query_binding(value) {
-    		/*categories_1_query_binding*/ ctx[17].call(null, value);
+    		/*categories_1_query_binding*/ ctx[16].call(null, value);
     	}
 
     	let categories_1_props = {
@@ -9285,14 +9285,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(229:6) {#if has_api_access(\\\"search_category\\\")}",
+    		source: "(225:6) {#if has_api_access(\\\"search_category\\\")}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (237:6) {#if has_api_access("search_tag")}
+    // (233:6) {#if has_api_access("search_tag")}
     function create_if_block_2$1(ctx) {
     	let categories_1;
     	let updating_selected_categories;
@@ -9300,11 +9300,11 @@ var app = (function () {
     	let current;
 
     	function categories_1_selected_categories_binding_1(value) {
-    		/*categories_1_selected_categories_binding_1*/ ctx[18].call(null, value);
+    		/*categories_1_selected_categories_binding_1*/ ctx[17].call(null, value);
     	}
 
     	function categories_1_query_binding_1(value) {
-    		/*categories_1_query_binding_1*/ ctx[19].call(null, value);
+    		/*categories_1_query_binding_1*/ ctx[18].call(null, value);
     	}
 
     	let categories_1_props = {
@@ -9374,14 +9374,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(237:6) {#if has_api_access(\\\"search_tag\\\")}",
+    		source: "(233:6) {#if has_api_access(\\\"search_tag\\\")}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (245:6) {#if search_datetime()}
+    // (241:6) {#if has_api_access("search_datetime")}
     function create_if_block_1$1(ctx) {
     	let datepicker;
     	let updating_from_datetime_query;
@@ -9389,11 +9389,11 @@ var app = (function () {
     	let current;
 
     	function datepicker_from_datetime_query_binding(value) {
-    		/*datepicker_from_datetime_query_binding*/ ctx[20].call(null, value);
+    		/*datepicker_from_datetime_query_binding*/ ctx[19].call(null, value);
     	}
 
     	function datepicker_to_datetime_query_binding(value) {
-    		/*datepicker_to_datetime_query_binding*/ ctx[21].call(null, value);
+    		/*datepicker_to_datetime_query_binding*/ ctx[20].call(null, value);
     	}
 
     	let datepicker_props = {};
@@ -9453,14 +9453,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(245:6) {#if search_datetime()}",
+    		source: "(241:6) {#if has_api_access(\\\"search_datetime\\\")}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (254:8) {#each data as item}
+    // (250:8) {#each data as item}
     function create_each_block$2(ctx) {
     	let li;
     	let status;
@@ -9468,7 +9468,7 @@ var app = (function () {
 
     	status = new Status({
     			props: {
-    				status: /*item*/ ctx[36],
+    				status: /*item*/ ctx[35],
     				baseURL: /*baseURL*/ ctx[11]
     			},
     			$$inline: true
@@ -9479,7 +9479,7 @@ var app = (function () {
     			li = element("li");
     			create_component(status.$$.fragment);
     			attr_dev(li, "class", "list-group-item svelte-1uhirki");
-    			add_location(li, file$5, 254, 8, 6483);
+    			add_location(li, file$5, 250, 8, 6482);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -9488,7 +9488,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const status_changes = {};
-    			if (dirty[0] & /*data*/ 1) status_changes.status = /*item*/ ctx[36];
+    			if (dirty[0] & /*data*/ 1) status_changes.status = /*item*/ ctx[35];
     			status.$set(status_changes);
     		},
     		i: function intro(local) {
@@ -9510,14 +9510,14 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(254:8) {#each data as item}",
+    		source: "(250:8) {#each data as item}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (268:6) {:else}
+    // (264:6) {:else}
     function create_else_block(ctx) {
     	let t_value = /*$_*/ ctx[10]("no_item_found") + "";
     	let t;
@@ -9541,14 +9541,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(268:6) {:else}",
+    		source: "(264:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (266:6) {#if data.length}
+    // (262:6) {#if data.length}
     function create_if_block$2(ctx) {
     	let t_value = (/*hasMore*/ ctx[7]
     	? /*$_*/ ctx[10]("all_items_loaded_no")
@@ -9577,7 +9577,7 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(266:6) {#if data.length}",
+    		source: "(262:6) {#if data.length}",
     		ctx
     	});
 
@@ -9588,11 +9588,11 @@ var app = (function () {
     	let div3;
     	let div2;
     	let div0;
-    	let show_if_2 = /*has_api_access*/ ctx[14]("search_category");
+    	let show_if_2 = /*has_api_access*/ ctx[13]("search_category");
     	let t0;
-    	let show_if_1 = /*has_api_access*/ ctx[14]("search_tag");
+    	let show_if_1 = /*has_api_access*/ ctx[13]("search_tag");
     	let t1;
-    	let show_if = /*search_datetime*/ ctx[13]();
+    	let show_if = /*has_api_access*/ ctx[13]("search_datetime");
     	let t2;
     	let div1;
     	let ul;
@@ -9618,7 +9618,7 @@ var app = (function () {
     	});
 
     	function infinitescroll_hasMore_binding(value) {
-    		/*infinitescroll_hasMore_binding*/ ctx[22].call(null, value);
+    		/*infinitescroll_hasMore_binding*/ ctx[21].call(null, value);
     	}
 
     	let infinitescroll_props = { threshold: "10" };
@@ -9633,7 +9633,7 @@ var app = (function () {
     		});
 
     	binding_callbacks.push(() => bind(infinitescroll, "hasMore", infinitescroll_hasMore_binding));
-    	infinitescroll.$on("loadMore", /*loadMore_handler*/ ctx[23]);
+    	infinitescroll.$on("loadMore", /*loadMore_handler*/ ctx[22]);
 
     	function select_block_type(ctx, dirty) {
     		if (/*data*/ ctx[0].length) return create_if_block$2;
@@ -9667,17 +9667,17 @@ var app = (function () {
     			p = element("p");
     			if_block3.c();
     			attr_dev(div0, "class", "col-md-auto");
-    			add_location(div0, file$5, 227, 4, 5762);
+    			add_location(div0, file$5, 223, 4, 5745);
     			attr_dev(ul, "class", "list-group my-1 svelte-1uhirki");
-    			add_location(ul, file$5, 252, 6, 6417);
+    			add_location(ul, file$5, 248, 6, 6416);
     			attr_dev(p, "class", "scroll-footer svelte-1uhirki");
-    			add_location(p, file$5, 264, 6, 6749);
+    			add_location(p, file$5, 260, 6, 6748);
     			attr_dev(div1, "class", "col");
-    			add_location(div1, file$5, 251, 4, 6393);
+    			add_location(div1, file$5, 247, 4, 6392);
     			attr_dev(div2, "class", "row");
-    			add_location(div2, file$5, 226, 2, 5740);
+    			add_location(div2, file$5, 222, 2, 5723);
     			attr_dev(div3, "class", "container");
-    			add_location(div3, file$5, 225, 0, 5714);
+    			add_location(div3, file$5, 221, 0, 5697);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -9835,7 +9835,7 @@ var app = (function () {
     		initialLocale: M()
     	});
 
-    	let baseURL = "";
+    	let baseURL = "http://local.doctoctoc.net";
 
     	// if the api (like in this example) just have a simple numeric pagination
     	let page = 1;
@@ -9897,7 +9897,7 @@ var app = (function () {
     		resTweets = await response.json();
 
     		//console.log(resTweets);
-    		$$invalidate(28, newBatch = resTweets["results"]);
+    		$$invalidate(27, newBatch = resTweets["results"]);
 
     		//console.log(newBatch);
     		nextUrl = resTweets["next"];
@@ -9971,14 +9971,11 @@ var app = (function () {
 
     	
 
-    	function search_datetime() {
-    		var access = fetchUserApiAccess;
-    		return access["search_datetime"];
-    	}
-
     	function has_api_access(item) {
     		var access = fetchUserApiAccess;
-    		return access[item];
+
+    		//console.log(`access[item] == "true" ${access[item] == "true"}`)
+    		return access[item] == "true";
     	}
 
     	onMount(() => {
@@ -10084,7 +10081,6 @@ var app = (function () {
     		fetchDataCategories,
     		fetchDataTags,
     		fetchUserApiAccess,
-    		search_datetime,
     		has_api_access,
     		$_
     	});
@@ -10097,7 +10093,7 @@ var app = (function () {
     		if ("resCategories" in $$props) resCategories = $$props.resCategories;
     		if ("resTags" in $$props) resTags = $$props.resTags;
     		if ("data" in $$props) $$invalidate(0, data = $$props.data);
-    		if ("newBatch" in $$props) $$invalidate(28, newBatch = $$props.newBatch);
+    		if ("newBatch" in $$props) $$invalidate(27, newBatch = $$props.newBatch);
     		if ("categories" in $$props) $$invalidate(1, categories = $$props.categories);
     		if ("tags" in $$props) $$invalidate(2, tags = $$props.tags);
     		if ("not_categorized" in $$props) not_categorized = $$props.not_categorized;
@@ -10119,7 +10115,7 @@ var app = (function () {
     		if ($$self.$$.dirty[0] & /*cat_query*/ 32) {
     			 if (cat_query.length > 0) {
     				$$invalidate(0, data = []);
-    				$$invalidate(28, newBatch = []);
+    				$$invalidate(27, newBatch = []);
     				nextUrl = null;
     				fetchDataTweets();
     			}
@@ -10128,7 +10124,7 @@ var app = (function () {
     		if ($$self.$$.dirty[0] & /*tag_query*/ 64) {
     			 if (tag_query.length >= 0) {
     				$$invalidate(0, data = []);
-    				$$invalidate(28, newBatch = []);
+    				$$invalidate(27, newBatch = []);
     				nextUrl = null;
     				fetchDataTweets();
     			}
@@ -10137,7 +10133,7 @@ var app = (function () {
     		if ($$self.$$.dirty[0] & /*from_datetime_query*/ 256) {
     			 if (from_datetime_query.length > 0) {
     				$$invalidate(0, data = []);
-    				$$invalidate(28, newBatch = []);
+    				$$invalidate(27, newBatch = []);
     				nextUrl = null;
     				fetchDataTweets();
     			}
@@ -10146,13 +10142,13 @@ var app = (function () {
     		if ($$self.$$.dirty[0] & /*to_datetime_query*/ 512) {
     			 if (to_datetime_query.length > 0) {
     				$$invalidate(0, data = []);
-    				$$invalidate(28, newBatch = []);
+    				$$invalidate(27, newBatch = []);
     				nextUrl = null;
     				fetchDataTweets();
     			}
     		}
 
-    		if ($$self.$$.dirty[0] & /*data, newBatch*/ 268435457) {
+    		if ($$self.$$.dirty[0] & /*data, newBatch*/ 134217729) {
     			 $$invalidate(0, data = [...data, ...newBatch]);
     		}
     	};
@@ -10171,7 +10167,6 @@ var app = (function () {
     		$_,
     		baseURL,
     		fetchDataTweets,
-    		search_datetime,
     		has_api_access,
     		categories_1_categories_binding,
     		categories_1_selected_categories_binding,

@@ -15,7 +15,7 @@
       initialLocale: "fr",
       initialLocale: getLocaleFromNavigator(),
     });
-	let baseURL="";
+	let baseURL="http://local.doctoctoc.net";
 	// if the api (like in this example) just have a simple numeric pagination
     let page = 1;
 	// but most likely, you'll have to store a token to fetch the next page
@@ -126,17 +126,13 @@
         api_access = await response.json();
         return api_access
     };
-    
-    function search_datetime() {
-    	var access = fetchUserApiAccess;
-    	return access["search_datetime"]
-    }
+
     function has_api_access(item) {
     	var access = fetchUserApiAccess;
-    	return access[item]
+    	//console.log(`access[item] == "true" ${access[item] == "true"}`)
+    	return (access[item] == "true")
     }
-    	
-	
+
 	onMount(()=> {
 		// load first batch
 		fetchDataTweets();
@@ -243,7 +239,7 @@
         title={$_("status_tags")}
         id={"tag"}/>
       {/if}
-      {#if search_datetime()}
+      {#if has_api_access("search_datetime")}
         <DatePicker
           bind:from_datetime_query
           bind:to_datetime_query/>

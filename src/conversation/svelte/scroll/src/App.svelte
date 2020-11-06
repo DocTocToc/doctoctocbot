@@ -128,7 +128,7 @@
     };
 
     function has_api_access(item) {
-    	var access = fetchUserApiAccess;
+    	var access = fetchUserApiAccess();
     	//console.log(`access[item] == "true" ${access[item] == "true"}`)
     	return (access[item] == "true")
     }

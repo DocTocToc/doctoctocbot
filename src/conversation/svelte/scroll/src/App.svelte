@@ -15,7 +15,7 @@
       initialLocale: "fr",
       initialLocale: getLocaleFromNavigator(),
     });
-	let baseURL="http://local.doctoctoc.net";
+	let baseURL="";
 	// if the api (like in this example) just have a simple numeric pagination
     let page = 1;
 	// but most likely, you'll have to store a token to fetch the next page

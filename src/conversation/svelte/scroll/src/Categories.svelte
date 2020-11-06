@@ -105,13 +105,14 @@ ul {
   <div class="col-md-auto">
   <h2>{title}</h2>
    <ul>
+   {#if id=="cat"}
    <li>
    <div class="custom-control custom-checkbox">
      <input class="custom-control-input" id="checkAll{id}" type="checkbox" bind:checked="{checkAll}" on:click="{checkAllClicked}">
-     <label class="custom-control-label" for="checkAll{id}"><bold>{$_("select_all")}</bold></label>
+     <label class="custom-control-label font-weight-bold" for="checkAll{id}"><bold>{$_("select_all")}</bold></label>
    </div>
-   <hr class="mt-2 mb-2" />
    </li>
+   {/if}
    {#each categories as category, i}
    <li>
      <div class="custom-control custom-checkbox">

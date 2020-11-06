@@ -22,3 +22,6 @@ class User(AbstractUser):
             return bool(user_categories)
         except:
             return False
+        
+    def get_user_api_access(self):
+        pass

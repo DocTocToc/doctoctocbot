@@ -4,10 +4,6 @@
 	import InfiniteScroll from "./InfiniteScroll.svelte";
 	import Status from "./Status.svelte";
 	import Categories from "./Categories.svelte";
-	//import "~@flatpickr/dist/flatpickr.css";
-	//import "~@flatpickr/dist/themes/light.css";
-    //import 'flatpickr/dist/flatpickr.css'
-    //import 'flatpickr/dist/themes/light.css'
     import DatePicker from "./DatePicker.svelte";
     import en from "../public/lang/en.json";
     import fr from "../public/lang/fr.json";
@@ -19,7 +15,7 @@
       initialLocale: "fr",
       initialLocale: getLocaleFromNavigator(),
     });
-	
+	let baseURL="";
 	// if the api (like in this example) just have a simple numeric pagination
     let page = 1;
 	// but most likely, you'll have to store a token to fetch the next page
@@ -48,9 +44,23 @@
 	let selected_tags = [];
 	let cat_query = "";
 	let tag_query = "";
-	const initialUrl = "/conversation/api/v1/tweets/?format=json&page=1";
+	const initialUrl = `${baseURL}/conversation/api/v1/tweets/?format=json&page=1`;
 	let hasMore = false;
 	
+	let api_access;
+	
+	// Error handling
+	function errorResponse(code, msg) {
+	    return e => {
+	        e.status = code;
+	        e.details = msg;
+	        throw e;
+	    };
+	}
+	function ifEmpty(fn) {
+	    return o => o || fn(new Error("empty"));
+	}
+
 	/* DatePickr */
 	let from_datetime_query = "";
 	let to_datetime_query = "";
@@ -65,36 +75,67 @@
 		resTweets = await response.json();
 		//console.log(resTweets);
 		newBatch = resTweets["results"];
-        console.log(newBatch);
+        //console.log(newBatch);
         nextUrl = resTweets["next"];
         //console.log(`nextUrl: ${nextUrl}`);
         hasMore = (nextUrl == null) ? false : true;
 	};
-	
+
     async function fetchDataCategories() {
-        const response = await fetch(`/tagging/api/v1/categories/`);
-        resCategories = await response.json();
+        const response = await fetch(`${baseURL}/tagging/api/v1/categories/`);
+        if (!response.ok) {
+          	const message = `An error has occured: ${response.status}`;
+           	//console.log(message);
+           	//throw new Error(message);
+           	return
+        }
+        resCategories =  await response.json();
         categories = resCategories["results"];
         for (var i = 0; i < categories.length; i++) {
-          categories[i].checked = true;
-          selected_categories.push(categories[i].taggit_tag);
+            categories[i].checked = true;
+            selected_categories.push(categories[i].taggit_tag);
         }
         categories.push(not_categorized)
         selected_categories.push(not_categorized.taggit_tag);
-        //console.log(categories);
     };
-    
+
     async function fetchDataTags() {
-        const response = await fetch(`/tagging/api/v1/tags/`);
+        const response = await fetch(`${baseURL}/tagging/api/v1/tags/`);
+        if (!response.ok) {
+          	const message = `An error has occured: ${response.status}`;
+           	//console.log(message);
+           	return
+          	//throw new Error(message);
+        }
         resTags = await response.json();
         tags = resTags["results"];
         for (var i = 0; i < tags.length; i++) {
-          tags[i].checked = false;
-          tags[i]["taggit_tag"] = tags[i].tag.toString();
-          tags[i]["tag"] = tags[i].tag_name;
-        }
-        //console.log(tags);
+            tags[i].checked = false;
+            tags[i]["taggit_tag"] = tags[i].tag.toString();
+            tags[i]["tag"] = tags[i].tag_name;
+        }                 
     };
+
+    async function fetchUserApiAccess() {
+        const response = await fetch(`${baseURL}/community/api/v1/user-api-access/`);
+        if (!response.ok) {
+          	const message = `An error has occured: ${response.status}`;
+           	//console.log(message);
+           	return
+        }
+        api_access = await response.json();
+        return api_access
+    };
+    
+    function search_datetime() {
+    	var access = fetchUserApiAccess;
+    	return access["search_datetime"]
+    }
+    function has_api_access(item) {
+    	var access = fetchUserApiAccess;
+    	return access[item]
+    }
+    	
 	
 	onMount(()=> {
 		// load first batch
@@ -186,23 +227,27 @@
 <div class="container">
   <div class="row">
     <div class="col-md-auto">
+      {#if has_api_access("search_category")}
       <Categories
         bind:categories
         bind:selected_categories
         bind:query={cat_query}
         title={$_("status_categories")}
         id={"cat"}/>
+      {/if}
+      {#if has_api_access("search_tag")}
       <Categories
         categories={tags}
         bind:selected_categories={selected_tags}
         bind:query={tag_query}
         title={$_("status_tags")}
         id={"tag"}/>
-
-      <DatePicker
-        bind:from_datetime_query
-        bind:to_datetime_query/>
-
+      {/if}
+      {#if search_datetime()}
+        <DatePicker
+          bind:from_datetime_query
+          bind:to_datetime_query/>
+      {/if}
     </div>
 
     <div class="col">
@@ -210,7 +255,7 @@
         {#each data as item}
         <li class="list-group-item">
           <Status
-            status={item} />
+            status={item} baseURL={baseURL} />
         </li>
         {/each}
         <InfiniteScroll

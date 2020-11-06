@@ -17,7 +17,7 @@
     var locale = extLocale.substring(0, extLocale.indexOf("-"));
     dayjs.locale(locale); // use loaded locale globally
   }
-  
+  export let baseURL;
   export let status;
   
   onMount(()=> {
@@ -86,7 +86,7 @@
 <div class="card">
     <div class="card-body">
       <div>
-        <img class="rounded-circle profile-pic float-left pr-1" src="{status.avatar_normal}" alt="Profile pic">
+        <img class="rounded-circle profile-pic float-left pr-1" src="{baseURL}{status.avatar_normal}" alt="Profile pic">
         <h6 class="card-title">
           <span class="name mx-1">{status.user_name}</span><span class="screen_name mx-1">@{status.user_screen_name}</span>
         </h6>

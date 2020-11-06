@@ -4,11 +4,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.db.models import Q, DateTimeField
 
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
 
 from . import models
-from . import serializers
 from rest_framework.pagination import PageNumberPagination
 
 from community.helpers import get_community
@@ -17,7 +16,7 @@ from users.utils import get_api_level
 from moderation.models import SocialUser
 from tagging.models import Category, TagKeyword
 
-from conversation.serializers import get_api_access
+from conversation.serializers import get_api_access, TweetdjSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Tweetdj.objects.all().order_by('-created_at')
-    serializer_class = serializers.TweetdjSerializer
+    serializer_class = TweetdjSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = (AllowAny,)
 

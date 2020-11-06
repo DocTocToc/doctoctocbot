@@ -52,7 +52,7 @@ urlpatterns += [
     path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
     path('oauth/', include('social_django.urls', namespace='social')),
-
+    path('community/', include('community.urls')),
     path('conversation/', include('conversation.urls')),
     path('tagging/', include('tagging.urls')),
     re_path(r'^ajax_select/', include(ajax_select_urls)),

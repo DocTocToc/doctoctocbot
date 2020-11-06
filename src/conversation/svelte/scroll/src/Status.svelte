@@ -19,6 +19,8 @@
   }
   export let baseURL;
   export let status;
+  export let has_status_category;
+  export let has_status_tag;
   
   onMount(()=> {
     setDayjsLocale();
@@ -102,12 +104,12 @@
       <p class="card-text">{status.text}</p>
       {#if categoryOrTag(status) }
       <div class="mx-0 mt-0 mb-1">
-        {#if status.status_category}
+        {#if has_status_category}
         {#each status.status_category as category}
         <span class="badge badge-pill badge-info mx-1">{category}</span>
         {/each}
         {/if}
-        {#if status.status_tag}
+        {#if has_status_tag}
         {#each status.status_tag as tag}
         <span class="badge badge-pill badge-dark mx-1">{tag}</span>
         {/each}

@@ -52,7 +52,8 @@
 	let has_search_datetime = false;
 	let has_search_category = false;
 	let has_search_tag = false;
-	
+	let has_status_category = false;
+	let has_status_tag = false;
 	
 	// Error handling
 	function errorResponse(code, msg) {
@@ -129,10 +130,12 @@
            	return
         }
         api_access = await response.json();
-        console.log(api_access);
+        //console.log(api_access);
     	has_search_datetime = api_access["search_datetime"];
     	has_search_category = api_access["search_category"];
     	has_search_tag = api_access["search_tag"];
+    	has_status_category = api_access["status_category"];
+    	has_status_tag = api_access["status_tag"];
     };
 
 	onMount(()=> {
@@ -254,7 +257,10 @@
         {#each data as item}
         <li class="list-group-item">
           <Status
-            status={item} baseURL={baseURL} />
+            status={item}
+            baseURL={baseURL}
+            bind:has_status_category
+            bind:has_status_tag />
         </li>
         {/each}
         <InfiniteScroll

@@ -15,7 +15,8 @@
       initialLocale: "fr",
       initialLocale: getLocaleFromNavigator(),
     });
-	let baseURL="";
+    let baseURL = "";
+	//let baseURL="http://local.doctoctoc.net";
 	// if the api (like in this example) just have a simple numeric pagination
     let page = 1;
 	// but most likely, you'll have to store a token to fetch the next page
@@ -48,6 +49,10 @@
 	let hasMore = false;
 	
 	let api_access;
+	let has_search_datetime = false;
+	let has_search_category = false;
+	let has_search_tag = false;
+	
 	
 	// Error handling
 	function errorResponse(code, msg) {
@@ -124,16 +129,14 @@
            	return
         }
         api_access = await response.json();
-        return api_access
+        console.log(api_access);
+    	has_search_datetime = api_access["search_datetime"];
+    	has_search_category = api_access["search_category"];
+    	has_search_tag = api_access["search_tag"];
     };
 
-    function has_api_access(item) {
-    	var access = fetchUserApiAccess();
-    	//console.log(`access[item] == "true" ${access[item] == "true"}`)
-    	return (access[item] == "true")
-    }
-
 	onMount(()=> {
+		fetchUserApiAccess();
 		// load first batch
 		fetchDataTweets();
 		// load categories
@@ -223,7 +226,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-auto">
-      {#if has_api_access("search_category")}
+      {#if has_search_category}
       <Categories
         bind:categories
         bind:selected_categories
@@ -231,7 +234,7 @@
         title={$_("status_categories")}
         id={"cat"}/>
       {/if}
-      {#if has_api_access("search_tag")}
+      {#if has_search_tag}
       <Categories
         categories={tags}
         bind:selected_categories={selected_tags}
@@ -239,7 +242,7 @@
         title={$_("status_tags")}
         id={"tag"}/>
       {/if}
-      {#if has_api_access("search_datetime")}
+      {#if has_search_datetime}
         <DatePicker
           bind:from_datetime_query
           bind:to_datetime_query/>

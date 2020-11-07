@@ -81,7 +81,7 @@
 		resTweets = await response.json();
 		//console.log(resTweets);
 		newBatch = resTweets["results"];
-        //console.log(newBatch);
+        console.log(newBatch);
         nextUrl = resTweets["next"];
         //console.log(`nextUrl: ${nextUrl}`);
         hasMore = (nextUrl == null) ? false : true;
@@ -92,7 +92,6 @@
         if (!response.ok) {
           	const message = `An error has occured: ${response.status}`;
            	//console.log(message);
-           	//throw new Error(message);
            	return
         }
         resCategories =  await response.json();
@@ -111,7 +110,6 @@
           	const message = `An error has occured: ${response.status}`;
            	//console.log(message);
            	return
-          	//throw new Error(message);
         }
         resTags = await response.json();
         tags = resTags["results"];

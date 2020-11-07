@@ -129,7 +129,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     def get_status_tag(self, obj):
         api_access = get_api_access(self.context['request'])
-        if api_access and api_access.status_category:
+        if api_access and api_access.status_tag:
             status_id = obj.json['id']
             community = get_community(self.context['request'])
             try:

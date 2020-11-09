@@ -37,6 +37,8 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     author_specialty = serializers.SerializerMethodField()
     status_category = serializers.SerializerMethodField()
     status_tag = serializers.SerializerMethodField()
+    media = serializers.SerializerMethodField()
+
 
     
     class Meta:
@@ -55,6 +57,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             'author_specialty',
             'status_category',
             'status_tag',
+            'media',
         )
 
     def get_id_str(self, obj):
@@ -141,6 +144,20 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
                 .exclude(pk__in=tagging_categories_id(community))
                 .values_list("name", flat=True)
             )
+
+    def get_media(self, obj):
+        status_id = obj.json['id']
+        try:
+            tweetdj = Tweetdj.objects.get(statusid=status_id)
+        except Tweetdj.DoesNotExist:
+            return
+        try:
+            return tweetdj.json["extended_entities"]["media"]
+        except KeyError:
+            try:
+                return tweetdj.json["entities"]["media"]
+            except KeyError:
+                return
 
 
 def tagging_categories_id(community) -> List[int]:

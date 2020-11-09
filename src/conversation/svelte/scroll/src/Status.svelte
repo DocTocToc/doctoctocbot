@@ -10,6 +10,8 @@
   dayjs.extend(localizedFormat)
   import 'dayjs/locale/en'
   import 'dayjs/locale/fr'
+  import Images from "./Images.svelte";
+
   
   // we need to remove "-FR" from "fr-FR"
   function setDayjsLocale() {
@@ -116,6 +118,8 @@
         {/if}
       </div>
       {/if}
+      <Images
+        images={status.media} />
       <div class="card-footer">
         <span class="card-text" data-toggle="tooltip" title="{dateTimeLocale(status.id_str)}">
         {fromNow(status.id_str)}

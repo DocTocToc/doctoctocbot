@@ -117,6 +117,7 @@ class ApiAccessAdmin(admin.ModelAdmin):
         'status_category',
         'status_tag',
         'status_protected',
+        'status_media',
     )
     list_filter = (
     'community',

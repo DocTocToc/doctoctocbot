@@ -146,18 +146,20 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             )
 
     def get_media(self, obj):
-        status_id = obj.json['id']
-        try:
-            tweetdj = Tweetdj.objects.get(statusid=status_id)
-        except Tweetdj.DoesNotExist:
-            return
-        try:
-            return tweetdj.json["extended_entities"]["media"]
-        except KeyError:
+        api_access = get_api_access(self.context['request'])
+        if api_access and api_access.status_media:
+            status_id = obj.json['id']
             try:
-                return tweetdj.json["entities"]["media"]
-            except KeyError:
+                tweetdj = Tweetdj.objects.get(statusid=status_id)
+            except Tweetdj.DoesNotExist:
                 return
+            try:
+                return tweetdj.json["extended_entities"]["media"]
+            except KeyError:
+                try:
+                    return tweetdj.json["entities"]["media"]
+                except KeyError:
+                    return
 
 
 def tagging_categories_id(community) -> List[int]:

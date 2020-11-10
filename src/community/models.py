@@ -389,7 +389,12 @@ class ApiAccess(models.Model):
         verbose_name=_('Protected status'),
         help_text=_("Access status from protected account."),
     )
-    
+    status_media = models.BooleanField(
+        default=False,
+        verbose_name=_('Status media'),
+        help_text=_("Access status media."),
+    )
+
     def __str__(self):
         return f"API Access: community = {self.community} ; level = {self.level}"
 

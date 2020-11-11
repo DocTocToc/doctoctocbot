@@ -35,13 +35,13 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = self.filter_by_site(qs)
+        api_access = get_api_access(self.request)
 
         # from_datetime
         req_from_datetime = self.request.query_params.getlist('from_datetime')
         logger.debug(f"{req_from_datetime=}")
         if req_from_datetime and len(req_from_datetime) == 1:
             qs = self.filter_by_from_datetime(qs, req_from_datetime[0])
-            
         # to_datetime
         req_to_datetime = self.request.query_params.getlist('to_datetime')
         logger.debug(f"{req_to_datetime=}")
@@ -84,11 +84,13 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             if (req_inter_tag):
                 qs = self.filter_by_tags(qs, req_inter_tag)
 
-            # filter out status authored by protected accounts if requesting
-            # user is not a member of the community
-            api_access = get_api_access(self.request)
-            if (api_access and not api_access.status_protected):
-                qs = self.filter_by_protected(qs)
+        # filter out status authored by protected accounts if requesting
+        # user is not a member of the community
+        if (api_access and not api_access.status_protected):
+            qs = self.filter_by_protected(qs)
+        # status_limit: slice QuerySet if status_limit int is superior to 0
+        if api_access and api_access.status_limit:
+            qs = qs[:api_access.status_limit]
         return qs
 
 

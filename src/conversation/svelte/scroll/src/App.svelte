@@ -81,7 +81,7 @@
 		resTweets = await response.json();
 		//console.log(resTweets);
 		newBatch = resTweets["results"];
-        console.log(newBatch);
+        //console.log(newBatch);
         nextUrl = resTweets["next"];
         //console.log(`nextUrl: ${nextUrl}`);
         hasMore = (nextUrl == null) ? false : true;
@@ -158,7 +158,7 @@
     fetchDataTweets();
   };
     
-  $: if ( tag_query.length >= 0 ) {
+  $: if ( tag_query.length > 0 ) {
     data = [];
     newBatch = [];
     nextUrl = null;
@@ -263,7 +263,7 @@
         {/each}
         <InfiniteScroll
           bind:hasMore
-          threshold=10
+          threshold=0
           on:loadMore={() => {fetchDataTweets();}} />
       </ul>
       <p class="scroll-footer">

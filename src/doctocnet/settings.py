@@ -713,4 +713,8 @@ CONSTANCE_CONFIG = {
         "santetoctoc",
         "Name of the local, in-house social media"
     ),
+    "autotweet__tree__batch_size": (
+        50,
+        "batch size for get_all_replies"
+    ),
 }

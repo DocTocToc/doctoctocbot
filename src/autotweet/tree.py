@@ -17,6 +17,7 @@ from community.helpers import (
     get_community_twitter_tweepy_api
 )
 from conversation.models import create_leaf, create_tree
+from constance import config
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +197,7 @@ def get_all_replies(community):
         .order_by("-statusid")
         .values_list("statusid", flat=True)
     )
-    batch_size = 10
+    batch_size = config.autotweet__tree__batch_size
     batches = [roots[i:i + batch_size] for i in range(0, len(roots), batch_size)]
     for batch in batches:
         record_replies(batch, community)

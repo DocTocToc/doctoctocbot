@@ -717,4 +717,12 @@ CONSTANCE_CONFIG = {
         50,
         "batch size for get_all_replies"
     ),
+    "autotweet__tasks__handle_get_all_replies__time_limit": (
+    86400,
+    "celery task time_limit"
+    ),
+    "autotweet__tasks__handle_get_all_replies__soft_time_limit": (
+    86400,
+    "celery task soft_time_limit"
+    ),
 }

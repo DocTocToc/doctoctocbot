@@ -1,5 +1,5 @@
 import logging
-
+from typing import Optional
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.sites.models import Site
 from django.db.utils import DatabaseError
@@ -7,6 +7,8 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import activate
 from community.models import Community
+from moderation.models import SocialUser
+from bot.tweepy_api import get_api
 
 logger = logging.getLogger(__name__)
 
@@ -47,3 +49,26 @@ def activate_language(community):
     if not language:
         return
     activate(language)
+    
+    
+def get_community_twitter_tweepy_api(community, backend=False):
+    if not community:
+        return
+    if not isinstance(community, Community):
+        return
+    return get_api(community.account.username, backend)
+    
+def get_community_bot_socialuser(community: Community) -> Optional[SocialUser]:
+    if not community:
+        return
+    if not isinstance(community, Community):
+        return
+    try:
+        user_id = community.account.userid
+    except AttributeError:
+        return
+    try:
+        su = SocialUser.objects.get(user_id=user_id)
+    except SocialUser.DoesNotExist:
+        return
+    return su

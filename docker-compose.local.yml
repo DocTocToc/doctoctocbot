@@ -11,6 +11,7 @@ services:
       target: dev
     image: dtn_dev
     command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    shm_size: 4gb
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}

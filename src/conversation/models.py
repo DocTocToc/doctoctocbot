@@ -206,10 +206,10 @@ def create_leaf(statusid, parentid):
         parent_mi = Treedj.objects.get(statusid=parentid)
     except Treedj.DoesNotExist:
         return None
-    leaf = None
     try:
         leaf = Treedj.objects.create(statusid=statusid, parent=parent_mi)
     except DatabaseError as e:
+        leaf = None
         logger.error(str(e))
     return leaf
 

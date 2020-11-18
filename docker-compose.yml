@@ -170,4 +170,8 @@ services:
       - redis
       - database
       - celery_retweet_worker
-    working_dir: /code/src
+    working_dir: /code/src  
+  chrome:
+    image: selenium/standalone-chrome:3.14
+    privileged: true
+    shm_size: 2g

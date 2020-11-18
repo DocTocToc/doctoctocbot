@@ -12,11 +12,25 @@ from autotweet.driver import getOrCreateWebdriver
 
 logger = logging.getLogger(__name__)
 
-def randinterval():
-    return random.randint(15, 20)/10
+def randinterval(low, high):
+    return random.randint(low, high)/1000
 
-def sleep():
-    time.sleep(randinterval())
+"""Sleep for a random time between low and high milliseconds
+"""
+def sleep(low=1500, high=3000):
+    '''
+    Sleep during a random amount of time between low and high milliseconds.
+
+            Optional parameters:
+                    low (int): A decimal integer representing the lower limit
+                    in milliseconds
+                    high (int): A decimal integer representing the higher limit
+                    in milliseconds
+
+            Returns:
+                    None
+    '''
+    time.sleep(randinterval(low, high))
     
 def ok_click(driver=None):
     if not driver:

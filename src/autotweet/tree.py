@@ -18,6 +18,7 @@ from community.helpers import (
 )
 from conversation.models import create_leaf, create_tree
 from constance import config
+from autotweet.authentication import get_auth_driver_chrome
 
 logger = logging.getLogger(__name__)
 
@@ -116,13 +117,17 @@ class ReplyCrawler(object):
             self.driver.implicitly_wait(1)
  
 
-def record_replies(statusids, community):
-    rc = ReplyCrawler(community, statusids)
+def record_replies(statusids, community, rc):
+    rc.sids = statusids
     tree_id_lst = rc.get_replies_of_status_list()
+    #logger.info(f"{tree_id_lst=}")
+    #logger.info(f"{np.unique(np.array(tree_id_lst))=}")
+    #logger.info(f"{np.array(Tweetdj.objects.values_list('statusid', flat=True))=}")
     new_id_arr = np.setdiff1d(
         np.unique(np.array(tree_id_lst)),
         np.array(Tweetdj.objects.values_list("statusid", flat=True))
     )
+    #logger.info(f"{new_id_arr.size=}")
     if new_id_arr.size == 0:
         return
     id_lst = list(new_id_arr)
@@ -130,18 +135,26 @@ def record_replies(statusids, community):
     while id_lst:
         batch = id_lst[:98]
         del id_lst[0:98]
+        #logger.debug(f"record_replies: {batch=}")
         statuses = api.statuses_lookup(batch, tweet_mode="extended")
         # sort statuses in reverse chronological order
         # so that the parents are added to the tree before their children
         statuses.sort(key=lambda x: x.id)
         for status in statuses:
             db = Addstatus(status._json)
-            db.addtweetdj()
+            _new_tweetdj = db.addtweetdj()
+            if _new_tweetdj:
+                pass
+                #logger.info(f"Status {status.id} was added to DB")
             in_reply_to_status_id = status._json["in_reply_to_status_id"]
             if in_reply_to_status_id:
-                create_leaf(status._json["id"], in_reply_to_status_id)
+                _leaf = create_leaf(status._json["id"], in_reply_to_status_id)
             elif status._json["id"] in statusids:
-                create_tree(status._json["id"])
+                _leaf = create_tree(status._json["id"])
+            if _leaf:
+                pass
+                #logger.info(f"Treedj {_leaf} was added to DB")
+
 
 def get_community_retweets(community_name: str) -> Optional[List[int]]:
     try:
@@ -199,9 +212,10 @@ def get_all_replies(community):
     )
     batch_size = config.autotweet__tree__batch_size
     batches = [roots[i:i + batch_size] for i in range(0, len(roots), batch_size)]
+    rc = ReplyCrawler(community, [])
     for batch in batches:
-        record_replies(batch, community)
-        
+        record_replies(batch, community, rc)
+"""        
 def get_auth_driver_chrome(community):
         username = community.account.username
         password = community.account.password
@@ -223,3 +237,4 @@ def get_auth_driver_chrome(community):
         focused_elem = driver.switch_to.active_element
         focused_elem.click()
         return driver
+"""

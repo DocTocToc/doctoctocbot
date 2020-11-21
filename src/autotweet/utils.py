@@ -9,6 +9,7 @@ from constance import config
 
 from selenium.common.exceptions import NoSuchElementException
 from autotweet.driver import getOrCreateWebdriver
+from selenium.webdriver.common.action_chains import ActionChains
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +86,9 @@ def send_post_request(auth_token=None, url=None, commit=None, referer=None):
 def rnd_str_gen(size=6, chars= string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-def tweet(txt):
-    driver = getOrCreateWebdriver(js=False)
+def tweet(txt, driver=None):
+    if not driver:
+        driver = getOrCreateWebdriver(js=False)
     sleep()
     try:
         driver.find_element_by_xpath('//a[@href="/compose/tweet"]').click()
@@ -104,3 +106,22 @@ def tweet(txt):
         driver.find_element_by_xpath('//input[@value="Tweet"]').click()
     except NoSuchElementException:
         return
+    
+def tweet_desktop(txt, driver=None):
+    if not driver:
+        driver = getOrCreateWebdriver(js=False)
+    sleep()
+    try:
+        driver.find_element_by_xpath('//a[@href="/compose/tweet"]').click()
+    except NoSuchElementException:
+        return
+    focused_elem = driver.switch_to.active_element
+    focused_elem.send_keys(txt)
+    sleep()
+    try:
+        tweet_button_span = driver.find_element_by_xpath('//span[text()="Tweet"]')
+    except NoSuchElementException:
+        return
+    action = ActionChains(driver) 
+    # perform the operation 
+    action.move_to_element(tweet_button_span).click().perform() 

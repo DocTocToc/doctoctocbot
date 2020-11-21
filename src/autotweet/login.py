@@ -13,7 +13,6 @@ from constance import config
 import logging
 import requests
 import sys
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common import action_chains, keys
 from selenium.common.exceptions import NoSuchElementException

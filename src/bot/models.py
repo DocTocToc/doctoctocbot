@@ -38,6 +38,10 @@ class Account(models.Model):
         default=False,
         help_text="Is this Twitter account protected (locked)?",
     )
+    cookies = models.BinaryField(
+        null=True,
+        help_text = "Session cookies for Selenium"
+    )
 
     def __str__(self):
         return self.username

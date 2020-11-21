@@ -197,7 +197,7 @@ class Treedj(MPTTModel):
         
 def create_tree(statusid):
     try:
-        Treedj.objects.create(statusid=statusid)
+        return Treedj.objects.create(statusid=statusid)
     except DatabaseError as e:
         logger.error(str(e))
 

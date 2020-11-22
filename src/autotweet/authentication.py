@@ -42,7 +42,7 @@ def ok_phone(phone=None, driver=None):
         try:
             driver.find_element_by_xpath(
                 '//input[@id="challenge_response"]'
-                ).send_keys(phone)
+                ).send_keys(phone.as_e164 )
             sleep()
             driver.find_element_by_xpath(
                 '//input[@id="email_challenge_submit"]'

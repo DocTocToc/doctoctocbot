@@ -434,7 +434,7 @@ CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 CELERY_TASK_ROUTES = {
     'bot.tasks.handle_on_status': {'queue': 'retweet'},
-    'conversation.tasks.handle_update_trees': {'queue': 'tree'},
+    'autotweet.tasks.handle_get_all_replies': {'queue': 'tree'},
 }
 
 ONCE = {

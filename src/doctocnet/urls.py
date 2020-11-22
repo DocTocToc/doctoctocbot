@@ -20,9 +20,9 @@ from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
 from django.conf.urls.i18n import i18n_patterns
 # wagtail start
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.core import urls as wagtail_urls
+#from wagtail.admin import urls as wagtailadmin_urls
+#from wagtail.documents import urls as wagtaildocs_urls
+#from wagtail.core import urls as wagtail_urls
 # wagtail stop
 from ajax_select import urls as ajax_select_urls
 from doctocnet.views import media_access
@@ -61,9 +61,9 @@ urlpatterns += [
     path('invitations/', include('invitations.urls', namespace='invitations')),
     path('authorize/', include('authorize.urls')),
     # wagtail
-    re_path(r'^cms/', include(wagtailadmin_urls)),
-    re_path(r'^documents/', include(wagtaildocs_urls)),
-    re_path(r'', include(wagtail_urls)),
+#    re_path(r'^cms/', include(wagtailadmin_urls)),
+#    re_path(r'^documents/', include(wagtaildocs_urls)),
+#    re_path(r'', include(wagtail_urls)),
 ]
 
 

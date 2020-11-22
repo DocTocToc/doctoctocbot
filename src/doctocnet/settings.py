@@ -154,8 +154,8 @@ if not DEBUG or DEBUG_HTTPS:
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
 # WAGTAIL
-WAGTAIL_SITE_NAME = config('WAGTAIL_SITE_NAME')
-WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
+#WAGTAIL_SITE_NAME = config('WAGTAIL_SITE_NAME')
+#WAGTAIL_FRONTEND_LOGIN_URL = '/accounts/login/'
 
 # Application definition
 
@@ -195,26 +195,26 @@ INSTALLED_APPS = [
     'rangefilter',
     'dashboard',
 # wagtail start
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail.core',
+#    'wagtail.contrib.forms',
+#    'wagtail.contrib.redirects',
+#    'wagtail.embeds',
+#    'wagtail.sites',
+#    'wagtail.users',
+#    'wagtail.snippets',
+#    'wagtail.documents',
+#    'wagtail.images',
+#    'wagtail.search',
+#    'wagtail.admin',
+#    'wagtail.core',
     
     'modelcluster',
     'taggit',
 # wagtail stop
 # wagtail blog
-    'blog',
-    'meta',
-    'wagtailmetadata',
-    'ajax_select',
+#    'blog',
+#    'meta',
+#    'wagtailmetadata',
+#    'ajax_select',
 # wagtail blog stop
     'link',
     'gpgcontact',
@@ -262,7 +262,7 @@ MIDDLEWARE = [
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
 # wagtail start
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+#    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 # wagtail stop
 ]
 

@@ -240,9 +240,7 @@ def poll_moderation_dm():
     dms_current = []
     for dm in dms:
         uid = get_moderation_id(dm)
-        logger.info(f"uid: {uid}")
         ok = uid in current_mod_uuids
-        logger.info(f"ok = uid in current_mod_uuids: {ok}")
         if ok:
             dms_current.append(dm)
     
@@ -250,7 +248,7 @@ def poll_moderation_dm():
     for dm in dms_current:
         moderation_id = get_moderation_id(dm)
         mod_cat_name = get_moderation_category_name(dm)
-        logger.info(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
+        #logger.debug(f"dm moderation_id: {moderation_id}, cat: {mod_cat_name}")
         #retrieve moderation instance
         try:
             mod_mi = Moderation.objects.get(id=moderation_id)
@@ -258,7 +256,7 @@ def poll_moderation_dm():
             logger.error(f"Moderation object with id {moderation_id} "
                          f"does not exist. Error message: {e}")
             continue
-        logger.info(f"mod_mi:{mod_mi}")
+        #logger.debug(f"mod_mi:{mod_mi}")
         # if mod_mi is not the current version, current_version() returns None
         # and it means this moderation was already done and we pass
         is_current = bool(Moderation.objects.current_version(mod_mi))
@@ -272,26 +270,21 @@ def poll_moderation_dm():
         # moderated SocialUser instance
         try:
             moderated_su_mi = SocialUser.objects.get(user_id=su_id_int)
-            logger.info(f"moderated_su_mi:{moderated_su_mi}")
-            logger.info(f"moderated_su_mi.profile:{moderated_su_mi.profile}")
         except SocialUser.DoesNotExist:
             continue
         
         # Category (cat_mi) or CategoryMetadata (meta_mi) model instance
         try:
             cat_mi = Category.objects.get(name=mod_cat_name)
-            logger.info(f"cat_mi:{cat_mi}")
         except Category.DoesNotExist:
             cat_mi = None
             try:
                 meta_mi = CategoryMetadata.objects.get(name=mod_cat_name)
-                logger.info(f"meta_mi:{meta_mi}")
             except CategoryMetadata.DoesNotExist:
                 continue
         # moderator SocialUser instance
         try:
             moderator_su_mi = SocialUser.objects.get(user_id=dm.sender_id)
-            logger.info(f"moderator_su_mi:{moderator_su_mi}")
         except SocialUser.DoesNotExist:
             continue
         if cat_mi:

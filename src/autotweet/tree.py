@@ -144,16 +144,16 @@ def record_replies(statusids, community, rc):
             db = Addstatus(status._json)
             _new_tweetdj = db.addtweetdj()
             if _new_tweetdj:
-                pass
-                #logger.info(f"Status {status.id} was added to DB")
+                logger.info(f"Status {status.id} was added to DB")
             in_reply_to_status_id = status._json["in_reply_to_status_id"]
             if in_reply_to_status_id:
                 _leaf = create_leaf(status._json["id"], in_reply_to_status_id)
+                if _leaf:
+                    logger.info(f"Treedj leaf {_leaf} was added to DB")
             elif status._json["id"] in statusids:
-                _leaf = create_tree(status._json["id"])
-            if _leaf:
-                pass
-                #logger.info(f"Treedj {_leaf} was added to DB")
+                _root = create_tree(status._json["id"])
+                if _root:
+                    logger.info(f"Treedj root {_root} was added to DB")
 
 
 def get_community_retweets(community_name: str) -> Optional[List[int]]:

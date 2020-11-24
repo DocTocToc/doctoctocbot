@@ -717,6 +717,18 @@ CONSTANCE_CONFIG = {
         50,
         "batch size for get_all_replies"
     ),
+    "autotweet__tree__rate_limited": (
+        "Sorry, you are rate limited. Please wait a few moments then try again.",
+        "rate limited message on web API"
+    ),
+    "autotweet__get_sleep_low": (
+    1000,
+    "Lower bound sleep duration in milliseconds inside get_tree_nodes"
+    ),
+    "autotweet__get_sleep_high": (
+    1500,
+    "Higher bound sleep duration in milliseconds inside get_tree_nodes"
+    ),
     "autotweet__tasks__handle_get_all_replies__time_limit": (
     86400,
     "celery task time_limit"

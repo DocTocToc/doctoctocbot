@@ -2,6 +2,8 @@ import re
 import logging
 from typing import List, Optional
 import http.client
+import time
+import sys
 
 import numpy as np
 from selenium.webdriver.common.action_chains import ActionChains 
@@ -36,6 +38,8 @@ class ReplyCrawler(object):
         self.community = community
         self.driver = get_auth_driver_chrome(self.community)
         self.sids = sids
+        self.get_count = 0
+        self.start_time = time.time()
 
     def get_tree_nodes(self, status_id):
         all_nodes: List[int] = []
@@ -49,9 +53,25 @@ class ReplyCrawler(object):
         #    return
         url = protocol + site + path
         #driver.set_page_load_timeout(10)
+        sleep(
+            config.autotweet__get_sleep_low,
+            config.autotweet__get_sleep_high
+        )
         self.driver.maximize_window()
         self.driver.get(url)
-        sleep(750, 1250)
+        self.get_count += 1
+        elapsed_second = (time.time() - self.start_time)
+        count_per_min = self.get_count / elapsed_second * 60
+        logger.info(f"Average get per minute = {count_per_min}")
+        if config.autotweet__tree__rate_limited in self.driver.page_source:
+            elapsed_minute = elapsed_second / 60
+            logger.warn(
+                f"Rate limited after {elapsed_minute} minutes:"
+                f"{count_per_min} get per minute"
+                f"({count_per_min*60} get per hour)"
+            )
+            # sleep for 15 minutes
+            time.sleep(15*60)
         counter = 0
         self.clickShowReplies()
         while True:

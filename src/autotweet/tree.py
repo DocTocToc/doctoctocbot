@@ -8,7 +8,7 @@ import sys
 import numpy as np
 from selenium.webdriver.common.action_chains import ActionChains 
 from selenium.webdriver.common import action_chains, keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from bot.lib.statusdb import Addstatus
 from autotweet.utils import sleep
 from autotweet.driver import getChromeRemoteDriver
@@ -76,7 +76,14 @@ class ReplyCrawler(object):
         self.clickShowReplies()
         while True:
             links = self.driver.find_elements_by_tag_name("a")
-            hrefs = [link.get_attribute("href") for link in links]
+            hrefs = []
+            for link in links:
+                try:
+                    hrefs.append(link.get_attribute("href"))
+                except StaleElementReferenceException as e:
+                    logger.error(f"Element became stale. {e}")
+                except NoSuchElementException as e:
+                    logger.error(f"Element not found. {e}")
             for href in hrefs:
                 #logger.debug(f"{href=}")
                 id_regex = re.search("\/.*\/status(?:es)?\/([^\/\?]+)", href)

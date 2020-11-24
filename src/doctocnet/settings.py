@@ -722,11 +722,11 @@ CONSTANCE_CONFIG = {
         "rate limited message on web API"
     ),
     "autotweet__get_sleep_low": (
-    1000,
+    2250,
     "Lower bound sleep duration in milliseconds inside get_tree_nodes"
     ),
     "autotweet__get_sleep_high": (
-    1500,
+    2300,
     "Higher bound sleep duration in milliseconds inside get_tree_nodes"
     ),
     "autotweet__tasks__handle_get_all_replies__time_limit": (

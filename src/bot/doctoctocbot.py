@@ -148,9 +148,8 @@ def is_following_rules(statusid, userid, dct):
 def is_following_rules_json(status, userid, dct):
     """
     Does this status follow the structural rules?
-    """  
-    author_is_follower: bool =  is_follower(userid, dct["_bot_screen_name"])
-    if dct["_require_follower"] and not author_is_follower:
+    """
+    if dct["_require_follower"] and not is_follower(userid, dct["_bot_screen_name"]):
         return False
     if isrt(status) and not dct["_allow_retweet"]:
         return False

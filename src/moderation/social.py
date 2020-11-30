@@ -94,7 +94,7 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     bot_cat, _ = Category.objects.get_or_create(name='bot')
     ok = False
     try:
-        ok = si.created > datetime_limit and not (bot_cat in user.category.all())
+        ok = si.created > datetime_limit and not (bot_cat in su.category.all())
     except AttributeError:
         pass
 

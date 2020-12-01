@@ -11,6 +11,7 @@ from django.forms import TextInput, Textarea
 from django.db import models
 from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
+from bot.models import Account
 from moderation.models import (
     SocialUser,
     Human,
@@ -98,9 +99,49 @@ class UserRelationshipInline(admin.TabularInline):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class ProtectedFilter(admin.SimpleListFilter):
+    title = 'Protected' # a label for our filter
+    parameter_name = 'protected' # you can put anything here
+
+    def lookups(self, request, model_admin):
+    # This is where you create filter options; we have two:
+        return [
+            ('unprotected', 'Unprotected'),
+            ('protected', 'Protected'),
+        ]
+
+    def queryset(self, request, queryset):
+    # This is where you process parameters selected by use via filter options:
+        if self.value() == 'unprotected':
+            return queryset.distinct().filter(profile__json__protected=False)
+        if self.value() == 'protected':
+            return queryset.distinct().filter(profile__json__protected=True)
 
 
+class BotFollower(admin.SimpleListFilter):
+    title = 'Bot Follower'
+    parameter_name = 'follow_bot'
     
+    def lookups(self, request, model_admin):
+        return list(Account.objects.values_list('userid', 'username'))
+
+    def queryset(self, request, queryset):
+        for userid in list(Account.objects.values_list('userid', flat=True)):
+            if self.value() == str(userid):
+                logger.debug(f"{self.value()=}")
+                try:
+                    su = SocialUser.objects.get(user_id=userid)
+                except SocialUser.DoesNotExist:
+                    return SocialUser.objects.none()
+                logger.debug(f"{su=}")
+                try:
+                    followers_ids = Follower.objects.filter(user=su).latest().id_list
+                except Follower.DoesNotExist:
+                    return SocialUser.objects.none()
+                logger.debug(f"{followers_ids=}")
+                return queryset.filter(user_id__in=followers_ids)
+
+
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
@@ -137,6 +178,11 @@ class SocialUserAdmin(admin.ModelAdmin):
     search_fields = (
         'user_id',
         'profile__json',
+    )
+    list_filter = (
+        'category__name',
+        ProtectedFilter,
+        BotFollower,
     )
 
     def category_moderator_lst(self, obj):
@@ -279,7 +325,14 @@ class QueueAdmin(VersionedAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link',)
+    list_display = (
+        'mini_image_tag',
+        'screen_name_tag',
+        'name_tag',
+        'socialuser_link',
+        'created',
+        'updated',
+    )
     fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
     readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
     search_fields = ('json',)

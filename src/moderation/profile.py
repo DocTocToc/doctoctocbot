@@ -4,6 +4,7 @@ import json
 from os.path import exists, basename
 import requests
 from urllib.parse import urlparse
+import tweepy
 
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
@@ -12,6 +13,8 @@ from django.conf import settings
 from moderation.models import SocialUser, Profile, SocialMedia
 from conversation.models import Tweetdj
 from bot.bin.user import getuser
+from bot.tweepy_api import get_api
+from community.models import Community
 
 logger = logging.getLogger('root')
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
@@ -211,3 +214,27 @@ def create_update_profile_local(su: SocialUser):
         )
     except DatabaseError:
         return
+
+def update_twitter_followers_profiles(community: Community):
+    """Update Twitter profiles of all followers
+    """
+    if not isinstance(community, Community):
+        logger.error(
+            f"{community} is not an instance of the 'Community' class"
+        )
+        return
+    try:
+        screen_name = community.account.username
+    except:
+        logger.error(
+            f"Could not retrieve username associated with {community}"
+        )
+        return
+    try:
+        api = get_api(community.account.username)
+    except:
+        return
+    c = tweepy.Cursor(api.followers, screen_name)
+    for follower in c.items():
+        logger.debug(f"{follower=}")
+        twitterprofile(follower._json)

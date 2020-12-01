@@ -141,6 +141,29 @@ class BotFollower(admin.SimpleListFilter):
                 logger.debug(f"{followers_ids=}")
                 return queryset.filter(user_id__in=followers_ids)
 
+class BotFriend(admin.SimpleListFilter):
+    title = 'Bot Friend'
+    parameter_name = 'friend_bot'
+
+    def lookups(self, request, model_admin):
+        return list(Account.objects.values_list('userid', 'username'))
+
+    def queryset(self, request, queryset):
+        for userid in list(Account.objects.values_list('userid', flat=True)):
+            if self.value() == str(userid):
+                logger.debug(f"{self.value()=}")
+                try:
+                    su = SocialUser.objects.get(user_id=userid)
+                except SocialUser.DoesNotExist:
+                    return SocialUser.objects.none()
+                logger.debug(f"{su=}")
+                try:
+                    friends_ids = Friend.objects.filter(user=su).latest().id_list
+                except Follower.DoesNotExist:
+                    return SocialUser.objects.none()
+                logger.debug(f"{friends_ids=}")
+                return queryset.filter(user_id__in=friends_ids)
+
 
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
@@ -183,6 +206,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category__name',
         ProtectedFilter,
         BotFollower,
+        BotFriend,
     )
 
     def category_moderator_lst(self, obj):

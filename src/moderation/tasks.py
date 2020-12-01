@@ -476,7 +476,32 @@ def update_bots_followers():
             bot_screen_name=account.username,
             relationship='followers',
         )
-        time.sleep(settings.API_FOLLOWERS_PERIOD)
+        try:
+            period = settings.API_FOLLOWERS_PERIOD
+            time.sleep(period)
+        except AttributeError:
+            logger.error(f"API_FOLLOWERS_PERIOD is not set.")
+            pass
+
+@shared_task
+def update_bots_friends():
+    for account in Account.objects.filter(active=True):
+        try:
+            su = SocialUser.objects.get(user_id=account.userid)
+        except SocialUser.DoesNotExist:
+            continue
+        update_social_ids(
+            su,
+            cached=False,
+            bot_screen_name=account.username,
+            relationship='friends',
+        )
+        try:
+            period = settings.API_FRIENDS_PERIOD
+            time.sleep(period)
+        except AttributeError:
+            logger.error(f"API_FRIENDS_PERIOD is not set.")
+            pass
 
 @shared_task
 def handle_pending_moderations():

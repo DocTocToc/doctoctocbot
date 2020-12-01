@@ -49,6 +49,7 @@ from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
 from autotweet.accept import accept_follower, decline_follower
+from moderation.profile import update_twitter_followers_profiles
 
 logger = get_task_logger(__name__)
 
@@ -622,4 +623,20 @@ def handle_accept_follower_twitter(ucr_pk: int):
             ucr.social_user.user_id,
             ucr.community.account.username,
         )
-    
+
+@shared_task
+def handle_update_twitter_followers_profiles(community: str):
+    """Update Profiles for followers of the community's bot
+
+    Parameters
+    ----------
+    community : str
+        Name of the community
+    """
+    if not community:
+        return
+    try:
+        community_mi = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    update_twitter_followers_profiles(community_mi)

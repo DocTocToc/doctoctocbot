@@ -234,7 +234,7 @@ def update_twitter_followers_profiles(community: Community):
         api = get_api(community.account.username)
     except:
         return
-    c = tweepy.Cursor(api.followers, screen_name)
+    c = tweepy.Cursor(api.followers, screen_name=screen_name, count=200)
     for follower in c.items():
         logger.debug(f"{follower=}")
         twitterprofile(follower._json)

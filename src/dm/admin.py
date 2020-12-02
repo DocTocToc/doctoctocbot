@@ -114,7 +114,6 @@ class DirectMessageAdmin(admin.ModelAdmin):
         'text',
         'is_quick_reply_response',
         'is_quick_reply_question',
-        'datetime_str'
         'jsn',
     )
     search_fields = (

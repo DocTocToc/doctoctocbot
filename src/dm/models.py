@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.admin.utils import help_text_for_field
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -47,6 +48,11 @@ class DirectMessage(models.Model):
     jsn = JSONField()
     
     objects = DirectMessageManager()
+
+    @property
+    def datetime_str(self):
+        dt = datetime.fromtimestamp(self.created_timestamp/1000)
+        return dt.strftime("%Y-%m-%d %H:%M:%S%z")
     
     class Meta:
         ordering = ['-created_timestamp']

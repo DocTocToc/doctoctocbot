@@ -89,7 +89,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'created_timestamp',
-        'datetime_str',
+        'datetime_str_tag',
         'sender_id',
         'recipient_id',
         'text',
@@ -110,6 +110,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
         'id',
         'sender_id',
         'created_timestamp',
+        'datetime_str',
         'recipient_id',
         'text',
         'is_quick_reply_response',
@@ -127,11 +128,11 @@ class DirectMessageAdmin(admin.ModelAdmin):
         ToAccount, 
     )
 
-    def datetime_str(self, obj):
+    def datetime_str_tag(self, obj):
         dt = datetime.fromtimestamp(obj.created_timestamp/1000)
-        return f"{dt:%Y-%m-%d %H:%M:%S%z}"
+        return dt.strftime("%Y-%m-%d %H:%M:%S%z")
 
-    datetime_str.short_description = "Date & Time"
+    datetime_str_tag.short_description = "Date & Time"
     
     def is_quick_reply_response(self, obj):
         try:

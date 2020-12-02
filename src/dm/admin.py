@@ -107,6 +107,10 @@ class DirectMessageAdmin(admin.ModelAdmin):
         'is_quick_reply_response',
         'is_quick_reply_question',
     )
+    search_fields = (
+        'jsn__kwargs__message_create__message_data__text',
+        'jsn__text',
+    )
     list_filter = (
         IsQuickReplyResponse,
         IsQuickReplyQuestion,

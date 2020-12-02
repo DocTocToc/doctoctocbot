@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
@@ -87,6 +89,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'created_timestamp',
+        'datetime_str',
         'sender_id',
         'recipient_id',
         'text',
@@ -95,6 +98,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     fields = (
         'id',
         'created_timestamp',
+        'datetime_str',
         'sender_id',
         'recipient_id',
         'text',
@@ -103,9 +107,15 @@ class DirectMessageAdmin(admin.ModelAdmin):
         'jsn',
     )
     readonly_fields = (
+        'id',
+        'sender_id',
+        'created_timestamp',
         'recipient_id',
+        'text',
         'is_quick_reply_response',
         'is_quick_reply_question',
+        'datetime_str'
+        'jsn',
     )
     search_fields = (
         'jsn__kwargs__message_create__message_data__text',
@@ -117,6 +127,12 @@ class DirectMessageAdmin(admin.ModelAdmin):
         FromAccount,
         ToAccount, 
     )
+
+    def datetime_str(self, obj):
+        dt = datetime.fromtimestamp(obj.created_timestamp/1000)
+        return f"{dt:%Y-%m-%d %H:%M:%S%z}"
+
+    datetime_str.short_description = "Date & Time"
     
     def is_quick_reply_response(self, obj):
         try:

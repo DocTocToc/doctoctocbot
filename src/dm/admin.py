@@ -46,22 +46,12 @@ class IsQuickReplyResponse(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         value = self.value()
-        #"kwargs"]["message_create"]["message_data"]
+        q1=Q(jsn__kwargs__message_create__message_data__has_key='quick_reply_response')
+        q2=Q(jsn__has_key='quick_reply_response')
         if value == 'yes':
-            return queryset.filter(
-                Q(jsn__kwargs__message_create__message_data__has_key='quick_reply_response') |
-                Q(jsn__has_key='quick_reply_response')
-            )
+            return queryset.filter(q1 | q2)
         elif value == 'no':
-            return (
-                queryset
-                .exclude(
-                    jsn__kwargs__message_create__message_data__has_key='quick_reply_response'
-                )
-                .exclude(
-                    jsn__has_key='quick_reply_response'
-                )
-            )
+            return queryset.filter(~q1 | ~q2)
         return queryset
 
 
@@ -77,21 +67,12 @@ class IsQuickReplyQuestion(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         value = self.value()
+        q1 = Q(jsn__has_key='quick_reply')
+        q2 = Q(jsn__kwargs__message_create__message_data__has_key='quick_reply')
         if value == 'yes':
-            return queryset.filter(
-                Q(jsn__has_key='quick_reply') |
-                Q(jsn__kwargs__message_create__message_data__has_key='quick_reply')
-            )
+            return queryset.filter(q1 | q2)
         elif value == 'no':
-            return (
-                queryset
-                .exclude(
-                    jsn__has_key='quick_reply'
-                )
-                .exclude(
-                    jsn__kwargs__message_create__message_data__has_key='quick_reply'
-                )
-            )
+            return queryset.filter(~q1 | ~q2)
         return queryset
 
 

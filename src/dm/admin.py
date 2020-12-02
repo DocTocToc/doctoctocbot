@@ -53,9 +53,14 @@ class IsQuickReplyResponse(admin.SimpleListFilter):
                 Q(jsn__has_key='quick_reply_response')
             )
         elif value == 'no':
-            return queryset.exclude(
-                Q(jsn__kwargs__message_create__message_data__has_key='quick_reply_response') |
-                Q(jsn__has_key='quick_reply_response')
+            return (
+                queryset
+                .exclude(
+                    jsn__kwargs__message_create__message_data__has_key='quick_reply_response'
+                )
+                .exclude(
+                    jsn__has_key='quick_reply_response'
+                )
             )
         return queryset
 
@@ -78,9 +83,14 @@ class IsQuickReplyQuestion(admin.SimpleListFilter):
                 Q(jsn__kwargs__message_create__message_data__has_key='quick_reply')
             )
         elif value == 'no':
-            return queryset.exclude(
-                Q(jsn__has_key='quick_reply') |
-                Q(jsn__kwargs__message_create__message_data__has_key='quick_reply')
+            return (
+                queryset
+                .exclude(
+                    jsn__has_key='quick_reply'
+                )
+                .exclude(
+                    jsn__kwargs__message_create__message_data__has_key='quick_reply'
+                )
             )
         return queryset
 
@@ -92,8 +102,9 @@ class DirectMessageAdmin(admin.ModelAdmin):
         'datetime_str_tag',
         'sender_id',
         'recipient_id',
-        'text',
+        'text_tag',
         'is_quick_reply_response',
+        'is_quick_reply_question',
     )
     fields = (
         'id',
@@ -127,6 +138,11 @@ class DirectMessageAdmin(admin.ModelAdmin):
         FromAccount,
         ToAccount, 
     )
+
+    def text_tag(self, obj):
+        return obj.text[0:70]
+
+    text_tag.short_description = "Text"
 
     def datetime_str_tag(self, obj):
         dt = datetime.fromtimestamp(obj.created_timestamp/1000)

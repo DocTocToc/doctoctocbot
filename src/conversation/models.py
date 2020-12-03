@@ -193,7 +193,7 @@ class Treedj(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['statusid']
-        order_by = ['statusid']
+        order_by = ['-statusid']
         
 def create_tree(statusid):
     try:

@@ -3,6 +3,8 @@ from typing import Optional
 import queue
 import threading
 import sys
+import pytz
+from datetime import datetime, timedelta
 from bot.lib.statusdb import Addstatus
 
 from conversation.models import Treedj, Tweetdj
@@ -10,25 +12,51 @@ from conversation.models import create_leaf, create_tree
 from community.helpers import get_community_twitter_tweepy_api
 from community.models import Community
 from bot.addstatusdj import addstatus
+from conversation.tree.utils import get_community_roots
 
 logger = logging.getLogger(__name__)
 
 class ReplyCrawler(object):
+    """
+    A class used to represent an Twitter tree crawler based on the search API
+
+    ...
+
+    Attributes
+    ----------
+    community : Community
+        a Community object, the crawler will build statuse trees of this community
+    api : Tweepy API object
+        Tweepy API object
+    root_id : int
+        status id of the root of the tree
+    q : PriorityQueue
+        unused
+    since_id: int
+        search will start from this id
+    tree_init: List[int]
+        list of ids of descendants already known for this tree root
+
+    Methods
+    -------
+    TODO
+
+    """
     max_count = 100
     
-    def __init__(self, community, root_id):
+    def __init__(self, community):
         self.community = community
         self.api = get_community_twitter_tweepy_api(
             self.community,
             backend=False
         )
-        self.root_id = root_id
-        self.q = queue.PriorityQueue(maxsize=0)
-        self.since_id = root_id
-        self.tree_init = ReplyCrawler.root_descendants(
-            root_id,
-            include_self=True
-        )
+        #self.root_id = root_id
+        #self.q = queue.PriorityQueue(maxsize=0)
+        #self.since_id = root_id
+        #self.tree_init = ReplyCrawler.root_descendants(
+        #    root_id,
+        #    include_self=True
+        #)
 
     @staticmethod
     def root_descendants(root_id, include_self: bool = True):
@@ -114,17 +142,20 @@ class ReplyCrawler(object):
         root = self.add_leaves(root_id)
         if not root:
             return
+        # Get existing descendants
         root_descendants = ReplyCrawler.root_descendants(
             root.statusid,
             include_self=True
         )
+        # Search for new leaves
         for r in root_descendants:
             self.add_leaves(r)
         tree_current = ReplyCrawler.root_descendants(
             root_id,
             include_self=True
         )
-        new_nodes = list(set(tree_current) - set(self.tree_init))
+        # Add new nodes to status database
+        new_nodes = list(set(tree_current) - set(root_descendants))
         if new_nodes:
             self.lookup_status(new_nodes)
 
@@ -138,9 +169,11 @@ class ReplyCrawler(object):
                 db = Addstatus(status._json)
                 db.addtweetdj()
 
+    """
     def enqueue_nodes(self, replies):
         for reply in replies:
             self.q.put(reply.id)
+    """
 
     def search_reply_to(
             self,
@@ -162,3 +195,28 @@ class ReplyCrawler(object):
             )
         except AttributeError:
             logger.error("Probable Tweepy API error.")
+
+
+def tree_search_crawl(community_name, days: int = 7):
+    try:
+        community = Community.objects.get(name=community_name)
+    except Community.DoesNotExist:
+        return
+    # get tree roots for this community created less than 7 days ago
+    lower_dt = datetime.utcnow().replace(tzinfo=pytz.utc) - timedelta(days=days)
+    logger.debug(f"{lower_dt=}")
+    roots = get_community_roots(community, lower_dt=lower_dt)
+    rc = ReplyCrawler(community)
+    start_dt = datetime.utcnow()
+    logger.info(
+        f"Starting tree_search_crawl loop over {len(roots)} root nodes "
+        f"at {start_dt} UTC."
+    )
+    for root in roots:
+        rc.build_tree(root)
+    stop_dt = datetime.utcnow()
+    logger.info(
+        f"Ending tree_search_crawl loop over {len(roots)} root nodes "
+        f"at {stop_dt} UTC. \n"
+        f"(Loop had started at {start_dt} UTC.)"
+    )

@@ -104,7 +104,7 @@ class ReplyCrawler(object):
         if len(replies) == ReplyCrawler.max_count:
             while True:
                 hi = 0
-                for x in [reply['id'] for reply in replies]:
+                for x in [reply.id for reply in replies]:
                     hi = max(x,hi)
                 more_replies = self.search_reply_to(
                     screen_name,

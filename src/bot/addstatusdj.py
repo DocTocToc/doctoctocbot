@@ -8,11 +8,8 @@ Author: Jérome Pinguet.
 Based on [retweet-bot](https://github.com/basti2342/retweet-bot) by [Basti](https://github.com/basti2342)
 License: Mozilla Public License, see 'LICENSE' for details.                     
 """                                                                             
-                                                                                
 import argparse
-import json
 import logging
-import os
 import tweepy
 
 from conversation.models import Tweetdj
@@ -20,9 +17,11 @@ from conversation.models import Tweetdj
 from .lib.statusdb import Addstatus
 from bot.tweepy_api import get_api
 from bot.tweepy_api import statuses_lookup
-
+from bot.lib.status import api_switch_get_status
 
 logger = logging.getLogger(__name__)
+
+#tweepy.error.TweepError: [{'code': 136, 'message': 'You have been blocked from the author of this tweet.'}]
 
 def addstatus(statusid, bot_username=None):
     API = get_api(
@@ -33,7 +32,21 @@ def addstatus(statusid, bot_username=None):
         status = API.get_status(statusid, tweet_mode='extended')
     except AttributeError:
         return
-    db = Addstatus(status._json)
+    except tweepy.error.TweepError as e:
+        logger.error(f"addstatus: Tweepy error: {e}")
+        # tweepy.error.TweepError: [{'code': 136, 'message': 'You have been blocked from the author of this tweet.'}]
+        if e.args[0][0]['code'] == 136:
+            status = api_switch_get_status(
+                statusid,
+                tweet_mode='extended',
+                exclude=bot_username
+            )
+    try:
+        db = Addstatus(status._json)
+    except AttributeError:
+        if status is None:
+            logger.error(f"We could not get status {statusid}")
+        return
     db.addtweetdj()
 
 def addstatus_if_not_exist(statusid):

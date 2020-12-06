@@ -115,4 +115,3 @@ def update_retweet(days: int):
                 tweetdj.deleted=True
                 tweetdj.save()
         
-        

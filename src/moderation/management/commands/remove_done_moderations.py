@@ -12,7 +12,7 @@ class Command(BaseCommand):
     'Remove moderations from this community where the user was already '
     'moderated.'
     )
-    
+
     def add_arguments(self, parser):
         parser.add_argument(
             '-com',

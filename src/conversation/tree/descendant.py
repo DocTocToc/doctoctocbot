@@ -5,8 +5,11 @@ import threading
 import sys
 import pytz
 from datetime import datetime, timedelta
-from bot.lib.statusdb import Addstatus
+import time
 
+from constance import config
+
+from bot.lib.statusdb import Addstatus
 from conversation.models import Treedj, Tweetdj
 from conversation.models import create_leaf, create_tree
 from community.helpers import get_community_twitter_tweepy_api
@@ -197,15 +200,27 @@ class ReplyCrawler(object):
             logger.error("Probable Tweepy API error.")
 
 
-def tree_search_crawl(community_name, days: int = 7):
+def tree_search_crawl(
+        community_name,
+        days: int = (
+            config.conversation__tree__descendant__tree_search_crawl__days
+        )
+    ):
     try:
         community = Community.objects.get(name=community_name)
     except Community.DoesNotExist:
-        return
+        return False
     # get tree roots for this community created less than 7 days ago
     lower_dt = datetime.utcnow().replace(tzinfo=pytz.utc) - timedelta(days=days)
     logger.debug(f"{lower_dt=}")
     roots = get_community_roots(community, lower_dt=lower_dt)
+    if not roots:
+        backoff = community.no_root_backoff
+        if not backoff:
+            backoff = config.community__models__no_root_backoff__default
+        logger.debug(f"No root found. Sleeping for {backoff} seconds.")
+        time.sleep(backoff)
+        return True
     rc = ReplyCrawler(community)
     start_dt = datetime.utcnow()
     logger.info(
@@ -220,3 +235,14 @@ def tree_search_crawl(community_name, days: int = 7):
         f"at {stop_dt} UTC. \n"
         f"(Loop had started at {start_dt} UTC.)"
     )
+    retry = community.tree_search_retry
+    if not retry:
+        retry = config.community__models__tree_search_retry__default
+    diff = retry - (stop_dt - start_dt)
+    if diff > 0:
+        logger.debug(
+            f"Execution time inferior to retry minimum. "
+            f"Sleeping for {backoff} seconds."
+        )
+        time.sleep(diff)
+    return True

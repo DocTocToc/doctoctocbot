@@ -49,6 +49,9 @@ class CommunityAdmin(admin.ModelAdmin):
         'language',
         'pending_moderation_period',
         'viral_moderation',
+        'tree_search',
+        'no_root_backoff',
+        'tree_search_retry',
     )
     fields = (
         'name',
@@ -68,6 +71,9 @@ class CommunityAdmin(admin.ModelAdmin):
         'viral_moderation',
         'viral_moderation_category',
         'viral_moderation_message',
+        'tree_search',
+        'no_root_backoff',
+        'tree_search_retry',
         'follow_request_backoff',
         'request_queue_backoff',
         'follower_common_account',

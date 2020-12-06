@@ -97,6 +97,23 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    tree_search = models.BooleanField(
+        default=False,
+        help_text = (
+            "Launch a conversation tree nodes search based on Twitter API "
+            "for this community at startup"
+        )
+    )
+    no_root_backoff = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text = "tree_search backoff period after no root found (second)"
+    )
+    tree_search_retry = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text = "minimum retry period after all roots processed (second)"
+    )
     verification_threshold_follower = models.PositiveIntegerField(
         default = settings.VERIFICATION_THRESHOLD_FOLLOWER,
         help_text = "Start verification if follower count superior or equal to"

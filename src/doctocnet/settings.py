@@ -214,7 +214,6 @@ INSTALLED_APPS = [
     'markdown',
     'phonenumber_field',
     'taggit_serializer',
-    'background_task',
 ]
 
 if DEBUG:
@@ -645,7 +644,6 @@ VERIFICATION_THRESHOLD_FOLLOWER = config(
     cast=int,
     default=1
 )
-
 #Constance
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
@@ -708,5 +706,17 @@ CONSTANCE_CONFIG = {
     "autotweet__tasks__handle_get_all_replies__soft_time_limit": (
     86400,
     "celery task soft_time_limit"
+    ),
+    "conversation__tree__descendant__tree_search_crawl__days": (
+        7,
+        "search for replies posted during the last n days"
+    ),
+    "community__models__no_root_backoff__default": (
+        3600,
+        "tree_search backoff period after no root found (second)"
+    ),
+    "community__models__tree_search_retry__default": (
+        60,
+        "retry period after all roots processed (second)"
     ),
 }

@@ -154,3 +154,6 @@ services:
   stream_6:
     image: dtn_prod
     restart: always
+  tree_search:
+    image: dtn_prod
+    restart: always

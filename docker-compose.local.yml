@@ -115,4 +115,13 @@ services:
     image: dtn_dev
     restart: on-failure
   stream_6:
-    image: dtn_dev    
+    image: dtn_dev
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+  tree_search:
+    image: dtn_dev
+    restart: on-failure

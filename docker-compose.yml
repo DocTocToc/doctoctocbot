@@ -170,8 +170,22 @@ services:
       - redis
       - database
       - celery_retweet_worker
-    working_dir: /code/src  
+    working_dir: /code/src
   chrome:
     image: selenium/standalone-chrome:3.14
     privileged: true
     shm_size: 2g
+  tree_search:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_tree_search --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+    depends_on:
+      - redis
+      - database
+    working_dir: /code/src

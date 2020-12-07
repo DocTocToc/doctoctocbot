@@ -141,11 +141,12 @@ class Community(models.Model):
     follower_common_account = models.ManyToManyField(
         'bot.Account',
         related_name='follower_common_account_community',
+        blank=True,
         help_text = (
             "These Accounts are part of a common follower community for "
             "retweeting purpose. If a user follows one of those accounts, she "
             "will be retweeted by the current Account."    
-        )   
+        ),
     )
 
     def __str__(self):

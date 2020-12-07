@@ -165,6 +165,9 @@ class Treedj(MPTTModel):
                             blank=True,
                             related_name='children')
 
+    class MPTTMeta:
+        order_insertion_by = ['statusid']
+
     def __str__(self):
         return settings.TWITTER_STATUS_URL.format(id=self.statusid)
 
@@ -191,9 +194,6 @@ class Treedj(MPTTModel):
     
     status_text_tag.short_description = "Text"
 
-    class MPTTMeta:
-        order_insertion_by = ['statusid']
-        order_by = ['-statusid']
         
 def create_tree(statusid):
     try:

@@ -197,6 +197,7 @@ class TreedjAdmin(MPTTModelAdmin):
     search_fields = ['statusid', 'parent__statusid',]
     fields = ('statusid', 'parent', 'screen_name', 'status_text_tag', 'tweetdj_link', 'status_url_tag',)
     readonly_fields = ('statusid', 'parent', 'screen_name', 'status_text_tag', 'tweetdj_link', 'status_url_tag',)
+    ordering = ('-statusid',)
 
     def tweetdj_link(self, obj):
         if Tweetdj.objects.filter(statusid=obj.statusid).exists():

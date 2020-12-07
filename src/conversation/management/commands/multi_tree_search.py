@@ -60,5 +60,13 @@ class Command(BaseCommand):
         for c in Community.objects.filter(active=True, tree_search=True):
             tasks.append((t, [c.name, f"--days={days}"]))
         logger.debug(tasks)
+        if not tasks:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "No community has activated tree_search. "
+                    "No task to process. Returning."
+                )
+            )
+            return
         mt = MultiTask(tasks)
         mt.start()

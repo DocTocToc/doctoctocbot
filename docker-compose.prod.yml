@@ -138,22 +138,22 @@ services:
     image: dtn_prod
   stream_1:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   stream_2:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   stream_3:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   stream_4:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   stream_5:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   stream_6:
     image: dtn_prod
-    restart: always
+    restart: on-failure:2
   tree_search:
     image: dtn_prod
     restart: always

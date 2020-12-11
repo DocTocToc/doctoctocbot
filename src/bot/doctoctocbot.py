@@ -38,6 +38,7 @@ from moderation.moderate import process_unknown_user
 from bot.tweet import hashtag_list
 from tagging.tasks import keyword_tag
 from bot.models import Account
+from conversation.models import create_tree
 
 logger = logging.getLogger(__name__)
 
@@ -382,6 +383,15 @@ def community_retweet(
         if trust:
             if skip_rules or is_following_rules(statusid, userid, dct):
                 rt(statusid, dct, community)
+
+def create_tree_except_rt(statusid):
+    try:
+        tweetdj = Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
+    if not tweetdj.retweetedstatus and not tweetdj.parentid:
+        create_tree(statusid)
+
 
 def rt(statusid, dct, community):
     logger.info(

@@ -27,10 +27,10 @@ def handle_question(statusid: int):
 
         
 @shared_task
-def handle_on_status(statusid: int):
+def handle_on_status(jsn: dict):
     from bot.onstatus import triage
-    logger.info("handling status %d" % statusid)
-    triage(statusid)
+    logger.info(f"handling status {jsn}")
+    triage(jsn)
     
 @shared_task
 def handle_image(url, filepath):

@@ -14,7 +14,7 @@ class StdOutListener(StreamListener):
 
     def on_status(self, status):
         logger.info("%s", status_json_log(status._json))
-        handle_on_status.apply_async(args=(status.id,), ignore_result=True)
+        handle_on_status.apply_async(args=(status._json,), ignore_result=True)
         return True
 
     def on_error(self, status_code):

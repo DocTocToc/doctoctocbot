@@ -74,14 +74,7 @@ def getSocialDjangoAuth(username):
     return auth
 
 def get_api(username=None, backend=False):
-    api = tweepy.API(getAuth(username, backend), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-    #verify_credentials(api, username, backend)
-    try:
-        api.verify_credentials()
-    except tweepy.TweepError as e:
-        logger.error(f"Error creating API with Tweepy: {e}")
-        return
-    return api
+    return tweepy.API(getAuth(username, backend), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.

@@ -343,7 +343,7 @@ def process_cat_mi(cat_mi, moderated_su_mi, moderator_su_mi, mod_mi):
         # linked moderations will be deleted too
         delete_moderation_queue(mod_mi)
         # send status to triage, it will be retweeted according to retweet rules of communities
-        triage_status(status_id)
+        triage_status(status_id, community)
         # TODO: create a cursor based on DM timestamp to avoid processing all DMs during each polling
         # TODO: check that the moderator is following the bot before attempting to send a DM
         # viral:

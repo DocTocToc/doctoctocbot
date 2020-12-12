@@ -1,8 +1,8 @@
 import logging
 import tweepy
+from typing import Optional
 from tweepy.streaming import StreamListener
 from bot.tweepy_api import get_api
-from conversation.models import Hashtag, Tweetdj
 from bot.tasks import handle_on_status
 from bot.lib.status import status_json_log
 from community.models import Community
@@ -14,7 +14,10 @@ class StdOutListener(StreamListener):
 
     def on_status(self, status):
         logger.info("%s", status_json_log(status._json))
-        handle_on_status.apply_async(args=(status._json,), ignore_result=True)
+        handle_on_status.apply_async(
+            kwargs={"json": status._json, "community": self.community},
+            ignore_result=True
+        )
         return True
 
     def on_error(self, status_code):
@@ -29,16 +32,30 @@ class StdOutListener(StreamListener):
             )
             return False
 
-def main(community=None):
+class CommunityStdOutListener(StdOutListener):
+
+    def __init__(self, community: str, **kwds):
+        self.community = community
+        super().__init__(**kwds)
+
+
+def main(community: Optional[str] = None):
     if not community:
         return
     #This handles Twitter authentication and the connection to Twitter Streaming API
     try:
-        screen_name = Community.objects.get(name=community).account.username
+        community_mi = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    try:
+        screen_name = community_mi.account.username
     except:
-        screen_name = None
-    api = get_api(screen_name, backend=True)
-    l = StdOutListener()
+        return
+    try:
+        api = get_api(screen_name, backend=True)
+    except:
+        return
+    l = CommunityStdOutListener(community=community)
     try:
         stream = tweepy.Stream(auth = api.auth, listener=l)
     except AttributeError as e:

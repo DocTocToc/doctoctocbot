@@ -101,19 +101,19 @@ services:
     image: dtn_dev
   stream_1:
     image: dtn_dev
-    restart: on-failure
+    restart: on-failure:1
   stream_2:
     image: dtn_dev
-    restart: on-failure
+    restart: on-failure:1
   stream_3:
     image: dtn_dev
-    restart: on-failure
+    restart: on-failure:1
   stream_4:
     image: dtn_dev
-    restart: on-failure
+    restart: on-failure:1
   stream_5:
     image: dtn_dev
-    restart: on-failure
+    restart: on-failure:1
   stream_6:
     image: dtn_dev
     restart: on-failure:1

@@ -214,6 +214,7 @@ INSTALLED_APPS = [
     'markdown',
     'phonenumber_field',
     'taggit_serializer',
+    'filter',
 ]
 
 if DEBUG:

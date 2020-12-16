@@ -15,7 +15,6 @@ from ..addstatusdj import addstatus
 from ..doctoctocbot import (
     community_retweet,
     isquestion,
-    isreplacement,
     isquote,
     has_retweet_hashtag,
     HasRetweetHashtag,

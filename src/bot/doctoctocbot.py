@@ -19,8 +19,6 @@ import logging
 import os
 import tweepy
 from tweepy.error import TweepError
-import unidecode
-from typing import List
 
 from django.db.models import F, Q
 from django.db.utils import DatabaseError
@@ -39,6 +37,7 @@ from bot.tweet import hashtag_list
 from tagging.tasks import keyword_tag
 from bot.models import Account
 from conversation.models import create_tree
+from filter.process import filter_status
 
 logger = logging.getLogger(__name__)
 
@@ -194,26 +193,7 @@ def okbadlist( status ):
     logger.debug("Does text contain bad words? %s", any(word in status['full_text'].split() for word in wordbadlist))
     return not any(word in status['full_text'].split() for word in wordbadlist)
 
-def isreplacement( status ):
-    "remove status asking for a replacement physician"
-    if 'extended_tweet' in status:
-        status = status['extended_tweet']
-    text = status['full_text']
-    #remplacementbadlist = frozenset([u"remplacement", u"rempla"])
-    remplacantbadlist = frozenset(["rempla", "remplacant", "remplaçant"])
-    monthlist = frozenset([u"janvier", u"fevrier", u"mars", u"avril", u"mai",
-                          u"juin", u"juillet", u"aout", u"septembre",
-                          u"octobre", u"novembre", u"decembre"])
-    wordlist = frozenset(unidecode.unidecode(text).split())
-    replacement = (bool(wordlist.intersection(monthlist)) and \
-                     bool(wordlist.intersection(remplacantbadlist))) or \
-                    (bool(wordlist.intersection(["du"])) and \
-                     bool(wordlist.intersection(["au"])) and \
-                     bool(wordlist.intersection(remplacantbadlist))) or \
-                    (bool(wordlist.intersection(["cherche"])) and \
-                     bool(wordlist.intersection(remplacantbadlist)))
-    logger.debug("bool(replacement) == %s", bool(replacement))
-    return bool(replacement)
+
 
 def is_follower(userid, bot_screen_name):
     try:
@@ -247,16 +227,6 @@ def is_follower(userid, bot_screen_name):
         except TypeError:
             continue
     return _is_follower
-
-def retweet(status_id) -> bool:
-    api = tweepy.API(getAuth())
-    try:
-        api.retweet(status_id)
-    except TweepError as e:
-        logger.error(str(e))
-        return False
-    return True
-
 
 def create_update_retweeted(statusid, community, retweet_status):
     rt: Retweeted = Retweeted.objects.as_of().filter(
@@ -399,6 +369,13 @@ def rt(statusid, dct, community):
         f"for community: {community.name}\n"
         f"with dct: {dct}\n"
     )
+    flag = filter_status(statusid=statusid, community=community)
+    if flag:
+        logger.warn(
+            f"Status {statusid} triggered the '{flag.filter}' filter. "
+            "Retweet canceled."
+        )
+        return
     username = dct["_bot_screen_name"]
     api = get_api(username=username, backend=True)
     if community.active:

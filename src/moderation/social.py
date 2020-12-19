@@ -55,6 +55,10 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     if relationship is None:
         return
     if not relationship in ['friends', 'followers']:
+        logger.error(
+            f"relationship parameter: {relationship} not "
+            "['friends', 'followers']"
+        )
         return
     if relationship == 'followers':
         followers = True

@@ -13,6 +13,7 @@ from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
 from autotweet.accept import accept_follower, decline_follower
 from moderation.social import update_social_ids
+from request.utils import update_request_queue
 
 logger = logging.getLogger(__name__)
 
@@ -217,4 +218,16 @@ def get_latest(latest_start, latest_end):
         return latest_end
     else:
         return latest_start
-    
+
+@shared_task
+def handle_update_request_queue():
+    """Update queue state of follow requests
+
+    Detect queues that were canceled by Twitter user or declined in the Twitter
+    web API but whose state is still 'PENDING' and change state to 'CANCELED'.
+    Detect queues that were accepted from Twitter web API but whose state is
+    still 'PENDING' and change their state to 'ACCEPTED'.
+    """
+    protected_community_qs = Community.objects.filter(account__protected=True)
+    for community in protected_community_qs:
+        update_request_queue(community)

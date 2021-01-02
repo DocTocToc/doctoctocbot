@@ -15,7 +15,6 @@ from django.utils.translation import gettext_lazy, ngettext_lazy
 from django.utils.text import format_lazy
 
 from conversation.models import Tweetdj, Hashtag
-from moderation.models import SocialUser, UserCategoryRelationship
 from community.helpers import get_community
 from moderation.profile import screen_name
 from rest_framework.views import APIView
@@ -28,7 +27,7 @@ from django.db.models import DateTimeField, CharField
 from moderation.models import SocialUser
 from django.db.models import F
 from bot.lib.datetime import get_datetime_tz_from_twitter_str
-from django.contrib.auth.mixins import LoginRequiredMixin
+from charts.utils import get_userid_lst
 
 logger = logging.getLogger(__name__)
 
@@ -50,13 +49,7 @@ def authenticated_socialuser_userid(request):
         if request.user.socialuser is not None:
             return request.user.socialuser.user_id
 
-def get_userid_lst(request):
-    community = get_community(request)
-    categories = community.membership.all()
-    return UserCategoryRelationship.objects.filter(
-        category__in = categories,
-        community = community
-        ).values_list('social_user__user_id', flat=True)
+
 
 def get_chart(period, request, series):
     """
@@ -384,38 +377,3 @@ class ChartData(APIView):
         }   
         """
         return Response(list(qs))
-
-  
-class CreationFollowerChartView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'charts/creation_follower.html')
-
-    
-class CreationFollowerChartData(APIView):
-    authentication_classes = []
-    permission_classes = []
-
-    def get(self, request, format=None):
-        member_userid_lst = get_userid_lst(request)
-        labels = []
-        data = list(
-            SocialUser.objects
-            .filter(user_id__in=member_userid_lst)
-            .values(
-                "profile__json__created_at",
-                "profile__json__followers_count",
-                "profile__json__screen_name",)
-        )
-        for i in range(len(data)):
-            dict = data.pop(i)
-            twitter_datetime: str =  dict.pop("profile__json__created_at")
-            python_datetime = get_datetime_tz_from_twitter_str(twitter_datetime)
-            dict["t"] = python_datetime.date().isoformat()
-            dict["y"] = dict.pop("profile__json__followers_count")
-            labels.insert(i, dict.pop("profile__json__screen_name"))
-            data.insert(i, dict)
-        res = {
-            "labels": labels,
-            "data": data,
-        }
-        return Response(res)

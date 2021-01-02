@@ -1,0 +1,261 @@
+{% extends 'charts/base_category.html' %}
+
+{% block zoom-button %}
+    <div style="width:75%;">
+        <button onclick="resetZoom()">Reset Zoom</button>
+        <button id="drag-switch" onclick="toggleDragMode()">Disable drag mode</button>
+    </div>
+{% endblock %}
+
+<script>
+{% block jquery %}
+var changeScaleTypePlugin = {
+		beforeUpdate: function (chartInstance) {
+		    var self = this;
+		    chartInstance.beforeInit = null;
+		    if (chartInstance.options.changeScale) {
+		        self.changeScales(chartInstance);
+		        if (chartInstance.options.scaleTypeChanged) {
+		            chartInstance.options.scaleTypeChanged = false;
+		            Object.keys(chartInstance.scales).forEach(function (axisName) {
+		                var scale = chartInstance.scales[axisName];
+		                Chart.layoutService.removeBox(chartInstance, scale);
+		            });
+		            chartInstance.initialize();
+		        }
+		    }
+		},
+		changeScales: function (chartInstance) {
+		    var maxValue = Math.max.apply(null, chartInstance.data.datasets.map(function (dataset) { return Math.max.apply(null, dataset.data); }));
+		    var minValue = Math.min.apply(null, chartInstance.data.datasets.map(function (dataset) { return Math.min.apply(null, dataset.data); }));
+		    var logMax = Math.floor(Math.log(maxValue) / Math.LN10);
+		    var logMin = Math.floor(Math.log(minValue) / Math.LN10);
+		    if (logMax - logMin > chartInstance.options.maxRankDifference) {
+		        if (!chartInstance.options.scaleTypeChanged && chartInstance.options.scales.yAxes.filter(function (axis) { return axis.type !== 'logarithmic'; }).length) {
+		            console.log('logarithmic');
+		            chartInstance.options.scaleTypeChanged = true;
+		            chartInstance.options.scales.yAxes = Chart.helpers.scaleMerge(Chart.defaults.scale, { yAxes: chartInstance.options.logarithmicScaleOptions }).yAxes;                
+		        }
+		    } else {
+		        if (!chartInstance.options.scaleTypeChanged && chartInstance.options.scales.yAxes.filter(function (axis) { return axis.type !== 'linear'; }).length) {
+		            console.log('linear');
+		            chartInstance.options.scaleTypeChanged = true;
+		            chartInstance.options.scales.yAxes = Chart.helpers.scaleMerge(Chart.defaults.scale, { yAxes: chartInstance.options.linearScaleOptions }).yAxes;
+		        }
+		    }
+		}
+};
+
+window.chartColors = {
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    yellow: 'rgb(255, 205, 86)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(54, 162, 235)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)'
+};
+  var endpoint = "{% url 'charts:reply-delay-data' %}";
+  var twitter0 = 1338972246.704; // seconds
+               //1609359221065
+
+  var x_max = 252455616000;
+            //1609359221065
+  const today_stamp = Date.now();
+  const y_max = Date.now() - 1338972246.704
+  $.ajax({
+    method: "GET",
+    url: endpoint,
+    success: function(data){
+      var ctx = document.getElementById("myChart").getContext('2d');
+      var color = Chart.helpers.color;
+//      var myChart = new Chart(ctx, {
+      window.myChart = new Chart(ctx, {
+          type: 'scatter',
+          data: {
+        	  labels: data.labels,
+              datasets: [{
+                  label: 'Delay between a question and its eventual answer(s)',
+                  backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                  borderColor: window.chartColors.red,
+                  data: data.data,
+                  /*backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255,99,132,1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1*/
+              }]
+          },
+          options: {
+              changeScale: true,
+               //maxRankDifference: 3,
+        	  tooltips: {
+        	         callbacks: {
+        	            label: function(tooltipItem, data) {
+        	                var indice = tooltipItem.index; 
+        	                var label = data.labels[indice];
+        	                return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+        	                //return "test"
+        	            }
+        	         }
+        	      },
+              reponsive: true,
+              scales: {
+            	  yAxes: [{
+            		  id: 'y-axis-0',
+            		  type: 'logarithmic',
+                      scaleLabel: {
+                          display: true,
+                          labelString: 'delay in seconds (logarithmic scale)'
+                      },
+                      ticks: {
+                          min: 0,
+                          max: x_max,
+                          callback: function (value, index, values) {
+                              if ( value <= 1000) {
+                        	      return `${value/1000} second`
+                              } else if ( value < 60000) {
+                        	      return `${value/1000} seconds`
+                              } else {
+                        	      return moment.duration(value).humanize()
+                        	  }
+                          }
+                      }
+                  }],
+                  xAxes: [{
+                      type: 'linear',
+                      ticks: {
+                          callback: function(value, index, values) {
+                        	  return moment(value).format("YYYY-MM-DD");
+                          }
+                      },
+                      position: 'bottom',
+                  }],
+              },
+              plugins: {
+            	  zoom: {
+            	        // Container for pan options
+            	        pan: {
+            	            // Boolean to enable panning
+            	            enabled: true,
+
+            	            // Panning directions. Remove the appropriate direction to disable
+            	            // Eg. 'y' would only allow panning in the y direction
+            	            // A function that is called as the user is panning and returns the
+            	            // available directions can also be used:
+            	            //   mode: function({ chart }) {
+            	            //     return 'xy';
+            	            //   },
+            	            mode: 'x',
+
+            	            rangeMin: {
+            	                // Format of min pan range depends on scale type
+            	                x: twitter0,
+            	                y: null
+            	            },
+            	            rangeMax: {
+            	                // Format of max pan range depends on scale type
+            	                x: today_stamp,
+            	                y: null
+            	            },
+
+            	            // On category scale, factor of pan velocity
+            	            speed: 20,
+
+            	            // Minimal pan distance required before actually applying pan
+            	            threshold: 10,
+
+            	            // Function called while the user is panning
+            	            onPan: function({chart}) { console.log(`I'm panning!!!`); },
+            	            // Function called once panning is completed
+            	            onPanComplete: function({chart}) { console.log(`I was panned!!!`); }
+            	        },
+
+            	        // Container for zoom options
+            	        zoom: {
+            	            // Boolean to enable zooming
+            	            enabled: true,
+
+            	            // Enable drag-to-zoom behavior
+            	            drag: true,
+
+            	            // Drag-to-zoom effect can be customized
+            	            // drag: {
+            	            //   borderColor: 'rgba(225,225,225,0.3)'
+            	            //   borderWidth: 5,
+            	            //   backgroundColor: 'rgb(225,225,225)',
+            	            //   animationDuration: 0
+            	            // },
+
+            	            // Zooming directions. Remove the appropriate direction to disable
+            	            // Eg. 'y' would only allow zooming in the y direction
+            	            // A function that is called as the user is zooming and returns the
+            	            // available directions can also be used:
+            	            //   mode: function({ chart }) {
+            	            //     return 'xy';
+            	            //   },
+            	            mode: 'xy',
+
+            	            rangeMin: {
+            	                // Format of min zoom range depends on scale type
+            	                x: twitter0,
+            	                y: 0
+            	            },
+            	            rangeMax: {
+            	                // Format of max zoom range depends on scale type
+            	                x: today_stamp,
+            	                y: y_max
+            	            },
+
+            	            // Speed of zoom via mouse wheel
+            	            // (percentage of zoom on a wheel event)
+            	            speed: 0.1,
+
+            	            // Minimal zoom distance required before actually applying zoom
+            	            threshold: 2,
+
+            	            // On category scale, minimal zoom level before actually applying zoom
+            	            sensitivity: 3,
+
+            	            // Function called while the user is zooming
+            	            onZoom: function({chart}) { console.log(`I'm zooming!!!`); },
+            	            // Function called once zooming is completed
+            	            onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`); }
+            	        }
+            	    }
+            	}  
+          }
+      });
+    },
+    error: function(error_data){
+      console.log(error_data)
+    }
+  })
+  
+window.resetZoom = function () {
+    window.myChart.resetZoom();
+};
+
+window.toggleDragMode = function() {
+	var chart = window.myChart;
+	var zoomOptions = chart.options.plugins.zoom.zoom;
+	zoomOptions.drag = zoomOptions.drag ? false : dragOptions;
+
+	chart.update();
+	document.getElementById('drag-switch').innerText = zoomOptions.drag ? 'Disable drag mode' : 'Enable drag mode';
+};
+  
+{% endblock %}
+</script>

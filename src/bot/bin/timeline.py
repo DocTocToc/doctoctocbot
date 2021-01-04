@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 def get_timeline_with_rts(screen_name):
     API = get_api(username=screen_name, backend=True)
     try:
-        return API.user_timeline(include_rts=True)
+        return API.user_timeline(
+            include_rts=True,
+            count=200
+        )
     except AttributeError:
         return
 

@@ -50,6 +50,7 @@ from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
 from autotweet.accept import accept_follower, decline_follower
 from moderation.profile import update_twitter_followers_profiles
+from community.helpers import get_community_bot_screen_name
 
 logger = get_task_logger(__name__)
 
@@ -64,7 +65,7 @@ def handle_create_update_lists(community_name: str):
     create_update_lists(community_name)
 
 @shared_task
-def handle_create_update_profile(userid: int):
+def handle_create_update_profile(userid: int, bot_screen_name=None):
     try:
         su: SocialUser = SocialUser.objects.get(user_id=userid)
     except SocialUser.DoesNotExist:
@@ -74,7 +75,10 @@ def handle_create_update_profile(userid: int):
     except AttributeError:
         return
     if sm.name == 'twitter':
-        create_update_profile_twitter(su)
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name
+        )
     elif sm.name == settings.THIS_SOCIAL_MEDIA:
         create_update_profile_local(su)
 
@@ -110,16 +114,19 @@ def handle_check_all_profile_pictures():
 @shared_task(bind=True, max_retries=2)
 def handle_sendmoderationdm(self, mod_instance_id):
     logger.debug("inside handle_sendmodarationdm()")
-    
     # community
     try:
         mod_mi = Moderation.objects.get(pk=mod_instance_id)
     except Moderation.DoesNotExist:
         logger.error(f"Moderation with id={id} does not exist.")
         return
-
-    handle_create_update_profile.apply_async(args=(mod_mi.queue.user_id,))
-
+    bot_screen_name = get_community_bot_screen_name(
+        mod_mi.queue.community
+    )
+    handle_create_update_profile(
+        mod_mi.queue.user_id,
+        bot_screen_name = bot_screen_name
+    )
     # select language
     try:
         community = mod_mi.queue.community
@@ -209,7 +216,9 @@ def poll_moderation_dm():
     def get_moderation_category_name(dm):
         return get_moderation_metadata(dm)[46:]
     
-    current_mod_uuids = [str(mod.id) for mod in Moderation.objects.current.filter(state=None)]
+    current_mod_uuids = [
+        str(mod.id) for mod in Moderation.objects.current.filter(state=None)
+    ]
     logger.debug(f"current_mod_uuids: {current_mod_uuids}")
     # return if no current Moderation object
     if not current_mod_uuids:

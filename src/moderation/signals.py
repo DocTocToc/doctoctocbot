@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
 from moderation.moderate import create_moderation
+from community.helpers import get_community_bot_screen_name
 
 from moderation.models import (
     Queue,
@@ -37,7 +38,14 @@ def createprofile_queue(sender, instance, created, **kwargs):
     if created:
         logger.debug(f"instance {instance}")
         logger.debug(f"instance.status_id {instance.user_id}")
-        handle_create_update_profile.apply_async(args=(instance.user_id,))
+        try:
+            bot_screen_name = instance.community.account.username
+        except AttributeError:
+            bot_screen_name = None
+        handle_create_update_profile.apply_async(
+            args=[instance.user_id],
+            kwargs={'bot_screen_name': bot_screen_name}
+        )
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def log_usercategoryrelationship(sender, instance, created, **kwargs):
@@ -66,14 +74,24 @@ def moderator(sender, instance, created, **kwargs):
 def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
     logger.debug(f"instance {instance}")
     logger.debug(f"instance.social_user.user_id {instance.social_user.user_id}")
-    handle_create_update_profile.apply_async(args=(instance.social_user.user_id,))
+    bot_screen_name = get_community_bot_screen_name(instance.community)
+    handle_create_update_profile.apply_async(
+        args=(instance.social_user.user_id,),
+        kwargs={'bot_screen_name': bot_screen_name}
+    )
     
 @receiver(post_save, sender=Moderation)
 def createupdatemoderatorprofile(sender, instance, created, **kwargs):
     if created:
         if not hasattr(instance.moderator, 'profile'):
             logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
-            handle_create_update_profile.apply_async(args=(instance.moderator.user_id,))
+            bot_screen_name = get_community_bot_screen_name(
+                instance.queue.community
+            )
+            handle_create_update_profile.apply_async(
+                args=[instance.moderator.user_id],
+                kwargs={'bot_screen_name': bot_screen_name}
+            )
 
 @receiver(post_save, sender=SocialUser)
 def create_update_socialuser_profile(sender, instance, created, **kwargs):

@@ -8,7 +8,6 @@ from community.models import Community
 from request.twitter_request import get_incoming_friendship
 from request.models import Queue
 from moderation.models import addsocialuser_from_userid, SocialMedia
-from moderation.tasks import handle_create_update_profile
 from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
 from autotweet.accept import accept_follower, decline_follower
@@ -29,8 +28,9 @@ def create_queue(community, uid, bot_screen_name):
         return
     create_update_profile_twitter(
             socialuser,
-            bot_screen_name=bot_screen_name
-        )
+            bot_screen_name=bot_screen_name,
+            cache=False
+    )
     try:
         Queue.objects.create(
             uid=uid,

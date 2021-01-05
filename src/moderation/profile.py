@@ -186,13 +186,17 @@ def update_profile_pictures(socialuser):
         if img_url:
             save_profile_pictures(img_url, profile)
 
-def create_update_profile_twitter(su: SocialUser, bot_screen_name=None):
+def create_update_profile_twitter(
+        su: SocialUser,
+        bot_screen_name=None,
+        cache=False
+    ):
     userid = su.user_id
     try:
         tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
     except Tweetdj.DoesNotExist:
         tweetdj_mi = None
-    if not tweetdj_mi or not tweetdj_mi.json.get("user"):
+    if not tweetdj_mi or not tweetdj_mi.json.get("user") or not cache:
         userjson = getuser(
             userid,
             bot_screen_name=bot_screen_name

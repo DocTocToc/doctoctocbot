@@ -72,3 +72,14 @@ def get_community_bot_socialuser(community: Community) -> Optional[SocialUser]:
     except SocialUser.DoesNotExist:
         return
     return su
+
+def get_community_bot_screen_name(community: Community) -> Optional[str]:
+    if not community:
+        return
+    if not isinstance(community, Community):
+        return
+    try:
+        screen_name = community.account.username
+    except AttributeError:
+        return
+    return screen_name

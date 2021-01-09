@@ -167,9 +167,23 @@ class SocialUser(models.Model):
         related_name='users',
         on_delete=models.CASCADE
     )
-    category = models.ManyToManyField('Category',
-                                      through='UserCategoryRelationship',
-                                      through_fields=('social_user', 'category'))
+    category = models.ManyToManyField(
+        'Category',
+        through='UserCategoryRelationship',
+        through_fields=('social_user', 'category')
+    )
+    twitter_follow_request = models.ManyToManyField(
+        'SocialUser',
+        related_name="follow_request_by",
+        blank=True,
+        help_text='Twitter users with pending follow request for this user'
+    )
+    twitter_block = models.ManyToManyField(
+        'SocialUser',
+        related_name="block_by",
+        blank=True,
+        help_text='Twitter users blocked by this user'
+    )
     objects = AuthorizedManager()
     
     def __str__(self):

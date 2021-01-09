@@ -175,6 +175,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'name_tag',
         'profile_link',
         'social_media_profile',
+        'follow_request_tag',
     )
     fields = (
         'pk',
@@ -186,6 +187,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'social_media_profile',
         'category',
         'category_moderator_lst',
+        'follow_request_tag',
     )
     readonly_fields = (
         'pk',
@@ -196,7 +198,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'profile_link',
         'social_media_profile',
         'category',
-        'category_moderator_lst'
+        'category_moderator_lst',
+        'follow_request_tag',
     )
     search_fields = (
         'user_id',
@@ -239,6 +242,33 @@ class SocialUserAdmin(admin.ModelAdmin):
             return "🚫"
 
     profile_link.short_description = 'Profile'
+    
+    def follow_request_tag(self, obj):
+        # return HTML link that will not be escaped
+        tfr = obj.twitter_follow_request.all()
+        if not tfr:
+            return
+        return mark_safe(
+            "<br />".join(
+                [
+                    su.screen_name_tag()
+                    for su in tfr
+                ]
+            )
+        )
+    follow_request_tag.short_description = 'Follow request'
+    
+    def block_tag(self, obj):
+        # return HTML link that will not be escaped
+        return mark_safe(
+            "<br />".join(
+                [
+                    su.screen_name_tag()
+                    for su in obj.twitter_block.all()
+                ]
+            )
+        )
+    block_tag.short_description = 'Block'
     
 class CategoryAdmin(TranslationAdmin):
     list_display = (

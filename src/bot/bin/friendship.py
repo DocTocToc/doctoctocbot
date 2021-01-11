@@ -48,7 +48,7 @@ def manage_active(friend, active):
         friend_su = SocialUser.objects.get(user_id=friend)
     except SocialUser.DoesNotExist:
         return
-    friend_su.active=True
+    friend_su.active=active
     friend_su.save()
 
 def create_friendship_members(community: Community, users=400):

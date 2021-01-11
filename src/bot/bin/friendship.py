@@ -28,6 +28,28 @@ def record_follow_request(friend: int, requestor: SocialUser):
     except SocialUser.DoesNotExist:
         return
     friend_su.twitter_follow_request.add(requestor)
+    
+def manage_block(friend: int, requestor: SocialUser, add: bool):
+    if add is None:
+        return
+    try:
+        friend_su = SocialUser.objects.get(user_id=friend)
+    except SocialUser.DoesNotExist:
+        return
+    if add:
+        friend_su.twitter_block.add(requestor)
+    else:
+        friend_su.twitter_block.remove(requestor)
+
+def manage_active(friend, active):
+    if active is None:
+        return
+    try:
+        friend_su = SocialUser.objects.get(user_id=friend)
+    except SocialUser.DoesNotExist:
+        return
+    friend_su.active=True
+    friend_su.save()
 
 def create_friendship_members(community: Community, users=400):
     if not community or not isinstance(community, Community):
@@ -75,8 +97,19 @@ def create_friendship_members(community: Community, users=400):
             sn = ""
         try:
             res = api.create_friendship(user_id=user_id)
+            logger.debug(f"{res=}")
             success_count += 1
             success_screen_name.append(sn)
+            # remove eventual block status
+            manage_block(
+                friend=user_id,
+                requestor=bot_social_user,
+                add=False
+            )
+            manage_active(
+                friend=user_id,
+                active=True                  
+            )
         except TweepError as e:
             logger.error(
                 "Error during friendship creation for "
@@ -84,10 +117,26 @@ def create_friendship_members(community: Community, users=400):
             )
             failure_count += 1
             failure_screen_name.append(sn)
-            if e.args[0][0]['code'] == 160:
+            error_code = e.args[0][0]['code']
+            #'Cannot find specified user.'
+            if error_code == 108:
+                manage_active(
+                    friend=user_id,
+                    active=False                   
+                )
+            elif error_code == 160:
                 record_follow_request(
                     friend=user_id,
                     requestor=bot_social_user
+                )
+            elif error_code == 161:
+                break
+            elif error_code == 162:
+                # mark SocialUser has having blocked bot_social_user
+                manage_block(
+                    friend=user_id,
+                    requestor=bot_social_user,
+                    add=True
                 )
             continue
         logger.debug(f"{user_id=} API reply: {res}")
@@ -98,6 +147,8 @@ def create_friendship_members(community: Community, users=400):
 """
 [{'code': 160, 'message': "You've already requested to follow XXX."}]
 [{'code': 108, 'message': 'Cannot find specified user.'}]
+[{'code': 161, 'message': "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."}]
+[{'code': 162, 'message': 'You have been blocked from following this account at the request of the user.'}]
 """    
     
     

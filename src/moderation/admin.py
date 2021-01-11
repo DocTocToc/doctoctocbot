@@ -176,6 +176,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'profile_link',
         'social_media_profile',
         'follow_request_tag',
+        'block_tag',
+        'active',
     )
     fields = (
         'pk',
@@ -188,6 +190,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category',
         'category_moderator_lst',
         'follow_request_tag',
+        'block_tag',
+        'active',
     )
     readonly_fields = (
         'pk',
@@ -200,6 +204,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category',
         'category_moderator_lst',
         'follow_request_tag',
+        'block_tag',
     )
     search_fields = (
         'user_id',

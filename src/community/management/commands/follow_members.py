@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         community_name = options["community"]
-        users = options["users"]
+        users = options["users"] or 400
         try:
             community = Community.objects.get(name=community_name)
         except Community.DoesNotExist:

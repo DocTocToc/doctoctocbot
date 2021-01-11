@@ -184,6 +184,13 @@ class SocialUser(models.Model):
         blank=True,
         help_text='Twitter users blocked by this user'
     )
+    active = models.BooleanField(
+        default=True,
+        help_text=(
+            "Is this SocialUser active? For Twitter, not active means "
+            "deactivated or deleted."
+        )
+    )
     objects = AuthorizedManager()
     
     def __str__(self):

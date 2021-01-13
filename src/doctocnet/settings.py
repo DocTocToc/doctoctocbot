@@ -720,4 +720,8 @@ CONSTANCE_CONFIG = {
         60,
         "retry period after all roots processed (second)"
     ),
+    "bot__bin__friendship__create_friendship_members__sleep": (
+        10,
+        "sleep between 2 create friendship API calls (second)"
+    ),
 }

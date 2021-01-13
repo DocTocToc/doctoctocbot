@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import List
 from community.models import Community
 from bot.tweepy_api import get_api
@@ -6,6 +7,7 @@ from moderation.models import UserCategoryRelationship, SocialMedia, SocialUser
 from moderation.social import update_social_ids
 from community.helpers import get_community_bot_socialuser
 
+from constance import config
 from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
@@ -52,6 +54,7 @@ def manage_active(friend, active):
     friend_su.save()
 
 def create_friendship_members(community: Community, users=400):
+    SLEEP = config.bot__bin__friendship__create_friendship_members__sleep
     if not community or not isinstance(community, Community):
         return
     categories = community.membership.all()
@@ -140,6 +143,9 @@ def create_friendship_members(community: Community, users=400):
                 )
             continue
         logger.debug(f"{user_id=} API reply: {res}")
+        # pause in seconds
+        if SLEEP:
+            time.sleep(SLEEP)
     logger.debug(
         f"{success_count} users added to friends: {success_screen_name=} \n"
         f"{failure_count} error(s): {failure_screen_name=}"

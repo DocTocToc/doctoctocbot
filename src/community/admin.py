@@ -52,6 +52,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'tree_search',
         'no_root_backoff',
         'tree_search_retry',
+        'twitter_follow_member',
     )
     fields = (
         'name',
@@ -77,6 +78,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'follow_request_backoff',
         'request_queue_backoff',
         'follower_common_account',
+        'twitter_follow_member',
     )
     readonly_fields = (
         'created',

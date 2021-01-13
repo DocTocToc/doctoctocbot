@@ -148,6 +148,12 @@ class Community(models.Model):
             "will be retweeted by the current Account."    
         ),
     )
+    twitter_follow_member = models.BooleanField(
+        default=False,
+        help_text = (
+            "Bot's Twitter account will follow the members of this community."
+        )
+    )
 
     def __str__(self):
         return self.name

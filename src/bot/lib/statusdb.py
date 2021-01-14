@@ -96,11 +96,10 @@ class Addstatus:
         """ Stores one or more images contained in the status.
         """
         if self.has_image():
-            for photo in self.json["extended_entities"]["media"]: 
+            for photo in self.json["extended_entities"]["media"]:
                 url = photo["media_url_https"]
                 filename = url.rsplit('/', 1)[1]
-                filepath = settings.BOT_IMAGES_PATH + "/" + filename
-                handle_image.apply_async(args=(url, filepath), ignore_result=True)
+                handle_image.apply_async(args=(url, filename), ignore_result=True)
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]

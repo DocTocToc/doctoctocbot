@@ -29,13 +29,12 @@ logger = logging.getLogger(__name__)
 
 def isrt(status):
     "is this status a RT?"
-    isrt = "retweeted_status" in status.keys()
-    logger.debug("is this status a retweet? %s" , isrt)
-    return isrt
+    return "retweeted_status" in status.keys()
 
 class Addstatus:
     def __init__(self, json):
         self.json = json
+        self.statusid = json["id"]
 
     def addtweetdj(self):
         """
@@ -44,44 +43,64 @@ class Addstatus:
         Tweetdj class, in the Django model.
         """
         try:
-            with transaction.atomic():
-                status = Tweetdj.objects.create(
-                    statusid = self.id(),
-                    userid = self.userid(),
-                    socialuser = addsocialuser_from_userid(self.userid()),
-                    json = self.json,
-                    created_at = get_datetime_tz(self.json),
-                    reply = None,
-                    like = self.like(),
-                    retweet = self.retweet(),
-                    parentid = self.parentid(),
-                    quotedstatus = self.json['is_quote_status'],
-                    retweetedstatus = isrt(self.json),
-                    deleted = None
+            status = Tweetdj.objects.get(pk=self.statusid)
+        except Tweetdj.DoesNotExist:
+            try:
+                with transaction.atomic():
+                    status = Tweetdj.objects.create(
+                        statusid = self.statusid,
+                        userid = self.userid(),
+                        socialuser = addsocialuser_from_userid(self.userid()),
+                        json = self.json,
+                        created_at = get_datetime_tz(self.json),
+                        #reply = self.reply(),
+                        like = self.like(),
+                        retweet = self.retweet(),
+                        parentid = self.parentid(),
+                        quotedstatus = self.json['is_quote_status'],
+                        retweetedstatus = isrt(self.json),
+                        deleted = None
+                    )
+                logger.debug(f"function addtweetdj added status {status}")
+            except IntegrityError:
+                logger.warn(
+                    f"Status {self.statusid} already exists in database."
                 )
-        except IntegrityError as e:
-            logger.warn("Status %s already exists in database: %s" % (self.id, e))
-            return False
-        logger.debug("function addtweetdj added status %s", status)
+                return False
+            try:
+                hashtag_m2m_tweetdj(status)
+            except DatabaseError as e:
+                logger.error("database error %s", e)
+                return False
+            logger.debug("added m2m hashtag relationship to %s", status)
+            return True
+
+    def updatetweetdj(self):
+        """
+        Update some fields of an existing Tweetdj object.
+        """
         try:
-            hashtag_m2m_tweetdj(status)
-        except DatabaseError as e:
-            logger.error("database error %s", e)
-            return False
-        logger.debug("added m2m hashtag relationship to %s", status)
-        return True
+            status = Tweetdj.objects.get(pk=self.statusid)
+        except Tweetdj.DoesNotExist:
+            return
+        with transaction.atomic():
+            status.like = self.like(),
+            status.retweet = self.retweet(),
+            status.save()
+        logger.debug(f"updated tweetdj {status}")
 
     def userid(self):
         return self.json["user"]["id"]
 
-    def id(self):
-        return self.json["id"]
-
     def like(self):
-        return self.json["favorite_count"]
-  
+        return self.json.get("favorite_count")
+
+    def reply(self):
+        #That field is only offered in the premium and enterprise API tiers
+        return self.json["reply_count"]
+
     def retweet(self):
-        return self.json["retweet_count"]
+        return self.json.get("retweet_count")
 
     def has_image(self):
         """ returns True if the status contains at least one image."""

@@ -5,7 +5,10 @@ from community.models import Community
 from bot.tweepy_api import get_api
 from moderation.models import UserCategoryRelationship, SocialMedia, SocialUser
 from moderation.social import update_social_ids
-from community.helpers import get_community_bot_socialuser
+from community.helpers import (
+    get_community_bot_socialuser,
+    get_community_member_id,
+)
 
 from constance import config
 from tweepy.error import TweepError
@@ -57,28 +60,14 @@ def create_friendship_members(community: Community, users=400):
     SLEEP = config.bot__bin__friendship__create_friendship_members__sleep
     if not community or not isinstance(community, Community):
         return
-    categories = community.membership.all()
-    try:
-        twitter = SocialMedia.objects.get(name="twitter")
-    except SocialMedia.DoesNotExist:
-        return
-    bot_social_user = get_community_bot_socialuser(community)
-    if not bot_social_user:
-        return
-    member_id: List[int] = (
-        UserCategoryRelationship.objects
-        .filter(
-            category__in=categories,
-            community=community,
-            social_user__social_media=twitter,
-        )
-        .exclude(social_user__twitter_follow_request=bot_social_user)
-        .values_list("social_user__user_id", flat=True)
-    )
+    member_id: Optional[List[int]] = get_community_member_id(community)
     if not member_id:
         return
     bot_screen_name = community.account.username
     if not bot_screen_name:
+        return
+    bot_social_user = get_community_bot_socialuser(community)
+    if not bot_social_user:
         return
     friend_id: List[int] = update_social_ids(
         user=bot_social_user,

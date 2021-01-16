@@ -37,7 +37,7 @@ class Hashtag(models.Model):
 
 
 class Tweetdj(models.Model):
-    statusid = models.BigIntegerField(unique=True, primary_key=True)
+    statusid = models.BigIntegerField(primary_key=True)
     userid = models.BigIntegerField()
     socialuser = models.ForeignKey(
         'moderation.SocialUser',

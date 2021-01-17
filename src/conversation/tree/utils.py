@@ -50,14 +50,14 @@ def limit_by_dt(
     
 def add_tweetdj_to_treedj():
     # create a set of all treedj pk
-    treedj_pk: Set[int] = set(
+    tree_sid: Set[int] = set(
         Treedj.objects.values_list("statusid", flat=True)
     )
     # loop over all tweetdj and check if the parent tweet is in the treedj set
     for tweetdj in Tweetdj.objects.all():
         parent_id = tweetdj.parentid
         #parent_id = tweetdj.json["in_reply_to_status_id"]
-        if parent_id in treedj_pk:
+        if parent_id in tree_sid and tweetdj.statusid not in tree_sid:
             try:
                 parent = Treedj.objects.get(statusid=parent_id)
             except Treedj.DoesNotExist:

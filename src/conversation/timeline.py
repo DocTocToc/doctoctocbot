@@ -14,7 +14,10 @@ def community_timeline(community):
         return
     api = get_community_twitter_tweepy_api(community, backend=True)
     for userid in userids:
-        get_user_timeline(userid, api)
+        try:
+            get_user_timeline(userid, api)
+        except tweepy.TweepError as e:
+            logger.error(f"Tweepy Error: {e}")
 
 def get_user_timeline(userid, api):
     for status in tweepy.Cursor(api.user_timeline, 

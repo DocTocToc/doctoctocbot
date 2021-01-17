@@ -1,10 +1,11 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Set
 from conversation.models import Tweetdj, Treedj
 from community.models import Community
 from community.helpers import (
     get_community_bot_socialuser,
 )
+from django.db.utils import DatabaseError
 
 def get_community_roots(
         community: Community,
@@ -46,3 +47,27 @@ def limit_by_dt(
         return qs.filter(created_at__lte=upper_dt)
     else:
         return qs
+    
+def add_tweetdj_to_treedj():
+    # create a set of all treedj pk
+    treedj_pk: Set[int] = set(
+        Treedj.objects.values_list("statusid", flat=True)
+    )
+    # loop over all tweetdj and check if the parent tweet is in the treedj set
+    for tweetdj in Tweetdj.objects.all():
+        parent_id = tweetdj.parentid
+        #parent_id = tweetdj.json["in_reply_to_status_id"]
+        if parent_id in treedj_pk:
+            try:
+                parent = Treedj.objects.get(statusid=parent_id)
+            except Treedj.DoesNotExist:
+                continue
+            try:
+                Treedj.objects.create(
+                    statusid=tweetdj.statusid,
+                    parent=parent
+                )
+            except DatabaseError:
+                continue
+            
+                    

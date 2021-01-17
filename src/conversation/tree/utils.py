@@ -67,9 +67,12 @@ def add_tweetdj_to_treedj():
         Treedj.objects.values_list("statusid", flat=True)
     )
     # loop over all tweetdj and check if the parent tweet is in the treedj set
-    for tweetdj in Tweetdj.objects.all():
-        parent_id = tweetdj.parentid
-        #parent_id = tweetdj.json["in_reply_to_status_id"]
-        if parent_id in tree_sid and tweetdj.statusid not in tree_sid:
-            add_leaf(parent_id, tweetdj.statusid)
+    for _dct in (
+        Tweetdj.objects
+        .filter(parentid__isnull=False)
+        .values("statusid", "parentid")
+    ):
+    #parent_id = tweetdj.json["in_reply_to_status_id"]
+        if _dct["parentid"] in tree_sid and _dct["statusid"] not in tree_sid:
+            add_leaf(_dct["parentid"], _dct["statusid"])
                     

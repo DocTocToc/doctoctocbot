@@ -47,7 +47,20 @@ def limit_by_dt(
         return qs.filter(created_at__lte=upper_dt)
     else:
         return qs
-    
+
+def add_leaf(parent_id, statusid):
+    try:
+        parent = Treedj.objects.get(statusid=parent_id)
+    except Treedj.DoesNotExist:
+        return
+    try:
+        Treedj.objects.create(
+            statusid=statusid,
+            parent=parent
+        )
+    except DatabaseError:
+        return
+
 def add_tweetdj_to_treedj():
     # create a set of all treedj pk
     tree_sid: Set[int] = set(
@@ -58,16 +71,5 @@ def add_tweetdj_to_treedj():
         parent_id = tweetdj.parentid
         #parent_id = tweetdj.json["in_reply_to_status_id"]
         if parent_id in tree_sid and tweetdj.statusid not in tree_sid:
-            try:
-                parent = Treedj.objects.get(statusid=parent_id)
-            except Treedj.DoesNotExist:
-                continue
-            try:
-                Treedj.objects.create(
-                    statusid=tweetdj.statusid,
-                    parent=parent
-                )
-            except DatabaseError:
-                continue
-            
+            add_leaf(parent_id, tweetdj.statusid)
                     

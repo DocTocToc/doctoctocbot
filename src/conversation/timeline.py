@@ -12,7 +12,7 @@ def community_timeline(community):
     userids = get_community_member_id(community)
     if not userids:
         return
-    api = get_community_twitter_tweepy_api(community)
+    api = get_community_twitter_tweepy_api(community, backend=True)
     for userid in userids:
         get_user_timeline(userid, api)
 

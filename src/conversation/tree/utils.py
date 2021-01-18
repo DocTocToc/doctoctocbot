@@ -70,6 +70,7 @@ def add_tweetdj_to_treedj():
     for _dct in (
         Tweetdj.objects
         .filter(parentid__isnull=False)
+        .order_by('statusid')
         .values("statusid", "parentid")
     ):
     #parent_id = tweetdj.json["in_reply_to_status_id"]

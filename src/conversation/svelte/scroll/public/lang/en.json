@@ -13,5 +13,9 @@
 "flatpickr": {
   "button_clear": "Clear",
   "select": "Select dates.."
+  },
+"reply": {
+  "singular": "reply",
+  "plural": "replies"
   }
 }

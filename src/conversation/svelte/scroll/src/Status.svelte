@@ -124,6 +124,24 @@
         <span class="card-text" data-toggle="tooltip" title="{dateTimeLocale(status.id_str)}">
         {fromNow(status.id_str)}
         </span>
+        <span class="mx-1">
+        {#if status.reply_count > 1}
+          <div class="badge badge-dark mx-1">
+          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.plural")}
+          <span class="sr-only">reply count</span>
+          </div>
+        {:else if status.reply_count > 0}
+          <div class="badge badge-warning mx-1">
+          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
+          <span class="sr-only">reply count</span>
+          </div>
+        {:else if status.reply_count == 0}
+          <div class="badge badge-danger mx-1">
+          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
+          <span class="sr-only">reply count</span>
+          </div>
+        {/if}
+        </span>
         <span><a href="https://twitter.com/{status.user_screen_name}/status/{status.id_str}" class="card-link" aria-label={$_("view_on_twitter")}>
         {$_("view_on_twitter")}
         <div class="Icon Icon--twitter" title={$_("view_on_twitter")}></div>

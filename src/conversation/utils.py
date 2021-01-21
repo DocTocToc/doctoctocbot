@@ -279,7 +279,7 @@ def help_statusid_lst(hourdelta, community):
     """
     from datetime import datetime, timedelta
     from moderation.models import SocialUser
-    
+
     tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
     qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
     qs = [mi for mi in qs if mi.is_root_node()]

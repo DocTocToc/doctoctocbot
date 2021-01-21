@@ -725,4 +725,8 @@ CONSTANCE_CONFIG = {
         10,
         "sleep between 2 create friendship API calls (second)"
     ),
+    "conversation__tree__utils__reply_by_member_count__cache_ttl": (
+        300,
+        "reply_by_member_count cache TTL in seconds"    
+    )
 }

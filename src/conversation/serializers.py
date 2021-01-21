@@ -16,7 +16,7 @@ from users.utils import get_all_categories_from_social_user
 from community.helpers import activate_language
 from moderation.models import SocialUser
 from tagging.models import Category
-
+from conversation.tree.utils import reply_by_member_count
 
 class HashtagSerializer(serializers.ModelSerializer):
 
@@ -38,9 +38,8 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     status_category = serializers.SerializerMethodField()
     status_tag = serializers.SerializerMethodField()
     media = serializers.SerializerMethodField()
+    reply_count = serializers.SerializerMethodField()
 
-
-    
     class Meta:
         model = Tweetdj
         fields = (
@@ -58,6 +57,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             'status_category',
             'status_tag',
             'media',
+            'reply_count',
         )
 
     def get_id_str(self, obj):
@@ -160,6 +160,13 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
                     return tweetdj.json["entities"]["media"]
                 except KeyError:
                     return
+                
+    def get_reply_count(self, obj):
+        api_access = get_api_access(self.context['request'])
+        if api_access and api_access.reply_count:
+            status_id = obj.json['id']
+            community = get_community(self.context['request'])
+            return reply_by_member_count(status_id, community)
 
 
 def tagging_categories_id(community) -> List[int]:

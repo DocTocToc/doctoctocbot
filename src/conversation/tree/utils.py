@@ -1,11 +1,19 @@
 from datetime import datetime
 from typing import Optional, List, Set
+import logging
+
+from django.db.utils import DatabaseError
+from django.core.cache import cache
+from constance import config
+
 from conversation.models import Tweetdj, Treedj
 from community.models import Community
 from community.helpers import (
     get_community_bot_socialuser,
 )
-from django.db.utils import DatabaseError
+from community.helpers import get_community_member_id
+
+logger = logging.getLogger(__name__)
 
 def get_community_roots(
         community: Community,
@@ -76,4 +84,43 @@ def add_tweetdj_to_treedj():
     #parent_id = tweetdj.json["in_reply_to_status_id"]
         if _dct["parentid"] in tree_sid and _dct["statusid"] not in tree_sid:
             add_leaf(_dct["parentid"], _dct["statusid"])
-                    
+
+def reply_by_member_count(statusid: int, community: Community) ->Optional[int]:
+    """
+    Return the number of replies by members of the community
+    (except the author)
+    """
+    if not statusid or not isinstance(community, Community):
+        return
+    cache_ttl = (
+        config.conversation__tree__utils__reply_by_member_count__cache_ttl
+    )
+    cache_name = f"reply_by_member_count_{community.name}_{statusid}"
+    count = cache.get(cache_name)
+    if not count:
+        try:
+            root = Treedj.objects.get(statusid=statusid)
+        except Treedj.DoesNotExist as e:
+            logger.debug(f"{e}")
+            return
+        try:
+            root_tweetdj = Tweetdj.objects.get(statusid=statusid)
+            root_user_id = root_tweetdj.userid
+        except Tweetdj.DoesNotExist as e:
+            logger.debug(f"{e}")
+            return
+        leaves = root.get_descendants(include_self=False)
+        if not leaves:
+            count = 0
+            cache.set(cache_name, count, cache_ttl)
+            return count
+        leaves_statusid = leaves.values_list("statusid", flat=True)
+        count = (
+            Tweetdj.objects
+            .filter(statusid__in=leaves_statusid)
+            .filter(userid__in=get_community_member_id(community))
+            .exclude(userid=root_user_id)
+            .count()
+        )
+        cache.set(cache_name, count, cache_ttl)
+    return count

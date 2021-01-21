@@ -13,5 +13,9 @@
 "flatpickr": {
   "button_clear": "Effacer",
   "select": "Filtrer selon la date.."
+  },
+"reply": {
+  "singular": "réponse",
+  "plural": "réponses"
   }
 }

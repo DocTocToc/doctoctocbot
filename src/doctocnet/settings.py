@@ -215,6 +215,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'taggit_serializer',
     'filter',
+    'user_visit',
 ]
 
 if DEBUG:
@@ -224,8 +225,6 @@ if DEBUG:
     ]
 
 MIDDLEWARE = [
-
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -236,6 +235,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    'user_visit.middleware.UserVisitMiddleware',
 ]
 
 if DEBUG:

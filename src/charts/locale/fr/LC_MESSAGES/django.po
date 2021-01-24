@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:52+0200\n"
+"POT-Creation-Date: 2021-01-24 00:30+0100\n"
 "PO-Revision-Date: 2020-02-01 00:29+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,39 +34,39 @@ msgstr "Tweets hebdomadaires"
 msgid "Yearly tweets"
 msgstr "Tweets annuels"
 
-#: charts/views.py:46
+#: charts/views/question.py:45
 msgid "by"
 msgstr "par"
 
-#: charts/views.py:75
+#: charts/views/question.py:68
 #, python-brace-format
 msgid "Number of questions per {period} ({categories_str})"
 msgstr "Nombre de questions par {period} ({categories_str})"
 
-#: charts/views.py:84
+#: charts/views/question.py:77
 msgid "Number of tweets"
 msgstr "Nombre de tweets"
 
-#: charts/views.py:109
+#: charts/views/question.py:102
 msgid "or"
 msgstr "ou"
 
-#: charts/views.py:110
+#: charts/views/question.py:103
 msgid "and"
 msgstr "et"
 
-#: charts/views.py:151
+#: charts/views/question.py:144
 msgid "day"
 msgstr "jour"
 
-#: charts/views.py:222
+#: charts/views/question.py:215
 msgid "week"
 msgstr "semaine"
 
-#: charts/views.py:269
+#: charts/views/question.py:262
 msgid "month"
 msgstr "mois"
 
-#: charts/views.py:315
+#: charts/views/question.py:308
 msgid "year"
 msgstr "an"

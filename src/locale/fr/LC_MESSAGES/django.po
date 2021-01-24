@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:52+0200\n"
+"POT-Creation-Date: 2021-01-24 00:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,102 @@ msgstr ""
 
 #: authorize/views.py:32
 msgid "Authorize our app"
+msgstr ""
+
+#: community/models.py:366
+msgid "Status limit"
+msgstr ""
+
+#: community/models.py:367
+msgid "Total number of status."
+msgstr ""
+
+#: community/models.py:373
+msgid "Status rate (per minute)"
+msgstr ""
+
+#: community/models.py:374
+msgid "Number of status per minute."
+msgstr ""
+
+#: community/models.py:378
+msgid "Author category"
+msgstr ""
+
+#: community/models.py:379
+msgid "Category of the author of the status."
+msgstr ""
+
+#: community/models.py:383
+msgid "Author specialty"
+msgstr ""
+
+#: community/models.py:384
+msgid "Specialty of the author of the status."
+msgstr ""
+
+#: community/models.py:388
+msgid "Date and Time search"
+msgstr ""
+
+#: community/models.py:389
+msgid "Search status by date and time."
+msgstr ""
+
+#: community/models.py:393
+msgid "Category search"
+msgstr ""
+
+#: community/models.py:394
+msgid "Search status by category."
+msgstr ""
+
+#: community/models.py:398
+msgid "Tag search"
+msgstr ""
+
+#: community/models.py:399
+msgid "Search status by tag."
+msgstr ""
+
+#: community/models.py:403
+msgid "Status category"
+msgstr ""
+
+#: community/models.py:404
+msgid "Access status category."
+msgstr ""
+
+#: community/models.py:408
+msgid "Status tag"
+msgstr ""
+
+#: community/models.py:409
+msgid "Access status tag."
+msgstr ""
+
+#: community/models.py:413
+msgid "Protected status"
+msgstr ""
+
+#: community/models.py:414
+msgid "Access status from protected account."
+msgstr ""
+
+#: community/models.py:418
+msgid "Status media"
+msgstr ""
+
+#: community/models.py:419
+msgid "Access status media."
+msgstr ""
+
+#: community/models.py:423
+msgid "Reply count"
+msgstr ""
+
+#: community/models.py:424
+msgid "Access status reply count."
 msgstr ""
 
 #: messenger/admin.py:28

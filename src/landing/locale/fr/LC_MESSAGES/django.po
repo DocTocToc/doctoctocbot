@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:52+0200\n"
-"PO-Revision-Date: 2020-10-12 01:53+0300\n"
+"POT-Creation-Date: 2021-01-24 00:30+0100\n"
+"PO-Revision-Date: 2021-01-24 02:31+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -27,36 +27,38 @@ msgstr "Catégories"
 msgid "Description of categories."
 msgstr "Description des catégories."
 
-#: landing/templates/landing/follow/index.html:14
-#: landing/templates/landing/follow/index.html:23
+#: landing/templates/landing/follow/index.html:15
+#: landing/templates/landing/follow/index.html:28
 msgid "Follow"
 msgstr "Suivre"
 
-#: landing/templates/landing/follow/index.html:15
-msgid "How to follow the bot."
+#: landing/templates/landing/follow/index.html:17
+#, fuzzy
+#| msgid "How to follow the bot."
+msgid "How to follow the bot"
 msgstr "Comment suivre le bot."
 
-#: landing/templates/landing/funding.html:5
+#: landing/templates/landing/funding.html:6
 msgid "Hello, I am"
 msgstr "Salut, je suis"
 
-#: landing/templates/landing/funding.html:7
+#: landing/templates/landing/funding.html:8
 msgid "I retweet questions tagged with"
 msgstr "Je retweete les questions"
 
-#: landing/templates/landing/funding.html:9
+#: landing/templates/landing/funding.html:10
 msgid "from healthcare professionals"
 msgstr "des professionnels de santé"
 
-#: landing/templates/landing/funding.html:10
+#: landing/templates/landing/funding.html:11
 msgid "who are following me."
 msgstr "qui me suivent."
 
-#: landing/templates/landing/funding.html:11
+#: landing/templates/landing/funding.html:12
 msgid "I'm online since"
 msgstr "Je suis en ligne depuis"
 
-#: landing/templates/landing/funding.html:17
+#: landing/templates/landing/funding.html:18
 msgid ""
 "I run without ads or sponsors. I need your support to stay online and offer "
 "new services."
@@ -64,7 +66,7 @@ msgstr ""
 "Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien pour "
 "continuer à exister et à progresser."
 
-#: landing/templates/landing/funding.html:18
+#: landing/templates/landing/funding.html:19
 msgid "I give my support!"
 msgstr "Je soutiens!"
 
@@ -79,6 +81,16 @@ msgstr "Accueil"
 #: landing/templates/landing/network_navbar.html:5
 msgid "Network"
 msgstr "Réseau"
+
+#: landing/templates/landing/sign_in.html:11
+msgid "Sign in with Twitter to access members-only content and features!"
+msgstr ""
+"Connectez-vous avec Twitter pour accéder au contenu et services réservés "
+"aux membres!"
+
+#: landing/templates/landing/sign_in.html:21
+msgid "Sign in with Twitter"
+msgstr "Se connecter avec Twitter"
 
 #: landing/templates/landing/user.html:33
 #: landing/templates/landing/usernav.html:15 landing/views.py:73

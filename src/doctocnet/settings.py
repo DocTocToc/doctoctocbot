@@ -728,5 +728,13 @@ CONSTANCE_CONFIG = {
     "conversation__tree__utils__reply_by_member_count__cache_ttl": (
         300,
         "reply_by_member_count cache TTL in seconds"    
+    ),
+    "landing__community_question_count__cache_ttl": (
+        86400,
+        "community_question_count cache TTL in seconds"    
+    ),
+    "landing__community_first_question_date__cache_ttl": (
+        86400,
+        "community_first_question_date cache TTL in seconds"    
     )
 }

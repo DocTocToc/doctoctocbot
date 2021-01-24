@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:52+0200\n"
+"POT-Creation-Date: 2021-01-24 00:30+0100\n"
 "PO-Revision-Date: 2020-02-29 02:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings.py:347 doctocnet/settings_backup/base.py:191
+#: doctocnet/settings.py:318
 msgid "French"
 msgstr "Français"
 
-#: doctocnet/settings.py:348
+#: doctocnet/settings.py:319
 msgid "English"
 msgstr "Anglais"
 
@@ -123,21 +123,20 @@ msgstr "Progression"
 msgid "Funders"
 msgstr "Financeurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:68
-msgid "Blog"
-msgstr "Blog"
-
-#: doctocnet/templates/doctocnet/navbar.html:80
+#: doctocnet/templates/doctocnet/navbar.html:79
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
-#: doctocnet/templates/doctocnet/navbar.html:100
+#: doctocnet/templates/doctocnet/navbar.html:99
 msgid "Discussion"
 msgstr "Discussion"
 
 #: doctocnet/views.py:40 doctocnet/views.py:53
 msgid "Not authorized to access this media."
 msgstr "Vous n'êtes pas autorisé à accéder à ce document."
+
+#~ msgid "Blog"
+#~ msgstr "Blog"
 
 #~ msgid "User"
 #~ msgstr "Utilisateur"

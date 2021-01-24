@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load static %}
+{% load community_text %}
+
+<div class="accordion" id="accordionExample">
+  <div class="card">
+    <div class="card-header panel-heading" id="headingOne">
+      <span>
+        <h1 class="mb-0 pb-0">
+          <button class="btn btn-block text-left  panel-title" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          {% trans "Sign in with Twitter to access members-only content and features!" %}
+          </button>
+        </h1>
+      </span>
+    </div>
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div class="card-body">
+        {% community_text "sign_in" %}
+        {% if "twitter" in backends.not_associated %}
+        <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}" class="card-link btn btn-outline-primary">
+        <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

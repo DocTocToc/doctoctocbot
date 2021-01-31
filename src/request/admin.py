@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+from django.utils.html import format_html
 
 from versions.admin import VersionedAdmin
 from moderation.models import SocialUser, UserCategoryRelationship
 from request.models import Queue
-from django.db.models import F, Q
+from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 
 class isSelfVerified(admin.SimpleListFilter):
@@ -31,7 +32,7 @@ class isSelfVerified(admin.SimpleListFilter):
                 .filter(social_user=F('moderator')) \
                 .values_list('social_user__pk', flat=True)
             return queryset.exclude(
-                socialuser__categoryrelationships__moderator__pk__in=pks
+                socialuser__pk__in=pks
             )
         return queryset
 
@@ -43,13 +44,15 @@ class QueueAdmin(VersionedAdmin):
         'uid',
         'socialuser',
         'community',
+        'category_tag',
         'socialmedia',
     )
     list_filter = (
         'state',
         'community',
         'socialmedia',
-        isSelfVerified
+        isSelfVerified,
+        'socialuser__category__name',
     )
     readonly_fields = (
         'mini_image_tag',
@@ -99,6 +102,16 @@ class QueueAdmin(VersionedAdmin):
         return mark_safe('<img src="%s"/>' % url)
     
     mini_image_tag.short_description = 'Image'
+
+    def category_tag(self, obj):
+        category_lst = ["<ul>"]
+        for relation in obj.socialuser.categoryrelationships.all():
+            category_lst.append(f"<li>{relation.category.name} [{relation.moderator.screen_name_tag()}]</li>")
+        category_lst.append("</ul>")
+        return format_html("".join(category_lst))
+    
+    category_tag.short_description = _('Categories')
+
 
     def get_ordering(self, request):
         return ['-version_start_date']

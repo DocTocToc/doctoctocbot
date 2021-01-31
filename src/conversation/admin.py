@@ -21,6 +21,7 @@ from .models import (
     Tweetdj,
     Hashtag,
     Retweeted,
+    TwitterUserTimeline,
 )
 
 
@@ -220,8 +221,6 @@ class TreedjAdmin(MPTTModelAdmin):
 
 
 class RetweetedAdmin(VersionedAdmin):
-    pass
-
     list_display = (
         'status',
         'status_link',
@@ -253,6 +252,24 @@ class RetweetedAdmin(VersionedAdmin):
 class HashtagAdmin(admin.ModelAdmin):
     pass
 
+class TwitterUserTimelineAdmin(admin.ModelAdmin):
+    list_display = (
+        'userid',
+        'screen_name_tag',
+        'created_at',
+        'last_api_call',
+        'statusid_updated_at',
+        'statusid',
+    )
+    def screen_name_tag(self, obj):
+        try:
+            return SocialUser.objects.get(user_id=obj.userid).screen_name_tag()
+        except SocialUser.DoesNotExist:
+            return
+
+    screen_name_tag.short_description = 'Screen name'
+
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)
 admin.site.register(Retweeted, RetweetedAdmin)
+admin.site.register(TwitterUserTimeline, TwitterUserTimelineAdmin)

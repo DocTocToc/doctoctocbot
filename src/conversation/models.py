@@ -221,3 +221,27 @@ class Retweeted(Versionable):
         "bot.Account",
         on_delete=models.CASCADE,
     )
+
+class TwitterUserTimeline(models.Model):
+    """ Trace first full retrieval of a user's timeline through API 1.1
+    and record last status id each time this endpoint is called.
+    Speed up subsequent retrievals by limiting them with "since
+    status id".
+    """
+    userid = models.BigIntegerField()
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    last_api_call = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+    statusid_updated_at = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+    statusid = models.BigIntegerField(
+        null=True,
+        blank=True,
+        help_text = "Status id of the most recent status retrieved"
+    )

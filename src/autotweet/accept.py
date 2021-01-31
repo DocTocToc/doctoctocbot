@@ -1,8 +1,9 @@
-from constance import config
 import logging
 
-from autotweet.utils import send_post_request, sleep
 from autotweet.login import AutoLogin
+from autotweet.utils import send_post_request, sleep
+from constance import config
+
 
 logger = logging.getLogger(__name__)
 

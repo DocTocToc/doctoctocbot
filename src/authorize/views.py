@@ -1,16 +1,16 @@
-import logging
-from django.urls import reverse
-from django.shortcuts import render
-from django.views.generic import TemplateView
 from django.conf import settings
 from django.shortcuts import redirect
-from django.utils.translation import gettext as _
+from django.shortcuts import render
+import logging
 from urllib.parse import urlparse, urlunparse
 
 from bot.models import Account
 from bot.tweepy_api import get_api
-
+from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 import tweepy
+
 
 logger = logging.getLogger(__name__)
 

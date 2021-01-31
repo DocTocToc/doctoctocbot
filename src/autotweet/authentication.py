@@ -1,18 +1,16 @@
-import pickle
 import logging
-
-from constance import config
+import pickle
 
 from autotweet.driver import getChromeRemoteDriver
 from autotweet.utils import sleep
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common import action_chains, keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from constance import config
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common import action_chains, keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 logger = logging.getLogger(__name__)
 

@@ -9,6 +9,10 @@ from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
 from bot.tweepy_api import get_api
 from moderation.models import SocialUser
+from conversation.utils import update_trees
+from moderation.models import addsocialuser
+from community.models import Community
+from conversation.timeline import community_timeline
 
 logger = logging.getLogger(__name__)
 
@@ -27,30 +31,23 @@ def handle_allnormalize():
     from .utils import allnormalize
     allnormalize()
 
-
 @shared_task
 def handle_update_trees(hourdelta):
-    from .utils import update_trees
     update_trees(hourdelta)
-    
 
 @shared_task
 def handle_addsocialuser():
-    from moderation.models import addsocialuser
-    from conversation.models import Tweetdj
     for instance in Tweetdj.objects.all():
         addsocialuser(instance)
 
-        
 @shared_task
 def handle_get_physician_timeline():
     from bot.bin.timeline import record_user_timeline
-    from moderation.models import SocialUser
     for user_id in SocialUser.objects.physician_users():
         record_user_timeline(user_id)
-        
+
 @shared_task
-def update_retweet(days: int):
+def update_retweet(days):
     """Update Retweeted and Tweetdj to reflect unretweets
     TODO: Doesn't work if the same tweet that was unretweeted is retweeted
     again.
@@ -71,7 +68,7 @@ def update_retweet(days: int):
         if not start_tweetdj:
             continue
         start_id = start_tweetdj.statusid
-        timeline_status: List[int] = []
+        timeline_status = []
         for status in tweepy.Cursor(api.user_timeline, 
                             user_id=account.userid, 
                             count=count,
@@ -114,4 +111,12 @@ def update_retweet(days: int):
             if not tweetdj.deleted:
                 tweetdj.deleted=True
                 tweetdj.save()
-        
+
+@shared_task
+def handle_community_members_timeline(community_name: str):
+    try:
+        community = Community.objects.get(name=community_name)
+    except Community.DoesNotExist:
+        logger.error(f"'{community_name}' does not exist.")
+        return
+    community_timeline(community)

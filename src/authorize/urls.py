@@ -1,7 +1,7 @@
+from authorize import views
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
-from authorize import views
 
 app_name = 'authorize'
 

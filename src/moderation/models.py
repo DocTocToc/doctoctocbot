@@ -855,6 +855,7 @@ class DoNotRetweet(models.Model):
     def __str__(self):
         return "{} {}".format(self.socialuser, self.current)
 
+
 def addsocialuser(tweetdj_instance):
     su = addsocialuser_from_userid(tweetdj_instance.userid)
     if not su:

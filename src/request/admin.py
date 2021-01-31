@@ -3,8 +3,37 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 
 from versions.admin import VersionedAdmin
-from moderation.models import SocialUser
+from moderation.models import SocialUser, UserCategoryRelationship
 from request.models import Queue
+from django.db.models import F, Q
+from django.utils.translation import ugettext_lazy as _
+
+class isSelfVerified(admin.SimpleListFilter):
+    title = 'Self verified'
+    parameter_name = 'is_self_verified'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'yes':
+            return queryset.filter(
+                socialuser__categoryrelationships__moderator__pk=F(
+                    'socialuser__pk'
+                )
+            )
+        elif value == 'no':
+            pks = UserCategoryRelationship.objects \
+                .filter(social_user=F('moderator')) \
+                .values_list('social_user__pk', flat=True)
+            return queryset.exclude(
+                socialuser__categoryrelationships__moderator__pk__in=pks
+            )
+        return queryset
 
 class QueueAdmin(VersionedAdmin):
     list_display = (
@@ -20,6 +49,7 @@ class QueueAdmin(VersionedAdmin):
         'state',
         'community',
         'socialmedia',
+        isSelfVerified
     )
     readonly_fields = (
         'mini_image_tag',

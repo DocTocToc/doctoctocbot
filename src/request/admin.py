@@ -106,12 +106,23 @@ class QueueAdmin(VersionedAdmin):
     def category_tag(self, obj):
         category_lst = ["<ul>"]
         for relation in obj.socialuser.categoryrelationships.all():
-            category_lst.append(f"<li>{relation.category.name} [{relation.moderator.screen_name_tag()}]</li>")
+            try:
+                screen_name = relation.moderator.screen_name_tag()
+            except:
+                screen_name = ""
+            try:
+                category = relation.category.name
+            except:
+                category = ""
+            if category:
+                category_lst.append(
+                    f"<li>{category} - "
+                    f"{screen_name}</li>"
+                )
         category_lst.append("</ul>")
         return format_html("".join(category_lst))
     
     category_tag.short_description = _('Categories')
-
 
     def get_ordering(self, request):
         return ['-version_start_date']

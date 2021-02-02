@@ -117,10 +117,15 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Queue)
 def request_dm(sender, instance, created, **kwargs):
     if (
-        created
+        instance.community.twitter_request_dm
+        and created
         and (instance.state == Queue.PENDING)
         and (instance.id == instance.identity)
-        and not instance.requestdm 
     ):
-        if instance.community.twitter_request_dm:
+        has_requestdm = False
+        try:
+            has_requestdm = (instance.requestdm is not None)
+        except Queue.DoesNotExist:
+            pass
+        if not has_requestdm:
             request_dm(instance)

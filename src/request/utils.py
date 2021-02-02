@@ -59,7 +59,7 @@ def request_dm(queue):
     text = community.twitter_request_dm_text
     if not text:
         return
-    api = get_community_twitter_tweepy_api(community)
+    api = get_community_twitter_tweepy_api(community, backend=True)
     try:
         rd = RequestDm.objects.create(queue=queue)
     except DatabaseError:
@@ -78,7 +78,10 @@ def request_dm(queue):
         # You cannot send messages to users who are not following you.
         # code 349
         # You cannot send messages to this user.
-        error_code =  e.args[0][0]['code']
+        try:
+            error_code =  e.args[0][0]['code']
+        except:
+            error_code = 0
         rd.state = RequestDm.FAIL
         rd.error_code = error_code
         rd.save()

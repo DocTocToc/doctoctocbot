@@ -154,6 +154,16 @@ class Community(models.Model):
             "Bot's Twitter account will follow the members of this community."
         )
     )
+    twitter_request_dm = models.BooleanField(
+        default=False,
+        help_text = (
+            "Twitter account will attempt to send a DM after a follow request."
+        )
+    )
+    twitter_request_dm_text = models.TextField(
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.name

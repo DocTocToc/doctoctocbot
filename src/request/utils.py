@@ -1,9 +1,12 @@
 import logging
-
-from request.models import Queue
+from tweepy import TweepError
+from request.models import Queue, RequestDm
 from community.models import Community
 from request.twitter_request import get_incoming_friendship
 from moderation.social import update_social_ids
+from community.helpers import get_community_twitter_tweepy_api
+
+from django.db.utils import DatabaseError
 
 logger = logging.getLogger(__name__) 
 
@@ -46,3 +49,40 @@ def update_request_queue(community: Community):
             q.state = Queue.CANCEL
             q.save()
             q.delete()
+
+def request_dm(queue):
+    """Try to send a DM.
+    Include instructions to self verify.
+    """
+    community = queue.community
+    recipient_id = queue.uid
+    text = community.twitter_request_dm_text
+    if not text:
+        return
+    api = get_community_twitter_tweepy_api(community)
+    try:
+        rd = RequestDm.objects.create(queue=queue)
+    except DatabaseError:
+        return
+    try:
+        res = api.send_direct_message(
+            recipient_id=recipient_id,
+            text=text
+        )
+        rd.state = RequestDm.SENT
+        rd.dm_id = res.id
+        rd.save()
+    except TweepError as e:
+        logger.error(f"addstatus: Tweepy error: {e}")
+        # code 150:
+        # You cannot send messages to users who are not following you.
+        # code 349
+        # You cannot send messages to this user.
+        error_code =  e.args[0][0]['code']
+        rd.state = RequestDm.FAIL
+        rd.error_code = error_code
+        rd.save()
+
+
+        
+    

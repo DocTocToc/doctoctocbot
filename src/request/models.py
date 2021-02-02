@@ -50,6 +50,34 @@ class Queue(Versionable):
         unique_together: ('uid', 'socialmedia', 'community')
         ordering = ['version_start_date']
 
+
+class RequestDm(models.Model):
+    SENT = 'S'
+    FAIL = 'F'
+    DM_STATE_CHOICES = [
+        (SENT, 'sent'),
+        (FAIL, 'failed'),
+    ]
+    queue =  models.OneToOneField(
+        "request.Queue",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    state = models.CharField(
+        max_length=1,
+        choices=DM_STATE_CHOICES,
+        null=True,
+    )
+    dm_id = models.BigIntegerField(
+        null=True,
+        default=None,
+    )
+    error_code = models.PositiveIntegerField(
+        null=True,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
 """
 class Process(Versionable):
     queue = VersionedForeignKey(Queue, on_delete=models.CASCADE)

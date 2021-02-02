@@ -37,10 +37,12 @@ class isSelfVerified(admin.SimpleListFilter):
         return queryset
 
 class QueueAdmin(VersionedAdmin):
+    empty_value_display = '∅'
     list_display = (
         'mini_image_tag',
         'screen_name_link',
         'state_tag',
+        'dm_tag',
         'uid',
         'socialuser',
         'community',
@@ -57,6 +59,8 @@ class QueueAdmin(VersionedAdmin):
     readonly_fields = (
         'mini_image_tag',
         'screen_name_link',
+        'state_tag',
+        'dm_tag',
         'uid',
         'socialuser',
         'community',
@@ -123,6 +127,16 @@ class QueueAdmin(VersionedAdmin):
         return format_html("".join(category_lst))
     
     category_tag.short_description = _('Categories')
+
+    def dm_tag(self, obj):
+        if not obj.requestdm:
+            return
+        if obj.requestdm.state == "F":
+            return "❌"
+        else:
+            return "✔️"
+
+    dm_tag.short_description = "DM"
 
     def get_ordering(self, request):
         return ['-version_start_date']

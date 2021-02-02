@@ -14,6 +14,7 @@ from request.tasks import (
     handle_accept_follower_twitter,
     handle_decline_follower_twitter,
 )
+from request.utils import request_dm
 
 logger = logging.getLogger(__name__) 
 
@@ -112,4 +113,14 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
         handle_decline_follower_twitter.apply_async(
             args=[instance.uid, instance.community.id]
         )
-                
+
+@receiver(post_save, sender=Queue)
+def request_dm(sender, instance, created, **kwargs):
+    if (
+        created
+        and (instance.state == Queue.PENDING)
+        and (instance.id == instance.identity)
+        and not instance.requestdm 
+    ):
+        if instance.community.twitter_request_dm:
+            request_dm(instance)

@@ -4,6 +4,8 @@ from users.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 User = get_user_model()
 
@@ -22,15 +24,43 @@ class CustomUserAdmin(UserAdmin):
         'last_name',
         'first_name',
         'is_superuser',
+        'is_staff',
         'is_active',
         'socialuser',
+        'date_joined',
+        'last_login',
+        'has_social_auth',
+    )
+    readonly_fields = (
+        'date_joined',
+        'last_login',
+        'social_auth_link_tag',
     )
     #list_filter = ('is_superuser',)
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'first_name', 'last_name' , 'password')}),
-        ('Permissions', {'fields': ('is_superuser','is_active',)}),
-        ('Social User', {'fields': ('socialuser',)}),
-
+        (None, {
+            'fields': (
+                'username',
+                'email',
+                'first_name',
+                'last_name',
+                'password',
+                'date_joined',
+                'last_login',
+            )
+        }),
+        ('Permissions', {
+            'fields': ('is_superuser', 'is_staff', 'is_active',)
+            }
+        ),
+        ('Social User', {
+            'fields': ('socialuser',)
+            }
+        ),
+        ('Social auth', {
+            'fields': ('social_auth_link_tag',)    
+            }
+        ),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -52,5 +82,26 @@ class CustomUserAdmin(UserAdmin):
     )
     ordering = ('email',)
     filter_horizontal = ()
+
+    def has_social_auth(self, obj):
+        return bool(obj.social_auth.all())
+
+    has_social_auth.boolean = True
+    
+    def social_auth_link_tag(self, obj):
+        if not obj.social_auth.all():
+            return
+        links = []
+        for sa in obj.social_auth.all():
+            url = reverse(
+                "admin:social_django_usersocialauth_change",
+                args=[sa.id]
+            )
+            links.append(f'<a href="{url}">{sa.provider}</a>')
+        return mark_safe(
+            "</br>".join(links)
+        )
+    social_auth_link_tag.short_description = "Social auth"
+            
 
 admin.site.register(User, CustomUserAdmin)

@@ -1,12 +1,16 @@
-from django.contrib import admin
-
 from .models import Project, ProjectInvestment, Tier
 
+from django.urls import reverse
+from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 class ProjectInvestmentAdmin(admin.ModelAdmin):
+    empty_value_display = '∅'
     list_display = (
         'uuid',
         'project',
-        'user',
+        'user_tag',
+        'socialuser_tag',
         'name',
         'email',
         'pledged',
@@ -29,6 +33,29 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
     list_filter = ['paid', 'datetime', 'public',]
     ordering = ['-datetime',]
     date_hierarchy = 'datetime'
+    
+    def socialuser_tag(self, obj):
+        su = obj.user.socialuser
+        if not su:
+            return
+        url = reverse("admin:moderation_socialuser_change", args=[su.id])
+        name = su.screen_name_tag() or obj.user.username
+        try:
+            emoji = su.social_media.emoji
+        except:
+            emoji = None
+        tag = f"{emoji}{name}"
+        return mark_safe(f'<a href="{url}">{tag}</a>')
+    socialuser_tag.short_description = "SocialUser"
+
+    def user_tag(self, obj):
+        u = obj.user
+        if not u:
+            return
+        url = reverse("admin:users_user_change", args=[u.id])
+        return mark_safe(f'<a href="{url}">{u.username}</a>')
+    user_tag.short_description = "Django user"
+
 
 class TierAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'description', 'emoji', 'min', 'max',)

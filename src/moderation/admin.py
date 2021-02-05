@@ -171,6 +171,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'pk',
         'user_id',
         'screen_name_tag',
+        'socialmedia_tag',
         'mini_image_tag',
         'name_tag',
         'profile_link',
@@ -182,6 +183,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     fields = (
         'pk',
         'screen_name_tag',
+        'socialmedia_tag',
         'normal_image_tag',
         'name_tag',
         'user_id',
@@ -196,6 +198,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     readonly_fields = (
         'pk',
         'screen_name_tag',
+        'socialmedia_tag',
         'normal_image_tag',
         'name_tag',
         'user_id',
@@ -275,6 +278,14 @@ class SocialUserAdmin(admin.ModelAdmin):
         )
     block_tag.short_description = 'Block'
     
+    def socialmedia_tag(self, obj):
+        try:
+            return obj.social_media.emoji
+        except:
+            return
+    socialmedia_tag.short_description = 'SoMed'
+
+
 class CategoryAdmin(TranslationAdmin):
     list_display = (
         'name',
@@ -778,6 +789,14 @@ class HumanAdmin(admin.ModelAdmin):
     
     djangouser_tag.short_description = 'Django user'
 
+
+class SocialMediaAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'emoji',
+    )
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 
@@ -791,6 +810,6 @@ admin.site.register(Friend, FriendAdmin)
 admin.site.register(Moderator, ModeratorAdmin)
 admin.site.register(Image)
 admin.site.register(DoNotRetweet, DoNotRetweetAdmin)
-admin.site.register(SocialMedia)
 admin.site.register(CategoryMetadata, CategoryMetadataAdmin)
 admin.site.register(Human, HumanAdmin)
+admin.site.register(SocialMedia, SocialMediaAdmin)

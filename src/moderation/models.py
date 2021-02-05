@@ -407,7 +407,17 @@ class UserCategoryRelationship(models.Model):
 
     
 class SocialMedia(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    emoji = models.CharField(
+        max_length=255,
+        unique=True,
+        null = True,
+        blank = True,
+        help_text = "emoji symbolizing a SocialMedia object for admin pages"
+    )
     
     def __str__(self):
         return self.name

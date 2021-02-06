@@ -116,3 +116,25 @@ class Tier(models.Model):
                                                    self.description[:140],
                                                    self.min,
                                                    self.max)
+
+
+class Campaign(models.Model):
+    project = models.ForeignKey(
+        'crowdfunding.Project',
+        on_delete=models.CASCADE,
+    )
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    goal = models.IntegerField(blank=True)
+    
+    class Meta:
+        ordering = ['start_datetime']
+    
+    def __str__(self):
+        return "Campaign {}:{} / {} start: {} end: {}".format(
+            self.id,
+            self.project.name,
+            self.project.description[:140],
+            self.start_datetime.date(),
+            self.end_datetime.date(),
+        )

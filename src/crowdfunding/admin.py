@@ -1,8 +1,27 @@
-from .models import Project, ProjectInvestment, Tier
+from .models import Project, Campaign, ProjectInvestment, Tier
 
 from django.urls import reverse
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'description',
+        'provider',
+        'product',
+        'currency',
+    )
+
+
+class CampaignAdmin(admin.ModelAdmin):
+    list_display = (
+        'project',
+        'start_datetime',
+        'end_datetime',
+        'goal',
+    )
+
 
 class ProjectInvestmentAdmin(admin.ModelAdmin):
     empty_value_display = '∅'
@@ -67,6 +86,7 @@ class TierAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'description', 'emoji', 'min', 'max',)
     prepopulated_fields = {"slug": ("title",)}
 
-admin.site.register(Project)
+admin.site.register(Project, ProjectAdmin)
+admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(ProjectInvestment, ProjectInvestmentAdmin)
 admin.site.register(Tier, TierAdmin)

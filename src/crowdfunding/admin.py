@@ -30,7 +30,13 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'name',
         'email',
     ]
-    list_filter = ['paid', 'datetime', 'public',]
+    list_filter = [
+        'paid',
+        'datetime',
+        'public',
+        'project',
+        'invoice_pdf',
+    ]
     ordering = ['-datetime',]
     date_hierarchy = 'datetime'
     

@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from versions.admin import VersionedAdmin
 from moderation.models import SocialUser, UserCategoryRelationship
 from request.models import Queue
+from moderation.admin_tags import admin_tag_category
 from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 
@@ -44,7 +45,6 @@ class QueueAdmin(VersionedAdmin):
         'state_tag',
         'dm_tag',
         'uid',
-        'socialuser',
         'community',
         'category_tag',
         'socialmedia',
@@ -80,7 +80,7 @@ class QueueAdmin(VersionedAdmin):
             return obj.state
 
     state_tag.short_description = 'STATE'
-    
+
     def screen_name_link(self, obj):
         try:
             su = SocialUser.objects.get(user_id=obj.uid)
@@ -92,9 +92,9 @@ class QueueAdmin(VersionedAdmin):
             )
         except SocialUser.DoesNotExist:
             return obj.socialuser.screen_name_tag()
-    
+
     screen_name_link.short_description = 'Screen name'
-    
+
     def mini_image_tag(self, obj):
         from django.contrib.staticfiles.templatetags.staticfiles import static
         p = obj.socialuser.profile
@@ -102,30 +102,14 @@ class QueueAdmin(VersionedAdmin):
             url = p.miniavatar.url
         else:
             url = static("moderation/twitter_unknown_images/egg24x24.png")
-        
+
         return mark_safe('<img src="%s"/>' % url)
-    
+
     mini_image_tag.short_description = 'Image'
 
     def category_tag(self, obj):
-        category_lst = ["<ul>"]
-        for relation in obj.socialuser.categoryrelationships.all():
-            try:
-                screen_name = relation.moderator.screen_name_tag()
-            except:
-                screen_name = ""
-            try:
-                category = relation.category.name
-            except:
-                category = ""
-            if category:
-                category_lst.append(
-                    f"<li>{category} - "
-                    f"{screen_name}</li>"
-                )
-        category_lst.append("</ul>")
-        return format_html("".join(category_lst))
-    
+        return admin_tag_category(obj.socialuser)
+
     category_tag.short_description = _('Categories')
 
     def dm_tag(self, obj):

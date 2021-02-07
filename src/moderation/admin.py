@@ -30,6 +30,8 @@ from moderation.models import (
     CategoryMetadata,
 )
 from community.models import Community
+from moderation.admin_tags import admin_tag_category
+
 from modeltranslation.admin import TranslationAdmin
 
 logger = logging.getLogger(__name__)
@@ -168,17 +170,16 @@ class BotFriend(admin.SimpleListFilter):
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
-        'pk',
-        'user_id',
-        'screen_name_tag',
-        'socialmedia_tag',
         'mini_image_tag',
+        'screen_name_tag',
+        'category_tag',
+        'socialmedia_tag',
         'name_tag',
         'profile_link',
-        'social_media_profile',
         'follow_request_tag',
         'block_tag',
         'active',
+        'user_id',
     )
     fields = (
         'pk',
@@ -188,7 +189,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         'name_tag',
         'user_id',
         'profile_link',
-        'social_media_profile',
         'category',
         'category_moderator_lst',
         'follow_request_tag',
@@ -203,7 +203,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         'name_tag',
         'user_id',
         'profile_link',
-        'social_media_profile',
         'category',
         'category_moderator_lst',
         'follow_request_tag',
@@ -225,25 +224,13 @@ class SocialUserAdmin(admin.ModelAdmin):
         for relation in obj.categoryrelationships.all():
             cat_mod_lst.append((relation.category.name, relation.moderator.screen_name_tag(),))
         return cat_mod_lst
-    
-    def social_media_profile(self, obj):
-        if obj.social_media.name == "twitter":
-            return mark_safe(
-                '<a href="https://twitter.com/intent/user?user_id={user_id}">{tag}</a>'.format(
-                    user_id = obj.user_id,
-                    tag = obj.social_media
-                )
-            )
-        elif obj.social_media.name == "santetoctoc":
-            return obj.social_media.name
 
     def profile_link(self, obj):
         try:
             su = Profile.objects.get(socialuser=obj.pk)
             return mark_safe(
-                '<a href="{link}">{tag}</a>'.format(
-                    link = reverse("admin:moderation_profile_change", args=(su.pk,)),
-                    tag = obj.screen_name_tag()
+                '<a href="{link}">🔗</a>'.format(
+                    link = reverse("admin:moderation_profile_change", args=(su.pk,))
                 )
             )
         except Profile.DoesNotExist:
@@ -264,7 +251,7 @@ class SocialUserAdmin(admin.ModelAdmin):
                 ]
             )
         )
-    follow_request_tag.short_description = 'Follow request'
+    follow_request_tag.short_description = 'Follow req'
     
     def block_tag(self, obj):
         # return HTML link that will not be escaped
@@ -280,10 +267,22 @@ class SocialUserAdmin(admin.ModelAdmin):
     
     def socialmedia_tag(self, obj):
         try:
-            return obj.social_media.emoji
+            emoji = obj.social_media.emoji
         except:
             return
-    socialmedia_tag.short_description = 'SoMed'
+        if not emoji:
+            emoji = obj.social_media.name
+        if obj.social_media.name == "twitter":
+            href = f"https://twitter.com/intent/user?user_id={obj.user_id}"
+            return mark_safe(f'<a href="{href}">{emoji}</a>')
+        else:
+            return emoji
+    socialmedia_tag.short_description = 'SoMed🔗'
+
+    def category_tag(self, obj):
+        return admin_tag_category(obj)
+
+    category_tag.short_description = 'Category'
 
 
 class CategoryAdmin(TranslationAdmin):

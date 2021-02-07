@@ -1,9 +1,12 @@
 """ Create a Twitter SocialUser object from userid or screen_name """
 
 import logging
+import random
 from django.core.management.base import BaseCommand, CommandError
 
 from moderation.models import SocialUser, SocialMedia
+from bot.models import Account
+from moderation.profile import create_update_profile_twitter
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
@@ -42,6 +45,11 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('Twitter SocialMedia object does not exist.'))
             return
         _su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
+        bot_screen_names = Account.objects \
+            .filter(active=True) \
+            .values_list("username", flat=True)
+        bot_screen_name = random.choice(bot_screen_names)
+        create_update_profile_twitter(_su, bot_screen_name=bot_screen_name)
         if created:
             self.stdout.write(self.style.SUCCESS('Done creating SocialUser object.'))
         else:

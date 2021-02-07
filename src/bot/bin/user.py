@@ -15,15 +15,25 @@ def getuser(user_id: int, bot_screen_name=None):
         return
     if not isinstance(user_id, int):
         return
-
     api = get_api(
         username=bot_screen_name,
         backend=True,
     )
-    try:
-        return api.get_user(user_id)._json
-    except AttributeError:
+    if not api:
         return
+    res = None
+    try:
+        res = api.get_user(user_id=user_id)
+    except tweepy.TweepError as error:
+        logger.error(f"{error=} {res=}")
+        return
+    if res:
+        try:
+            return res._json
+        except AttributeError as error:
+            logging.error(error)
+        except Exception as exception:
+            logging.error(exception)
 
 def getuser_lst(user_id_lst: List[int]):
     "Get a list of Twitter user objects from list of user ids."

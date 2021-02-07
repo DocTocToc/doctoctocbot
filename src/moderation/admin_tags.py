@@ -14,7 +14,7 @@ def admin_tag_category(su: SocialUser):
         except:
             category = ""
         if category:
-            if su.user_id == relation.moderator.user_id:    
+            if relation.moderator and su.user_id == relation.moderator.user_id:    
                 asterisk = "<span style='color: red'>*</span>"
             else:
                 asterisk = ""

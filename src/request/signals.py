@@ -2,7 +2,7 @@ import logging
 from django.db.utils import DatabaseError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from request.models import Queue
+from request.models import Queue, RequestDm
 from dm.api import senddm
 from django.utils.translation import gettext as _
 from moderation.models import Category
@@ -125,7 +125,7 @@ def request_dm(sender, instance, created, **kwargs):
         has_requestdm = False
         try:
             has_requestdm = (instance.requestdm is not None)
-        except Queue.DoesNotExist:
+        except RequestDm.DoesNotExist:
             pass
         if not has_requestdm:
             request_dm(instance)

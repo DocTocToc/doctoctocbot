@@ -736,5 +736,9 @@ CONSTANCE_CONFIG = {
     "landing__community_first_question_date__cache_ttl": (
         86400,
         "community_first_question_date cache TTL in seconds"    
+    ),
+    "conversation__admin__tweetdj_list_per_page": (
+        50,
+        "Default number of Tweetdj instances to show on admin display list"    
     )
 }

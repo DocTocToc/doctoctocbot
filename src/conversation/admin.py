@@ -12,7 +12,9 @@ from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
+
 from versions.admin import VersionedAdmin
+from constance import config
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +107,7 @@ class RetweetedByListFilter(admin.SimpleListFilter):
         )
 
 class TweetdjAdmin(admin.ModelAdmin):
+    list_per_page = config.conversation__admin__tweetdj_list_per_page
     list_display = (
         'statusid',
         'userid',

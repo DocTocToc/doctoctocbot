@@ -480,8 +480,6 @@ STATUS_DISPLAY_HOUR = {
 
 #CORS_ORIGIN_ALLOW_ALL = True
 
-# Messenger DM per task limit
-MESSENGER_DM_LIMIT = 15
 
 # django-meta
 
@@ -740,5 +738,15 @@ CONSTANCE_CONFIG = {
     "conversation__admin__tweetdj_list_per_page": (
         50,
         "Default number of Tweetdj instances to show on admin display list"    
-    )
+    ),
+    "messenger__campaign__dm_limit": (
+        1000,
+        "Maximum number of messenger DMs for one handle campaign task"    
+    ),
+    "messenger__models__backoff_default": (
+        60,
+        "backoff period between 2 Twitter API message_create events in seconds"
+    ),
 }
+
+MESSENGER_DM_LIMIT = 15

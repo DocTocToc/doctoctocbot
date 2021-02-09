@@ -1,7 +1,7 @@
 from django.db import models
 from moderation.models import SocialUser, Category
 from django.utils.translation import gettext as _
-
+from constance import config
 
 class Message(models.Model):
     name = models.CharField(
@@ -24,6 +24,9 @@ class Message(models.Model):
         return f"Message {self.name} ({self.created})"
 
 
+def get_backoff():
+    return config.messenger__models__backoff_default
+
 
 class Campaign(models.Model):
     name = models.CharField(
@@ -36,9 +39,19 @@ class Campaign(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
+    restrict_by_category = models.BooleanField(
+        null=True,
+    )
     categories = models.ManyToManyField(
         Category,
-        blank=True
+        blank=True,
+    )
+    restrict_by_crowdfunding = models.BooleanField(
+        null=True,
+    )
+    crowdfunding_campaign = models.ManyToManyField(
+        'crowdfunding.Campaign',
+        blank=True,
     )
     recipients = models.ManyToManyField(
         SocialUser,
@@ -53,7 +66,11 @@ class Campaign(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    
+    backoff = models.PositiveIntegerField(
+        default = get_backoff,
+        help_text = "period between 2 API message_create events in seconds"
+    )
+
     class Meta:
         verbose_name = _("Campaign")
         verbose_name_plural = _("Campaigns")

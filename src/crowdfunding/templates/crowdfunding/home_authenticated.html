@@ -23,11 +23,9 @@
 
 {% include 'landing/donate.html' %}
 
-{% include 'crowdfunding/twitter_signin.html' %}
-
 {% include 'crowdfunding/browser_warning.html' %}
-
 <div id="donate"></div>
+<a name="anchor" id="anchor"/>
 {% include "crowdfunding/tiers.html" %}
 {% if frontend_error_msg %}
 <p>❌ {{ frontend_error_msg }}</p>

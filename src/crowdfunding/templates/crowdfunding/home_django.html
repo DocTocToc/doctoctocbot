@@ -15,9 +15,10 @@
 {% endblock header_javascript %}
 {% block title %}Financement participatif{% endblock %}
 {% block content %}
+<a name="anchor" id="anchor"/>
 {% include 'landing/donate.html' %}
-{% include 'crowdfunding/twitter_signin.html' %}
 {% include 'crowdfunding/browser_warning.html' %}
+{% include 'crowdfunding/twitter_signin.html' %}
 <div id="donate"></div>
 {% include "crowdfunding/tiers.html" %}
 {% if frontend_error_msg %}

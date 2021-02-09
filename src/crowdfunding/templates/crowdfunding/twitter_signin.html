@@ -17,7 +17,7 @@
   <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir un nom d'utilisateur et indiquer votre email.
   Un compte sera créé automatiquement pour que vous puissiez obtenir votre facture dans votre espace utilisateur.
   Nous vous enverrons un mail de confirmation.
-  <p><small>⚠️Les noms d'utilisateurs Twitter connus sont réservés à l'authentification via Twitter.</small></p>
+  <p><small>⚠️Les noms d'utilisateurs Twitter connus sont réservés à l'<a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">authentification via Twitter</a>.</small></p>
   {% endif %}
 </div>
 {% endif %}

@@ -53,6 +53,16 @@ $(document).ready(function() {
     $(".dropdown-toggle").dropdown();
 });
 </script-->
+
+<title>{% block title %} Home {% endblock title %} | {{ site.name }}</title>
+
+{% block header_javascript %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>                 
+{% endblock header_javascript %}
+</head>
+
+  <body data-spy="scroll" data-target="#navbar-main">
+
 <script>
 $(document).ready(function() {
 $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
@@ -68,14 +78,6 @@ $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
 });
 </script>
 
-<title>{% block title %} Home {% endblock title %} | {{ site.name }}</title>
-
-{% block header_javascript %}
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>                 
-{% endblock header_javascript %}
-</head>
-
-  <body data-spy="scroll" data-target="#navbar-main">
 
   {% include "doctocnet/navbar.html" %}
   

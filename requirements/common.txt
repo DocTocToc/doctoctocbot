@@ -36,7 +36,7 @@ django-ajax-selects
 furl
 gunicorn==19.9.0
 django-markdownify
-django-bootstrap-modal-forms==1.5.0
+django-bootstrap-modal-forms==2.0.1
 pycountry
 simplejson
 django-silver

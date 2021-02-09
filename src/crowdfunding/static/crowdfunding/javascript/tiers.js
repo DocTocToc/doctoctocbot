@@ -37,5 +37,5 @@ $( "#amount-radio-group" ).click(function(){
 
 $(document).ready(function(){
 	$( "#option50" ).trigger( "click" );
-    $(window).scrollTop($('#anchor').offset().top).scrollLeft($('#anchor').offset().left);});
+    $(window).scrollTop($('#anchor').offset().top).scrollLeft($('#anchor').offset().left);
 });

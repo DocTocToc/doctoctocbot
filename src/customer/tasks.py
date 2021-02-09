@@ -6,6 +6,7 @@ from celery import shared_task
 from celery_once import QueueOnce
 from django.conf import settings
 from crowdfunding.models import ProjectInvestment
+from customer.silver import create_customer_and_draft_invoice
 
 PDF_GENERATION_TIME_LIMIT = getattr(settings, 'PDF_GENERATION_TIME_LIMIT',
                                     60)  # default 60s
@@ -24,4 +25,11 @@ def generate_pdf(document_id, document_type):
             return
         pi.invoice_pdf = True
         pi.save()
-    
+
+@shared_task
+def handle_create_customer_and_draft_invoice(uuid):
+    try:
+        instance = ProjectInvestment.objects.get(uuid=uuid)
+    except ProjectInvestment.DoesNotExist:
+        return
+    create_customer_and_draft_invoice(instance)

@@ -31,6 +31,7 @@ from moderation.models import (
 )
 from community.models import Community
 from moderation.admin_tags import admin_tag_category
+from common.list_filter import by_null_filter
 
 from modeltranslation.admin import TranslationAdmin
 
@@ -217,6 +218,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         ProtectedFilter,
         BotFollower,
         BotFriend,
+        by_null_filter('category', 'Category'),
     )
 
     def category_moderator_lst(self, obj):

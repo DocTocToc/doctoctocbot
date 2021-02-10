@@ -159,9 +159,14 @@ def send(campaign: Campaign):
                 # You cannot send messages to users who are not following you.
                 # code 349
                 # You cannot send messages to this user.
+                # code 226:
+                # This request looks like it might be automated. To protect our
+                # users from spam and other malicious activity, we can't
+                # complete this action right now. Please try again later.
                 try:
                     error_code =  e.args[0][0]['code']
-                    if error_code in [420, 429, 88]:
+                    if error_code in [420, 429, 88, 226]:
+                        logger.error(f"Twitter API error code: {error_code}")
                         current_limit=0
                 except:
                     error_code = 0

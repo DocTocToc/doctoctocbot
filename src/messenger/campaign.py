@@ -135,13 +135,9 @@ def send(campaign: Campaign):
             skip = False
             if receipts:
                 for r in receipts:
-                    receipt_info = (f"Tried sending this on {localize(r.created)} "
-                                    f"Error: {r.error} ID: {r.event_id}")
-                    logger.debug(receipt_info)
                     if r.event_id:
                         skip = True
             if skip:
-                logger.info("SKIPPING!")
                 continue
             text=_format(msg, recipient, campaign)
             sleep_random(campaign)

@@ -64,6 +64,24 @@ class CategoryRelationshipInline(admin.TabularInline):
     fk_name = 'category'
     raw_id_fields = ("social_user", "moderator",)
     
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "moderator":
+            if request.user.socialuser:
+                kwargs["queryset"] = SocialUser.objects.filter(
+                    id = request.user.socialuser.id
+                )
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
+    """
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == 'moderator':
+            if request.user.socialuser:
+                kwargs['initial'] = request.user.socialuser.id
+                return db_field.formfield(**kwargs)
+        return super(CategoryRelationshipInline, self) \
+            .formfield_for_manytomany(db_field, request, **kwargs)
+    """
+
     def social_user_screen_name_tag(self, obj):
         screen_name = obj.social_user.profile.json.get("screen_name", None)
         return screen_name
@@ -87,18 +105,20 @@ class UserRelationshipInline(admin.TabularInline):
     extra = 10
     fk_name = 'social_user'
     readonly_fields = ['created', 'updated']
-    
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "moderator":
-            mod_ids = list(Moderator.objects.values_list('socialuser', flat=True))
-            try:
-                logger.debug(request.resolver_match.kwargs["object_id"])
-                parent_obj_id = request.resolver_match.kwargs["object_id"]
-                kwargs["queryset"] = SocialUser.objects.filter(
-                    Q(id=parent_obj_id) | Q(id__in=mod_ids)
+            parent_id = request.resolver_match.kwargs['object_id']
+            moderator_ids = list(
+                UserCategoryRelationship.objects \
+                    .filter(social_user__id=parent_id) \
+                    .values_list("moderator__id", flat=True)
                 )
-            except IndexError:
-                pass
+            if request.user.socialuser:
+                moderator_ids.append(request.user.socialuser.id)
+            kwargs["queryset"] = SocialUser.objects.filter(
+                    id__in=moderator_ids
+                )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

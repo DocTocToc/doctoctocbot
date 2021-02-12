@@ -72,6 +72,7 @@ class ModeratorPublicList(TemplateView):
             Moderator.objects
             .filter(
                 public=True,
+                active=True,
                 community=community
             )
             .annotate(

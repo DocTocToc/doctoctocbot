@@ -6,11 +6,7 @@ from messenger.models import (
     Receipt,
     CampaignMessage
 )
-from moderation.models import SocialUser
-
-
-class SocialUser(admin.ModelAdmin):
-    search_fields = ['profile__json__screen_name']
+from constance import config
 
 
 class CampaignMessageInline(admin.TabularInline):
@@ -45,6 +41,7 @@ class EventIdListFilter(admin.SimpleListFilter):
             return queryset.filter(event_id__isnull=True)
 
 class ReceiptAdmin(admin.ModelAdmin):
+    list_per_page = config.messenger__admin__receipt_list_per_page
     list_display = (
         'campaign',
         'message',

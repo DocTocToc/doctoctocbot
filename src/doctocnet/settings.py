@@ -739,6 +739,10 @@ CONSTANCE_CONFIG = {
         50,
         "Default number of Tweetdj instances to show on admin display list"    
     ),
+    "messenger__admin__receipt_list_per_page": (
+        25,
+        "Default number of Receipt instances to show on admin display list"
+    ),
     "messenger__campaign__dm_limit": (
         1000,
         "Maximum number of messenger DMs for one handle campaign task"    

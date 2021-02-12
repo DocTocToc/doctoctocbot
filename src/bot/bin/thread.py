@@ -28,7 +28,8 @@ def retweetroot(statusid: int):
     """
     Starting from the status with statusid, analyze nodes towards root to
     determine if the root status should be retweeted.
-    Retweet only if all nodes leading to root have the same author and if they contain a question mark
+    Retweet only if all nodes leading to root have the same author and if they
+    contain a question mark
     """
     logger.debug(type(statusid))
     status_mi: Tweetdj = getorcreate(statusid)
@@ -61,9 +62,7 @@ def retweetroot(statusid: int):
         if parent_mi.parentid is None:
             add_root_to_tree(parent_mi.statusid)
             if hasquestionmark:
-                if (hrh \
-                    and not isreplacement(parent_mi.json) \
-                    and not isquote(parent_mi.json)):
+                if (hrh and not isquote(parent_mi.json)):
                     community_retweet(
                         parent_mi.statusid,
                         parent_mi.userid,

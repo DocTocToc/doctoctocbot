@@ -326,7 +326,7 @@ class CategoryAdmin(TranslationAdmin):
         'show_relationships_count',
     )
     search_fields = ['name', 'label', 'description', 'field',]
-    autocomplete_fields = ['field',]
+    autocomplete_fields = ['mesh', 'field',]
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size':'72'})},
     }

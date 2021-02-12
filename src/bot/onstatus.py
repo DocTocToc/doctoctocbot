@@ -26,7 +26,11 @@ def get_status(statusid: int, community: Community):
         logger.error(e)
 
 def get_status_communities(statusid, community):
-    for c in Community.objects.filter(active=True).remove(community):
+    """Get a status through the account of another community
+    Try to get a status through another account if the bot of a community was
+    blocked by the author of the status.
+    """
+    for c in Community.objects.filter(active=True).exclude(id=community.id):
         status = get_status(statusid=statusid, community=c)
         if status:
             return status

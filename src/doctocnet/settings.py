@@ -4,6 +4,7 @@ import logging
 from django.utils.log import DEFAULT_LOGGING
 from decouple import AutoConfig, Csv
 from pathlib import Path
+from neomodel import config as neo4j_config
 
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING) 
@@ -135,16 +136,7 @@ DICT_CONFIG = {
 }
 logging.config.dictConfig(DICT_CONFIG)
 
-#sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-
-
-
-
 SECRET_KEY = config('SECRET_KEY')
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
 
@@ -287,6 +279,12 @@ DATABASES = {
         },
     }
 }
+
+# neo4j
+NEO4J_USERNAME = config('NEO4J_USERNAME', default='neo4j')
+NEO4J_PASSWORD = config('NEO4J_PASSWORD')
+NEO4J_BOLT_URL = f'bolt://{NEO4J_USERNAME}:{NEO4J_PASSWORD}@neo4j:7687'
+neo4j_config.DATABASE_URL = NEO4J_BOLT_URL
 
 STATIC_ROOT = config('STATIC_ROOT')
 STATIC_URL = '/static/'

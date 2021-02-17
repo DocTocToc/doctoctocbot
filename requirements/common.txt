@@ -54,3 +54,4 @@ django-reversion
 django-phonenumber-field[phonenumbers]
 django-taggit-serializer
 django-user-visit==0.4.1
+neomodel ~= 4.0

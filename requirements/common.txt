@@ -34,7 +34,7 @@ django-admin-rangefilter
 django-meta
 django-ajax-selects
 furl
-gunicorn==19.9.0
+gunicorn==20.0.4
 django-markdownify
 django-bootstrap-modal-forms==2.0.1
 pycountry

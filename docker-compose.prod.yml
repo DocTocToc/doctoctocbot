@@ -10,7 +10,7 @@ services:
       dockerfile: docker/django/Dockerfile
       target: prod
     image: dtn_prod
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:8080' --worker-tmp-dir /dev/shm --timeout 60"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout 60"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     image: dtn_prod
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:8080' --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout 60 --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -44,7 +44,7 @@ services:
     env_file:
       - .env
     image: dtn_prod
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:8080' --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout 60 --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -61,7 +61,7 @@ services:
     env_file:
       - .env
     image: dtn_prod
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings4 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:8080' --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings4 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout 60 --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -89,7 +89,7 @@ services:
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
       - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
     ports:
-      - "8080:8080"
+      - "8080:80"
     depends_on:
       - django_1
       - django_2

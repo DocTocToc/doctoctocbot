@@ -19,6 +19,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8081:80"
     depends_on:
       - database
       - redis
@@ -36,6 +38,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8082:80"
     depends_on:
       - database
       - redis
@@ -53,6 +57,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8083:80"
     depends_on:
       - database
       - redis
@@ -70,27 +76,29 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8084:80"
     depends_on:
       - database
       - redis
     working_dir: /code/src
-  nginx:
-    restart: on-failure
-    env_file:
-      - .env
-    image: nginx:latest
-    volumes:
-      - ./src:/code/src
-      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
-      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
-      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
-      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
-      - ${NGINX_LOG_DIR}:/var/log/nginx
-    ports:
-      - "8080:80"
-    depends_on:
-      - django_1
-      - django_2
+#  nginx:
+#    restart: on-failure
+#    env_file:
+#      - .env
+#    image: nginx:latest
+#    volumes:
+#      - ./src:/code/src
+#      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
+#      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
+#      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
+#      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
+#      - ${NGINX_LOG_DIR}:/var/log/nginx
+#    ports:
+#      - "8080:80"
+#    depends_on:
+#      - django_1
+#      - django_2
   celery_retweet_worker:
     image: dtn_dev
   celery_tree_worker:

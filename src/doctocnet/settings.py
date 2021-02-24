@@ -752,6 +752,10 @@ CONSTANCE_CONFIG = {
         60,
         "backoff period between 2 Twitter API message_create events in seconds"
     ),
+    "dm__admin__direct_message_list_per_page": (
+        25,
+        "Default number of DirectMessage instances to show on admin display list"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15

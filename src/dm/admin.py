@@ -54,9 +54,9 @@ class IsQuickReplyResponse(admin.SimpleListFilter):
         q1=Q(jsn__kwargs__message_create__message_data__has_key='quick_reply_response')
         q2=Q(jsn__has_key='quick_reply_response')
         if value == 'yes':
-            return queryset.filter(q1 | q2)
+            return queryset.filter(q1 | q2).order_by("-created_timestamp")
         elif value == 'no':
-            return queryset.filter(~q1 & ~q2)
+            return queryset.filter(~q1 & ~q2).order_by("-created_timestamp")
         return queryset
 
 
@@ -75,9 +75,9 @@ class IsQuickReplyQuestion(admin.SimpleListFilter):
         q1 = Q(jsn__has_key='quick_reply')
         q2 = Q(jsn__kwargs__message_create__message_data__has_key='quick_reply')
         if value == 'yes':
-            return queryset.filter(q1 | q2)
+            return queryset.filter(q1 | q2).order_by("-created_timestamp")
         elif value == 'no':
-            return queryset.filter(~q1 & ~q2)
+            return queryset.filter(~q1 & ~q2).order_by("-created_timestamp")
         return queryset
 
 

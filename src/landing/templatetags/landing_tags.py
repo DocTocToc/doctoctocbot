@@ -215,7 +215,10 @@ def network_navbar(context):
     if not community:
         logger.warn("Create a community first.")
         return
-    network_lst = Community.objects.exclude(id=community.id).values('name', 'site__domain')
+    network_lst = Community.objects \
+        .exclude(id=community.id) \
+        .exclude(active=False) \
+        .values('name', 'site__domain')
     logger.debug(network_lst)
     if settings.DEBUG:
         protocol="http://"

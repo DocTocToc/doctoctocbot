@@ -51,7 +51,7 @@ def reply_delay_data(su):
             data.append({"x": t0, "y": delta})
             labels.append(
                 f"@{tweetdj.screen_name_tag()} "
-                f"{tweetdj.status_text_tag()}"
+                f"{tweetdj.status_text_tag()[0:100]}"
             )
             logger.debug(labels)
     return {"labels": labels, "data": data}

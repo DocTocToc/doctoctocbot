@@ -1,5 +1,5 @@
 from typing import List
-
+import logging
 from rest_framework import serializers
 from .models import Hashtag, Tweetdj
 from taggit_serializer.serializers import (TagListSerializerField,
@@ -17,6 +17,8 @@ from community.helpers import activate_language
 from moderation.models import SocialUser
 from tagging.models import Category
 from conversation.tree.utils import reply_by_member_count
+
+logger = logging.getLogger(__name__)
 
 class HashtagSerializer(serializers.ModelSerializer):
 
@@ -75,29 +77,36 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_user_name(self, obj):
         try:
             return obj.json['user']['name']
-        except TypeError:
+        except (AttributeError, KeyError) as e:
+            logger.error(e)
             return ""
 
     def get_user_screen_name(self, obj):
         try:
             return obj.json['user']['screen_name']
-        except TypeError:
+        except (AttributeError, KeyError) as e:
+            logger.error(e)
             return ""
 
     def get_created_at(self, obj):
         try:
             return obj.json['created_at']
-        except TypeError:
+        except (AttributeError, KeyError) as e:
+            logger.error(e)
             return ""
 
     def get_text(self, obj):
         try:
             return obj.json['full_text']
-        except TypeError:
+        except KeyError:
             try:
                 return obj.json['text']
-            except TypeError:
+            except KeyError as e:
+                logger.error(e)
                 return ""
+        except AttributeError as e:
+            logger.error(e)
+            return ""
 
     def get_author_category(self, obj):
         api_access = get_api_access(self.context['request'])
@@ -158,7 +167,8 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             except KeyError:
                 try:
                     return tweetdj.json["entities"]["media"]
-                except KeyError:
+                except KeyError as e:
+                    logger.error(e)
                     return
                 
     def get_reply_count(self, obj):

@@ -5,6 +5,7 @@ from os.path import exists, basename
 import requests
 from urllib.parse import urlparse
 import tweepy
+import random
 
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
@@ -15,6 +16,7 @@ from conversation.models import Tweetdj
 from bot.bin.user import getuser
 from bot.tweepy_api import get_api
 from community.models import Community
+from bot.models import Account
 
 logger = logging.getLogger('root')
 FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
@@ -30,6 +32,20 @@ def socialuser(backend, user, response, *args, **kwargs):
         su_mi, created2 = SocialUser.objects.get_or_create(user_id=tuid_int, social_media=sm_mi)
         logger.debug(f'socialuser: {su_mi}, created: {created2}')
         return {'socialuser': su_mi}
+
+def create_social_user_and_profile(userid):
+    try:
+        twitter = SocialMedia.objects.get(name='twitter')
+    except SocialMedia.DoesNotExist:
+        logger.error('Twitter SocialMedia object does not exist.')
+        return
+    _su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
+    bot_screen_names = Account.objects \
+        .filter(active=True) \
+        .values_list("username", flat=True)
+    bot_screen_name = random.choice(bot_screen_names)
+    create_update_profile_twitter(_su, bot_screen_name=bot_screen_name)
+    return created
     
 def user(backend, user, response, *args, **kwargs):
     from users.models import User

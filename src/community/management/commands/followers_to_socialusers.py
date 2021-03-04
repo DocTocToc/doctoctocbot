@@ -1,5 +1,5 @@
 from django.core.management.base import  BaseCommand, CommandError
-from moderation.profile import create_social_user_and_profile
+from moderation.profile import create_twitter_social_user
 from community.models import Community
 from moderation.models import Follower
 from community.helpers import get_community_bot_socialuser
@@ -32,12 +32,20 @@ class Command(BaseCommand):
         bot_follower_id = Follower.objects.filter(user=bot_su).latest().id_list
         n = 0
         for userid in bot_follower_id:
-            created = create_social_user_and_profile(userid)
+            try:
+                su, created = create_twitter_social_user(userid)
+            except TypeError:
+                continue
             if created:
                 n+=1
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"New SocialUser created:{su}"
+                    )
+                )
         self.stdout.write(
             self.style.SUCCESS(
                 "Done. "
-                f"{n} new SocialUser instance{'s' if n>1 else ''}) created."
+                f"{n} new SocialUser instance{'s' if n>1 else ''} created."
             )
         )

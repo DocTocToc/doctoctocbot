@@ -33,19 +33,26 @@ def socialuser(backend, user, response, *args, **kwargs):
         logger.debug(f'socialuser: {su_mi}, created: {created2}')
         return {'socialuser': su_mi}
 
-def create_social_user_and_profile(userid):
+def create_twitter_social_user(userid):
     try:
         twitter = SocialMedia.objects.get(name='twitter')
     except SocialMedia.DoesNotExist:
         logger.error('Twitter SocialMedia object does not exist.')
         return
-    _su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
+    su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
+    return su, created
+
+def create_twitter_social_user_and_profile(userid):
+    try:
+        su, created = create_twitter_social_user(userid)
+    except TypeError:
+        return
     bot_screen_names = Account.objects \
         .filter(active=True) \
         .values_list("username", flat=True)
     bot_screen_name = random.choice(bot_screen_names)
-    create_update_profile_twitter(_su, bot_screen_name=bot_screen_name)
-    return created
+    create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
+    return su, created
     
 def user(backend, user, response, *args, **kwargs):
     from users.models import User

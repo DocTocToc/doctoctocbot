@@ -2,8 +2,7 @@
 
 import logging
 from django.core.management.base import BaseCommand, CommandError
-from moderation.profile import create_social_user_and_profile
-from moderation.models import SocialMedia
+from moderation.profile import create_twitter_social_user_and_profile
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
@@ -36,8 +35,16 @@ class Command(BaseCommand):
                 return
             userid=tweepy_user.id
             self.stdout.write(f"user id: {userid}")
-        created = create_social_user_and_profile(userid)
+        su, created = create_twitter_social_user_and_profile(userid)
         if created:
-            self.stdout.write(self.style.SUCCESS('Done creating SocialUser object.'))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Done creating SocialUser object {su}.'
+                )
+            )
         else:
-            self.stdout.write(self.style.ERROR('SocialUser object already exists.'))
+            self.stdout.write(
+                self.style.ERROR(
+                    f'SocialUser object {su} already exists.'
+                )
+            )

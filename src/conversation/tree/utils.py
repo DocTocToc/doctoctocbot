@@ -124,3 +124,32 @@ def reply_by_member_count(statusid: int, community: Community) ->Optional[int]:
         )
         cache.set(cache_name, count, cache_ttl)
     return count
+
+
+class StatusTree(object):
+    def __init__(self, statusid):
+        try:
+            node = Treedj.objects.get(statusid=statusid)
+        except Treedj.DoesNotExist as e:
+            logger.error(f"Cannot create StatusTree because {e}")
+            return
+        root = node.get_root()
+        self.root = root
+
+    def root_user_nodes(self):
+        """Return QuerySet of nodes of the tree created by the creator of the
+        root status
+        :returns: QuerySet of all the Treedj nodes created by the creator of
+        the root node
+        :rtype: QuerySet
+        """
+        all_nodes =  self.root.get_descendants(include_self=True)
+        try:
+            root_userid = Tweetdj.objects.get(statusid=self.root.statusid).userid
+        except Tweetdj.DoesNotExist:
+            return
+        root_user_statusids = Tweetdj.objects \
+            .filter(statusid__in=all_nodes.values_list("statusid", flat=True)) \
+            .filter(userid=root_userid) \
+            .values_list("statusid", flat=True)
+        return all_nodes.filter(statusid__in=root_user_statusids)

@@ -19,14 +19,14 @@ def handle_retweetroot(statusid: int):
 @shared_task
 def handle_question(statusid: int):
     from bot.bin.thread import question_api
-    for i in range(1,5):
+    for i in range(1,8):
+        logger.info(f"handle_question statusid: {statusid}, loop: {i}")
         ok = question_api(statusid)
         if ok:
             break
         else:
             time.sleep(30*2**i)
 
-        
 @shared_task
 def handle_on_status(json: dict, community: str):
     from bot.onstatus import triage

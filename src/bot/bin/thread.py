@@ -10,6 +10,7 @@ from django.conf import settings
 import tweepy
 from bot.tweepy_api import get_api
 from conversation.models import create_leaf
+from conversation.tree.utils import StatusTree
 
 from ..addstatusdj import addstatus
 from ..doctoctocbot import (
@@ -77,19 +78,23 @@ def retweetroot(statusid: int):
     return
 
 def tree_has_question_mark(tweetdj: Tweetdj, bot_username=None):
+    """Return True if the tree contains a status with a question mark
+    created by the author of the root node
+    """
     if tweetdj_has_q_m(tweetdj):
         return True
-    if not tweetdj.parentid:
-        return False
-    parent: Tweetdj = getorcreate(
-        tweetdj.parentid,
-        bot_username=bot_username
-    )
-    if not parent:
-        return False
-    return tree_has_question_mark(parent)
+    root_tweetdj = get_root_status(tweetdj, bot_username=bot_username)
+    if tweetdj_has_q_m(root_tweetdj):
+        return True
+    # get all descendants of root status with same author
+    st = StatusTree(statusid=root_tweetdj.statusid)
+    statusids = st.root_user_nodes().values_list("statusid", flat=True)
+    for tweetdj in Tweetdj.objects.filter(statusid__in=statusids):
+        if tweetdj_has_q_m(tweetdj):
+            return True
         
 def get_root_status(tweetdj: Tweetdj, bot_username=None):
+    userid = tweetdj.userid
     if not tweetdj.parentid:
         return tweetdj
     parent_mi = getorcreate(
@@ -98,6 +103,8 @@ def get_root_status(tweetdj: Tweetdj, bot_username=None):
     )
     if not parent_mi:
         return tweetdj
+    if not parent_mi.userid == userid:
+        return
     return get_root_status(parent_mi, bot_username=bot_username)
 
 def add_root_to_tree(statusid):
@@ -108,7 +115,7 @@ def add_root_to_tree(statusid):
     except DatabaseError as e:
         logger.error(f" Database error: {e}")
         
-def getorcreate(statusid: int, bot_username=None) -> Tweetdj:  
+def getorcreate(statusid: int, bot_username=None) -> Tweetdj:
     # Is status in database? If not, add it.
     if statusid is None:
         return None
@@ -183,6 +190,8 @@ def question_api(start_status_id: int) -> bool:
         start_tweetdj,
         bot_username=bot_username,
     )
+    if not root_tweetdj:
+        return
     tree_has_q_m: bool = tree_has_question_mark(
         start_tweetdj,
         bot_username=bot_username

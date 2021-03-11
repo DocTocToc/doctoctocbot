@@ -237,43 +237,6 @@ def question_api(start_status_id: int) -> bool:
                     skip_rules=True
                 )
                 return True
-                         
-def question(statusid: int) -> bool:
-    logger.debug(f"Running question() with statusid {statusid}")
-    tweet0 = tweet_parser.Tweet(statusid)
-    logger.debug(f"Object:{tweet0}, statusid:{tweet0.statusid}")
-    tweet_context = tweet_server.request_tweets(tweet0)
-    hashtag_tweet = tweet_context.tweet
-    hrh = _has_retweet_hashtag(hashtag_tweet)
-    
-    start_tweet = tweet_parser.Tweet(hashtag_tweet.conversationid)
-    start_tweet_context = tweet_server.request_tweets(start_tweet)
-    if not start_tweet_context:
-        return False
-    start_tweet = start_tweet_context.tweet
-    
-    logger.debug(f"Object:{hashtag_tweet}, statusid: {hashtag_tweet.statusid}, bodytext: {hashtag_tweet.bodytext}")
-    descendants = tweet_context.descendants
-    logger.debug(f"{descendants}, {len(descendants)}")
-    for lst_tweet in tweet_context.descendants:
-        logger.debug(f"{lst_tweet}, {len(lst_tweet)}")
-        for tweet in lst_tweet:
-            logger.debug(f"\n{tweet.statusid}\n{tweet.bodytext}\n conversationid: {tweet.conversationid}")
-            logger.debug(f"has_questionmark: {has_questionmark(tweet)}")
-            logger.debug(f"init_author: {hashtag_tweet.userid}\n author:{tweet.userid}")
-            logger.debug(f"is_same_author: {is_same_author(hashtag_tweet, tweet)}")
-            if has_questionmark(tweet) and is_same_author(hashtag_tweet, tweet):
-                if hashtag_tweet.statusid == tweet.conversationid:
-                    add_root_to_tree(hashtag_tweet.statusid)
-                    if hrh:
-                        community_retweet(hashtag_tweet.statusid, hashtag_tweet.userid, hrh)
-                    return True
-                elif is_same_author(hashtag_tweet, start_tweet):
-                    add_root_to_tree(start_tweet.statusid)
-                    if hrh:
-                        community_retweet(start_tweet.statusid, start_tweet.userid, hrh)
-                    return True
-    return False
 
 def _has_retweet_hashtag(tweet: tweet_parser.Tweet) -> bool:
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.

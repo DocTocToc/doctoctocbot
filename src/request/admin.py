@@ -6,7 +6,11 @@ from django.utils.html import format_html
 from versions.admin import VersionedAdmin
 from moderation.models import SocialUser, UserCategoryRelationship
 from request.models import Queue
-from moderation.admin_tags import admin_tag_category
+from moderation.admin_tags import (
+    admin_tag_category,
+    admin_tag_screen_name_link
+)
+
 from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 
@@ -82,16 +86,7 @@ class QueueAdmin(VersionedAdmin):
     state_tag.short_description = 'STATE'
 
     def screen_name_link(self, obj):
-        try:
-            su = SocialUser.objects.get(user_id=obj.uid)
-            return mark_safe(
-                '<a href="{link}">{tag}</a>'.format(
-                    link = reverse("admin:moderation_socialuser_change", args=(su.pk,)),
-                    tag = obj.socialuser.screen_name_tag()
-                )
-            )
-        except SocialUser.DoesNotExist:
-            return obj.socialuser.screen_name_tag()
+        return admin_tag_screen_name_link(obj.uid)
 
     screen_name_link.short_description = 'Screen name'
 

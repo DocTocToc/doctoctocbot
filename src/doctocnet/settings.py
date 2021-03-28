@@ -138,7 +138,7 @@ logging.config.dictConfig(DICT_CONFIG)
 
 SECRET_KEY = config('SECRET_KEY')
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
+ALLOWED_HOSTS = ['*']
 
 if not DEBUG or DEBUG_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -748,6 +748,10 @@ CONSTANCE_CONFIG = {
     "messenger__models__backoff_default": (
         60,
         "backoff period between 2 Twitter API message_create events in seconds"
+    ),
+    "dm__admin__direct_message_list_per_page": (
+        25,
+        "Default number of DirectMessage instances to show on admin display list"
     ),
 }
 

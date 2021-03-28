@@ -164,6 +164,13 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    blog = models.ForeignKey(
+        'community.Blog',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="community",
+    )
 
     def __str__(self):
         return self.name
@@ -440,3 +447,18 @@ class ApiAccess(models.Model):
 
     class Meta:
         unique_together = ("community", "level")
+
+
+class Blog(models.Model):
+    name = models.CharField(
+        max_length=254,
+        help_text=_("Name of the blog."),
+    )
+    link = models.CharField(
+        max_length=254,
+        help_text=_("Link text."),
+    )
+    url = models.URLField()
+
+    def __str__(self):
+        return f"{self.name} <{self.url}>"

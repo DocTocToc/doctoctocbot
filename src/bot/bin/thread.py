@@ -10,6 +10,7 @@ from django.conf import settings
 import tweepy
 from bot.tweepy_api import get_api
 from conversation.models import create_leaf
+from conversation.tree.utils import StatusTree
 
 from ..addstatusdj import addstatus
 from ..doctoctocbot import (
@@ -77,19 +78,23 @@ def retweetroot(statusid: int):
     return
 
 def tree_has_question_mark(tweetdj: Tweetdj, bot_username=None):
+    """Return True if the tree contains a status with a question mark
+    created by the author of the root node
+    """
     if tweetdj_has_q_m(tweetdj):
         return True
-    if not tweetdj.parentid:
-        return False
-    parent: Tweetdj = getorcreate(
-        tweetdj.parentid,
-        bot_username=bot_username
-    )
-    if not parent:
-        return False
-    return tree_has_question_mark(parent)
+    root_tweetdj = get_root_status(tweetdj, bot_username=bot_username)
+    if tweetdj_has_q_m(root_tweetdj):
+        return True
+    # get all descendants of root status with same author
+    st = StatusTree(statusid=root_tweetdj.statusid)
+    statusids = st.root_user_nodes().values_list("statusid", flat=True)
+    for tweetdj in Tweetdj.objects.filter(statusid__in=statusids):
+        if tweetdj_has_q_m(tweetdj):
+            return True
         
 def get_root_status(tweetdj: Tweetdj, bot_username=None):
+    userid = tweetdj.userid
     if not tweetdj.parentid:
         return tweetdj
     parent_mi = getorcreate(
@@ -98,6 +103,8 @@ def get_root_status(tweetdj: Tweetdj, bot_username=None):
     )
     if not parent_mi:
         return tweetdj
+    if not parent_mi.userid == userid:
+        return
     return get_root_status(parent_mi, bot_username=bot_username)
 
 def add_root_to_tree(statusid):
@@ -108,7 +115,7 @@ def add_root_to_tree(statusid):
     except DatabaseError as e:
         logger.error(f" Database error: {e}")
         
-def getorcreate(statusid: int, bot_username=None) -> Tweetdj:  
+def getorcreate(statusid: int, bot_username=None) -> Tweetdj:
     # Is status in database? If not, add it.
     if statusid is None:
         return None
@@ -183,6 +190,8 @@ def question_api(start_status_id: int) -> bool:
         start_tweetdj,
         bot_username=bot_username,
     )
+    if not root_tweetdj:
+        return
     tree_has_q_m: bool = tree_has_question_mark(
         start_tweetdj,
         bot_username=bot_username
@@ -237,43 +246,6 @@ def question_api(start_status_id: int) -> bool:
                     skip_rules=True
                 )
                 return True
-                         
-def question(statusid: int) -> bool:
-    logger.debug(f"Running question() with statusid {statusid}")
-    tweet0 = tweet_parser.Tweet(statusid)
-    logger.debug(f"Object:{tweet0}, statusid:{tweet0.statusid}")
-    tweet_context = tweet_server.request_tweets(tweet0)
-    hashtag_tweet = tweet_context.tweet
-    hrh = _has_retweet_hashtag(hashtag_tweet)
-    
-    start_tweet = tweet_parser.Tweet(hashtag_tweet.conversationid)
-    start_tweet_context = tweet_server.request_tweets(start_tweet)
-    if not start_tweet_context:
-        return False
-    start_tweet = start_tweet_context.tweet
-    
-    logger.debug(f"Object:{hashtag_tweet}, statusid: {hashtag_tweet.statusid}, bodytext: {hashtag_tweet.bodytext}")
-    descendants = tweet_context.descendants
-    logger.debug(f"{descendants}, {len(descendants)}")
-    for lst_tweet in tweet_context.descendants:
-        logger.debug(f"{lst_tweet}, {len(lst_tweet)}")
-        for tweet in lst_tweet:
-            logger.debug(f"\n{tweet.statusid}\n{tweet.bodytext}\n conversationid: {tweet.conversationid}")
-            logger.debug(f"has_questionmark: {has_questionmark(tweet)}")
-            logger.debug(f"init_author: {hashtag_tweet.userid}\n author:{tweet.userid}")
-            logger.debug(f"is_same_author: {is_same_author(hashtag_tweet, tweet)}")
-            if has_questionmark(tweet) and is_same_author(hashtag_tweet, tweet):
-                if hashtag_tweet.statusid == tweet.conversationid:
-                    add_root_to_tree(hashtag_tweet.statusid)
-                    if hrh:
-                        community_retweet(hashtag_tweet.statusid, hashtag_tweet.userid, hrh)
-                    return True
-                elif is_same_author(hashtag_tweet, start_tweet):
-                    add_root_to_tree(start_tweet.statusid)
-                    if hrh:
-                        community_retweet(start_tweet.statusid, start_tweet.userid, hrh)
-                    return True
-    return False
 
 def _has_retweet_hashtag(tweet: tweet_parser.Tweet) -> bool:
     """ Returns True if the tweet contains a hashtag that is in the retweet_hashtag_list.

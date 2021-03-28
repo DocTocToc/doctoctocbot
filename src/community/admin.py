@@ -12,6 +12,7 @@ from community.models import (
     Text,
     AccessLevel,
     ApiAccess,
+    Blog,
 )
 
 
@@ -54,6 +55,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'tree_search_retry',
         'twitter_follow_member',
         'twitter_request_dm',
+        'blog',
     )
     fields = (
         'name',
@@ -82,6 +84,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_follow_member',
         'twitter_request_dm',
         'twitter_request_dm_text',
+        'blog',
     )
     readonly_fields = (
         'created',
@@ -138,8 +141,17 @@ class ApiAccessAdmin(admin.ModelAdmin):
     ordering = ('community', 'level')
 
 
+class BlogAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'link',
+        'url',
+    )
+
+
 admin.site.register(Community, CommunityAdmin)
 admin.site.register(Retweet, RetweetAdmin)
 admin.site.register(TextDescription, TextDescriptionAdmin)
 admin.site.register(AccessLevel, AccessLevelAdmin)
 admin.site.register(ApiAccess, ApiAccessAdmin)
+admin.site.register(Blog, BlogAdmin)

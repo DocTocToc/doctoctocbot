@@ -10,7 +10,7 @@ services:
       dockerfile: docker/django/Dockerfile
       target: dev
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     shm_size: 4gb
     volumes:
       - ./src:/code/src
@@ -19,6 +19,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8081:80"
     depends_on:
       - database
       - redis
@@ -28,7 +30,7 @@ services:
     env_file:
       - .env
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -36,6 +38,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8082:80"
     depends_on:
       - database
       - redis
@@ -45,7 +49,7 @@ services:
     env_file:
       - .env
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -53,6 +57,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8083:80"
     depends_on:
       - database
       - redis
@@ -62,7 +68,7 @@ services:
     env_file:
       - .env
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings4 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings4 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -70,27 +76,29 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8084:80"
     depends_on:
       - database
       - redis
     working_dir: /code/src
-  nginx:
-    restart: on-failure
-    env_file:
-      - .env
-    image: nginx:latest
-    volumes:
-      - ./src:/code/src
-      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
-      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
-      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
-      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
-      - ${NGINX_LOG_DIR}:/var/log/nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - django_1
-      - django_2
+#  nginx:
+#    restart: on-failure
+#    env_file:
+#      - .env
+#    image: nginx:latest
+#    volumes:
+#      - ./src:/code/src
+#      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
+#      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
+#      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
+#      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
+#      - ${NGINX_LOG_DIR}:/var/log/nginx
+#    ports:
+#      - "8080:80"
+#    depends_on:
+#      - django_1
+#      - django_2
   celery_retweet_worker:
     image: dtn_dev
   celery_tree_worker:
@@ -109,12 +117,6 @@ services:
     image: dtn_dev
     restart: on-failure:1
   stream_4:
-    image: dtn_dev
-    restart: on-failure:1
-  stream_5:
-    image: dtn_dev
-    restart: on-failure:1
-  stream_6:
     image: dtn_dev
     restart: on-failure:1
   tree_search:

@@ -34,9 +34,6 @@ src/media
 src/celerybeat-schedule.db
 src/celerybeat.pid
 
-# gpgcontact keys used as proof-of-work (not secret)
-src/gpgcontact/static/gpgcontact/script/private
-
 # ignore private subfolder of static folders
 **/static/private
 

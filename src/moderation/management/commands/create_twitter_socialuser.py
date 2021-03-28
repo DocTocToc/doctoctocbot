@@ -1,12 +1,8 @@
 """ Create a Twitter SocialUser object from userid or screen_name """
 
 import logging
-import random
 from django.core.management.base import BaseCommand, CommandError
-
-from moderation.models import SocialUser, SocialMedia
-from bot.models import Account
-from moderation.profile import create_update_profile_twitter
+from moderation.profile import create_twitter_social_user_and_profile
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 
@@ -39,18 +35,16 @@ class Command(BaseCommand):
                 return
             userid=tweepy_user.id
             self.stdout.write(f"user id: {userid}")
-        try:
-            twitter = SocialMedia.objects.get(name='twitter')
-        except SocialMedia.DoesNotExist:
-            self.stdout.write(self.style.ERROR('Twitter SocialMedia object does not exist.'))
-            return
-        _su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
-        bot_screen_names = Account.objects \
-            .filter(active=True) \
-            .values_list("username", flat=True)
-        bot_screen_name = random.choice(bot_screen_names)
-        create_update_profile_twitter(_su, bot_screen_name=bot_screen_name)
+        su, created = create_twitter_social_user_and_profile(userid)
         if created:
-            self.stdout.write(self.style.SUCCESS('Done creating SocialUser object.'))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Done creating SocialUser object {su}.'
+                )
+            )
         else:
-            self.stdout.write(self.style.ERROR('SocialUser object already exists.'))
+            self.stdout.write(
+                self.style.ERROR(
+                    f'SocialUser object {su} already exists.'
+                )
+            )

@@ -101,6 +101,13 @@
           </a>
         </li>
         {% endif %}
+        {% if site.community.get.blog %}
+        <li class="nav-item">
+          <a href="{{ site.community.get.blog.url }}" title="{{ site.community.get.blog.name }}" id="blog" class="nav-link">
+         {{ site.community.get.blog.link }}
+          </a>
+        </li>
+        {% endif %}
       </ul>
         <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
         {% network_navbar %}

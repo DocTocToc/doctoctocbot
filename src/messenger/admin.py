@@ -58,8 +58,24 @@ class ReceiptAdmin(admin.ModelAdmin):
         'user',
         'created',
     ]
-
-
+    fields = (
+        'campaign',
+        'message',
+        'user',
+        'event_id',
+        'error',
+        'created',
+        'updated',
+    )
+    readonly_fields = (
+        'campaign',
+        'message',
+        'user',
+        'event_id',
+        'error',
+        'created',
+        'updated',
+    )
 
 admin.site.register(Message)
 admin.site.register(Campaign, CampaignAdmin)

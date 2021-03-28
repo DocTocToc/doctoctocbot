@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 00:30+0100\n"
+"POT-Creation-Date: 2021-03-28 21:17+0200\n"
 "PO-Revision-Date: 2019-04-04 23:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -27,24 +27,24 @@ msgstr ""
 msgid "The message must be encrypted Header %(begin)s is missing"
 msgstr ""
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:17
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:18
 #: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
 msgid "Contact"
 msgstr "Contact"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:32
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:33
 msgid "Your name"
 msgstr "Votre nom"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:40
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:41
 msgid "Your email address"
 msgstr "Votre adresse e-mail"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:48
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:49
 msgid "Your message"
 msgstr "Votre message"
 
-#: gpgcontact/templates/gpg_contact_form/contact_form.html:58
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:59
 msgid "Encrypt & Send"
 msgstr "Chiffrer & Envoyer"
 

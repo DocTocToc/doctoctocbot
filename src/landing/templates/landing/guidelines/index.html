@@ -7,17 +7,23 @@
 {% load landing_links %}
 {% load landing_tags %}
 {% load community_text %}
+{% load opengraph_tags %}
 
 {% block head_meta %}
+
 {% static "landing/images/magna_carta.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
-{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_title="Charte 🤖@DocTocTocBot" og_description="Charte des utilisateurs de @DocTocTocBot: recommandations de bonne pratique" %}
+{% bot_screen_name as bot %}
+{% trans "User Charter: Good Practice Guidelines" as title %}
+{% with "@"|add:bot|add:" "|add:title as og_title %}
+{% trans "Please read those guidelines before you start interacting with members of our community." as og_description %}
 {{ block.super }}
-{% include "doctocnet/twitter_opengraph.html" %}
+{% opengraph %}
 {% endwith %}
 {% endwith %}
 {% endwith %}
+
 {% endblock head_meta %}
 
 {% block content %}

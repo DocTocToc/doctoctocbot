@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 00:30+0100\n"
+"POT-Creation-Date: 2021-03-28 21:17+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:415
+#: moderation/admin.py:447
 msgid "state"
 msgstr "état"
 
-#: moderation/admin.py:425
+#: moderation/admin.py:457
 msgid "Pending"
 msgstr "En attente"
 
-#: moderation/admin.py:440
+#: moderation/admin.py:472
 msgid "community"
 msgstr "communauté"
 
@@ -57,31 +57,31 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:494
+#: moderation/models.py:504
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:495
+#: moderation/models.py:505
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:496
+#: moderation/models.py:506
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:497
+#: moderation/models.py:507
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:836
+#: moderation/models.py:846
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:837
+#: moderation/models.py:847
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:838
+#: moderation/models.py:848
 msgid "Ban"
 msgstr "Exclure"
 

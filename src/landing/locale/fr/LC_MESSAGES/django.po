@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 00:30+0100\n"
-"PO-Revision-Date: 2021-01-24 02:31+0300\n"
+"POT-Creation-Date: 2021-03-28 21:17+0200\n"
+"PO-Revision-Date: 2021-03-28 22:18+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -33,10 +33,8 @@ msgid "Follow"
 msgstr "Suivre"
 
 #: landing/templates/landing/follow/index.html:17
-#, fuzzy
-#| msgid "How to follow the bot."
 msgid "How to follow the bot"
-msgstr "Comment suivre le bot."
+msgstr "Comment suivre le bot"
 
 #: landing/templates/landing/funding.html:6
 msgid "Hello, I am"
@@ -70,7 +68,19 @@ msgstr ""
 msgid "I give my support!"
 msgstr "Je soutiens!"
 
-#: landing/templates/landing/guidelines/index.html:25
+#: landing/templates/landing/guidelines/index.html:18
+msgid "User Charter: Good Practice Guidelines"
+msgstr "Charte des utilisateurs: recommandations de bonnes pratiques"
+
+#: landing/templates/landing/guidelines/index.html:20
+msgid ""
+"Please read those guidelines before you start interacting with members of "
+"our community."
+msgstr ""
+"Merci de lire ces recommandations avant de commencer à interagir avec les "
+"membres de notre communauté."
+
+#: landing/templates/landing/guidelines/index.html:31
 msgid "Community guidelines"
 msgstr "Charte de la communauté"
 
@@ -85,8 +95,8 @@ msgstr "Réseau"
 #: landing/templates/landing/sign_in.html:11
 msgid "Sign in with Twitter to access members-only content and features!"
 msgstr ""
-"Connectez-vous avec Twitter pour accéder au contenu et services réservés "
-"aux membres!"
+"Connectez-vous avec Twitter pour accéder au contenu et services réservés aux "
+"membres!"
 
 #: landing/templates/landing/sign_in.html:21
 msgid "Sign in with Twitter"
@@ -123,7 +133,7 @@ msgstr "Modération"
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user/billing.html:41
+#: landing/templates/landing/user/billing.html:45
 msgid "Edit"
 msgstr "Éditer"
 

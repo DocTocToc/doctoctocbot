@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-24 00:30+0100\n"
+"POT-Creation-Date: 2021-03-28 21:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: dm/admin.py:43 dm/admin.py:64
+#: dm/admin.py:48 dm/admin.py:72
 msgid "Yes"
 msgstr ""
 
-#: dm/admin.py:44 dm/admin.py:65
+#: dm/admin.py:49 dm/admin.py:73
 msgid "No"
 msgstr ""
 

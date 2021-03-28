@@ -4,7 +4,7 @@
  *
  * Formally, these OpenPGP keys are RSA private keys. Here, they are used as
  * proof-of-work. They are NOT secret and the signatures created with them are
- *  used to authenticate the identity of the sender.
+ * NOT used to authenticate the identity of the sender.
  */
 
 const privkey_sign_4096 = `-----BEGIN PGP PRIVATE KEY BLOCK-----

@@ -229,13 +229,12 @@ class SocialUser(models.Model):
     
     name_tag.short_description = 'Name'
 
-    def self_moderate(self, category_name: str):
+    def self_moderate(self, category_name: str, community: Community):
+        if not category_name or not community:
+            return
         try:
             category: Category = Category.objects.get(name=category_name)
         except Category.DoesNotExist:
-            return
-        community: Community =  category.community.first()
-        if not community:
             return
         try:
             with transaction.atomic():
@@ -247,29 +246,6 @@ class SocialUser(models.Model):
                 )
                 logger.info(f'Created {ucr}')
         except DatabaseError:
-            return
-        
-    def follow_twitter(self, category_name: str):
-        try:
-            category: Category = Category.objects.get(name=category_name)
-        except Category.DoesNotExist:
-            return 
-        community: Community =  category.community.first()
-        if not community:
-            return
-        bot_screen_name = community.account.username
-        try:
-            api = get_api(username=bot_screen_name, backend=False)
-        except TweepError as e:
-            logger.error(e.response.text)
-            return
-        try:
-            api.create_friendship(user_id=self.user_id)
-        except TweepError as e:
-            logger.error(f"Tweepy Error: {e}")
-            return
-        except AttributeError as e:
-            logger.error(f"Attribute Error: {e}")
             return
 
     def community(self) -> List:

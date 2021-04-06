@@ -8,8 +8,8 @@ from moderation.social import update_social_ids
 from community.helpers import (
     get_community_bot_socialuser,
     get_community_member_id,
+    get_community_twitter_tweepy_api,
 )
-
 from constance import config
 from tweepy.error import TweepError
 
@@ -146,4 +146,17 @@ def create_friendship_members(community: Community, users=400):
 [{'code': 162, 'message': 'You have been blocked from following this account at the request of the user.'}]
 """    
     
-    
+def create_friendship(userid, community: Community):
+    if not community or not isinstance(community, Community):
+        return
+    api = get_community_twitter_tweepy_api(community, backend=True)
+    if not api:
+        return
+    try:
+        api.create_friendship(user_id=userid)
+    except TweepError as e:
+        logger.error(f"Tweepy Error: {e}")
+        return
+    except AttributeError as e:
+        logger.error(f"Attribute Error: {e}")
+        return

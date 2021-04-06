@@ -6,8 +6,9 @@ import time
 from pathlib import Path
 
 from django.conf import settings
-
+from bot.bin.friendship import create_friendship
 from celery import shared_task
+from community.models import Community
 
 logger = logging.getLogger(__name__)
 
@@ -49,3 +50,11 @@ def handle_image(url, filename):
             logger.debug(f"{name} image %s written on disk." % filepath)
         else:
             logger.error(f"{name} image %s not found on disk." % filepath)
+     
+@shared_task
+def handle_create_friendship(userid, communityid):
+    try:
+        community = Community.objects.get(id=communityid)
+    except Community.DoesNotExist:
+        return
+    create_friendship(userid, community)

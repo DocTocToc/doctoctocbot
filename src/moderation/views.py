@@ -18,16 +18,18 @@ from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import F
 from django.db.utils import DatabaseError
 from django.conf import settings
-from django.core.paginator import Paginator
-from community.helpers import get_community
+from community.helpers import (
+    get_community,
+    get_community_bot_screen_name,
+)
 from moderation.thumbnail import get_thumbnail_url
 from django.contrib.sites.shortcuts import get_current_site
 import logging
 from moderation.forms import SelfModerationForm
 from social_django.models import UserSocialAuth
-from community.models import Community
 from moderation.models import UserCategoryRelationship
 from django.core.mail import send_mail
+from bot.tasks import handle_create_friendship
 
 logger = logging.getLogger(__name__)
 
@@ -137,18 +139,31 @@ class SelfModerationView(LoginRequiredMixin, FormView):
         # It should return an HttpResponse.
         # create moderation task here
         user = self.request.user
-        logger.debug(UserSocialAuth.objects.filter(
-                provider='twitter',
-                user=user,
-            ).exists())
+        logger.debug(f"{user}")
+        usa = UserSocialAuth.objects.filter(
+            provider='twitter',
+            user=user,
+        )
+        logger.debug(f"UserSocialAuth: {usa}")
         if UserSocialAuth.objects.filter(
                 provider='twitter',
                 user=user,
             ).exists():
             category_name = form.cleaned_data['category']
-            logger.debug(category_name)
-            user.socialuser.self_moderate(category_name=category_name)
-            user.socialuser.follow_twitter(category_name=category_name)
+            logger.debug(f"{category_name}")
+            community = get_community(self.request)
+            user.socialuser.self_moderate(
+                category_name=category_name,
+                community=community 
+            )
+            #apply_async(args=(status.id,), ignore_result=True)
+            handle_create_friendship.apply_async(
+                args = (
+                    user.socialuser.user_id,
+                    community.id,
+                ),
+                ignore_result=True,
+            )
             #email
             scheme = self.request.is_secure() and "https" or "http"
             su_admin_link = (
@@ -181,9 +196,8 @@ class SelfModerationView(LoginRequiredMixin, FormView):
             logger.debug(ucr)
         except UserCategoryRelationship.DoesNotExist:
             return '/oauth/login/twitter/?next=/moderation/self/'
-        category: Category = ucr.category
-        bot_screen_name = category.twitter_screen_name()
-        logger.debug(bot_screen_name)
+        community = get_community(self.request)
+        bot_screen_name = get_community_bot_screen_name(community)
         return reverse_lazy(
             'moderation:self-success',
             kwargs = {'screen_name': bot_screen_name}

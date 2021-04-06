@@ -50,7 +50,6 @@ def activate_language(community):
         return
     activate(language)
     
-    
 def get_community_twitter_tweepy_api(community, backend=False):
     if not community:
         return

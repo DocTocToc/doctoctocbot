@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
-
 class Community(models.Model):
     name = models.CharField(max_length=101, unique=True)
     active = models.BooleanField(default=False)
@@ -68,7 +67,7 @@ class Community(models.Model):
         related_name="helper_community",
     )
     helper_message = models.TextField(
-        max_length=200,
+        max_length=257,
         blank=True,
         null=True,
     )

@@ -756,6 +756,10 @@ CONSTANCE_CONFIG = {
         25,
         "Default number of DirectMessage instances to show on admin display list"
     ),
+    "landing__templatetags__opengraph_tags__twitter_creator": (
+        "@MedecineLibre",
+        "Opengraph (Twitter card) default twitter_creator value"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15

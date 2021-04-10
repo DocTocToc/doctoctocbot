@@ -48,7 +48,6 @@ from community.helpers import activate_language
 from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
-from autotweet.accept import accept_follower, decline_follower
 from moderation.profile import update_twitter_followers_profiles
 from community.helpers import get_community_bot_screen_name
 
@@ -642,10 +641,13 @@ def handle_accept_follower_twitter(ucr_pk: int):
     if ucr.category in ucr.community.follower.all():
         uid = ucr.social_user.user_id
         username = ucr.community.account.username
+        success = True
+        """
         success = accept_follower(
             uid,
             username,
         )
+        """
         if success:
             accept_delete_queue(
                 uid=uid,
@@ -653,10 +655,13 @@ def handle_accept_follower_twitter(ucr_pk: int):
             )
             
     else:
+        return
+        """
         decline_follower(
             ucr.social_user.user_id,
             ucr.community.account.username,
         )
+        """
 
 @shared_task
 def handle_update_twitter_followers_profiles(community: str):

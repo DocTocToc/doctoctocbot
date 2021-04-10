@@ -137,8 +137,11 @@ def sendmoderationdm(sender, instance, created, **kwargs):
             
 @receiver(post_save, sender=UserCategoryRelationship)
 def accept_follower(sender, instance, created, **kwargs):
+    return
+    """
     if created:
         if instance.moderator != instance.social_user:
             handle_accept_follower.apply_async(
                 args=[instance.pk],
             )
+    """

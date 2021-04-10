@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 from autotweet.login import AutoLogin
 from autotweet.utils import rnd_str_gen, tweet, sleep
-from autotweet.accept import accept_follower_requests
 from moderation.social import get_socialuser_from_screen_name
 
 class Command(BaseCommand):
@@ -34,7 +33,8 @@ class Command(BaseCommand):
             su = get_socialuser_from_screen_name(sn)
             if su:
                 uids.append(su.user_id)
-        res = accept_follower_requests(uids, autologin._authenticity_token)
+        # accept follow requests here
+        res = None
         self.stdout.write(
             self.style.SUCCESS(
                 'Response: "%s"' % res

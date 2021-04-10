@@ -18,19 +18,21 @@ def get_community(request):
     """
     site = get_current_site(request)
     if not site:
-        return
+        return Community.objects.first()
     try:
         return Community.objects.get(site=site.id)
     except DatabaseError:
         return
     except Community.DoesNotExist:
-        try:
-            site = Site.objects.first()
-            if site:
+        site = Site.objects.first()
+        if site:
+            try:
                 return Community.objects.get(site=site.id)
-        except Community.DoesNotExist as e:
-            logger.warn("Create at least one community. %s", e)
-            
+            except Community.DoesNotExist as e:
+                logger.warn("Create at least one community. %s", e)
+        else:
+            logger.warn("Create at least one Site. %s", e)
+    
 def site_url(community):
     if not community:
         return

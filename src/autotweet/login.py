@@ -6,23 +6,16 @@ Selenium.
 """
 
 import argparse
-import time
 import string
 import random
 from constance import config
 import logging
-import requests
-import sys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common import action_chains, keys
+from selenium.webdriver.common import keys
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
 from bot.models import Account
 
 from autotweet.driver import getOrCreateWebdriver
 from autotweet.utils import sleep
-from autotweet.utils import ok_click
-from autotweet.utils import send_post_request
 
 logger = logging.getLogger(__name__)
 
@@ -110,62 +103,6 @@ class AutoLogin:
         logger.debug(f"{auth_token=}")
         return auth_token
 
-    def login_mobile_twitter(self):
-        if not self._password:
-            logger.error(f"Password field for  @{self._username} is empty.")
-            return
-        self._driver.get("https://mobile.twitter.com/login")
-        if "JavaScript is disabled" in self._driver.page_source:
-            ok_click(self._driver)
-        sleep()
-        try:
-            username_input = self._driver.find_element_by_xpath(
-                '//input[@id="session[username_or_email]"]'
-            )
-        except NoSuchElementException as e:
-            source = self._driver.page_source
-            logger.error(
-                f"Could not find this element: \n"
-                f"//input[@id='session[username_or_email]']\n"
-                f"Error: {e}\n"
-                f"Page source: {source}"
-            )
-            return
-        try:
-            password_input = self._driver.find_element_by_xpath(
-                '//input[@id="session[password]"]'
-            )
-        except NoSuchElementException as e:
-            source = self._driver.page_source
-            logger.error(
-                f"Could not find this element: \n"
-                f"//input[@id='session[username_or_email]']\n"
-                f"Error: {e}\n"
-                f"Page source: {source}"
-            )
-            return
-        try:
-            login_button = self._driver.find_element_by_xpath(
-                '//input[@name="commit"]'
-            )
-        except NoSuchElementException as e:
-            source = self._driver.page_source
-            logger.error(
-                f"Could not find this element: \n"
-                f"//input[@id='session[username_or_email]']\n"
-                f"Error: {e}\n"
-                f"Page source: {source}"
-            )
-            return
-        username_input.send_keys(self._username)
-        sleep()
-        password_input.send_keys(self._password)
-        sleep()
-        login_button.click()
-        self.ok_email()
-        self.ok_phone()
-        self.get_authenticity_token()
-
     def login_twitter(self):
         driver = getOrCreateWebdriver(js=True)
         driver.get("https://www.twitter.com/login")
@@ -180,20 +117,6 @@ class AutoLogin:
         focused_elem.send_keys(keys.Keys.TAB)
         focused_elem = driver.switch_to.active_element
         focused_elem.click()
-    
-    def logout(self):
-        auth_token = self.get_authenticity_token()
-        if not auth_token:
-            return
-        url = "https://mobile.twitter.com/session/destroy"
-        commit = "Log+out"
-        referer = "https://mobile.twitter.com/account"
-        send_post_request(
-            auth_token=auth_token,
-            url=url,
-            commit=commit,
-            referer=referer,
-        )
 
 def close():
     driver = getOrCreateWebdriver()
@@ -212,10 +135,3 @@ def tweet(txt):
     sleep()
     #driver.find_element_by_class_name('SendTweetsButton').click()
     driver.find_element_by_xpath("//div[@data-testid='tweetButton']").click()
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Authorize this Twitter userid.')
-    parser.add_argument('integers', metavar='N', type=int, nargs='+',
-                   help='a bigint user id')
-    args = parser.parse_args()
-    print(f"args.integers: {args.integers}")

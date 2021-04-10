@@ -5,12 +5,9 @@ from autotweet.driver import getChromeRemoteDriver
 from autotweet.utils import sleep
 from constance import config
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common import action_chains, keys
-from selenium.webdriver.common.by import By
+from selenium.webdriver.common import keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 
 logger = logging.getLogger(__name__)
 

@@ -3,15 +3,12 @@ import logging
 from typing import List, Optional
 import http.client
 import time
-import sys
 
 import numpy as np
 from selenium.webdriver.common.action_chains import ActionChains 
-from selenium.webdriver.common import action_chains, keys
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from bot.lib.statusdb import Addstatus
 from autotweet.utils import sleep
-from autotweet.driver import getChromeRemoteDriver
 from community.models import Community
 from conversation.models import Tweetdj, Treedj
 from community.helpers import (

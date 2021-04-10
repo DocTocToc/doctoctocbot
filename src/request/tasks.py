@@ -10,7 +10,6 @@ from request.models import Queue
 from moderation.models import addsocialuser_from_userid, SocialMedia
 from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
-from autotweet.accept import accept_follower, decline_follower
 from moderation.social import update_social_ids
 from request.utils import update_request_queue
 
@@ -185,10 +184,12 @@ def handle_accept_follower_twitter(userid: int, community__id: int):
         )
     if followers and userid in followers:
         return
+    """
     accept_follower(
         userid,
         username,
     )
+    """
 
 @shared_task
 def handle_decline_follower_twitter(userid: int, community__id: int):
@@ -202,10 +203,12 @@ def handle_decline_follower_twitter(userid: int, community__id: int):
     except AttributeError as e:
         logger.error(f"Could not get username from community's account: {e}")
         return
+    """
     decline_follower(
         userid,
         username,
     )
+    """
     
 def get_latest(latest_start, latest_end):
     if not latest_start and not latest_end:

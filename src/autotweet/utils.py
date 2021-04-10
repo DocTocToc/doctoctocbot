@@ -1,7 +1,6 @@
 import time
 import ast
 import random
-import requests
 import logging
 import string
 
@@ -60,28 +59,6 @@ def get_selenium_firefox_headers():
         logger.error(f"{e}")
         return {}
 
-def send_post_request(auth_token=None, url=None, commit=None, referer=None):
-    headers = get_selenium_firefox_headers()
-    headers["Referer"]=referer
-    driver = getOrCreateWebdriver(js=False)
-    cookies = driver.get_cookies()
-    s = requests.Session()
-    for cookie in cookies:
-        s.cookies.set(cookie['name'], cookie['value'])
-    response = s.post(
-        url,
-        data={
-            "authenticity_token":auth_token,
-            "commit":commit
-        },
-        headers=headers
-    )
-    logger.debug(
-        f"code: {response.status_code}\n"
-        f"json: {response.text}\n"
-        f"headers: {response.headers}\n"
-    )
-    return response
 
 def rnd_str_gen(size=6, chars= string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))

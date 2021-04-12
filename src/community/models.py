@@ -3,6 +3,7 @@ from django.contrib.sites.models import Site
 import logging
 from django.conf import settings
 import reversion
+from django.core.exceptions import ValidationError
 
 from django.utils.translation import gettext_lazy as _
 
@@ -318,11 +319,14 @@ class TextDescription(models.Model):
         return f"{self.label}"
 
 
+
+
 @reversion.register(fields='content')
 class Text(models.Model):
-    community = models.ForeignKey(
+    community = models.ManyToManyField(
         'Community',
-        on_delete=models.CASCADE,
+        through='TextCommunity',
+        through_fields=('text', 'community'),
         related_name='text',
     )
     type = models.ForeignKey(
@@ -336,12 +340,31 @@ class Text(models.Model):
     )
 
     def __str__(self):
-        return f"Text: community = {self.community} type = {self.type}"
+        communities = ", ".join(str(community) for community in self.community.all())
+        return f"Text: community = {communities} type = {self.type}"
 
 
     class Meta:
-        unique_together = ("community", "type")
-        
+        pass
+
+
+class TextCommunity(models.Model):
+    text = models.ForeignKey(Text, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+
+    def validate_unique(self, *args, **kwargs):
+        super(TextCommunity, self).validate_unique(*args, **kwargs)
+        qs = Text.objects.filter(community=self.community)
+        if qs.filter(type=self.text.type).exclude(pk=self.text.pk).exists():
+            raise ValidationError(
+                {
+                    'community':[
+                        'Type and Community must be unique together per Text '
+                        f'({qs.filter(type=self.text.type)})',
+                    ]
+                }
+            )
+
 
 class AccessLevel(models.Model):
     """API access level categories.

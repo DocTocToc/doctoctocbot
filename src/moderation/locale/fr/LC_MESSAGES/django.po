@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
+"POT-Creation-Date: 2021-04-13 04:59+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -57,31 +57,31 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:504
+#: moderation/models.py:480
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:505
+#: moderation/models.py:481
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:506
+#: moderation/models.py:482
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:507
+#: moderation/models.py:483
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:846
+#: moderation/models.py:822
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:847
+#: moderation/models.py:823
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:848
+#: moderation/models.py:824
 msgid "Ban"
 msgstr "Exclure"
 
@@ -117,7 +117,7 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:147
+#: moderation/tasks.py:146
 #, python-brace-format
 msgid ""
 "\n"
@@ -126,7 +126,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:164
+#: moderation/tasks.py:163
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -142,12 +142,12 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/tasks.py:179
+#: moderation/tasks.py:178
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/views.py:58
+#: moderation/views.py:60
 msgid "Moderators"
 msgstr "Modérateurs"
 

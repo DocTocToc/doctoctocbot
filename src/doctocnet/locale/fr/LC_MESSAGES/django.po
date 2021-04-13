@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
-"PO-Revision-Date: 2020-02-29 02:42+0100\n"
+"POT-Creation-Date: 2021-04-13 04:59+0200\n"
+"PO-Revision-Date: 2021-04-13 06:02+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,116 +18,120 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings.py:316
+#: doctocnet/settings.py:319
 msgid "French"
 msgstr "Français"
 
-#: doctocnet/settings.py:317
+#: doctocnet/settings.py:320
 msgid "English"
 msgstr "Anglais"
 
-#: doctocnet/templates/doctocnet/navbar.html:16
+#: doctocnet/templates/doctocnet/navbar.html:17
 msgid "Home"
 msgstr "Accueil"
 
-#: doctocnet/templates/doctocnet/navbar.html:18
+#: doctocnet/templates/doctocnet/navbar.html:19
 msgid "Logout"
 msgstr "Se déconnecter"
 
-#: doctocnet/templates/doctocnet/navbar.html:21
+#: doctocnet/templates/doctocnet/navbar.html:22
 msgid "Login"
 msgstr "Se connecter"
 
-#: doctocnet/templates/doctocnet/navbar.html:26
+#: doctocnet/templates/doctocnet/navbar.html:27
 msgid "Charts"
 msgstr "Visualisations"
 
-#: doctocnet/templates/doctocnet/navbar.html:29
+#: doctocnet/templates/doctocnet/navbar.html:30
 msgid "Daily"
 msgstr "Jours"
 
-#: doctocnet/templates/doctocnet/navbar.html:30
+#: doctocnet/templates/doctocnet/navbar.html:31
 msgid "Weekly"
 msgstr "Semaines"
 
-#: doctocnet/templates/doctocnet/navbar.html:31
+#: doctocnet/templates/doctocnet/navbar.html:32
 msgid "Monthly"
 msgstr "Mois"
 
-#: doctocnet/templates/doctocnet/navbar.html:32
+#: doctocnet/templates/doctocnet/navbar.html:33
 msgid "Yearly"
 msgstr "Années"
 
-#: doctocnet/templates/doctocnet/navbar.html:35
+#: doctocnet/templates/doctocnet/navbar.html:36
 msgid "FAQ"
 msgstr "FAQ"
 
-#: doctocnet/templates/doctocnet/navbar.html:38
+#: doctocnet/templates/doctocnet/navbar.html:39
 msgid "About"
 msgstr "À propos"
 
-#: doctocnet/templates/doctocnet/navbar.html:41
+#: doctocnet/templates/doctocnet/navbar.html:42
 msgid "About us"
 msgstr "À propos"
 
-#: doctocnet/templates/doctocnet/navbar.html:42
+#: doctocnet/templates/doctocnet/navbar.html:43
 msgid "Guidelines"
 msgstr "Recommandations"
 
-#: doctocnet/templates/doctocnet/navbar.html:43
+#: doctocnet/templates/doctocnet/navbar.html:44
 msgid "Bot rules"
 msgstr "Règles du bot"
 
-#: doctocnet/templates/doctocnet/navbar.html:44
+#: doctocnet/templates/doctocnet/navbar.html:47
+msgid "Antiracism"
+msgstr "Antiracism"
+
+#: doctocnet/templates/doctocnet/navbar.html:49
 msgid "Values"
 msgstr "Engagements"
 
-#: doctocnet/templates/doctocnet/navbar.html:45
+#: doctocnet/templates/doctocnet/navbar.html:50
 msgid "Privacy"
 msgstr "Confidentialité"
 
-#: doctocnet/templates/doctocnet/navbar.html:46
+#: doctocnet/templates/doctocnet/navbar.html:51
 msgid "Moderation"
 msgstr "Modération"
 
-#: doctocnet/templates/doctocnet/navbar.html:47
+#: doctocnet/templates/doctocnet/navbar.html:52
 msgid "Moderators"
 msgstr "Modérateurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:49
+#: doctocnet/templates/doctocnet/navbar.html:54
 msgid "Moderator guide"
 msgstr "Guide du modérateur"
 
-#: doctocnet/templates/doctocnet/navbar.html:51
+#: doctocnet/templates/doctocnet/navbar.html:56
 msgid "SpamTocToc"
 msgstr "SpamTocToc"
 
-#: doctocnet/templates/doctocnet/navbar.html:52
+#: doctocnet/templates/doctocnet/navbar.html:57
 msgid "Contact"
 msgstr "Contact"
 
-#: doctocnet/templates/doctocnet/navbar.html:57
-#: doctocnet/templates/doctocnet/navbar.html:60
+#: doctocnet/templates/doctocnet/navbar.html:62
+#: doctocnet/templates/doctocnet/navbar.html:65
 msgid "Crowdfunding"
 msgstr "Crowdfunding"
 
-#: doctocnet/templates/doctocnet/navbar.html:63
+#: doctocnet/templates/doctocnet/navbar.html:68
 msgid "Participate"
 msgstr "Je finance"
 
-#: doctocnet/templates/doctocnet/navbar.html:64
+#: doctocnet/templates/doctocnet/navbar.html:69
 msgid "Progress"
 msgstr "Progression"
 
-#: doctocnet/templates/doctocnet/navbar.html:65
+#: doctocnet/templates/doctocnet/navbar.html:70
 msgid "Funders"
 msgstr "Financeurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:79
+#: doctocnet/templates/doctocnet/navbar.html:84
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
-#: doctocnet/templates/doctocnet/navbar.html:99
+#: doctocnet/templates/doctocnet/navbar.html:104
 msgid "Discussion"
 msgstr "Discussion"
 

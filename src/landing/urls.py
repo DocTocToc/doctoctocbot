@@ -38,6 +38,8 @@ urlpatterns = [
     path('faq/', TemplateView.as_view(template_name='landing/faq/index.html'), name='faq'),
     path('spamtoctoc/', TemplateView.as_view(template_name='landing/spamtoctoc/index.html'), name='spamtoctoc'),
     path('categories/', TemplateView.as_view(template_name='landing/categories/index.html'), name='categories'),
+    path('antiracism/', TemplateView.as_view(template_name='landing/antiracism/index.html'), name='antiracism'),
+
 
 
 

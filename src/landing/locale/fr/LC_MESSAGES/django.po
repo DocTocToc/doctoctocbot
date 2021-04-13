@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
-"PO-Revision-Date: 2021-03-28 22:18+0300\n"
+"POT-Creation-Date: 2021-04-13 04:59+0200\n"
+"PO-Revision-Date: 2021-04-13 06:01+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,6 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
+
+#: landing/templates/landing/antiracism/index.html:18
+msgid "Antiracism"
+msgstr "Antiracisme"
+
+#: landing/templates/landing/antiracism/index.html:20
+msgid "Community Charter against racism & discriminations"
+msgstr "Charte de la communauté contre le racisme et les discriminations"
+
+#: landing/templates/landing/antiracism/index.html:31
+msgid "Charter against racism and discriminations"
+msgstr "Charte contre le racisme et les discriminations"
 
 #: landing/templates/landing/categories/index.html:9
 #: landing/templates/landing/categories/index.html:25
@@ -91,6 +103,18 @@ msgstr "Accueil"
 #: landing/templates/landing/network_navbar.html:5
 msgid "Network"
 msgstr "Réseau"
+
+#: landing/templates/landing/rules/index.html:18
+msgid "Rules of"
+msgstr "Lois de"
+
+#: landing/templates/landing/rules/index.html:20
+msgid "These are the rules followed by the bot."
+msgstr "Lois suivies par le robot."
+
+#: landing/templates/landing/rules/index.html:31
+msgid "Laws of robotics"
+msgstr "Lois de la robotique"
 
 #: landing/templates/landing/sign_in.html:11
 msgid "Sign in with Twitter to access members-only content and features!"
@@ -201,7 +225,7 @@ msgstr "Compte"
 msgid "Invitation"
 msgstr "Invitation"
 
-#: landing/templatetags/opengraph_tags.py:45
+#: landing/templatetags/opengraph_tags.py:57
 #, python-format
 msgid "Welcome to %(twitter_site)s companion website."
 msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."

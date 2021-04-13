@@ -15,9 +15,9 @@
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
 {% bot_screen_name as bot %}
-{% trans "Rules of" as title %}
-{% with title|add:" @"|add:bot as og_title %}
-{% trans "These are the rules followed by the bot." as og_description %}
+{% trans "Antiracism" as title %}
+{% with "Against racism and discriminations" as og_title %}
+{% trans "Community Charter against racism & discriminations" as og_description %}
 {{ block.super }}
 {% opengraph %}
 {% endwith %}
@@ -28,9 +28,9 @@
 
 {% block content %}
 
-<h1>{% block title %} {% trans "Laws of robotics" %} {% endblock title %}</h1>
+<h1>{% block title %} {% trans "Charter against racism and discriminations" %} {% endblock title %}</h1>
 
-{% community_text "rules" %}
+{% community_text "antiracism" %}
 
 {% endblock content %}
 

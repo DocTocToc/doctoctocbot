@@ -104,9 +104,19 @@ class TextDescriptionAdmin(TranslationAdmin):
     pass
 
 
+class TextCommunityInline(admin.TabularInline):
+    model = Text.community.through
+
+
 @admin.register(Text)
 class TextAdmin(VersionAdmin):
-    pass
+    inlines = [
+        TextCommunityInline,    
+    ]
+    fields = (
+        'type',
+        'content',
+    )
 
 
 class AccessLevelAdmin(TranslationAdmin):

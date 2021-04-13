@@ -4,6 +4,7 @@
 {% load auth_discourse %}
 {% load landing_links %}
 {% load landing_tags %}
+{% load community_text %}
 
 <nav id="navbar-main" class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
@@ -41,6 +42,10 @@
           <a class="dropdown-item" href="{% url 'landing:about' %}">{% trans "About us" %}</a>
           <a class="dropdown-item" href="{% url 'landing:guidelines' %}">{% trans "Guidelines" %}</a>
           <a class="dropdown-item" href="{% url 'landing:rules' %}">{% trans "Bot rules" %}</a>
+          {% community_text "antiracism" as antiracism %}
+          {% if antiracism %}
+          <a class="dropdown-item" href="{% url 'landing:antiracism' %}">{% trans "Antiracism" %}</a>
+          {% endif %}
           <a class="dropdown-item" href="{% url 'landing:values' %}">{% trans "Values" %}</a>
           <a class="dropdown-item" href="{% url 'landing:privacy' %}">{% trans "Privacy" %}</a>
           <a class="dropdown-item" href="{% url 'landing:moderation' %}">{% trans "Moderation" %}</a>

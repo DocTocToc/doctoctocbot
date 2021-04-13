@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
+"POT-Creation-Date: 2021-04-13 04:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,107 +34,107 @@ msgstr ""
 msgid "Authorize our app"
 msgstr ""
 
-#: community/models.py:383
+#: community/models.py:405
 msgid "Status limit"
 msgstr ""
 
-#: community/models.py:384
+#: community/models.py:406
 msgid "Total number of status."
 msgstr ""
 
-#: community/models.py:390
+#: community/models.py:412
 msgid "Status rate (per minute)"
 msgstr ""
 
-#: community/models.py:391
+#: community/models.py:413
 msgid "Number of status per minute."
 msgstr ""
 
-#: community/models.py:395
+#: community/models.py:417
 msgid "Author category"
 msgstr ""
 
-#: community/models.py:396
+#: community/models.py:418
 msgid "Category of the author of the status."
 msgstr ""
 
-#: community/models.py:400
+#: community/models.py:422
 msgid "Author specialty"
 msgstr ""
 
-#: community/models.py:401
+#: community/models.py:423
 msgid "Specialty of the author of the status."
 msgstr ""
 
-#: community/models.py:405
+#: community/models.py:427
 msgid "Date and Time search"
 msgstr ""
 
-#: community/models.py:406
+#: community/models.py:428
 msgid "Search status by date and time."
 msgstr ""
 
-#: community/models.py:410
+#: community/models.py:432
 msgid "Category search"
 msgstr ""
 
-#: community/models.py:411
+#: community/models.py:433
 msgid "Search status by category."
 msgstr ""
 
-#: community/models.py:415
+#: community/models.py:437
 msgid "Tag search"
 msgstr ""
 
-#: community/models.py:416
+#: community/models.py:438
 msgid "Search status by tag."
 msgstr ""
 
-#: community/models.py:420
+#: community/models.py:442
 msgid "Status category"
 msgstr ""
 
-#: community/models.py:421
+#: community/models.py:443
 msgid "Access status category."
 msgstr ""
 
-#: community/models.py:425
+#: community/models.py:447
 msgid "Status tag"
 msgstr ""
 
-#: community/models.py:426
+#: community/models.py:448
 msgid "Access status tag."
 msgstr ""
 
-#: community/models.py:430
+#: community/models.py:452
 msgid "Protected status"
 msgstr ""
 
-#: community/models.py:431
+#: community/models.py:453
 msgid "Access status from protected account."
 msgstr ""
 
-#: community/models.py:435
+#: community/models.py:457
 msgid "Status media"
 msgstr ""
 
-#: community/models.py:436
+#: community/models.py:458
 msgid "Access status media."
 msgstr ""
 
-#: community/models.py:440
+#: community/models.py:462
 msgid "Reply count"
 msgstr ""
 
-#: community/models.py:441
+#: community/models.py:463
 msgid "Access status reply count."
 msgstr ""
 
-#: community/models.py:455
+#: community/models.py:477
 msgid "Name of the blog."
 msgstr ""
 
-#: community/models.py:459
+#: community/models.py:481
 msgid "Link text."
 msgstr ""
 

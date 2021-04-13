@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 04:59+0200\n"
-"PO-Revision-Date: 2021-04-13 06:01+0300\n"
+"POT-Creation-Date: 2021-04-13 18:29+0200\n"
+"PO-Revision-Date: 2021-04-13 19:29+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -19,14 +19,11 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: landing/templates/landing/antiracism/index.html:18
-msgid "Antiracism"
-msgstr "Antiracisme"
+msgid "Against racism and discriminations"
+msgstr "Contre le racisme et les discriminations"
 
-#: landing/templates/landing/antiracism/index.html:20
-msgid "Community Charter against racism & discriminations"
-msgstr "Charte de la communauté contre le racisme et les discriminations"
-
-#: landing/templates/landing/antiracism/index.html:31
+#: landing/templates/landing/antiracism/index.html:19
+#: landing/templates/landing/antiracism/index.html:30
 msgid "Charter against racism and discriminations"
 msgstr "Charte contre le racisme et les discriminations"
 
@@ -233,6 +230,12 @@ msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid "Antiracism"
+#~ msgstr "Antiracisme"
+
+#~ msgid "Community Charter against racism & discriminations"
+#~ msgstr "Charte de la communauté contre le racisme et les discriminations"
 
 #~ msgid ""
 #~ "Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien "

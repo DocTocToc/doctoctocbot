@@ -11,13 +11,12 @@
 
 {% block head_meta %}
 
-{% static "landing/images/rules.jpg" as og_image_static %}
+{% static "landing/images/antiracism.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
 {% bot_screen_name as bot %}
-{% trans "Antiracism" as title %}
-{% with "Against racism and discriminations" as og_title %}
-{% trans "Community Charter against racism & discriminations" as og_description %}
+{% trans "Against racism and discriminations" as og_title %}
+{% trans "Charter against racism and discriminations" as og_description %}
 {{ block.super }}
 {% opengraph %}
 {% endwith %}

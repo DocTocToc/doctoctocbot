@@ -60,10 +60,7 @@ urlpatterns += [
     path('charts/', include('charts.urls', namespace='charts')),
     path('invitations/', include('invitations.urls', namespace='invitations')),
     path('authorize/', include('authorize.urls')),
-    # wagtail
-#    re_path(r'^cms/', include(wagtailadmin_urls)),
-#    re_path(r'^documents/', include(wagtaildocs_urls)),
-#    re_path(r'', include(wagtail_urls)),
+    path('cas/', include('mama_cas.urls')),
 ]
 
 

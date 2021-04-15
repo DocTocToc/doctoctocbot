@@ -217,6 +217,7 @@ INSTALLED_APPS = [
     'taggit_serializer',
     'filter',
     'user_visit',
+    'mama_cas',
 ]
 
 if DEBUG:

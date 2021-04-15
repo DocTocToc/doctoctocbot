@@ -54,3 +54,6 @@ django-reversion
 django-phonenumber-field[phonenumbers]
 django-taggit-serializer
 django-user-visit==0.4.1
+django-mama-cas # Central Authentication Service
+gevent # django-mama-cas optional
+defusedxml # django-mama-cas optional

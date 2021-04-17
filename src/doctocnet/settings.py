@@ -218,6 +218,7 @@ INSTALLED_APPS = [
     'filter',
     'user_visit',
     'mama_cas',
+    'matrix',
 ]
 
 if DEBUG:
@@ -761,6 +762,40 @@ CONSTANCE_CONFIG = {
         "@MedecineLibre",
         "Opengraph (Twitter card) default twitter_creator value"
     ),
+    "matrix__cas__callbacks__attribute_key": (
+        "matrix",
+        "Key of attribute sent by CAS to Synapse (attribute_requirements)"
+    ),
+    "matrix__cas__callbacks__attribute_value": (
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "Value of attribute sent by CAS to Synapse (attribute_requirements)"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15
+
+# CAS Central Authentication Service
+MAMA_CAS_SERVICES = [
+    {
+        "SERVICE" : config(
+                'CAS_1_SERVICE',
+                default="^http:\/\/127\.0\.0\.1.*"
+            ),
+        "CALLBACKS" : [
+            config(
+                'CAS_1_CALLBACK',
+                default='mama_cas.callbacks.user_name_attributes'
+            ),
+        ]
+    },
+]
+#        'SERVICE': config("CAS_1_SERVICE", default="^https://[^\.]+\.example\.com"),
+#        'CALLBACKS': [
+#            config('CAS_1_CALLBACK', default='mama_cas.callbacks.user_name_attributes'),
+#        ],
+#        'LOGOUT_ALLOW': config('CAS_1_LOGOUT_ALLOW', default=True, cast=bool),
+#        'LOGOUT_URL': config('CAS_1_LOGOUT_URL', default=''),
+#        'PROXY_ALLOW': config('CAS_1_PROXY_ALLOW', default=False, cast=bool),
+#        'PROXY_PATTERN': config('CAS_1__PROXY_PATTERN', default=''),
+#    }
+#]

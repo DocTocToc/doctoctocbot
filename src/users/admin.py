@@ -66,8 +66,14 @@ class CustomUserAdmin(UserAdmin):
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email','password',)}
+            'fields': (
+                'username',
+                'email',
+                'password1',
+                'password2',
+                'socialuser',
+            )
+            }
          ),
     )
     autocomplete_fields = ['socialuser']

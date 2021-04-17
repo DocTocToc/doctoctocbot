@@ -108,12 +108,22 @@ class UserRelationshipInline(admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "moderator":
-            parent_id = request.resolver_match.kwargs['object_id']
-            moderator_ids = list(
-                UserCategoryRelationship.objects \
-                    .filter(social_user__id=parent_id) \
-                    .values_list("moderator__id", flat=True)
-                )
+            moderator_ids = []
+            try:
+                parent_id = request.resolver_match.kwargs['object_id']
+            except KeyError:
+                parent_id = None
+            if parent_id:
+                try:
+                    moderator_ids.extend(
+                        list(
+                            UserCategoryRelationship.objects \
+                            .filter(social_user__id=parent_id) \
+                            .values_list("moderator__id", flat=True)
+                        )
+                    )
+                except TypeError:
+                    pass
             if request.user.socialuser:
                 moderator_ids.append(request.user.socialuser.id)
             kwargs["queryset"] = SocialUser.objects.filter(
@@ -203,8 +213,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'user_id',
     )
     fields = (
-        'pk',
         'screen_name_tag',
+        'social_media',
         'socialmedia_tag',
         'normal_image_tag',
         'name_tag',
@@ -217,12 +227,10 @@ class SocialUserAdmin(admin.ModelAdmin):
         'active',
     )
     readonly_fields = (
-        'pk',
         'screen_name_tag',
         'socialmedia_tag',
         'normal_image_tag',
         'name_tag',
-        'user_id',
         'profile_link',
         'category',
         'category_moderator_lst',
@@ -240,6 +248,16 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFriend,
         by_null_filter('category', 'Category'),
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(SocialUserAdmin, self)\
+        .get_readonly_fields(request, obj)
+        if obj: # editing an existing object
+            return readonly_fields + (
+                'user_id',
+                'social_media',
+            )
+        return readonly_fields
 
     def category_moderator_lst(self, obj):
         cat_mod_lst = []

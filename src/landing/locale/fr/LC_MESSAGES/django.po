@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 18:29+0200\n"
+"POT-Creation-Date: 2021-04-18 14:15+0200\n"
 "PO-Revision-Date: 2021-04-13 19:29+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -23,7 +23,7 @@ msgid "Against racism and discriminations"
 msgstr "Contre le racisme et les discriminations"
 
 #: landing/templates/landing/antiracism/index.html:19
-#: landing/templates/landing/antiracism/index.html:30
+#: landing/templates/landing/antiracism/index.html:29
 msgid "Charter against racism and discriminations"
 msgstr "Charte contre le racisme et les discriminations"
 

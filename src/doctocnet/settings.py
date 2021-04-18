@@ -789,13 +789,4 @@ MAMA_CAS_SERVICES = [
         ]
     },
 ]
-#        'SERVICE': config("CAS_1_SERVICE", default="^https://[^\.]+\.example\.com"),
-#        'CALLBACKS': [
-#            config('CAS_1_CALLBACK', default='mama_cas.callbacks.user_name_attributes'),
-#        ],
-#        'LOGOUT_ALLOW': config('CAS_1_LOGOUT_ALLOW', default=True, cast=bool),
-#        'LOGOUT_URL': config('CAS_1_LOGOUT_URL', default=''),
-#        'PROXY_ALLOW': config('CAS_1_PROXY_ALLOW', default=False, cast=bool),
-#        'PROXY_PATTERN': config('CAS_1__PROXY_PATTERN', default=''),
-#    }
-#]
+MAMA_CAS_LOGIN_TEMPLATE = "cas/login.html"

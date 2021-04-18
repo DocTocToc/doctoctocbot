@@ -1,0 +1,90 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load static %}
+    {% block style %}
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+      <style type="text/css">
+        body {
+          background-color: #eee;
+        }
+        .login-title {
+          color: #555;
+          font-size: 1.8em;
+          margin-bottom: 20px;
+        }
+        .form-login .checkbox {
+          font-weight: normal;
+          padding-left: 20px;
+        }
+        .form-login .form-control {
+          font-size: 16px;
+          height: auto;
+          padding: 10px;
+          position: relative;
+          -webkit-box-sizing: border-box;
+             -moz-box-sizing: border-box;
+                  box-sizing: border-box;
+        }
+        .form-login .form-control:focus {
+          z-index: 2;
+        }
+        .form-login input[type="text"] {
+          margin-bottom: -1px;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+        .form-login input[type="password"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+      </style>
+    {% endblock style %}
+{% block content %}
+
+      <h1 class="text-center login-title">
+        {% block content_title %}{% trans "Central Authentication Service" %}{% endblock content_title %}
+      </h1>
+  <div class="row py-5 my-5 border border-primary">
+    <div class="col-sm-6 col-md-4 col-md-offset-4">
+      {% if "twitter" in backends.not_associated %}
+        <p>
+        {% blocktrans %}Please sign in with Twitter.
+        You will be redirected to <mark>https://api.twitter.com</mark> and
+        Twitter will ask for your password from its own page.
+        Your password remains between your and Twitter: it is never revealed to us.
+        Only verified Twitter users are allowed to use our secure messenger.
+        {% endblocktrans %}
+        </p>
+        <a href="{% url 'social:begin' 'twitter' %}?next={% url 'cas_login'|urlencode %}">
+        <img class="border border-primary rounded p-0 m-0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}">
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row py-5 my-5 border border-secondary">
+    <div class="col-sm-6 col-md-4 col-md-offset-4">
+      {% include "mama_cas/_messages.html" %}
+      <p>
+      {% blocktrans with scheme=request.scheme domain=request.site.domain %}If you don't have a Twitter account
+      and if your registered an account on
+      <mark>{{ scheme }}://{{ domain }}</mark>, please login here:
+      {% endblocktrans %}
+      </p>
+      <form class="form-login" method="post">
+        {% csrf_token %}
+        <label class="sr-only" for="id_username">{{ form.username.label }}</label>
+        <input type="text" class="form-control" id="id_username" name="username" placeholder="{{ form.username.label }}" required autofocus>
+        <label class="sr-only" for="id_password">{{ form.password.label }}</label>
+        <input type="password" class="form-control" id="id_password" name="password" placeholder="{{ form.password.label }}" required>
+        {% if form.warn %}
+          <label class="checkbox">
+            <input type="checkbox" id="id_warn" name="warn"> {{ form.warn.label }}
+          </label>
+        {% endif %}
+        <button class="btn btn-lg btn-secondary btn-block" type="submit">{% trans "Login" %}</button>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

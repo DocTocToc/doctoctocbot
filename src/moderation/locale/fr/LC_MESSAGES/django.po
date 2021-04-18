@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 18:29+0200\n"
+"POT-Creation-Date: 2021-04-18 14:15+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:447
+#: moderation/admin.py:465
 msgid "state"
 msgstr "état"
 
-#: moderation/admin.py:457
+#: moderation/admin.py:475
 msgid "Pending"
 msgstr "En attente"
 
-#: moderation/admin.py:472
+#: moderation/admin.py:490
 msgid "community"
 msgstr "communauté"
 

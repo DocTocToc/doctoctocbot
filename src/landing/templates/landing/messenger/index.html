@@ -1,0 +1,207 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+  <div class="hero">
+    <div class="hero__wrap">
+      <div class="flex">
+        <div class="flex__item--align-center">
+          <h1 class="display__h1">Own your conversations.</h1>
+          <p class="text__medium">All-in-one secure chat app for teams, friends and organisations. Keeps conversations in your control, safe from data-mining and ads. Talk to everyone through the open global Matrix network, protected by proper end-to-end encryption.<br></p>
+          <div class="btn__wrapper">
+            <a href="{% url 'landing:messenger-get-started' %}" class="cta__btn--primary cta__btn--primary--left w-button">Try {medica}</a>
+            <a href="{% url 'landing:messenger-features' %}" class="cta__btn--primary cta__btn--hollow w-button">Learn more</a>
+          </div>
+          <p class="text__small text__small--0-7">For Web, Android, iOS, macOS, Windows &amp; Linux</p>
+        </div>
+        <div class="flex__item--align-center hero-collage-all-platforms"><img src="images/homepage-all-platforms-1_1.png" style="opacity:0" data-w-id="fd067dcd-1aa9-3a41-41f9-74ee488fc5c7" alt="" class="img-hero-collage-ele-desktop-light"><img src="images/ios-room-chat-012x_1.png" width="300" style="-webkit-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" data-w-id="fb0a0861-782b-4f69-5034-052de165afba" alt="" class="img-hero-collage-ios-room-dark"><img src="images/pixel4-rooms-light-012x_1.png" style="-webkit-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0PX, 12PX, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" data-w-id="e8c24c12-1e69-8cbc-a58f-bd3ce3476b78" sizes="(max-width: 479px) 96px, 170px" srcset="images/pixel4-rooms-light-012x_1-p-500.png 500w, images/pixel4-rooms-light-012x_1.png 984w" alt="" class="img-hero-collage-android-rooms-light"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap hero__wrap--p0">
+      <div class="width__80">
+        <h2 class="display__h2 display__h2---center">Element is a messenger that gives you the privacy you expect from a conversation in your own home, but with everyone across the globe.</h2>
+      </div>
+      <div class="flex flex--homepage-use-cases">
+        <div id="w-node-ddba9ce3-391a-5f59-9160-372fe38025ea-4e4b8ae3" class="flex__item--align-center flex__item--home-use-case">
+          <div class="tile tile__home--use-case">
+            <div>
+              <h3 class="display__h3">Keep it personal</h3>
+              <p class="text__regular width__80">Group chat, video calls and sharing to stay in touch and coordinate with family and friends.</p>
+              <a data-w-id="ddba9ce3-391a-5f59-9160-372fe38025f1" href="{% url 'landing:messenger-personal' %}" class="link-text-btn home-use-case__link w-inline-block">
+                <p class="card__p card__p--medium link-text-btn">Learn more</p><img src="images/icon-arrowhead-right-accent.svg" alt="" class="link-text-chevron">
+              </a>
+            </div>
+            <div class="tile__img"><img src="images/for-personal.png" width="447" sizes="(max-width: 479px) 100vw, (max-width: 991px) 447px, 39vw" srcset="images/for-personal-p-500.png 500w, images/for-personal.png 894w" alt=""></div>
+          </div>
+        </div>
+        <div id="w-node-b51d1edd-8901-9ca5-c072-8d8a2176cf4c-4e4b8ae3" class="flex__item--align-center flex__item--home-use-case">
+          <div class="tile tile__home--use-case">
+            <div>
+              <h3 class="display__h3">Revolutionise the workplace</h3>
+              <p class="text__regular width__80">Highly effective teamwork within a company, across a business ecosystem or an entire government.</p>
+              <a data-w-id="b51d1edd-8901-9ca5-c072-8d8a2176cf53" href="{% url 'landing:messenger-pro' %}" class="link-text-btn home-use-case__link w-inline-block">
+                <p class="card__p card__p--medium link-text-btn">Learn more</p><img src="images/icon-arrowhead-right-accent.svg" alt="" class="link-text-chevron">
+              </a>
+            </div>
+            <div class="tile__img"><img src="images/temp-img-pro-use-01.png" width="369" sizes="(max-width: 479px) 100vw, 369px" srcset="images/temp-img-pro-use-01-p-500.png 500w, images/temp-img-pro-use-01.png 738w" alt=""></div>
+          </div>
+        </div>
+        <div id="w-node-_47a50cc3-b51a-a806-3d9e-fa0d3e4b8a65-4e4b8ae3" class="flex__item--align-center flex__item--home-use-case">
+          <div class="tile tile__home--use-case">
+            <div>
+              <h3 class="display__h3">Host your community</h3>
+              <p class="text__regular width__80">From clubs to social movements, keep everyone together with a platform everyone can use.</p>
+              <a data-w-id="47a50cc3-b51a-a806-3d9e-fa0d3e4b8a6c" href="{% url 'landing:messenger-communities' %}" class="link-text-btn home-use-case__link w-inline-block">
+                <p class="card__p card__p--medium link-text-btn">Learn more</p><img src="images/icon-arrowhead-right-accent.svg" alt="" class="link-text-chevron">
+              </a>
+            </div>
+            <div class="tile__img tile__img--communuty"><img src="images/community-22x.png" width="792" sizes="(max-width: 479px) 260px, (max-width: 767px) 490px, (max-width: 991px) 510px, 40vw" srcset="images/community-22x-p-500.png 500w, images/community-22x.png 1584w" alt="" class="img__use-case--community"></div>
+          </div>
+        </div>
+        <div id="w-node-_62c2e8d5-e1ea-91dd-5605-37591b0591f6-4e4b8ae3" class="flex__item--align-center flex__item--home-use-case">
+          <div class="tile tile__home--use-case">
+            <div>
+              <h3 class="display__h3">Nirvana for developers</h3>
+              <p class="text__regular width__80">Element is the on-ramp for open collaboration with developers throughout all of Matrix, including <a href="https://chat.mozilla.org">Mozilla</a>, <a href="http://webchat.kde.org/">KDE</a>, <a href="https://gnome.riot.im">GNOME</a>, and soon all of <a href="https://gitter.im">Gitter</a>.</p>
+              <a data-w-id="62c2e8d5-e1ea-91dd-5605-37591b0591fd" href="/developers" class="link-text-btn home-use-case__link w-inline-block">
+                <p class="card__p card__p--medium link-text-btn">Learn more</p><img src="images/icon-arrowhead-right-accent.svg" alt="" class="link-text-chevron">
+              </a>
+            </div>
+            <div class="tile__img"><img src="images/Screenshot-2020-09-30-at-12.32.57.png" width="447" sizes="(max-width: 479px) 100vw, (max-width: 767px) 408px, 370px" srcset="images/Screenshot-2020-09-30-at-12.32.57-p-500.png 500w, images/Screenshot-2020-09-30-at-12.32.57.png 1170w" alt="" class="image-24"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap">
+      <div class="flex__grid--2col home__testimonials">
+        <h2 id="w-node-c67d5b29-ea25-68da-ca21-2c7cbebac08b-4e4b8ae3" class="display__h2 display__h2---center">Millions of people rely on Element</h2>
+        <div id="w-node-_886aa2ae-a2e0-590a-794c-2f341bce9b41-4e4b8ae3" class="flex__item--align-center flex__item--quote">
+          <div class="card card--quote">
+            <div class="card--quote__footer"><img src="images/logo-mozilla.svg" width="58" alt="" class="quote-source-img-1">
+              <div>
+                <p class="card--quote__footer__p">Mike Hoye</p>
+                <h4 class="card__quote__footer__h">Mozilla</h4>
+              </div>
+            </div>
+            <p class="text__medium">&quot;Mozilla values open communities, accessibility and trustworthy collaboration; the move to Element has been a huge improvement for us and a great experience for our company and community.&quot;</p>
+          </div>
+        </div>
+        <div id="w-node-dadeee18-3133-77f6-7c9c-b5278dbb2c67-4e4b8ae3" class="flex__item--align-center flex__item--quote">
+          <div class="card card--quote">
+            <div class="card--quote__footer"><img src="images/logo-dinnum.svg" width="58" alt="" class="quote-source-img-1">
+              <div>
+                <p class="card--quote__footer__p">Jérôme Ploquin</p>
+                <h4 class="card__quote__footer__h">DINUM</h4>
+              </div>
+            </div>
+            <p class="text__medium">&quot;Element gives us messaging and collaboration that is secure, and contains the right feature set for 300,000 public administration users. Matrix is technically advanced, proven and mature.&quot;</p>
+          </div>
+        </div>
+        <div id="w-node-_5e350bab-7e5f-acc8-edf1-24924bc30bab-4e4b8ae3" class="flex__item--align-center flex__item--quote">
+          <div class="card card--quote">
+            <div class="card--quote__footer"><img src="images/logo-hms.svg" width="58" alt="" class="quote-source-img-1">
+              <div>
+                <p class="card--quote__footer__p">Abner Coimbre</p>
+                <h4 class="card__quote__footer__h">Handmade Seattle</h4>
+              </div>
+            </div>
+            <p class="text__medium">“We have to switch to a virtual conference this year. We’re using Element as our hallways, water coolers and coffee shops. It’s powering our community.”</p>
+          </div>
+        </div>
+        <div id="w-node-_5e350bab-7e5f-acc8-edf1-24924bc30ba2-4e4b8ae3" class="flex__item--align-center flex__item--quote">
+          <div class="card card--quote">
+            <div class="card--quote__footer">
+              <div>
+                <p class="card--quote__footer__p">Pierre</p>
+                <h4 class="card__quote__footer__h">Germany</h4>
+              </div>
+            </div>
+            <p class="text__medium">“I use Element so I can chat with family and friends without compromising my privacy, thanks to decentralisation and end-to-end encryption.”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero hero--allow-overflow">
+    <div class="hero__wrap hero__wrap--no-padding-bottom hero__wrap--no-padding-top hero__wrap--padding-top--medium">
+      <div class="flex flex__stretch">
+        <div class="flex__item--align-center flex__item--full flex__item--full-matrix-ad">
+          <div class="card card--matrix-ad div-block-20">
+            <div class="card__matrix--copy">
+              <h2 class="heading__matrix-ecosystem h2--looks--like-an-h3">A part of the Matrix ecosystem.</h2>
+              <p class="width__80">Matrix is an open network for secure, decentralised communication, connecting 28M+ users over 60K+ deployments. Governed by The Matrix.org Foundation, the Matrix protocol is an open standard with open source implementations, supporting a vibrant developer ecosystem. Element was founded by the team behind Matrix as a way to bring it to the mainstream.</p>
+            </div>
+            <div class="card__matrix--cta"><img src="images/logo-matrix-white.svg" width="106" alt="" class="card__matrix--logo">
+              <a href="https://matrix.org/" class="cta__btn--primary hero__cta__btn--white hero__cta__btn--less-padding matrix--btn w-inline-block">
+                <div class="text-block">Matrix.org</div><img src="images/icon-arrow-up-right.svg" alt="" class="img-btn-icon-right">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap">
+      <div class="flex">
+        <div class="flex__item--align-center">
+          <h3 class="display__h3">Element is an open source company</h3>
+          <p class="text__regular width__80">Element is incredibly proud to build in the open, contributing almost all of our own code to everyone.<br></p>
+          <div class="github-table">
+            <div class="github-table__row">
+              <div class="github-table__row__left">
+                <a href="https://github.com/vector-im/element-web" target="_blank" class="link__un-green text__regular">Element Web</a>
+              </div>
+              <div class="github-table__row__right">
+                <div class="w-embed">
+                  <a class="github-button" href="https://github.com/vector-im/element-web" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-web on GitHub">Star</a>
+                </div>
+              </div>
+            </div>
+            <div class="github-table__row">
+              <div class="github-table__row__left">
+                <a href="https://github.com/vector-im/element-ios" target="_blank" class="link__un-green text__regular">Element iOS</a>
+              </div>
+              <div class="github-table__row__right">
+                <div class="w-embed">
+                  <a class="github-button" href="https://github.com/vector-im/element-ios" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-ios on GitHub">Star</a>
+                </div>
+              </div>
+            </div>
+            <div class="github-table__row">
+              <div class="github-table__row__left">
+                <a href="https://github.com/vector-im/element-android/" target="_blank" class="link__un-green text__regular">Element Android</a>
+              </div>
+              <div class="github-table__row__right">
+                <div class="w-embed">
+                  <a class="github-button" href="https://github.com/vector-im/element-android" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-android on GitHub">Star</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a data-w-id="c99740f0-aa1b-5831-0776-65b339f20554" href="/open-source" class="link-text-btn w-inline-block">
+            <p class="card__p card__p--medium link-text-btn">Learn more</p><img src="images/icon-arrowhead-right-accent.svg" alt="" class="link-text-chevron">
+          </a>
+        </div>
+        <div class="flex__item--align-center"><img src="images/temp-open-tech-01.png" width="402" sizes="(max-width: 479px) 84vw, (max-width: 767px) 83vw, 402px" srcset="images/temp-open-tech-01-p-500.png 500w, images/temp-open-tech-01.png 835w" alt="" class="img__feature--open-chat-app"></div>
+      </div>
+    </div>
+  </div>
+
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

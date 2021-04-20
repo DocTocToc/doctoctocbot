@@ -1,0 +1,33 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+<div class="card">
+  <h5 class="card-header">Prix libre</h5>
+  <div class="card-body">
+    <h5 class="card-title">Investissez dans vos outils professionnels libres!</h5>
+    <p class="card-text">
+    Le prix libre est un mode de fixation du prix par l'acheteur d'un bien ou d'un service, qui peut être pour lui une manière de payer :
+    <ul>
+    <li>le prix qu'il estime juste,</li>
+    <li>un prix de soutien par rapport à un coût de revient affiché, un prix suggéré ou plancher</li>
+    <li>un montant inférieur au coût de revient s'il ne peut ou ne souhaite pas payer cette somme.</li>   
+    </ul>
+    </p>
+    <a href="{% url "crowdfunding:start" %}" class="btn btn-primary">Je participe!</a>
+  </div>
+</div>
+
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

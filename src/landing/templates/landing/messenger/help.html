@@ -1,0 +1,639 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+  <div class="hero hero--left bg-smoke">
+    <div class="hero__wrap hero__wrap--help">
+      <h1 class="display__h1">Element help and support</h1>
+      <p class="text__medium">Check the FAQs below or send a message in a room to get community support or get in touch with our team.<br></p>
+      <div class="flex flex--support">
+        <div class="tile tile--contact_us">
+          <div>
+            <h3 class="tile__h3 tile__h3--support">Desktop &amp; Web</h3>
+          </div>
+          <div>
+            <a href="https://matrix.to/#/#element-web:matrix.org" target="_blank" class="cta__btn--primary cta__btn--hollow w-button">Join room</a>
+          </div>
+        </div>
+        <div class="tile tile--contact_us">
+          <div>
+            <h3 class="tile__h3">iOS</h3>
+          </div>
+          <div>
+            <a href="https://matrix.to/#/#element-ios:matrix.org" target="_blank" class="cta__btn--primary cta__btn--hollow w-button">Join room</a>
+          </div>
+        </div>
+        <div class="tile tile--contact_us">
+          <div>
+            <h3 class="tile__h3">Android</h3>
+          </div>
+          <div>
+            <a href="https://matrix.to/#/#element-android:matrix.org" target="_blank" class="cta__btn--primary cta__btn--hollow w-button">Join room</a>
+          </div>
+        </div>
+      </div>
+      <p class="text__small text__small--help">*You should never share account details in any of these rooms. For account specific questions, please user the <a href="{% url 'gpgcontact:contact-form' %}"><span class="__cf_email__" >secure contact form</span></a><br></p>
+    </div>
+  </div>
+  <div class="hero hero--allow-overflow">
+    <div class="hero__wrap">
+      <div id="chat" class="flex flex--faq">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Account management</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I reset my password?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Please note that we cannot reset passwords or reactivate matrix.org accounts. If you have an email address attached to your account, you can reset your password <a href="https://app.element.io/#/forgot_password" target="_blank">here</a>.</p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I register with an email?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Yes you can! Registering your email address is optional, but setting it will help friends to find you, and will allow you to reset your password if you forget it.</p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is the username used for?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">We will use your username to create an ID (Matrix ID) allowing to disambiguate you from others with the same display name. It will allow us to keep your email confidential. 🙂</p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I register with a phone number?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Not anymore. Sorry!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="chat" class="flex flex--faq">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Chat</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I mention someone?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Just type their name and they will be notified accordingly. You can autocomplete by pressing the tab button, you don’t need any prefix for the mention to work!<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">With what type of mentions will I get notified?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">By default you’ll be notified if your display name and your user name are mentioned. You can add other names, nicknames or keywords on which you want to be notified from your settings, in the Notifications section.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I send a file?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Simple, just drag the file into Element and it will automatically upload. Alternatively you can click on the paperclip icon in the text input field and browse your filesystem.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I upload a file from a mobile device?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Yes you can! on a mobile device simply press the arrow which is pointing upwards (on iOS) and paperclip (on android) while in a chat and select your file.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I find a contact who is already using Element?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">In every app you can start a chat with people who are already using Element (or another Matrix compliant app) by typing their display name or Matrix ID in the “Invite” box. Otherwise just type their email and they will be invite to use the app.If you authorised Element to access your contact book on mobile, you will be able to see which of your contacts are already using Element, based on their emails.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I invite a contact to use Element?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can invite a contact by email or by sending them a link to a room: by clicking on the link they will be able to join without even registering, if the room allows it.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Is there a way to know if a message has been read?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Yes! Element shows who has read a message by displaying their avatar to the right of the message. Hovering over these avatars (or clicking on them on mobile) will give you the user’s info and reading time.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I search for a file or message?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Click on the magnifying glass located near the top of the screen. You can then type in a keyword or filename you are searching for. Also you have the ability to select whether you want the search to search the specific chat room you are in or across all conversations.<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="settings" class="flex flex--faq">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Settings</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I change my account settings?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Click on the drop down menu under your name in the top left corner of the web or desktop app and select. From here you can change all of your account and general Element preferences.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I change my notification settings?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Element allows you to customise your notifications at two levels: across the app and per room.You can configure how you will be notified for given events by default in the Notifications section of your Settings (accessible from the drop down menu under your name in the top left corner of the web/desktop app).<br><br>You can configure keywords, default notification settings for group, one-to-one chat rooms, invites and calls. The notifications can be:<br></p>
+                  <p class="simple__p extra__p simple__p--indent">– Turned off: you won’t be notified when the selected event happens.<br>– Turned on: you will get a message popping up when the selected event happens, but no sound.<br>– “Noisy”: you will get a visual highlight (red badge and/or text highlight), a sound and/or vibration (depending on the device) when the selected event happens.<br></p>
+                  <p class="simple__p extra__p">Then for finer tuning, you can easily configure per room notification setting from the context menu you get by clicking on the [...] icon that appears when hovering over the room name in the room list. This is very handy when you wish to temporarily mute a room, or make sure you’re not missing anything from a given discussion. You can select the following options:<br></p>
+                  <p class="simple__p extra__p simple__p--indent">– Mute: you won’t be notified, even if your name or a keyword is mentioned.<br>– Mentions only: you will only be notified for the items that are meant to be ‘noisy’, i.e. your name and keywords.<br>– All messages: you will get a (silent) notification for every message happening in the room; your ‘noisy’ events (e.g. your name being mentioned) will still be noisy (red badge and sound).<br>– All messages (noisy): every message will make a noise on top of the visual notification. Your noisy events will still be differentiated by a red badge.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I set up email notifications?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can set Element up to email you when you have missed some activity (new messages, new invites…). You can do this in the Notification section of your Settings and turn on the toggle labelled as ‘Enable email notifications’.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I change my display name?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can change your display name in General section of your Settings (accessible from the drop down menu under your name in the top left corner of the web/desktop app).<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I reset my password?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">If you have forgotten your password don’t worry! Just visit <a href="http://app.element.io">app.element.io</a> and click on the link ‘Set a new password’. Next input your email address which is registered to your Element account and choose a new password. You will then be sent an email asking you to confirm your request to reset your password. Please follow the link in the email to complete the process and regain access to your account. Note that if you haven’t set an email address we won’t be able to reset your password. We should emphasise that setting an email is not just useful to notify you but also for these kind of security processes and to make it easier for your contacts to find you.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Why would I need to associate an email address to my account? Can I do so a posteriori?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">We strongly recommend that you set an email address in order to be able to reclaim your account if you’ve lost your password. It is also very useful for people to find you, and easier to remember than (yet another) ID. If you haven’t done so at registration don’t worry: you can add as many email addresses as you like, at any point, in the General section of your Settings (accessible from the drop down menu under your name in the top left corner of the web/desktop app). If you have forgotten your password and did not register an email address with us, I’m sorry to say that there is no way to access your account. 🙁<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="rooms" class="flex flex--faq">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Rooms</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How can I change the settings for a specific chat or room?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can change the settings for any one-to-one chat or group room by clicking on the cog icon next to the room name.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I restrict the access of a room to a given set of people?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can restrict the access of a room to people who have been nominately invited by selecting the “only people who have been invited” option in the room settings. People knowing the link of the room won’t be able to access it if an invite hasn’t been explicitly sent to their email or id.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I limit the access of a room to people knowing its existence?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can restrict the access of a room to people with whom you shared a link to the room by selecting the “anyone who knows the room link” option in the room settings. Selecting this option will not make the room publicly visible to the rest of the community.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Can I make a room publicly discoverable?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">You can get your room listed into your server’s directory by checking the “list this room in the &lt;your server=&quot;&quot; name=&quot;&quot;&gt;’s directory”. By checking this box anyone making a search on the server will be able to see it. However, they will be able to join only if you haven’t restricted the access to it to people being invited.&lt;/your&gt;<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Will anyone be able to join my room if I list it in the directory?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">If your room is listed in the directory, people will know it exists but they will only be able to join it if you allowed the access to it to anyone knowing the link.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">If I make the room accessible to anyone, will new joiners be able to read the history?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">It depends on how you configured the history visibility for the room. By default every member of the room can read its history. But you can decide that new joiners will only see the history they are part of, I.E. Members will only be able to see the history of the room since they were invited (or joined, both options are available.<br>‍<br>However it is important to note that these settings are not retroactive and only apply from the time they are selected: if you have a discussion with the history being visible to every member since the start, then change it to discuss an important matter so that people only see the history from the time they joined, new members will have access to all the history before you changed the option.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Why would I want to make the history visible to anyone?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Making the history visible to anyone means that people can see what is being said in a room before joining it. So typically, if you are browsing the room directory and see a room which might be interesting, you will have the opportunity to “peek” into it, having a view of what has been said without joining it. This gives users the opportunity to gauge a room before joining. It is a useful option for rooms publicly listed and hosting public discussions, or for people you share your room link with, so that they have an idea of what they’re going into before joining.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is a room address?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">By default the room has an ugly identifier which is barely human readable. Setting an address for a room allows you to give it a simple reference making it easier to share a link to it. The addresses are linked to the server you are registered (e.G. Matrix.Org if your id is @username:matrix.Org). A room can have different addresses on the same homeserver and addresses on different homeservers. They are just a user friendly entry point, but are required the moment you want to make the room accessible in other ways than by inviting users.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is a favourite room?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">The favourite section allows you to pin and order important rooms which will be displayed at the top of your Element room list.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is a low priority room?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">The low priority section allows you to declutter your room list by moving rooms you consider less important to the bottom.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is the “historical” section?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">The “historical” section lists all the rooms you’ve left and allows you to access the history you have there. You won’t see the new activity in these rooms, only what happened before you left.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">As a room admin, can I decide what members can do?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">In the roles and permissions section of the room’s settings you’ll be able to configure the privilege level are required to perform various actions in the room, e.G. Send a message, ban / kick members, redact messages, update the room’s settings, invite new members, etc..<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="rooms" class="flex flex--faq">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Privacy, abuse and notices</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Please note that Element is a client that allows you to access any homeserver in the Matrix network, just like a browser allows you to access any website you want. Each homeserver has different approaches to Abuse Management and Privacy, which are out of Element’s control.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How is my personal data being used?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Here is Element’s <a href="https://element.io/privacy">privacy policy</a>. If you have additional questions, contact our <a href="/cdn-cgi/l/email-protection#85e1f5eac5e0e9e0e8e0ebf1abecea">DPO</a>.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I report on content in Element?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Report inappropriate content on Element by hovering on the message and clicking the more options button (three dots) and &quot;Report content&quot;.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I submit an abuse report? <br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">To report a general abuse issue, please <a href="/cdn-cgi/l/email-protection#43222136302603262f262e262d376d2a2c">contact</a>. <br>‍<br>To report an abuse issue on the Matrix.org homeserver please <a href="http://abuse@matrix.org.">contact.<br>‍</a><br>To report an issue outside of matrix.org homeserver, please contact the administrators of that homeserver. <br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I request a DMCA takedown? <br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Please read our <a href="https://element-io.webflow.io/copyright">Copyright Policy</a> for our approach to copyright. To send DMCA takedown notices, <a href="/cdn-cgi/l/email-protection#5c38313f3d1c39303931393228723533">contact</a>.<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="encryption" class="flex flex--faq flex--faq--last">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>End-to-end encryption</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is encryption?</strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Encryption means scrambling a message in such a way that only those knowing the secret key can unscramble it. We use encryption to keep your messages and files private.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is end-to-end encryption?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">End-to-end encryption means your messages and files are encrypted before they leave your device, and stay encrypted until they reach the other participants&#x27; devices. End-to-end encrypted messages can <em>only</em> be read by the participants in the conversation.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Who can read my messages?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Thanks to end-to-end encryption, your messages can only be read by the participants in the conversation <em>and nobody else</em>. This means your messages can&#x27;t be read by anyone at New Vector, or by any other third party. It also means that if you lose your keys, you won&#x27;t be able to read your messages either.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Why can&#x27;t I read a message?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">If you can&#x27;t read a message it&#x27;s because your device doesn&#x27;t have the right key. If your device doesn&#x27;t have the right key, there are three ways you might be able to get hold of the key:<br>‍<br>Restore all of your keys from key backup<br>Request the specific key from another device via key share<br>Upload keys from a manual backup (advanced)<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is Key Backup?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">When key backup is enabled, your device will maintain a secure copy of its keys on our server. To ensure those keys can only ever be accessed by you, they are encrypted on your device, with a key that you either store yourself, or secure with a passphrase and upload to our server. It is important to understand that to protect your privacy <em>your keys will never touch our systems unencrypted</em>.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Is it safe to back up my encryption keys to your servers?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Yes. Your keys are encrypted before they are uploaded to our servers, so we never see them unencrypted.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I set up key backup?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Go to User Settings -&gt; Security &amp; Privacy and click Start using Key Backup.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I restore from key backup?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Go to User Settings -&gt; Security &amp; Privacy and click Restore from Backup.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I request the key from another device via key share?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">When Element sees a message it can&#x27;t decrypt, it automatically asks your other devices if they have a copy of the necessary key. Keys will be shared automatically with trusted devices - if the device with the key <em>hasn&#x27;t</em> trusted the device requesting the key, the device with the key will pop up a prompt asking you to confirm the key share manually.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What is a &#x27;device&#x27;?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">For historical reasons, when we say &#x27;device&#x27; we don&#x27;t mean your phone or your laptop - you actually create a new &#x27;device&#x27; each time you log in on Matrix (and destroy it again when you log out).<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What does it mean to verify or trust a device in Element?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Element uses <em>trust</em> to represent an additional layer of security within the app, over and above username and password authentication.<br>‍<br>If somebody is sending messages as Alice, we know that they have access to Alice&#x27;s account - either they&#x27;ve logged in with Alice&#x27;s username and password, or they&#x27;re using a logged in session, perhaps on Alice&#x27;s phone.<br>‍<br>Usually, that somebody is going to be Alice. Unfortunately, in the real world, passwords can be guessed or sniffed and phones can be stolen. Element&#x27;s <em>trust</em> mechanism is designed to mitigate this.<br>‍<br>In Element, you can see every device that has joined an encrypted conversation. If a new and unexpected device joins, you can use device verification to check that it&#x27;s really Alice. And if you suspect that a trusted device has fallen into the wrong hands, you can revoke that trust and remove its access to the ongoing encrypted conversation.<br>‍<br>Verifying every device is, alas, still time-consuming — we’re working hard on a solution to this.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Are all of my messages encrypted?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">No, messages are only encrypted in rooms with encryption enabled. You can enable encryption by going to Room Settings.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">Why can&#x27;t I search in encrypted rooms?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">The search feature looks through the database to find matching messages. When the messages are encrypted, we can&#x27;t read the messages to check whether they match!We&#x27;re working on a solution to this, but for now searching is not possible in encrypted rooms.<br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">What does the red/green symbol mean at the top of the encrypted room?<br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">If an encrypted room has a green symbol next to the room name, it means your device trusts every other device in the room. This is the gold standard.<br>‍<br>If instead there is a red symbol next to the room name, it means one or more devices are untrusted.<br>‍<br>Verifying every device is, alas, still time-consuming — we’re working hard on a solution to this.<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="encryption" class="flex flex--faq flex--faq--last">
+        <div class="flex__item--align-center flex__item--help-section-heading">
+          <div class="help__section-title">
+            <h2>Reporting bugs and requesting features</h2>
+          </div>
+        </div>
+        <div class="flex__item--align-center">
+          <div class="faq--questions-list">
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I submit a bug request? </strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">From a mobile you can ‘rageshake’ (shake your phone when the app is open). Alternatively for iOS: Go to ‘Settings’ (cog in the top left) and select ‘Report bug’ under the ‘Other’ section. <br><br>Or from Android: Go to ‘Settings’ (three dots in the top right) and select ‘Report bug.’For desktop and web: Go to ‘Settings’ under your profile, click on ‘Feedback” and submit a report. <br></p>
+                </div>
+              </div>
+            </div>
+            <div class="faq__q-and-a">
+              <div class="accordian-item">
+                <div class="accordian-item-trigger">
+                  <h4 class="simple__h4"><strong class="faq--q">How do I request a new feature? <br></strong></h4>
+                </div>
+                <div class="accordian-item-content">
+                  <p class="simple__p extra__p">Please submit an Element feature request as an issue on GitHub:<br>Element Web and Desktop: <a href="https://github.com/vector-im/element-web/issues">https://github.com/vector-im/element-web/issues<br>‍</a>Element iOS: <a href="https://github.com/vector-im/element-ios/issues">https://github.com/vector-im/element-ios/issues<br>‍</a>Element Android: <a href="https://github.com/vector-im/element-android/issues">https://github.com/vector-im/element-android/issues<br>‍</a><br>Before opening a new issue, please look for already open similar issues.<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=5ef25c0d30ee3108da4c25e9" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

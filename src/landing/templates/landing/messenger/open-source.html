@@ -1,0 +1,80 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+<div class="hero hero--left">
+    <div class="hero__wrap hero__wrap--columns hero__wrap--columns--milestones hero__wrap--open-source-top">
+      <div class="container__small--left">
+        <h1 class="display__h--margin-40-0">Element is an open source company.</h1>
+        <p>Element is a for-profit company that makes flagship products and services built on the Matrix open source project.<br>‍<br>The founders of Element created the Matrix protocol and are still guardians for the Matrix open source project.<br>‍<br>Element is incredibly proud to provide significant development to the Matrix open source project, and contributes almost all its own code.<br>‍<br>The Element app is free for everyone, and can be self-hosted or hosted on <a href="https://matrix.org">Matrix.org</a> at no cost.<br><br>The Element app is open source and you can find all the code on GitHub.<br></p>
+        <div class="github-table">
+          <div class="github-table__row">
+            <div class="github-table__row__left">
+              <a href="https://github.com/vector-im/element-web" target="_blank">Element Web</a>
+            </div>
+            <div class="github-table__row__right">
+              <div class="w-embed">
+                <a class="github-button" href="https://github.com/vector-im/element-web" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-web on GitHub">Star</a>
+              </div>
+            </div>
+          </div>
+          <div class="github-table__row">
+            <div class="github-table__row__left">
+              <a href="https://github.com/vector-im/element-ios" target="_blank">Element iOS</a>
+            </div>
+            <div class="github-table__row__right">
+              <div class="w-embed">
+                <a class="github-button" href="https://github.com/vector-im/element-ios" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-ios on GitHub">Star</a>
+              </div>
+            </div>
+          </div>
+          <div class="github-table__row">
+            <div class="github-table__row__left">
+              <a href="https://github.com/vector-im/element-android/">Element Android</a>
+            </div>
+            <div class="github-table__row__right">
+              <div class="w-embed">
+                <a class="github-button" href="https://github.com/vector-im/element-android" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vector-im/element-android on GitHub">Star</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="border-1px-grey border-1px-grey--github"></div>
+        <h2 class="display__h--margin-8-0-24-0">Element’s revenue comes from two sources:</h2>
+        <h3 class="display__h--margin-8-0-24-0">Element Matrix Services</h3>
+        <p>a hosting platform for Element (and other Matrix-based) messaging and collaboration deployments.</p>
+        <h3 class="display__h--margin-8-0-24-0">Consulting and services</h3>
+        <p>For large organisations, as they often need specialist knowledge and support for such huge deployments.</p>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap hero__wrap--p0-0-60-0">
+      <div class="container__small--left">
+        <h2 class="display__h--margin-8-0-24-0">Why Element is committed to open source</h2>
+        <p>One of the reasons that the web has become so centralised - and therefore why it has eroded privacy - is that it is so much easier to develop a ‘full-stack’ product that the service provider wholly owns and controls. <br>‍<br>Under the pressure to make money, and driven by the network effect of first mover advantage, the philosophy has been to create the product as quickly as possible, win the space, and then monetise it (generally through an ad-model; aka datamining).<br>‍<br>An open source project is pretty much the only way a reliable decentralised, self-hosted, end-to-end encrypted messaging and collaboration app could have been developed. Because decentralised is super-difficult and incredibly time-consuming. It took Matrix five years to get out of beta. An already successful service provider won’t spend that long to develop a decentralised system (and possibly cannibalise its revenue), and VCs tend not to invest that far in advance (although some are now definitely well aware of the benefits - and different requirements - of a decentralised approach). <br></p>
+      </div>
+      <div class="container__small--left">
+        <h2 class="display__h--margin-8-0-24-0">Element even welcomes competitors</h2>
+        <p>Element’s success will see many more new companies using Matrix as the basis of their own communication apps. It’ll even see Element’s current competitors adopt Matrix. That will create an even wider range of universal secure collaboration products and services to create a healthy competitive ecosystem and - most important - to make people’s conversations private again.<br>‍<br>Matrix - an open source project - is perhaps the only genuine ‘email killer’ out there (although, as email can function over Matrix, it might actually be email’s saviour too).<br></p>
+      </div>
+      <div class="container__small--left">
+        <h2 class="display__h--margin-8-0-24-0">Enjoy and innovate</h2>
+      </div>
+    </div>
+  </div>
+
+
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

@@ -1,0 +1,93 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+
+  <div class="hero">
+    <div class="hero__wrap">
+      <h1 class="hero__wrap__h1">{% trans "Get {medica} messenger" %}</h1>
+      <a href="https://element.medica.im" class="cta__btn--primary cta__btn--primary--browser w-button">Open in your browser</a>
+      <p class="text__medium">{% trans "Or download on your devices of choice" %}</p>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap hero__wrap--get-started-download-options">
+      <div class="flex flex__stretch flex__get-ele__download-boxes">
+        <div id="w-node-dadc0f5a-b86b-e51f-ec81-fec786491980-a94b8b3e" class="flex__item--align-center flex__item--download-ele">
+          <div class="tile tile--center tile__download-ele">
+            <div>
+              <h3 class="tile__h3">Mobile</h3>
+              <div class="tile__cta title__cta--center">
+                <a href="https://apps.apple.com/app/vector/id1083446067" class="link__get-ele--app-store w-inline-block"><img src="{% static '/landing/images/App-store-US-alt.svg' %}" alt="" class="tile__cta__img get-ele__store-link-img"></a>
+                <a href="https://play.google.com/store/apps/details?id=im.vector.app" class="w-inline-block"><img src="{% static '/landing/images/Google-Play-US.svg' %}" alt="" class="tile__cta__img"></a>
+              </div>
+              <p class="text__regular text__regular--center text__modal--link">
+                <a href="https://f-droid.org/packages/im.vector.app/">{% trans "Also available on F-Droid" %}</a>
+              </p>
+            </div>
+            <div class="tile__img get-ele__mobile--img"><img src="{% static '/landing/images/for-personal.png' %}" width="447" sizes="(max-width: 479px) 30vw, 447px" srcset="{% static '/landing/images/for-personal-p-500.png' %} 500w, {% static '/landing/images/for-personal.png' %} 894w" alt="" class="img__download-ele-mobile"></div>
+          </div>
+        </div>
+        <div id="w-node-_8b620700-fc31-56ba-c820-aea6d6c35dfa-a94b8b3e" class="flex__item--align-center flex__item--download-ele">
+          <div class="tile tile--center tile__download-ele">
+            <div>
+              <h3 class="tile__h3">Desktop</h3>
+              <div class="btn__wrapper cta__btn-friends--desktop">
+                <a href="https://packages.riot.im/desktop/install/macos/Element.dmg" target="_blank" class="link__become-full-width cta__link-full-btn--desktop w-inline-block">
+                  <div class="cta__btn--primary cta__btn--macos"><img src="{% static '/landing/images/icon-apple.svg' %}" alt="" class="icon__apple--brand--download-ele">
+                    <div class="download-ele__mac-txt">Mac OS</div>
+                  </div>
+                </a>
+                <a href="https://packages.riot.im/desktop/install/win32/x64/Element%20Setup.exe" target="_blank" class="link__become-full-width cta__link-full-btn--desktop w-inline-block">
+                  <div class="cta__btn--primary cta__btn--hollow cta__btn--primary-windows"><img src="{% static '/landing/images/icon-windows.svg' %}" alt="" class="icon__apple--brand--download-ele icon__windows--brand--download-ele">
+                    <div class="download-ele__windows-txt">Windows (64 bit)</div>
+                  </div>
+                </a>
+              </div>
+              <a href="{% url 'landing:messenger-linux' %}">Also available on Linux</a>
+            </div>
+            <div class="tile__img get-ele__desktop-img"><img src="{% static '/landing/images/homepage-all-platforms-1.png' %}" height="" width="575.5" sizes="(max-width: 479px) 154.203125px, (max-width: 767px) 158.203125px, (max-width: 991px) 26vw, 39vw" srcset="{% static '/landing/images/homepage-all-platforms-1-p-500.png' %} 500w, {% static '/landing/images/homepage-all-platforms-1-p-800.png' %} 800w, {% static '/landing/images/homepage-all-platforms-1.png' %} 1151w" alt="" class="img__download-ele-desktop"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero__wrap hero__wrap--get-started-download-options">
+      <div class="flex flex__stretch flex__get-ele__download-boxes">
+        <div id="w-node-dadc0f5a-b86b-e51f-ec81-fec786491980-a94b8b3e" class="flex__item--align-center flex__item--download-ele">
+          <div class="tile tile--center tile__download-ele">
+            <div>
+              <h3 class="tile__h3">{% trans 'First sign in - Mobile' %}</h3>
+              <div class="btn__wrapper cta__btn-friends--desktop">
+                {% include "landing/messenger/app-login.html" %}"
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="w-node-_8b620700-fc31-56ba-c820-aea6d6c35dfa-a94b8b3e" class="flex__item--align-center flex__item--download-ele">
+          <div class="tile tile--center tile__download-ele">
+            <div>
+              <h3 class="tile__h3">{% trans 'First sign in - Web & Desktop' %}</h3>
+              <div class="btn__wrapper cta__btn-friends--desktop">
+                {% include "landing/messenger/web-login.html" %}"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

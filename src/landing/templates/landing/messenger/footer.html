@@ -1,0 +1,67 @@
+{% load static %}
+{% load i18n %}
+
+<div class="footer">
+    <div class="footer__wrap">
+      <div class="footer__row">
+        <div class="footer__col footer__col--logo"><img src="images/logo-mark-primary.svg" alt="" class="footer__col--logo__img"></div>
+      </div>
+      <div class="footer__row">
+        <div class="footer__col">
+          <h4 class="footer__h">Products</h4>
+          <a href="{% url 'landing:messenger-features' %}" class="footer_a footer__a--list-link">{medica}</a>
+          <a href="{% url 'landing:messenger-matrix-store' %}" aria-current="page" class="footer_a footer__a--list-link w--current">Element App Store</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__h">Why Element</h4>
+          <a href="{% url 'landing:messenger-personal' %}" class="footer_a footer__a--list-link">Personal</a>
+          <a href="{% url 'landing:messenger-communities' %}" class="footer_a footer__a--list-link">Communities</a>
+          <a href="{% url 'landing:messenger-pro' %}" class="footer_a footer__a--list-link">Business</a>
+          <a href="{% url 'landing:messenger-collaboration-federation' %}" class="footer_a footer__a--list-link">Public Sector</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__h">Plans &amp; Pricing</h4>
+          <a href="{% url 'landing:messenger-pricing' %}" class="footer_a footer__a--list-link">Pricing</a>
+          <a href="/contact" class="footer_a footer__a--list-link">Contact Sales</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__h">About</h4>
+          <a href="/about" class="footer_a footer__a--list-link">Company</a>
+          <a href="{% url 'landing:messenger-open-source' %}" class="footer_a footer__a--list-link">Open Source</a>
+          <a href="/contact" class="footer_a footer__a--list-link">Contact Us</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__h">Resources</h4>
+          <a href="{% url 'landing:messenger-help' %}" class="footer_a footer__a--list-link">Help</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__h">Get Started</h4>
+          <a href="{% url 'landing:messenger-get-started' %}" aria-current="page" class="footer_a footer__a--list-link w--current">Web</a>
+          <a href="{% url 'landing:messenger-get-started' %}" aria-current="page" class="footer_a footer__a--list-link w--current">iOS</a>
+          <a href="{% url 'landing:messenger-get-started' %}" aria-current="page" class="footer_a footer__a--list-link w--current">Android</a>
+        </div>
+      </div>
+      <div class="footer__row footer__row--mast">
+        <div class="footer__col footer__col--mast_left">
+          <h4 class="footer__h">Our mission is to preserve your right to privacy, in the face of an increasingly centralised internet, and routine surveillance.</h4>
+          <p class="footer__p">Privacy is protected by the UN Declaration of Human Rights</p>
+        </div>
+        <div class="footer__col footer__col--mast_right">
+          <div class="footer__col--mast_right__logos">
+            <a href="https://twitter.com/santetoctoc" class="footer__col__link w-inline-block"><img src="{% static '/landing/images/twitter.svg' %}" alt="" class="image-4 social-media-img"></a>
+            <a href="https://github.com/doctoctoc" class="footer__col__link w-inline-block"><img src="{% static '/landing/images/github.svg' %}" alt="" class="image-4 social-media-img"></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__row footer__row--heel">
+        <div class="footer__col footer__col--heel">
+          <p class="footer__p">{medica} is proud to be a part of <a href="https://matrix.org/" class="link">Matrix</a>.</p>
+        </div>
+        <div class="footer__col footer__col--heel footer__col-heel--right">
+          <p class="footer__p footer__p--heel_right">Copyright © 2021 {medica} messenger
+          </p>
+          <p class="footer__p footer__p--heel_right footer__x-small">All Rights Reserved. The {medica} messenger name, logo and device are registered trade marks of medica.im</p>
+        </div>
+      </div>
+    </div>
+  </div>

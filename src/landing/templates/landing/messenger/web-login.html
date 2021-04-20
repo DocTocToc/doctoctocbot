@@ -1,0 +1,60 @@
+{% load static %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-web_0_fr.png' %}">
+  <img id="imageresource" class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-web_0_fr.png' %}" alt="{% trans 'web login step 0' %}">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Sign in</mark> button' %}
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-web_1_fr.png' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-web_1_fr.png' %}" alt="{% trans 'web login step 1' %}">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in with single sign-on' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Sign in with single sign-on</mark> button' %}
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-web_2_fr.png' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-web_2_fr.png' %}" alt="{% trans 'web login step 2' %}">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in with Twitter' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Sign in with Twitter</mark> button' %}
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-web_3_fr.png' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-web_3_fr.png' %}" alt="{% trans 'web login step 3' %}">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Authorize DocTocTocBot to use your account' %}</h5>
+    <p class="card-text">
+      {% trans 'Authorize DocTocTocBot to use your account.' %}
+      <ul class="list-group list-group-flush">
+      <li class="list-group-item">{% trans 'Enter your Twitter <mark>username</mark>.' %}</li>
+      <li class="list-group-item">{% trans 'Enter your Twitter <mark>password</mark>.' %}</li>
+      <li class="list-group-item">{% trans 'Click on the <mark>Sign in</mark> button' %}</li>
+      </ul>
+      {% with LANGUAGE_CODE|truncatewords:2 as lang %}
+      <a href="{{ 'https://help.twitter.com/'|add:lang|add:'/managing-your-account/connect-or-revoke-access-to-third-party-apps' }}">
+      {% endwith %}
+      {% trans 'Twitter Help Center' %}
+      </a>:
+      <q>
+      {% trans 'OAuth is a secure connection method and doesn’t require you to give your Twitter username and password to the third party.' %} 
+      </q>
+    </p>
+  </div>
+</div>

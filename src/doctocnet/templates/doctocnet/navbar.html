@@ -102,7 +102,7 @@
         {% if user|is_allowed_discussion %}
         <li class="nav-item">
           <a href="https://discussion.doctoctoc.net" title="{% trans 'Discussion' %}" id="discussion" class="nav-link">
-         🙊Discussion
+         Forum
           </a>
         </li>
         {% endif %}
@@ -113,6 +113,11 @@
           </a>
         </li>
         {% endif %}
+        <li class="nav-item">
+          <a href="{% url 'landing:messenger-index' %}" title="Messenger" id="messenger" class="nav-link">
+         Messenger
+          </a>
+        </li>
       </ul>
         <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
         {% network_navbar %}

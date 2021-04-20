@@ -1,0 +1,109 @@
+{% load static %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_0_fr.jpg' %}">
+  <img id="imageresource" class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_0_fr.jpg' %}" alt="{% trans 'web login step' %} 0">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Start' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Start</mark> button' %}
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_1_fr.jpg' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_1_fr.jpg' %}" alt="{% trans 'web login step' %} 1">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Other' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Other Custom & advanced settings</mark> button' %}
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_3_fr.jpg' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_3_fr.jpg' %}" alt="{% trans 'web login step' %} 3">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Connect to a custom server' %}</h5>
+    <p class="card-text">
+    {% trans 'Fill in the address of our custom server:' %} matrix.medica.im
+    </p>
+      <ul class="list-group list-group-flush">
+      <li class="list-group-item">{% trans 'Click on the <mark>Address</mark> field' %}</li>
+      <li class="list-group-item">{% trans 'Enter <mark>matrix.medica.im</mark>' %}</li>
+      <li class="list-group-item">{% trans 'Click on the <mark>Continue</mark> button' %}</li>
+      </ul>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_4_fr.jpg' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_4_fr.jpg' %}" alt="{% trans 'web login step' %} 4">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Continue with single sing-on' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Continue with single sing-on</mark> button' %}
+    </p>
+    <p class="card-text">
+      {% trans 'Your default mobile browser should open and navigate to our Central Authentication Service:' %}
+      https://doctoctoc.net/cas/login/
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_5_fr.png' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_5_fr.png' %}" alt="{% trans 'web login step' %} 5">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in with Twitter' %}</h5>
+    <p class="card-text">
+      {% trans 'Click on <mark>Sign in with Twitter</mark> button' %}
+    </p>
+    <p class="card-text">
+      {% trans 'Your browser should be redirected to Twitter at' %}
+      https://api.twitter.com
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_6_fr.png' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_6_fr.png' %}" alt="{% trans 'web login step' %} 6">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Authorize DocTocTocBot to use your account' %}</h5>
+    <p class="card-text">
+      {% trans 'Authorize DocTocTocBot to use your account.' %}
+      <ul class="list-group list-group-flush">
+      <li class="list-group-item">{% trans 'Enter your Twitter <mark>username</mark>.' %}</li>
+      <li class="list-group-item">{% trans 'Enter your Twitter <mark>password</mark>.' %}</li>
+      <li class="list-group-item">{% trans 'Click on the <mark>Sign in</mark> button' %}</li>
+      </ul>
+      {% with LANGUAGE_CODE|truncatewords:2 as lang %}
+      <a href="{{ 'https://help.twitter.com/'|add:lang|add:'/managing-your-account/connect-or-revoke-access-to-third-party-apps' }}">
+      {% endwith %}
+      {% trans 'Twitter Help Center' %}
+      </a>:
+      <q>
+      {% trans 'OAuth is a secure connection method and doesn’t require you to give your Twitter username and password to the third party.' %} 
+      </q>
+    </p>
+  </div>
+</div>
+<div class="card" style="width: 24rem;">
+  <a href="{% static 'landing/images/messenger/login/fr/login-element-mobile_7_fr.jpg' %}">
+  <img class="card-img-top" src="{% static 'landing/images/messenger/login/fr/login-element-mobile_7_fr.jpg' %}" alt="{% trans 'web login step' %} 7">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Authorize this page to open Element' %}</h5>
+    <p class="card-text">
+      {% trans 'Authorize this page to open Element' %}?
+    </p>
+    <p class="card-text">
+      {% trans 'Click on <mark>OK</mark>' %}
+    </p>
+  </div>
+</div>

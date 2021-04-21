@@ -113,11 +113,20 @@
           </a>
         </li>
         {% endif %}
-        <li class="nav-item">
-          <a href="{% url 'landing:messenger-index' %}" title="Messenger" id="messenger" class="nav-link">
-         Messenger
+        {% if site.community.get.matrix.authorize %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMessenger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% trans "Messenger" %}
           </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuMessenger">
+            <a class="dropdown-item" href="{% url 'landing:messenger-get-started' %}">{% trans "Get" %} {medica}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-why-medica' %}">{% trans "Why" %} {medica}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-help' %}">{% trans "Help" %}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-pricing' %}">{% trans "Terms" %}</a>
+          </div>
         </li>
+        {% endif %}
+       
       </ul>
         <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
         {% network_navbar %}

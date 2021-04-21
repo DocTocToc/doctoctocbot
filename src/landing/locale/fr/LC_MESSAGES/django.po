@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 08:53+0200\n"
-"PO-Revision-Date: 2021-04-20 09:57+0300\n"
+"POT-Creation-Date: 2021-04-21 13:59+0200\n"
+"PO-Revision-Date: 2021-04-21 15:03+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -130,7 +130,7 @@ msgstr "Se connecter à un serveur personnalisé"
 
 #: landing/templates/landing/messenger/app-login.html:33
 msgid "Fill in the address of our custom server:"
-msgstr "Ajouter l'adresse de notre serveur personnalisé"
+msgstr "Ajouter l'adresse de notre serveur personnalisé:"
 
 #: landing/templates/landing/messenger/app-login.html:36
 msgid "Click on the <mark>Address</mark> field"
@@ -233,7 +233,7 @@ msgstr "Cliquer sur <mark>OK</mark>"
 #: landing/templates/landing/messenger/messenger-matrix-store.html:11
 #: landing/templates/landing/messenger/open-source.html:11
 #: landing/templates/landing/messenger/personal.html:11
-#: landing/templates/landing/messenger/pricing.html:11
+#: landing/templates/landing/messenger/pricing.html:12
 #: landing/templates/landing/messenger/pro.html:11
 #: landing/templates/landing/messenger/skeleton.html:11
 #: landing/templates/landing/messenger/why-medica.html:11
@@ -241,24 +241,29 @@ msgstr "Cliquer sur <mark>OK</mark>"
 msgid "{medica} messenger - Get Started"
 msgstr "{medica} messenger - Premiers pas"
 
-#: landing/templates/landing/messenger/get-started.html:19
+#: landing/templates/landing/messenger/get-started.html:18
 #, python-brace-format
 msgid "Get {medica} messenger"
 msgstr "Obtenir {medica} messenger"
 
-#: landing/templates/landing/messenger/get-started.html:21
+#: landing/templates/landing/messenger/get-started.html:19
+msgid "Open in your browser"
+msgstr "Ouvrir dans votre navigateur"
+
+#: landing/templates/landing/messenger/get-started.html:20
 msgid "Or download on your devices of choice"
 msgstr "Ou télécharger sur l'appareil de votre choix"
 
-#: landing/templates/landing/messenger/get-started.html:36
-msgid "Also available on F-Droid"
-msgstr "Également disponible sur F-Droid"
+#: landing/templates/landing/messenger/get-started.html:35
+#: landing/templates/landing/messenger/get-started.html:57
+msgid "Also available on"
+msgstr "Également disponible sur"
 
-#: landing/templates/landing/messenger/get-started.html:72
+#: landing/templates/landing/messenger/get-started.html:67
 msgid "First sign in - Mobile"
 msgstr "Première connexion - Mobile"
 
-#: landing/templates/landing/messenger/get-started.html:82
+#: landing/templates/landing/messenger/get-started.html:71
 msgid "First sign in - Web & Desktop"
 msgstr "Première connexion - Web & Desktop"
 
@@ -277,6 +282,88 @@ msgstr "{medica} messenger"
 msgid "{medica} messenger = element + medica.im + [matrix] = secure messaging"
 msgstr ""
 "{medica} messenger = element + medica.im + [matrix] = messagerie sécurisée"
+
+#: landing/templates/landing/messenger/nav.html:13
+msgid "Services"
+msgstr "Services"
+
+#: landing/templates/landing/messenger/nav.html:22
+msgid "Messaging apps for iOS, Android, web &amp; desktop."
+msgstr "Apps de messagerie pour  iOS, Android, web &amp; desktop."
+
+#: landing/templates/landing/messenger/nav.html:45
+msgid "Why"
+msgstr "Pourquoi"
+
+#: landing/templates/landing/messenger/nav.html:54
+#, python-brace-format
+msgid "What makes {medica} different?"
+msgstr "Qu'est-ce qui est différent avec {medica}?"
+
+#: landing/templates/landing/messenger/nav.html:60
+msgid "Personal"
+msgstr "Personnel"
+
+#: landing/templates/landing/messenger/nav.html:61
+msgid "for everyone"
+msgstr "pour tout le monde"
+
+#: landing/templates/landing/messenger/nav.html:67
+msgid "Communities"
+msgstr "Communautés"
+
+#: landing/templates/landing/messenger/nav.html:68
+msgid "By a community, for communities"
+msgstr "Par une communauté, pour des communautés"
+
+#: landing/templates/landing/messenger/nav.html:74
+msgid "Business"
+msgstr "Pro"
+
+#: landing/templates/landing/messenger/nav.html:75
+msgid "Universal secure collaboration"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:81
+msgid "Public sector"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:82
+msgid "Secure collaboration for public bodies"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:91
+msgid "Terms"
+msgstr "Conditions"
+
+#: landing/templates/landing/messenger/nav.html:103
+msgid "Free & Open source"
+msgstr "Libre & open source"
+
+#: landing/templates/landing/messenger/nav.html:104
+msgid "is committed to free & open source software"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:110
+msgid "Help"
+msgstr "Aide"
+
+#: landing/templates/landing/messenger/nav.html:111
+msgid "Find the answers"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:117
+msgid "About"
+msgstr "A propos"
+
+#: landing/templates/landing/messenger/nav.html:118
+#, python-brace-format
+msgid "More context about why {medica} came to be"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:125
+msgid "Get in touch"
+msgstr ""
 
 #: landing/templates/landing/messenger/web-login.html:6
 msgid "web login step 0"

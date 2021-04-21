@@ -7,11 +7,33 @@
 {% load landing_tags %}
 {% load community_text %}
 {% load opengraph_tags %}
+{% load matrix_tags %}
 
 {% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
 
 {% block content %}
-{% include "landing/messenger/nav.html" %}
+
+<div class="card">
+  <h5 class="card-header">Conditions d'utilisation</h5>
+  <div class="card-body">
+    <h5 class="card-title">Accès libre pour les membres de SantéTocToc!</h5>
+    <p class="card-text">
+    L'accès à la messagerie {medica} est et restera libre pour tous les
+    professionnels de santé et les étudiants en santé membres du réseau SantéTocToc.
+    <ul>
+      <li>Suivre un des bots SantéTocToc:</li>
+        <ul>
+          <li>@doctoctocbot</li>
+          <li>@pharmatoctocbot</li>
+          <li>@infirmierebot</li>
+          <li>@santetoctoc</li>
+        </ul>
+      <li>Appartenir à une de ces catégories:</li>
+        {% matrix_category_lst %}
+    </ul>
+    </p>
+  </div>
+</div>
 
 <div class="card">
   <h5 class="card-header">Prix libre</h5>
@@ -20,14 +42,12 @@
     <p class="card-text">
     Le prix libre est un mode de fixation du prix par l'acheteur d'un bien ou d'un service, qui peut être pour lui une manière de payer :
     <ul>
-    <li>le prix qu'il estime juste,</li>
-    <li>un prix de soutien par rapport à un coût de revient affiché, un prix suggéré ou plancher</li>
-    <li>un montant inférieur au coût de revient s'il ne peut ou ne souhaite pas payer cette somme.</li>   
+      <li>le prix qu'il estime juste,</li>
+      <li>un prix de soutien par rapport à un coût de revient affiché, un prix suggéré ou plancher</li>
+      <li>un montant inférieur au coût de revient s'il ne peut ou ne souhaite pas payer cette somme.</li>   
     </ul>
     </p>
     <a href="{% url "crowdfunding:start" %}" class="btn btn-primary">Je participe!</a>
   </div>
 </div>
-
-{% include "landing/messenger/footer.html" %}
 {% endblock content %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from matrix.models import CategoryAccessControl
+from matrix.models import CategoryAccessControl, CommunityAccessControl
 
 class CategoryAccessControlAdmin(admin.ModelAdmin):
     list_display = (
@@ -7,4 +7,12 @@ class CategoryAccessControlAdmin(admin.ModelAdmin):
         'authorize',
     )
 
+
+class CommunityAccessControlAdmin(admin.ModelAdmin):
+    list_display = (
+        'community',
+        'authorize',
+    )
+
 admin.site.register(CategoryAccessControl, CategoryAccessControlAdmin)
+admin.site.register(CommunityAccessControl, CommunityAccessControlAdmin)

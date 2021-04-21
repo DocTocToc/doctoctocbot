@@ -53,5 +53,4 @@ urlpatterns = [
     path('messenger/pro/', TemplateView.as_view(template_name='landing/messenger/pro.html'), name='messenger-pro'),
     path('messenger/pro/collaboration-federation/', TemplateView.as_view(template_name='landing/messenger/collaboration-federation.html'), name='messenger-collaboration-federation'),
     path('messenger/linux/', TemplateView.as_view(template_name='landing/messenger/linux.html'), name='messenger-linux'),
-
 ]

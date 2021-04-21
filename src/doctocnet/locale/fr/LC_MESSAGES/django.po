@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-21 13:59+0200\n"
-"PO-Revision-Date: 2021-04-13 06:20+0300\n"
+"PO-Revision-Date: 2021-04-21 21:09+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -137,23 +137,23 @@ msgstr "Discussion"
 
 #: doctocnet/templates/doctocnet/navbar.html:119
 msgid "Messenger"
-msgstr ""
+msgstr "Messenger"
 
 #: doctocnet/templates/doctocnet/navbar.html:122
 msgid "Get"
-msgstr ""
+msgstr "Obtenir"
 
 #: doctocnet/templates/doctocnet/navbar.html:123
 msgid "Why"
-msgstr ""
+msgstr "Pourquoi"
 
 #: doctocnet/templates/doctocnet/navbar.html:124
 msgid "Help"
-msgstr ""
+msgstr "Aide"
 
 #: doctocnet/templates/doctocnet/navbar.html:125
 msgid "Terms"
-msgstr ""
+msgstr "Conditions"
 
 #: doctocnet/views.py:40 doctocnet/views.py:53
 msgid "Not authorized to access this media."

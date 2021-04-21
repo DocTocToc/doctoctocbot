@@ -11,7 +11,7 @@
 
 {% block head_meta %}
 
-{% static "landing/images/antiracism.jpg" as og_image_static %}
+{% static "landing/images/medica_400x400.png" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
 {% trans "{medica} messenger" as og_title %}

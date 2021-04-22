@@ -96,7 +96,6 @@ class TweetdjAdmin(admin.ModelAdmin):
     list_display = (
         'statusid',
         'userid',
-        'socialuser',
         'screen_name',
         'status_text_tag',
         'status_link',
@@ -159,8 +158,8 @@ class TweetdjAdmin(admin.ModelAdmin):
 
     status_link.short_description = 'tweet'
 
-    def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related('tags')
+    #def get_queryset(self, request):
+    #    return super().get_queryset(request).prefetch_related('tags')
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())

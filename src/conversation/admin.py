@@ -106,7 +106,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'tag_list',
         'retweeted_by_screen_name',
     )
-    search_fields = ['statusid', 'userid', 'json__text',]
+    search_fields = ['json__text',]
     fields = (
         'statusid',
         'userid',

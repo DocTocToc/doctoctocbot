@@ -4,7 +4,7 @@ services:
           
   database:
     restart: always                                                                       
-    image: postgres:10.10
+    image: postgres:10.16
     command: >
       postgres
       -c config_file=/etc/postgresql.conf
@@ -14,7 +14,7 @@ services:
       - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"
       - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"
       - "${DATABASE_BACKUP_DIR}:/backup"
-      - "${DATABASE_LOG_DIR}:/var/log/postgresql/"
+      - "${DATABASE_LOG_DIR}:/var/log/postgresql"
   redis:
     restart: always
     image: redis:latest

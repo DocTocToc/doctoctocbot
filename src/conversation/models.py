@@ -82,6 +82,9 @@ class Tweetdj(models.Model):
     class Meta:
         get_latest_by = "statusid"
         ordering = ('-statusid',)
+        indexes = [
+            models.Index(fields=['userid'], name='userid_idx'),
+        ]
 
     def __str__(self):
         return str(self.statusid)

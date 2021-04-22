@@ -28,38 +28,23 @@ from .models import (
 
 
 def screen_name_link(self, obj):
-    if hasattr(obj, "json"):
-        status = obj.json
-        userid = obj.userid
-    else:
-        try:
-            tweetdj = Tweetdj.objects.get(statusid=obj.statusid)
-            status = tweetdj.json
-            userid = tweetdj.userid
-        except:
-            return
-
-    if not isinstance(status, dict):
+    try:
+        screen_name = obj.json["user"]["screen_name"]
+    except (KeyError, AttributeError) as _e:
         return
-
-    screen_name = ""
-    if "user" in status:  
-        if "screen_name" in status["user"]:
-            screen_name = status["user"]["screen_name"]
-
-    if screen_name:
-        try:
-            su = SocialUser.objects.get(user_id=userid)
-            return mark_safe(
-                '<a href="{link}">{name}</a>'
-                .format(
-                    link=reverse("admin:moderation_socialuser_change", args=(su.pk,)),
-                    name=screen_name
-                )
+    try:
+        return mark_safe(
+            '<a href="{link}">{name}</a>'
+            .format(
+                link=reverse(
+                    "admin:moderation_socialuser_change",
+                    args=(obj.socialuser.pk,)
+                ),
+                name=screen_name
             )
-        except:
-            return screen_name
-
+        )
+    except AttributeError:
+        return screen_name
 
 class CategoryListFilter(admin.SimpleListFilter):
 
@@ -122,7 +107,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'tag_list',
         'retweeted_by_screen_name',
     )
-    search_fields = ['statusid', 'userid', 'json',]
+    search_fields = ['statusid', 'userid', 'json__text',]
     fields = (
         'statusid',
         'userid',

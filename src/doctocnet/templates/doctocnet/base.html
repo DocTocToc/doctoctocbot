@@ -31,23 +31,14 @@
 
 {% block head_javascript %}
 {% endblock head_javascript %}
+{% block style %}
 
 <style>
-{% block style %}
 body {
-  padding-top: 4.5rem;
+  padding-top: 4rem;
 }
 {% endblock style %}
 </style>
-
-
-
-<!-- The following script is necessary for navbar dropdown toogle to work. -->
-<!--script>
-$(document).ready(function() {
-    $(".dropdown-toggle").dropdown();
-});
-</script-->
 
 <title>{{ site.name }} | {% block title %} Home {% endblock title %}</title>
 
@@ -56,7 +47,7 @@ $(document).ready(function() {
 {% endblock header_javascript %}
 </head>
 
-  <body data-spy="scroll" data-target="#navbar-main">
+<body data-spy="scroll" data-target="#navbar-main">
 
 <script>
 $(document).ready(function() {
@@ -73,8 +64,7 @@ $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
 });
 </script>
 
-
-  {% include "doctocnet/navbar.html" %}
+{% include "doctocnet/navbar.html" %}
   
   <main role="main" class="container">
     {% block content %}

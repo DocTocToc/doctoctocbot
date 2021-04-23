@@ -22,8 +22,8 @@
 {% endwith %}
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://doctoctoc.net/messenger/get-started">
-<meta content="Download {medica} messenger with secure end-to-end encryption messaging and video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux." name="description">
-<meta content="Download {medica} messenger with secure end-to-end encryption messaging and video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux." property="og:description">
+<meta content="{% trans 'Download {medica} messenger with secure end-to-end encryption messaging and video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux.' %}" name="description">
+<meta content="{% trans 'Download {medica} messenger with secure end-to-end encryption messaging and video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux.' %}" property="og:description">
 {% endblock head_meta %}
 
 {% block head_css %}
@@ -48,9 +48,7 @@
   
 {% block style %}
 {{ block.super }}
-#modal {
--webkit-overflow-scrolling: touch;
-}
+
 {% endblock style %}
 
 {% block footer_javascript %}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 13:59+0200\n"
-"PO-Revision-Date: 2021-04-21 15:03+0300\n"
+"POT-Creation-Date: 2021-04-23 17:16+0200\n"
+"PO-Revision-Date: 2021-04-23 18:25+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -227,7 +227,7 @@ msgstr "Cliquer sur <mark>OK</mark>"
 #: landing/templates/landing/messenger/collaboration-federation.html:11
 #: landing/templates/landing/messenger/communities.html:11
 #: landing/templates/landing/messenger/features.html:11
-#: landing/templates/landing/messenger/get-started.html:11
+#: landing/templates/landing/messenger/get-started.html:10
 #: landing/templates/landing/messenger/index.html:11
 #: landing/templates/landing/messenger/linux.html:11
 #: landing/templates/landing/messenger/messenger-matrix-store.html:11
@@ -241,29 +241,29 @@ msgstr "Cliquer sur <mark>OK</mark>"
 msgid "{medica} messenger - Get Started"
 msgstr "{medica} messenger - Premiers pas"
 
-#: landing/templates/landing/messenger/get-started.html:18
+#: landing/templates/landing/messenger/get-started.html:17
 #, python-brace-format
 msgid "Get {medica} messenger"
 msgstr "Obtenir {medica} messenger"
 
-#: landing/templates/landing/messenger/get-started.html:19
+#: landing/templates/landing/messenger/get-started.html:18
 msgid "Open in your browser"
 msgstr "Ouvrir dans votre navigateur"
 
-#: landing/templates/landing/messenger/get-started.html:20
+#: landing/templates/landing/messenger/get-started.html:19
 msgid "Or download on your devices of choice"
 msgstr "Ou télécharger sur l'appareil de votre choix"
 
-#: landing/templates/landing/messenger/get-started.html:35
-#: landing/templates/landing/messenger/get-started.html:57
+#: landing/templates/landing/messenger/get-started.html:34
+#: landing/templates/landing/messenger/get-started.html:56
 msgid "Also available on"
 msgstr "Également disponible sur"
 
-#: landing/templates/landing/messenger/get-started.html:67
+#: landing/templates/landing/messenger/get-started.html:66
 msgid "First sign in - Mobile"
 msgstr "Première connexion - Mobile"
 
-#: landing/templates/landing/messenger/get-started.html:71
+#: landing/templates/landing/messenger/get-started.html:70
 msgid "First sign in - Web & Desktop"
 msgstr "Première connexion - Web & Desktop"
 
@@ -282,6 +282,16 @@ msgstr "{medica} messenger"
 msgid "{medica} messenger = element + medica.im + [matrix] = secure messaging"
 msgstr ""
 "{medica} messenger = element + medica.im + [matrix] = messagerie sécurisée"
+
+#: landing/templates/landing/messenger/messenger.html:25
+#: landing/templates/landing/messenger/messenger.html:26
+#, python-brace-format
+msgid ""
+"Download {medica} messenger with secure end-to-end encryption messaging and "
+"video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux."
+msgstr ""
+"Télécharger {medica}: messagerie &amp; appel audio / vidéo chiffrés de bout "
+"à bout. Disponible sur le web, Android, iOS, macOS, Windows &amp; Linux."
 
 #: landing/templates/landing/messenger/nav.html:13
 msgid "Services"

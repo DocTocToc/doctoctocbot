@@ -11,6 +11,7 @@ from taggit.managers import TaggableManager
 from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
 from django.utils.translation import ugettext_lazy as _
 from versions.models import Versionable
+from fuzzycount import FuzzyCountManager
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +78,9 @@ class Tweetdj(models.Model):
         "moderation.SocialUser",
         blank=True,
     )
-    
-    
+
+    objects = FuzzyCountManager()
+
     class Meta:
         get_latest_by = "statusid"
         ordering = ('-statusid',)
@@ -158,6 +160,7 @@ class Tweetdj(models.Model):
             return status.get("text") or ""
         else:
             return ""
+
 
 class Treedj(MPTTModel):
     statusid = models.BigIntegerField(unique=True)

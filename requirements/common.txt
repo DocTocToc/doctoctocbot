@@ -59,3 +59,4 @@ git+https://github.com/DocTocToc/django-mama-cas.git@ac6623ac20b3a2655eae38161c8
 gevent # django-mama-cas optional
 defusedxml # django-mama-cas optional
 django-dumpdata-one
+django-postgres-fuzzycount

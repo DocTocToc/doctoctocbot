@@ -30,7 +30,8 @@ from .models import (
 def screen_name_link(self, obj):
     try:
         screen_name = obj.json["user"]["screen_name"]
-    except (KeyError, AttributeError) as _e:
+    except (AttributeError, KeyError, TypeError) as e:
+        logger.error(e)
         return
     try:
         return mark_safe(

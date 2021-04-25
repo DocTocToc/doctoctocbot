@@ -48,7 +48,7 @@ class Tweetdj(models.Model):
         related_name="tweets"
     )
     json = JSONField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(null=True)
     reply = models.PositiveIntegerField(null=True)
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)

@@ -219,6 +219,7 @@ INSTALLED_APPS = [
     'user_visit',
     'mama_cas',
     'matrix',
+    'django_dumpdata_one',
 ]
 
 if DEBUG:

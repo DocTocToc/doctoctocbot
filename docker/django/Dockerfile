@@ -26,7 +26,7 @@ ENV LANGUAGE fr_FR
 ENV LC_ALL fr_FR.UTF-8
 
 ADD ./requirements /code/requirements
-RUN pip install --upgrade pip
+RUN pip install pip==21.0.1
 RUN pip install --upgrade -r /code/requirements/common.txt
 
 RUN mkdir /var/log/celery && touch /var/log/celery/celery.log

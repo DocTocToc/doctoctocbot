@@ -69,7 +69,7 @@ class ModeratorPublicList(TemplateView):
                 yield l[i:i + n] 
         
         context = super(ModeratorPublicList, self).get_context_data(*args, **kwargs)
-        community = get_community(context)
+        community = get_community(context['request'])
         moderators_qs = (
             Moderator.objects
             .filter(

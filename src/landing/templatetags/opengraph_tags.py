@@ -34,7 +34,8 @@ register = template.Library()
 
 @register.inclusion_tag('landing/twitter_opengraph.html', takes_context=True)
 def opengraph(context):
-    community = get_community(context)
+    community = get_community(context['request'])
+
     activate_language(community)
     try:
         twitter_site = f"@{community.account.username}"

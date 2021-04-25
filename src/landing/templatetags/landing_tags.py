@@ -31,7 +31,7 @@ def community_name(context):
 
 @register.inclusion_tag('landing/hashtag_lst.html', takes_context=True)
 def hashtag_lst(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         hashtag_lst= list(
             Retweet.objects.filter(
@@ -53,7 +53,7 @@ def membership_category_or(context):
 
 
 def retweeted_category_values_list(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     activate_language(community)
     rt_qs = Retweet.objects.filter(
         community=community,
@@ -119,7 +119,7 @@ def membership_category_field_lst(context):
     This function will return None if Mesh model is empty.
     Please apply mesh app fixture mesh_fr_en.json first.
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         lang = context["LANGUAGE_CODE"][:2]
         logger.debug(f"lang: '{lang}'")
@@ -136,7 +136,7 @@ def follower_category_field_lst(context):
     This function will return None if Mesh model is empty.
     Please apply mesh app fixture mesh_fr_en.json first.
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         lang = context["LANGUAGE_CODE"][:2]
         logger.debug(f"lang: '{lang}'")
@@ -151,14 +151,14 @@ def membership_category_label_lst(context):
     """
     Return list of strings representing the different category of a community's members
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     return list(community.membership.values_list("label", flat=True))
 
 def follower_category_label_lst(context):
     """
     Return list of strings representing the different category of a community's allowed followers
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     return list(community.follower.values_list("label", flat=True))
 
     
@@ -166,7 +166,7 @@ def retweeted_category_field_lst(context):
     """
     TODO: return in the language adapted to context or community
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         lang = context["LANGUAGE_CODE"][:2]
         logger.debug(f"lang: '{lang}'")
@@ -182,7 +182,7 @@ def community_creation_date(context, format_string):
     """
     Return creation date of the community as an ISO date time string
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         logger.debug(f"{community} \n {community.created}")
         datetime = community.created
@@ -195,7 +195,7 @@ def bot_launch_date(context, format_string):
     """
     Return launch date of the bot
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     if not community:
         logger.warn("Create a community first.")
         return
@@ -211,7 +211,7 @@ def bot_launch_date(context, format_string):
 
 @register.inclusion_tag('landing/network_navbar.html', takes_context=True)    
 def network_navbar(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     if not community:
         logger.warn("Create a community first.")
         return

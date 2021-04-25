@@ -112,7 +112,7 @@ def userhashtagcount(userid: int, context) -> dict:
     if not userid or not context:
         return
     mi_lst = Tweetdj.objects.filter(userid=userid, quotedstatus=False, retweetedstatus=False)
-    community = get_community(context)
+    community = get_community(context['request'])
     hashtag_lst = []
     hashtag_lst.extend(list(community.hashtag.all()))
     trusted_community_lst = community.trust.all()

@@ -11,7 +11,7 @@ register = template.Library()
 
 @register.inclusion_tag('matrix/category_ul.html', takes_context=True)
 def matrix_category_lst(context):
-    community = get_community(context.request)
+    community = get_community(context['request'])
     activate_language(community)
     try:
         category_lst= list(

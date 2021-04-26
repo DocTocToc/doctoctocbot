@@ -231,6 +231,9 @@ def handle_update_request_queue():
     Detect queues that were accepted from Twitter web API but whose state is
     still 'PENDING' and change their state to 'ACCEPTED'.
     """
-    protected_community_qs = Community.objects.filter(account__protected=True)
+    protected_community_qs = Community.objects.filter(
+        active=True,
+        account__protected=True
+    )
     for community in protected_community_qs:
         update_request_queue(community)

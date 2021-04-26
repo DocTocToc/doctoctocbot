@@ -42,13 +42,13 @@ def update_request_queue(community: Community):
         )
     for q in Queue.objects.current.filter(state=Queue.PENDING):
         if q.uid in followers:
-            q.state = Queue.ACCEPT
-            q.save()
-            q.delete()
+            qc = q.clone()
+            qc.state = Queue.ACCEPT
+            qc.save()
         elif q.uid not in ifs:
-            q.state = Queue.CANCEL
-            q.save()
-            q.delete()
+            qc = q.clone()
+            qc.state = Queue.CANCEL
+            qc.save()
 
 def request_dm(queue):
     """Try to send a DM.

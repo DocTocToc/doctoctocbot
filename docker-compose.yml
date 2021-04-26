@@ -10,7 +10,8 @@ services:
       -c config_file=/etc/postgresql.conf
       -c logging_collector=on
       -c log_directory=/var/log/postgresql
-      -c log_min_duration_statement=${DATABASE_LOG_MIN_DURATION_STATEMENT}                                
+      -c log_min_duration_statement=${DATABASE_LOG_MIN_DURATION_STATEMENT}
+      -c shared_buffers=${DATABASE_SHARED_BUFFERS}
     volumes:                                                                    
       - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"
       - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"

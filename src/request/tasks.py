@@ -12,6 +12,7 @@ from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
 from moderation.social import update_social_ids
 from request.utils import update_request_queue
+from moderation.twitter.user import TwitterUser
 
 logger = logging.getLogger(__name__)
 
@@ -198,17 +199,8 @@ def handle_decline_follower_twitter(userid: int, community__id: int):
     except Community.DoesNotExist as e:
         logger.error(f"Community does not exist: {e}")
         return
-    try:
-        username = community.account.username
-    except AttributeError as e:
-        logger.error(f"Could not get username from community's account: {e}")
-        return
-    """
-    decline_follower(
-        userid,
-        username,
-    )
-    """
+    tu = TwitterUser(userid=userid)
+    tu.decline_follow_request(community=community)
     
 def get_latest(latest_start, latest_end):
     if not latest_start and not latest_end:

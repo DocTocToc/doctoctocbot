@@ -113,12 +113,10 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
         and is_twitter
         and current_version
     ):
-        return
-        """
+        logger.debug(f"declining follow request for user id={instance.uid}")
         handle_decline_follower_twitter.apply_async(
             args=[instance.uid, instance.community.id]
         )
-        """
 
 @receiver(post_save, sender=Queue)
 def request_dm(sender, instance, created, **kwargs):

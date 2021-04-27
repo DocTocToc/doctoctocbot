@@ -57,7 +57,11 @@ def get_community_twitter_tweepy_api(community, backend=False):
         return
     if not isinstance(community, Community):
         return
-    return get_api(community.account.username, backend)
+    try:
+        bot_screen_name = community.account.username
+    except AttributeError:
+        return
+    return get_api(bot_screen_name, backend)
     
 def get_community_bot_socialuser(community: Community) -> Optional[SocialUser]:
     if not community:

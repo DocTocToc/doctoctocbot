@@ -102,17 +102,21 @@ def allhashtag():
     for status_mi in Tweetdj.objects.all():
         hashtag_m2m(status_mi.statusid)
         
-def userhashtagcount(userid: int, context) -> dict:
+def userhashtagcount(userid: int, request) -> dict:
     """
     Return the count of status posted by the user with this userid for the following hashtags:
      - community hashtags
      - trusted communities hashtags
     that are neither retweets nor quotes.
     """
-    if not userid or not context:
+    if not userid or not request:
         return
-    mi_lst = Tweetdj.objects.filter(userid=userid, quotedstatus=False, retweetedstatus=False)
-    community = get_community(context['request'])
+    mi_lst = Tweetdj.objects.filter(
+        userid=userid,
+        quotedstatus=False,
+        retweetedstatus=False
+    )
+    community = get_community(request)
     hashtag_lst = []
     hashtag_lst.extend(list(community.hashtag.all()))
     trusted_community_lst = community.trust.all()

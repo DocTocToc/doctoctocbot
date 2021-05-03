@@ -10,9 +10,9 @@ from bot.models import Account
 from bot.tweepy_api import get_api
 from moderation.models import SocialUser
 from conversation.utils import update_trees
-from moderation.models import addsocialuser
+from moderation.models import addsocialuser, Category
 from community.models import Community
-from conversation.timeline import community_timeline
+from conversation.timeline import community_timeline, user_id_list_timeline
 
 logger = logging.getLogger(__name__)
 
@@ -120,3 +120,11 @@ def handle_community_members_timeline(community_name: str):
         logger.error(f"'{community_name}' does not exist.")
         return
     community_timeline(community)
+    
+@shared_task
+def handle_category_timeline(category_name: str):
+    try:
+        category = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        return
+    user_id_list_timeline(category.twitter_id_list())

@@ -36,7 +36,7 @@ class Command(BaseCommand):
                 su, created = create_twitter_social_user(userid)
             except TypeError:
                 continue
-            if created:
+            if su and created:
                 n+=1
                 self.stdout.write(
                     self.style.SUCCESS(

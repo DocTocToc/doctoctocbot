@@ -1,5 +1,7 @@
+from typing import List
 import tweepy
 import logging
+from bot.tweepy_api import get_api
 from datetime import datetime, timezone
 from bot.lib.statusdb import Addstatus
 from community.helpers import (
@@ -11,6 +13,16 @@ from conversation.models import TwitterUserTimeline
 from django.db.utils import DatabaseError
 
 logger = logging.getLogger(__name__)
+
+def user_id_list_timeline(user_id_list: List):
+    if not user_id_list:
+        return
+    api = get_api()
+    for userid in user_id_list:
+        try:
+            get_user_timeline(userid, api)
+        except tweepy.TweepError as e:
+            logger.error(f"Tweepy Error: {e}")
 
 def community_timeline(community):
     userids = get_community_member_id(community)
@@ -40,6 +52,7 @@ def get_user_timeline(userid, api):
                         trim_user=False,
                         exclude_replies=False,
                         include_rts=True,
+                        tweet_mode="extended"
                         ).items():
         api_call = True
         if first:

@@ -12,6 +12,7 @@ from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
+from django.db.models.aggregates import Sum, Count
 
 from versions.admin import VersionedAdmin
 from constance import config
@@ -30,8 +31,7 @@ from .models import (
 def screen_name_link(self, obj):
     try:
         screen_name = obj.json["user"]["screen_name"]
-    except (AttributeError, KeyError, TypeError) as e:
-        logger.error(e)
+    except (AttributeError, KeyError, TypeError) as _e:
         return
     try:
         return mark_safe(
@@ -106,6 +106,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'deleted',
         'tag_list',
         'retweeted_by_screen_name',
+        'rt_by_count',
+        'quoted_by_screen_name',
+        'qt_by_count',
     )
     search_fields = ['json__text',]
     fields = (
@@ -123,6 +126,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'parentid',
         'tags',
         'retweeted_by',
+        'rt_by_count',
+        'quoted_by',
+        'qt_by_count',
     )
     readonly_fields = (
         'statusid',
@@ -136,6 +142,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quotedstatus',
         'retweetedstatus',
         'parentid',
+        'rt_by_count',
+        'quoted_by',
+        'qt_by_count',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -148,6 +157,26 @@ class TweetdjAdmin(admin.ModelAdmin):
         RetweetedByListFilter,
     )
     filter_horizontal = ('retweeted_by',)
+
+    def get_queryset(self, request):
+        return Tweetdj.objects.annotate(
+            rt_by_cnt=Count('retweeted_by'),
+            qt_by_cnt=Count('quoted_by')
+        )
+
+    def rt_by_count(self, obj):
+        return obj.retweeted_by.all().count()
+    
+    rt_by_count.short_description = "RT by count"
+    
+    rt_by_count.admin_order_field = 'rt_by_cnt'
+    
+    def qt_by_count(self, obj):
+        return obj.quoted_by.all().count()
+    
+    qt_by_count.short_description = "QT by count"
+    
+    qt_by_count.admin_order_field = 'qt_by_cnt'
     
     def screen_name(self, obj):
         return screen_name_link(self,obj)
@@ -177,6 +206,17 @@ class TweetdjAdmin(admin.ModelAdmin):
             
 
     retweeted_by_screen_name.short_description = "RT by"
+
+    def quoted_by_screen_name(self, obj):
+        qtby_lst = []
+        for qtby in obj.quoted_by.all():
+            snt = qtby.screen_name_tag()
+            if snt:
+                qtby_lst.append(snt)
+        return "\n".join(qtby_lst)
+            
+
+    quoted_by_screen_name.short_description = "QT by"
 
 admin.site.register(Tweetdj, TweetdjAdmin)
 

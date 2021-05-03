@@ -27,9 +27,7 @@ __status__ = "Production"
 
 logger = logging.getLogger(__name__)
 
-def isrt(status):
-    "is this status a RT?"
-    return "retweeted_status" in status.keys()
+
 
 class Addstatus:
     def __init__(self, json):
@@ -57,8 +55,8 @@ class Addstatus:
                         like = self.like(),
                         retweet = self.retweet(),
                         parentid = self.parentid(),
-                        quotedstatus = self.json['is_quote_status'],
-                        retweetedstatus = isrt(self.json),
+                        quotedstatus = self.has_quoted_status(),
+                        retweetedstatus = self.has_retweeted_status(),
                         deleted = None
                     )
                 logger.debug(f"function addtweetdj added status {status}")
@@ -122,3 +120,13 @@ class Addstatus:
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]
+
+    def has_retweeted_status(self):
+        """is this status a RT?
+        """
+        return "retweeted_status" in self.json.keys()
+
+    def has_quoted_status(self):
+        """is this status a Quote?
+        """
+        return "quoted_status" in self.json.keys()

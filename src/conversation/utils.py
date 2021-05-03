@@ -366,3 +366,38 @@ def created_at(statusid):
         logger.debug(created_at)
         return created_at
     
+def retweeted_by(rt_statusid: int, rt_userid: int, by_socialuserid: int):
+    """
+    Get or create the quoted status, then add the given socialuser
+    to retweeted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=rt_statusid,
+        userid=rt_userid
+    )
+    status.retweeted_by.add(by_socialuserid)
+    count_threshold = 2
+    count = status.retweeted_by.count()
+    if count > count_threshold:
+        logger.debug(
+            f"Hmmm interesting tweet id: {rt_statusid} "
+            f"was retweeted {count} times."
+        )
+        
+def quoted_by(quoted_statusid: int, quoted_userid: int, by_socialuserid: int):
+    """
+    Get or create the quoted status, then add the given socialuser
+    to quoted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=quoted_statusid,
+        userid=quoted_userid
+    )
+    status.quoted_by.add(by_socialuserid)
+    count_threshold = 2
+    count = status.quoted_by.count()
+    if count > count_threshold:
+        logger.debug(
+            f"Hmmm interesting tweet id: {quoted_statusid} "
+            f"was quoted {count} times."
+        )

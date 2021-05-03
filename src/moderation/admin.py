@@ -201,6 +201,7 @@ class BotFriend(admin.SimpleListFilter):
 class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
+        'id',
         'mini_image_tag',
         'screen_name_tag',
         'category_tag',
@@ -435,6 +436,7 @@ class QueueAdmin(VersionedAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'mini_image_tag',
         'screen_name_tag',
         'name_tag',
@@ -442,8 +444,8 @@ class ProfileAdmin(admin.ModelAdmin):
         'created',
         'updated',
     )
-    fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
-    readonly_fields = ('mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
+    fields = ('id', 'mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
+    readonly_fields = ('id', 'mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
     search_fields = ('json',)
     
     def socialuser_link(self, obj):

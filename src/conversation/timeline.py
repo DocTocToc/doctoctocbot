@@ -40,6 +40,7 @@ def get_user_timeline(userid, api):
                         trim_user=False,
                         exclude_replies=False,
                         include_rts=True,
+                        tweet_mode="extended"
                         ).items():
         api_call = True
         if first:

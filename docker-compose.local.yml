@@ -82,23 +82,6 @@ services:
       - database
       - redis
     working_dir: /code/src
-#  nginx:
-#    restart: on-failure
-#    env_file:
-#      - .env
-#    image: nginx:latest
-#    volumes:
-#      - ./src:/code/src
-#      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
-#      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
-#      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
-#      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
-#      - ${NGINX_LOG_DIR}:/var/log/nginx
-#    ports:
-#      - "8080:80"
-#    depends_on:
-#      - django_1
-#      - django_2
   celery_retweet_worker:
     image: dtn_dev
   celery_tree_worker:

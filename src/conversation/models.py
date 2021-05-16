@@ -48,21 +48,23 @@ class Tweetdj(models.Model):
         on_delete=models.SET_NULL,
         related_name="tweets"
     )
-    json = JSONField()
+    json = JSONField(
+        null=True
+    )
     created_at = models.DateTimeField(null=True)
     reply = models.PositiveIntegerField(null=True)
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    quotedstatus = models.NullBooleanField(
-        default=None,
-        help_text="Is quoted_status",
-        verbose_name="Quote",
-    )
     retweetedstatus = models.NullBooleanField(
         default=None,
         help_text="Has retweeted_status",
         verbose_name="RT",
+    )
+    quotedstatus = models.NullBooleanField(
+        default=None,
+        help_text="Has quoted_status",
+        verbose_name="QT",
     )
     deleted = models.NullBooleanField(
         default=None,
@@ -76,6 +78,12 @@ class Tweetdj(models.Model):
     tags = TaggableManager(through=GenericBigIntTaggedItem)
     retweeted_by = models.ManyToManyField(
         "moderation.SocialUser",
+        related_name = "retweets",
+        blank=True,
+    )
+    quoted_by = models.ManyToManyField(
+        "moderation.SocialUser",
+        related_name = "quotes",
         blank=True,
     )
 
@@ -251,3 +259,19 @@ class TwitterUserTimeline(models.Model):
         blank=True,
         help_text = "Status id of the most recent status retrieved"
     )
+
+class TwitterLanguageIdentifier(models.Model):
+    tag = models.CharField(
+        max_length=35,
+        unique=True
+    )
+    language = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    class MPTTMeta:
+        unique_together = [['tag', 'language']]
+
+    def __str__(self):
+        return '%s %s' % (self.language, self.tag)

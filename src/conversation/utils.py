@@ -365,4 +365,3 @@ def created_at(statusid):
         created_at= row[0]
         logger.debug(created_at)
         return created_at
-    

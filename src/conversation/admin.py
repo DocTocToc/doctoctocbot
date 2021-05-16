@@ -12,8 +12,10 @@ from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
+from django.db.models.aggregates import Sum, Count
 
 from versions.admin import VersionedAdmin
+
 from constance import config
 
 logger = logging.getLogger(__name__)
@@ -24,14 +26,14 @@ from .models import (
     Hashtag,
     Retweeted,
     TwitterUserTimeline,
+    TwitterLanguageIdentifier,
 )
 
 
 def screen_name_link(self, obj):
     try:
         screen_name = obj.json["user"]["screen_name"]
-    except (AttributeError, KeyError, TypeError) as e:
-        logger.error(e)
+    except (AttributeError, KeyError, TypeError) as _e:
         return
     try:
         return mark_safe(
@@ -72,6 +74,26 @@ class CategoryListFilter(admin.SimpleListFilter):
         else:
             return queryset
 
+class LanguageListFilter(admin.SimpleListFilter):
+
+    title = _('Language')
+
+    parameter_name = 'language'
+
+    def lookups(self, request, model_admin):
+        lst = list(TwitterLanguageIdentifier.objects.all().values_list('tag', 'language'))
+        if hasattr(settings, "SORTING_LOCALE"):
+            pool = Pool()
+            return pool.apply(localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE])
+        else:
+            return localized_tuple_list_sort(lst, 1)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(json__lang=self.value())
+        else:
+            return queryset
+
 
 class RetweetedByListFilter(admin.SimpleListFilter):
     title = _('retweeted by')
@@ -106,6 +128,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'deleted',
         'tag_list',
         'retweeted_by_screen_name',
+        'rt_by_count',
+        'quoted_by_screen_name',
+        'qt_by_count',
     )
     search_fields = ['json__text',]
     fields = (
@@ -123,6 +148,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'parentid',
         'tags',
         'retweeted_by',
+        'rt_by_count',
+        'quoted_by',
+        'qt_by_count',
     )
     readonly_fields = (
         'statusid',
@@ -136,6 +164,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quotedstatus',
         'retweetedstatus',
         'parentid',
+        'rt_by_count',
+        'quoted_by',
+        'qt_by_count',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -146,8 +177,29 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'tags',
         RetweetedByListFilter,
+        LanguageListFilter,
     )
     filter_horizontal = ('retweeted_by',)
+
+    def get_queryset(self, request):
+        return Tweetdj.objects.annotate(
+            rt_by_cnt=Count('retweeted_by'),
+            qt_by_cnt=Count('quoted_by')
+        )
+
+    def rt_by_count(self, obj):
+        return obj.retweeted_by.all().count()
+    
+    rt_by_count.short_description = "RT by count"
+    
+    rt_by_count.admin_order_field = 'rt_by_cnt'
+    
+    def qt_by_count(self, obj):
+        return obj.quoted_by.all().count()
+    
+    qt_by_count.short_description = "QT by count"
+    
+    qt_by_count.admin_order_field = 'qt_by_cnt'
     
     def screen_name(self, obj):
         return screen_name_link(self,obj)
@@ -177,6 +229,17 @@ class TweetdjAdmin(admin.ModelAdmin):
             
 
     retweeted_by_screen_name.short_description = "RT by"
+
+    def quoted_by_screen_name(self, obj):
+        qtby_lst = []
+        for qtby in obj.quoted_by.all():
+            snt = qtby.screen_name_tag()
+            if snt:
+                qtby_lst.append(snt)
+        return "\n".join(qtby_lst)
+            
+
+    quoted_by_screen_name.short_description = "QT by"
 
 admin.site.register(Tweetdj, TweetdjAdmin)
 
@@ -257,7 +320,25 @@ class TwitterUserTimelineAdmin(admin.ModelAdmin):
 
     screen_name_tag.short_description = 'Screen name'
 
+class TwitterLanguageIdentifierAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'language',
+        'tag',    
+    )
+    readonly_fields = (
+        'id',
+        'tag',
+        'language',
+    )
+    search_fields = [
+        'language',
+        'tag',    
+    ]
+
+
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)
 admin.site.register(Retweeted, RetweetedAdmin)
 admin.site.register(TwitterUserTimeline, TwitterUserTimelineAdmin)
+admin.site.register(TwitterLanguageIdentifier, TwitterLanguageIdentifierAdmin)

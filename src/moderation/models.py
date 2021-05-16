@@ -315,8 +315,15 @@ class Category(CategoryBase):
         if not communities:
             return
         return communities[0].account.username
-
     
+    def twitter_id_list(self):
+        """ Return list of Twitter user ids for this category
+        """
+        return list(
+            self.relationships.values_list("social_user__user_id", flat=True)
+        )
+
+
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "categories"

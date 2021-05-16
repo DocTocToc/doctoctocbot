@@ -89,11 +89,18 @@ def handle_create_all_profiles():
     for su in su_qs_lst:
         if not su["profile"]:
             try:
-                tweetdj_mi = Tweetdj.objects.filter(userid = su["user_id"]).latest()
+                tweetdj_mi = Tweetdj.objects.filter(
+                    userid = su["user_id"],
+                    json__isnull=False,
+                ).latest()
             except Tweetdj.DoesNotExist:
                 user_id_request_lst.append(su["user_id"])
                 continue
-            userjson = tweetdj_mi.json.get("user")
+            logger.debug(f"type: {type(tweetdj_mi.json)} \n value:{tweetdj_mi.json}")
+            try:
+                userjson = tweetdj_mi.json.get("user")
+            except AttributeError:
+                continue
             twitterprofile(userjson)
     
     if user_id_request_lst:

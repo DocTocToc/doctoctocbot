@@ -1,5 +1,6 @@
 import logging
 import tweepy
+from random import shuffle
 from datetime import timedelta
 from django.utils import timezone
 from celery import shared_task
@@ -10,9 +11,9 @@ from bot.models import Account
 from bot.tweepy_api import get_api
 from moderation.models import SocialUser
 from conversation.utils import update_trees
-from moderation.models import addsocialuser
+from moderation.models import addsocialuser, Category
 from community.models import Community
-from conversation.timeline import community_timeline
+from conversation.timeline import community_timeline, user_id_list_timeline
 
 logger = logging.getLogger(__name__)
 
@@ -120,3 +121,38 @@ def handle_community_members_timeline(community_name: str):
         logger.error(f"'{community_name}' does not exist.")
         return
     community_timeline(community)
+    
+@shared_task
+def handle_category_timeline(category_name: str):
+    try:
+        category = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        return
+    user_id_list = category.twitter_id_list()
+    shuffle(user_id_list)
+    user_id_list_timeline(user_id_list)
+
+@shared_task
+def handle_retweeted_by(rt_statusid: int, rt_userid: int, by_socialuserid: int):
+    """
+    Get or create the quoted status, then add the given socialuser
+    to retweeted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=rt_statusid,
+        userid=rt_userid
+    )
+    status.save()
+    status.retweeted_by.add(by_socialuserid)
+
+@shared_task
+def handle_quoted_by(quoted_statusid: int, quoted_userid: int, by_socialuserid: int):
+    """
+    Get or create the quoted status, then add the given socialuser
+    to quoted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=quoted_statusid,
+        userid=quoted_userid
+    )
+    status.quoted_by.add(by_socialuserid)

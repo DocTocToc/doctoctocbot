@@ -10,6 +10,7 @@
 
 import time
 import calendar
+import datetime
 
 def str2utc(s):
     # parse twitter time string into UTC seconds, unix-style
@@ -34,4 +35,9 @@ def snowflake2utcms(sf):
 # really is the best way to get utc timestamp?
 #   (minus changing your box to be UTC)
 def utcnow():
-    calendar.timegm(datetime.datetime.utcnow().timetuple())
+    return calendar.timegm(datetime.datetime.utcnow().timetuple())
+
+def status_age(statusid: int) -> int:
+    """Return age of a status in seconds
+    """
+    return int(utcnow() - snowflake2utc(statusid))

@@ -39,7 +39,14 @@ def create_twitter_social_user(userid):
     except SocialMedia.DoesNotExist:
         logger.error('Twitter SocialMedia object does not exist.')
         return
-    su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
+    try:
+        su, created = SocialUser.objects.get_or_create(
+            user_id=userid,
+            social_media=twitter
+        )
+    except IntegrityError as e:
+        logger.error(e)
+        return None, None
     return su, created
 
 def create_twitter_social_user_and_profile(userid):
@@ -47,11 +54,12 @@ def create_twitter_social_user_and_profile(userid):
         su, created = create_twitter_social_user(userid)
     except TypeError:
         return
-    bot_screen_names = Account.objects \
-        .filter(active=True) \
-        .values_list("username", flat=True)
-    bot_screen_name = random.choice(bot_screen_names)
-    create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
+    if su:
+        bot_screen_names = Account.objects \
+            .filter(active=True) \
+            .values_list("username", flat=True)
+        bot_screen_name = random.choice(bot_screen_names)
+        create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
     return su, created
     
 def user(backend, user, response, *args, **kwargs):
@@ -216,7 +224,10 @@ def create_update_profile_twitter(
     ):
     userid = su.user_id
     try:
-        tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
+        tweetdj_mi = Tweetdj.objects.filter(
+            userid = userid,
+            json__isnull=False
+        ).latest()
     except Tweetdj.DoesNotExist:
         tweetdj_mi = None
     if not tweetdj_mi or not tweetdj_mi.json.get("user") or not cache:

@@ -259,3 +259,19 @@ class TwitterUserTimeline(models.Model):
         blank=True,
         help_text = "Status id of the most recent status retrieved"
     )
+
+class TwitterLanguageIdentifier(models.Model):
+    tag = models.CharField(
+        max_length=35,
+        unique=True
+    )
+    language = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    class MPTTMeta:
+        unique_together = [['tag', 'language']]
+
+    def __str__(self):
+        return '%s %s' % (self.language, self.tag)

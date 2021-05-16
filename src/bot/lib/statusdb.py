@@ -34,56 +34,65 @@ class Addstatus:
         self.json = json
         self.statusid = json["id"]
 
-    def addtweetdj(self):
+    def addtweetdj(self, update=False):
         """
         Add status to Django database (table tweetdj).
         MPTT tree node is added to treedj inside the overridden save method of
         Tweetdj class, in the Django model.
         """
-        try:
-            status = Tweetdj.objects.get(pk=self.statusid)
-        except Tweetdj.DoesNotExist:
-            try:
-                with transaction.atomic():
-                    status = Tweetdj.objects.create(
-                        statusid = self.statusid,
-                        userid = self.userid(),
-                        socialuser = addsocialuser_from_userid(self.userid()),
-                        json = self.json,
-                        created_at = get_datetime_tz(self.json),
-                        #reply = self.reply(),
-                        like = self.like(),
-                        retweet = self.retweet(),
-                        parentid = self.parentid(),
-                        quotedstatus = self.has_quoted_status(),
-                        retweetedstatus = self.has_retweeted_status(),
-                        deleted = None
-                    )
-                logger.debug(f"function addtweetdj added status {status}")
-            except IntegrityError:
-                logger.warn(
-                    f"Status {self.statusid} already exists in database."
-                )
-                return False
-            try:
-                hashtag_m2m_tweetdj(status)
-            except DatabaseError as e:
-                logger.error("database error %s", e)
-                return False
-            logger.debug("added m2m hashtag relationship to %s", status)
-            return True
+        if Tweetdj.objects.filter(statusid=self.statusid).exists() and update:
+            self.update()
+        else:
+            self.create()
 
-    def updatetweetdj(self):
+    def create(self):
+        try:
+            with transaction.atomic():
+                status = Tweetdj.objects.create(
+                    statusid = self.statusid,
+                    userid = self.userid(),
+                    socialuser = addsocialuser_from_userid(self.userid()),
+                    json = self.json,
+                    created_at = get_datetime_tz(self.json),
+                    #reply = self.reply(),
+                    like = self.like(),
+                    retweet = self.retweet(),
+                    parentid = self.parentid(),
+                    quotedstatus = self.has_quoted_status(),
+                    retweetedstatus = self.has_retweeted_status(),
+                    deleted = None
+                )
+            logger.debug(f"function addtweetdj added status {status}")
+        except IntegrityError:
+            logger.warn(
+                f"Status {self.statusid} already exists in database."
+            )
+            return False
+        try:
+            hashtag_m2m_tweetdj(status)
+        except DatabaseError as e:
+            logger.error("database error %s", e)
+            return False
+        logger.debug("added m2m hashtag relationship to %s", status)
+        return True
+
+    def update(self):
         """
         Update some fields of an existing Tweetdj object.
         """
-        try:
-            status = Tweetdj.objects.get(pk=self.statusid)
-        except Tweetdj.DoesNotExist:
-            return
         with transaction.atomic():
-            status.like = self.like(),
-            status.retweet = self.retweet(),
+            try:
+                status = Tweetdj.objects.get(pk=self.statusid)
+            except Tweetdj.DoesNotExist:
+                return
+            status.json = self.json
+            status.socialuser = addsocialuser_from_userid(self.userid())
+            status.created_at = get_datetime_tz(self.json)
+            status.like = self.like()
+            status.retweet = self.retweet()
+            status.parentid = self.parentid()
+            status.quotedstatus = self.has_quoted_status()
+            status.retweetedstatus = self.has_retweeted_status()
             status.save()
         logger.debug(f"updated tweetdj {status}")
 

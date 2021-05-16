@@ -1,0 +1,350 @@
+- model: conversation.twitterlanguageidentifier
+  pk: 1
+  fields:
+    tag: am
+    language: Amharic
+- model: conversation.twitterlanguageidentifier
+  pk: 2
+  fields:
+    tag: ar
+    language: Arabic
+- model: conversation.twitterlanguageidentifier
+  pk: 3
+  fields:
+    tag: hy
+    language: Armenian
+- model: conversation.twitterlanguageidentifier
+  pk: 4
+  fields:
+    tag: eu
+    language: Basque
+- model: conversation.twitterlanguageidentifier
+  pk: 5
+  fields:
+    tag: bn
+    language: Bengali
+- model: conversation.twitterlanguageidentifier
+  pk: 6
+  fields:
+    tag: bs
+    language: Bosnian
+- model: conversation.twitterlanguageidentifier
+  pk: 7
+  fields:
+    tag: bg
+    language: Bulgarian
+- model: conversation.twitterlanguageidentifier
+  pk: 8
+  fields:
+    tag: my
+    language: Burmese
+- model: conversation.twitterlanguageidentifier
+  pk: 9
+  fields:
+    tag: hr 
+    language: Croatian
+- model: conversation.twitterlanguageidentifier
+  pk: 10
+  fields:
+    tag: ca
+    language: Catalan
+- model: conversation.twitterlanguageidentifier
+  pk: 11
+  fields:
+    tag: cs
+    language: Czech
+- model: conversation.twitterlanguageidentifier
+  pk: 12
+  fields:
+    tag: da
+    language: Danish
+- model: conversation.twitterlanguageidentifier
+  pk: 13
+  fields:
+    tag: nl
+    language: Dutch
+- model: conversation.twitterlanguageidentifier
+  pk: 14
+  fields:
+    tag: en 
+    language: English
+- model: conversation.twitterlanguageidentifier
+  pk: 15
+  fields:
+    tag: et 
+    language: Estonian
+- model: conversation.twitterlanguageidentifier
+  pk: 16
+  fields:
+    tag: fi 
+    language: Finnish
+- model: conversation.twitterlanguageidentifier
+  pk: 17
+  fields:
+    tag: fr 
+    language: French
+- model: conversation.twitterlanguageidentifier
+  pk: 18
+  fields:
+    tag: ka
+    language: Georgian
+- model: conversation.twitterlanguageidentifier
+  pk: 19
+  fields:
+    tag: de
+    language: German
+- model: conversation.twitterlanguageidentifier
+  pk: 20
+  fields:
+    tag: el
+    language: Greek
+- model: conversation.twitterlanguageidentifier
+  pk: 21
+  fields:
+    tag: gu
+    language: Gujarati
+- model: conversation.twitterlanguageidentifier
+  pk: 22
+  fields:
+    tag: ht
+    language: Haitian Creole
+- model: conversation.twitterlanguageidentifier
+  pk: 23
+  fields:
+    tag: iw
+    language: Hebrew
+- model: conversation.twitterlanguageidentifier
+  pk: 24
+  fields:
+    tag: hi
+    language: Hindi
+- model: conversation.twitterlanguageidentifier
+  pk: 25
+  fields:
+    tag: hi-Latn
+    language: Latinized Hindi
+- model: conversation.twitterlanguageidentifier
+  pk: 26
+  fields:
+    tag: hu
+    language: Hungarian
+- model: conversation.twitterlanguageidentifier
+  pk: 27
+  fields:
+    tag: is
+    language: Icelandic
+- model: conversation.twitterlanguageidentifier
+  pk: 28
+  fields:
+    tag: it
+    language: Italian
+- model: conversation.twitterlanguageidentifier
+  pk: 29
+  fields:
+    tag: in
+    language: Indonesian
+- model: conversation.twitterlanguageidentifier
+  pk: 30
+  fields:
+    tag: ja
+    language: Japanese
+- model: conversation.twitterlanguageidentifier
+  pk: 31
+  fields:
+    tag: kn
+    language: Kannada
+- model: conversation.twitterlanguageidentifier
+  pk: 32
+  fields:
+    tag: km
+    language: Khmer
+- model: conversation.twitterlanguageidentifier
+  pk: 33
+  fields:
+    tag: ko
+    language: Korean
+- model: conversation.twitterlanguageidentifier
+  pk: 34
+  fields:
+    tag: lo
+    language: Lao
+- model: conversation.twitterlanguageidentifier
+  pk: 35
+  fields:
+    tag: lv
+    language: Latvian
+- model: conversation.twitterlanguageidentifier
+  pk: 36
+  fields:
+    tag: lt
+    language: Lithuanian
+- model: conversation.twitterlanguageidentifier
+  pk: 37
+  fields:
+    tag: ml
+    language: Malayalam
+- model: conversation.twitterlanguageidentifier
+  pk: 38
+  fields:
+    tag: dv
+    language: Maldivian
+- model: conversation.twitterlanguageidentifier
+  pk: 39
+  fields:
+    tag: mr
+    language: Marathi
+- model: conversation.twitterlanguageidentifier
+  pk: 40
+  fields:
+    tag: ne
+    language: Nepali
+- model: conversation.twitterlanguageidentifier
+  pk: 41
+  fields:
+    tag: no
+    language: Norwegian
+- model: conversation.twitterlanguageidentifier
+  pk: 42
+  fields:
+    tag: or
+    language: Oriya
+- model: conversation.twitterlanguageidentifier
+  pk: 43
+  fields:
+    tag: pa
+    language: Panjabi
+- model: conversation.twitterlanguageidentifier
+  pk: 44
+  fields:
+    tag: ps
+    language: Pashto
+- model: conversation.twitterlanguageidentifier
+  pk: 45
+  fields:
+    tag: fa
+    language: Persian
+- model: conversation.twitterlanguageidentifier
+  pk: 46
+  fields:
+    tag: pl
+    language: Polish
+- model: conversation.twitterlanguageidentifier
+  pk: 47
+  fields:
+    tag: pt
+    language: Portuguese
+- model: conversation.twitterlanguageidentifier
+  pk: 48
+  fields:
+    tag: ro
+    language: Romanian
+- model: conversation.twitterlanguageidentifier
+  pk: 49
+  fields:
+    tag: ru
+    language: Russian
+- model: conversation.twitterlanguageidentifier
+  pk: 50
+  fields:
+    tag: sr
+    language: Serbian
+- model: conversation.twitterlanguageidentifier
+  pk: 51
+  fields:
+    tag: zh-CN
+    language: Simplified Chinese
+- model: conversation.twitterlanguageidentifier
+  pk: 52
+  fields:
+    tag: sd
+    language: Sindhi
+- model: conversation.twitterlanguageidentifier
+  pk: 53
+  fields:
+    tag: si
+    language: Sinhala
+- model: conversation.twitterlanguageidentifier
+  pk: 54
+  fields:
+    tag: sk
+    language: Slovak
+- model: conversation.twitterlanguageidentifier
+  pk: 55
+  fields:
+    tag: sl
+    language: Slovenian
+- model: conversation.twitterlanguageidentifier
+  pk: 56
+  fields:
+    tag: ckb
+    language: Sorani Kurdish
+- model: conversation.twitterlanguageidentifier
+  pk: 57
+  fields:
+    tag: es 
+    language: Spanish
+- model: conversation.twitterlanguageidentifier
+  pk: 58
+  fields:
+    tag: sv
+    language: Swedish
+- model: conversation.twitterlanguageidentifier
+  pk: 59
+  fields:
+    tag: tl
+    language: Tagalog
+- model: conversation.twitterlanguageidentifier
+  pk: 60
+  fields:
+    tag: ta
+    language: Tamil
+- model: conversation.twitterlanguageidentifier
+  pk: 61
+  fields:
+    tag: te
+    language: Telugu
+- model: conversation.twitterlanguageidentifier
+  pk: 62
+  fields:
+    tag: th
+    language: Thai
+- model: conversation.twitterlanguageidentifier
+  pk: 63
+  fields:
+    tag: bo
+    language: Tibetan
+- model: conversation.twitterlanguageidentifier
+  pk: 64
+  fields:
+    tag: zh-TW 
+    language: Traditional Chinese
+- model: conversation.twitterlanguageidentifier
+  pk: 65
+  fields:
+    tag: tr 
+    language: Turkish
+- model: conversation.twitterlanguageidentifier
+  pk: 66
+  fields:
+    tag: uk
+    language: Ukrainian
+- model: conversation.twitterlanguageidentifier
+  pk: 67
+  fields:
+    tag: ur 
+    language: Urdu
+- model: conversation.twitterlanguageidentifier
+  pk: 68
+  fields:
+    tag: ug
+    language: Uyghur
+- model: conversation.twitterlanguageidentifier
+  pk: 69
+  fields:
+    tag: vi 
+    language: Vietnamese
+- model: conversation.twitterlanguageidentifier
+  pk: 70
+  fields:
+    tag: cy 
+    language: Welsh

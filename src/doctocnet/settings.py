@@ -220,6 +220,8 @@ INSTALLED_APPS = [
     'mama_cas',
     'matrix',
     'django_dumpdata_one',
+    'hive',
+    'durationwidget',
 ]
 
 if DEBUG:
@@ -770,6 +772,15 @@ CONSTANCE_CONFIG = {
     "matrix__cas__callbacks__attribute_value": (
         "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "Value of attribute sent by CAS to Synapse (attribute_requirements)"
+    ),
+    # ISO8601 duration (default is 1 day)
+    "hive__models__tweetsubscription__age": (
+        "P1DT0H0M0S",
+        "Default age limit of a tweet for notification"
+    ),
+    "hive__utils__tweetsubscription_retweet_ratio": (
+        0.01,
+        "retweet ratio threshold to notify a status"
     ),
 }
 

@@ -15,6 +15,7 @@ from common.twitter import status_url_from_id
 from django.db.models.aggregates import Sum, Count
 
 from versions.admin import VersionedAdmin
+
 from constance import config
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ from .models import (
     Hashtag,
     Retweeted,
     TwitterUserTimeline,
+    TwitterLanguageIdentifier,
 )
 
 
@@ -69,6 +71,26 @@ class CategoryListFilter(admin.SimpleListFilter):
                 values_list('user_id', flat=True)
             )
             return queryset.filter(userid__in=userids)
+        else:
+            return queryset
+
+class LanguageListFilter(admin.SimpleListFilter):
+
+    title = _('Language')
+
+    parameter_name = 'language'
+
+    def lookups(self, request, model_admin):
+        lst = list(TwitterLanguageIdentifier.objects.all().values_list('tag', 'language'))
+        if hasattr(settings, "SORTING_LOCALE"):
+            pool = Pool()
+            return pool.apply(localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE])
+        else:
+            return localized_tuple_list_sort(lst, 1)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(json__lang=self.value())
         else:
             return queryset
 
@@ -155,6 +177,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'tags',
         RetweetedByListFilter,
+        LanguageListFilter,
     )
     filter_horizontal = ('retweeted_by',)
 
@@ -297,7 +320,25 @@ class TwitterUserTimelineAdmin(admin.ModelAdmin):
 
     screen_name_tag.short_description = 'Screen name'
 
+class TwitterLanguageIdentifierAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'language',
+        'tag',    
+    )
+    readonly_fields = (
+        'id',
+        'tag',
+        'language',
+    )
+    search_fields = [
+        'language',
+        'tag',    
+    ]
+
+
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)
 admin.site.register(Retweeted, RetweetedAdmin)
 admin.site.register(TwitterUserTimeline, TwitterUserTimelineAdmin)
+admin.site.register(TwitterLanguageIdentifier, TwitterLanguageIdentifierAdmin)

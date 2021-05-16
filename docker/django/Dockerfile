@@ -10,7 +10,8 @@ RUN apt-get clean && apt-get update && apt-get install -y \
   build-essential \
   libgl1-mesa-glx \
   libgtk-3-dev \
-  libdbus-glib-1-2
+  libdbus-glib-1-2 \
+  python-yaml
 
 RUN echo "Europe/Paris" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \

@@ -1,4 +1,4 @@
-Django==2.2.20
+Django==2.2.21
 pytz==2018.7                                                                    
 kombu==4.6.7
 vine==1.3.0
@@ -60,3 +60,5 @@ gevent # django-mama-cas optional
 defusedxml # django-mama-cas optional
 django-dumpdata-one
 django-postgres-fuzzycount
+pyyaml
+git+https://github.com/DocTocToc/django-durationwidget.git@800d9393ca2e99acb39ced8cd73dea27503423d1

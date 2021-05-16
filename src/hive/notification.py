@@ -6,7 +6,11 @@ from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
 
-dm = NotificationService.objects.get(name="dm")
+def get_dm():
+    try:
+        return NotificationService.objects.get(name="dm")
+    except NotificationService.DoesNotExist:
+        return
 
 def notify(statusid, json, socialuser, tweetsubscription, dct=None):
     for service in tweetsubscription.service.all().values_list("name", flat=True):
@@ -60,7 +64,7 @@ def notify_dm(
             statusid=statusid,
             tweetsubscription=tweetsubscription,
             socialuser=socialuser,
-            service=dm,
+            service=get_dm(),
             success=True,
             success_log=res._json
         )
@@ -70,7 +74,7 @@ def notify_dm(
             statusid=statusid,
             tweetsubscription=tweetsubscription,
             socialuser=socialuser,
-            service=dm,
+            service=get_dm(),
             success=False,
             error_log=e.args[0][0]
         )

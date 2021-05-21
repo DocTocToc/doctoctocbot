@@ -102,6 +102,9 @@ services:
   stream_4:
     image: dtn_dev
     restart: on-failure:1
+  stream_5:
+    image: dtn_dev
+    restart: on-failure:1
   tree_search:
     image: dtn_dev
     restart: on-failure

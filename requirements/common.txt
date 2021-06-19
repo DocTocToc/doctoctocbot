@@ -8,7 +8,7 @@ django-redis==4.10.0
 tweepy==3.10.0
 configparser==3.7.3
 unidecode==1.0.23
-psycopg2-binary
+psycopg2-binary>=2.8,<2.9
 django-mptt
 social-auth-app-django
 CleanerVersion==2.1.1

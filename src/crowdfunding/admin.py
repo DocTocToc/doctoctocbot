@@ -1,4 +1,10 @@
-from .models import Project, Campaign, ProjectInvestment, Tier
+from .models import (
+    Project,
+    Campaign,
+    ProjectInvestment,
+    Tier,
+    PaymentProcessorWebhook
+)
 
 from django.urls import reverse
 from django.contrib import admin
@@ -38,6 +44,9 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'public',
         'invoice',
         'invoice_pdf',
+    )
+    readonly_fields = (
+        'payment_intent',
     )
     search_fields = [
         'user__last_name',
@@ -86,7 +95,24 @@ class TierAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'description', 'emoji', 'min', 'max',)
     prepopulated_fields = {"slug": ("title",)}
 
+
+class PaymentProcessorWebhookAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'site',
+        'secret_tag'
+    )
+
+    def secret_tag(self, obj):
+        secret = obj.secret
+        if not secret:
+            return
+        return "*" * len(secret)
+
+    secret_tag.short_description = "Secret"
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(ProjectInvestment, ProjectInvestmentAdmin)
 admin.site.register(Tier, TierAdmin)
+admin.site.register(PaymentProcessorWebhook, PaymentProcessorWebhookAdmin)

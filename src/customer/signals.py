@@ -12,6 +12,7 @@ from crowdfunding.models import ProjectInvestment
 from customer.models import Customer, Provider, Product
 
 from customer.silver import get_headers, get_api_endpoint
+from customer.silver import create_customer_and_draft_invoice
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +20,11 @@ logger = logging.getLogger(__name__)
 def create_customer_and_draft_invoice_receiver(sender, instance, created, **kwargs):
     # start invoicing only if instance is paid
     # start invoicing only if instance doesn't already have invoice
-    handle_create_customer_and_draft_invoice.apply_async(
-        args=(instance.uuid,),
-        ignore_result=True
-    )
+    if instance.paid and not instance.invoice:
+        logger.debug(
+            f"create_customer_and_draft_invoice() for {instance=}"
+        )
+        create_customer_and_draft_invoice(instance)
 
 @receiver(post_save, sender=Customer)
 def on_customer_update(sender, instance, created, **kwargs):

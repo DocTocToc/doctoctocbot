@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 17:16+0200\n"
+"POT-Creation-Date: 2021-06-16 20:51+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:465
+#: moderation/admin.py:467
 msgid "state"
 msgstr "état"
 
-#: moderation/admin.py:475
+#: moderation/admin.py:477
 msgid "Pending"
 msgstr "En attente"
 
-#: moderation/admin.py:490
+#: moderation/admin.py:492
 msgid "community"
 msgstr "communauté"
 
@@ -57,31 +57,31 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:480
+#: moderation/models.py:487
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:481
+#: moderation/models.py:488
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:482
+#: moderation/models.py:489
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:483
+#: moderation/models.py:490
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:822
+#: moderation/models.py:829
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:823
+#: moderation/models.py:830
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:824
+#: moderation/models.py:831
 msgid "Ban"
 msgstr "Exclure"
 
@@ -117,7 +117,7 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:146
+#: moderation/tasks.py:153
 #, python-brace-format
 msgid ""
 "\n"
@@ -126,7 +126,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:163
+#: moderation/tasks.py:170
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -142,7 +142,7 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/tasks.py:178
+#: moderation/tasks.py:185
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."

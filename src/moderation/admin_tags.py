@@ -53,3 +53,4 @@ def admin_tag_screen_name_link(user_id):
         )
     except SocialUser.DoesNotExist:
         return
+

@@ -10,12 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_project(request):
-    try:
-        return Project.objects.get(name=settings.PROJECT_NAME)
-    except (AttributeError, ImproperlyConfigured, Project.DoesNotExist):
-        community = get_community(request)
-        if community:
-            return community.crowdfunding
+    community = get_community(request)
+    if community:
+        return community.crowdfunding
 
 def get_year_investor_count(context):
     project = get_project(context)

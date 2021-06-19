@@ -30,6 +30,7 @@
 {% endblock head_css %}
 
 {% block head_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 {% endblock head_javascript %}
 {% block style %}
 
@@ -42,9 +43,6 @@ body {
 
 <title>{{ site.name }} | {% block title %} Home {% endblock title %}</title>
 
-{% block header_javascript %}
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>                 
-{% endblock header_javascript %}
 </head>
 
 <body data-spy="scroll" data-target="#navbar-main">

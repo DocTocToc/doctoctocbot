@@ -1,10 +1,5 @@
 {% extends "doctocnet/base.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
-<!--form action="/customer/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form-->
 {% crispy form %}
 {% endblock %}

@@ -222,6 +222,7 @@ INSTALLED_APPS = [
     'django_dumpdata_one',
     'hive',
     'durationwidget',
+    'widget_tweaks',
 ]
 
 if DEBUG:
@@ -504,6 +505,10 @@ META_USE_TWITTER_PROPERTIES = True
 STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False
+STRIPE_WEBHOOK_SECRET = config(
+    "STRIPE_WEBHOOK_SECRET",
+    default="whsec_REDACTED"
+)
 
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)

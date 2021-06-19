@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 17:16+0200\n"
+"POT-Creation-Date: 2021-06-16 20:51+0200\n"
 "PO-Revision-Date: 2019-12-18 16:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -54,11 +54,7 @@ msgstr "Courriel"
 msgid "City"
 msgstr "Ville"
 
-#: customer/forms.py:92 customer/models.py:75 customer/models.py:76
-msgid "State"
-msgstr "Région"
-
-#: customer/forms.py:98 customer/models.py:80 customer/models.py:81
+#: customer/forms.py:100 customer/models.py:80 customer/models.py:81
 msgid "ZIP code"
 msgstr "Code postal"
 
@@ -81,6 +77,10 @@ msgstr "Adresse Ligne 1"
 #: customer/models.py:58 customer/models.py:59
 msgid "Address Line 2 (optional)"
 msgstr "Adresse Ligne 2 (optionnelle)"
+
+#: customer/models.py:75 customer/models.py:76
+msgid "State"
+msgstr "Région"
 
 #: customer/templates/customer/update_customer.html:6
 msgid "Add your billing data"

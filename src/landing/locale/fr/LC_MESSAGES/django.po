@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 17:16+0200\n"
+"POT-Creation-Date: 2021-06-16 20:51+0200\n"
 "PO-Revision-Date: 2021-04-23 18:25+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -103,7 +103,6 @@ msgstr "Accueil"
 #: landing/templates/landing/messenger/app-login.html:44
 #: landing/templates/landing/messenger/app-login.html:59
 #: landing/templates/landing/messenger/app-login.html:74
-#: landing/templates/landing/messenger/app-login.html:98
 msgid "web login step"
 msgstr "connexion web étape"
 
@@ -214,15 +213,6 @@ msgid ""
 msgstr ""
 "OAuth est une méthode de connexion sécurisée. Elle ne nécessite aucune "
 "communication de nom d'utilisateur ou de mot de passe Twitter à un tiers."
-
-#: landing/templates/landing/messenger/app-login.html:101
-#: landing/templates/landing/messenger/app-login.html:103
-msgid "Authorize this page to open Element"
-msgstr "Autoriser cette pages à ouvrir Element"
-
-#: landing/templates/landing/messenger/app-login.html:106
-msgid "Click on <mark>OK</mark>"
-msgstr "Cliquer sur <mark>OK</mark>"
 
 #: landing/templates/landing/messenger/collaboration-federation.html:11
 #: landing/templates/landing/messenger/communities.html:11
@@ -462,7 +452,7 @@ msgstr "Modération"
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user/billing.html:45
+#: landing/templates/landing/user/billing.html:44
 msgid "Edit"
 msgstr "Éditer"
 
@@ -530,7 +520,7 @@ msgstr "Compte"
 msgid "Invitation"
 msgstr "Invitation"
 
-#: landing/templatetags/opengraph_tags.py:57
+#: landing/templatetags/opengraph_tags.py:58
 #, python-format
 msgid "Welcome to %(twitter_site)s companion website."
 msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
@@ -538,6 +528,12 @@ msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid "Authorize this page to open Element"
+#~ msgstr "Autoriser cette pages à ouvrir Element"
+
+#~ msgid "Click on <mark>OK</mark>"
+#~ msgstr "Cliquer sur <mark>OK</mark>"
 
 #~ msgid "web login step 4"
 #~ msgstr "connexion web étape 4"

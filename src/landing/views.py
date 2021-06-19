@@ -11,7 +11,7 @@ from django.conf import settings
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
 from moderation.models import Profile
-from customer.forms import CustomerForm, CustomerReadOnlyForm
+from customer.forms import CustomerModelForm, CustomerReadOnlyForm
 from customer.models import Customer
 from bootstrap_modal_forms.generic import BSModalUpdateView
 
@@ -103,7 +103,7 @@ class UserProfile(LoginRequiredMixin, TemplateView):
 class CustomerUpdateView(BSModalUpdateView):
     model = Customer
     template_name = 'customer/update_customer.html'
-    form_class = CustomerForm
+    form_class = CustomerModelForm
     success_message = 'Success: billing data was updated.'
     success_url = reverse_lazy('landing:user-billing')
 

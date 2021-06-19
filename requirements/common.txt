@@ -25,7 +25,7 @@ django-registration
 django-countries
 django-sendmail-backend
 python-gnupg
-stripe
+stripe>=2.48.0,<3.0
 matplotlib
 numpy
 dry-rest-permissions
@@ -36,7 +36,7 @@ django-ajax-selects
 furl
 gunicorn==20.0.4
 django-markdownify
-django-bootstrap-modal-forms==2.0.1
+django-bootstrap-modal-forms==2.2.0
 pycountry
 simplejson
 django-silver
@@ -62,3 +62,4 @@ django-dumpdata-one
 django-postgres-fuzzycount
 pyyaml
 git+https://github.com/DocTocToc/django-durationwidget.git@800d9393ca2e99acb39ced8cd73dea27503423d1
+django-widget-tweaks

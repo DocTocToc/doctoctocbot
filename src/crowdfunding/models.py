@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from common.international import currencies
+from django.contrib.sites.models import Site
 
 class Project(models.Model):
     name = models.CharField(max_length=191)
@@ -60,9 +61,17 @@ class ProjectInvestment(models.Model):
         help_text="Id of the invoice in the billing app."
     )
     invoice_pdf = models.BooleanField(default=False)
+    payment_intent=models.CharField(max_length=27, blank=True)
     
     def __str__(self):
-        return "{}:{} user:{} pledged:{} paid:{}".format(self.uuid, self.project, self.user, self.pledged, self.paid)
+        return "{}:{} user:{} pledged:{} paid:{} payment_intent:{}".format(
+            self.uuid,
+            self.project,
+            self.user,
+            self.pledged,
+            self.paid,
+            self.payment_intent
+        )
 
     @staticmethod
     def has_read_permission(self):
@@ -90,6 +99,20 @@ class ProjectInvestment(models.Model):
 
     def has_object_update_permission(self, request):
         return False
+
+    def get_rank(self):
+        current_campaign = Campaign.objects.filter(
+            project=self.project,
+            start_datetime__gte=self.datetime,
+            end_datetime__lte=self.datetime
+        ).first()
+        qs = ProjectInvestment.objects \
+            .filter(paid=True) \
+            .filter(project=self.project) \
+            .filter(datetime__lte=self.datetime)
+        if current_campaign:
+            qs.filter(datetime__gte=current_campaign.start_datetime)
+        return qs.count()
 
 
 class Tier(models.Model):
@@ -137,4 +160,21 @@ class Campaign(models.Model):
             self.project.description[:140],
             self.start_datetime.date(),
             self.end_datetime.date(),
+        )
+
+
+class PaymentProcessorWebhook(models.Model):
+    site = models.OneToOneField(
+        Site,
+        on_delete=models.CASCADE,
+    )
+    secret = models.CharField(
+        max_length=255
+    )
+    
+    def __str__(self):
+        return "{}:{}:{}".format(
+            self.id,
+            self.site,
+            "*" * len(self.secret),
         )

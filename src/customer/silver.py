@@ -8,6 +8,8 @@ from crowdfunding.models import ProjectInvestment
 from customer.models import Customer
 from django.db.utils import DatabaseError, IntegrityError
 
+import psycopg2
+
 logger = logging.getLogger(__name__)
 
 def get_protocol():
@@ -82,7 +84,7 @@ def create_customer_and_draft_invoice(instance):
                 provider=silver_provider,
                 number=cardinality,
             )
-        except IntegrityError as e:
+        except psycopg2.Error as e:
             logger.error(
                 f"Silver invoice with {silver_customer=} {silver_provider=} "
                 f"{cardinality=}  already exists. {e}"

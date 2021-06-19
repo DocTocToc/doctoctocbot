@@ -84,8 +84,8 @@ def create_customer_and_draft_invoice(instance):
             )
         except IntegrityError as e:
             logger.error(
-                f"Silver invoice with {customer=} {provider=} {number=} "
-                f"already exists. {e}"
+                f"Silver invoice with {silver_customer=} {silver_provider=} "
+                f"{cardinality=}  already exists. {e}"
             )
             return
         instance.invoice = silver_invoice.id

@@ -87,7 +87,19 @@ def create_customer_and_draft_invoice(instance):
                 f"Silver invoice with {silver_customer=} {silver_provider=} "
                 f"{cardinality=}  already exists. {e}"
             )
-            return
+            try:
+                silver_invoice= SilverInvoice.objects.get(
+                    customer=silver_customer,
+                    provider=silver_provider,
+                    number=cardinality,
+                )
+                logger.warn(
+                    f"{e} \n Silver invoice with {silver_customer=} "
+                    f"{silver_provider=} {cardinality=}  already existed: "
+                    f"{silver_invoice=}"
+                )
+            except SilverInvoice.DoesNotExist:
+                return
         instance.invoice = silver_invoice.id
         instance.save()
 

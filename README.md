@@ -31,11 +31,15 @@ This repository contains a submodule ```src/bot/lib/python-twitter```. It is a m
 
 For a 1st time clone use
 
-```git clone --recursive https://github.com/DocTocToc/doctoctocbot.git```
+```
+git clone --recursive https://github.com/DocTocToc/doctoctocbot.git
+```
 
 If you already cloned the repository, cd into it and
 
-```git submodule update --init --recursive```
+```
+git submodule update --init --recursive
+```
 
 ## Retweet rules
 
@@ -73,14 +77,13 @@ help with this?
 
 Python & Django version
 --------------
-* Python version 3.7
+* Python version 3.8
 * Django version 2.2
 
 Dependencies:
 -------------
 See requirements folder.
 
-```
 pip install -r requirements/common.txt
 pip install -r requirements/staging.txt
 pip install -r requirements/development.txt

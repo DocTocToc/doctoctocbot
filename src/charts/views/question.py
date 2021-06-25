@@ -148,6 +148,7 @@ def questions_daily_data(request):
         .filter(userid__in=member_userid_lst)
         .filter(retweetedstatus=False)
         .filter(quotedstatus=False)
+        .exclude(created_at__isnull=True)
         .annotate(date = TruncDay('created_at'))
         .values('date')
         .annotate(count=Count('statusid'))
@@ -192,6 +193,8 @@ def questions_daily_data(request):
         data = []
         for values in dct["qs"]:
             d = values["date"]
+            if not d:
+                continue
             timestamp = int(time.mktime(d.timetuple())*1000)
             count = values["count"]
             data.append([timestamp, count])
@@ -246,6 +249,8 @@ def questions_weekly_data(request):
         data = []
         for values in dct["qs"]:
             d = values["date"]
+            if not d:
+                continue
             timestamp = int(time.mktime(d.timetuple())*1000)
             count = values["count"]
             data.append([timestamp, count])
@@ -293,6 +298,8 @@ def questions_monthly_data(request):
         data = []
         for values in dct["qs"]:
             d = values["date"]
+            if not d:
+                continue
             timestamp = int(time.mktime(d.timetuple())*1000)
             count = values["count"]
             data.append([timestamp, count])
@@ -338,6 +345,8 @@ def questions_yearly_data(request):
         data = []
         for values in dct["qs"]:
             d = values["date"]
+            if not d:
+                continue
             timestamp = int(time.mktime(d.timetuple())*1000)
             count = values["count"]
             data.append([timestamp, count])

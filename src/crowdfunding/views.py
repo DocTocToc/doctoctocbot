@@ -4,7 +4,7 @@ import pytz
 from django.core import signing
 from django.conf import settings
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -393,31 +393,39 @@ def create_checkout_session(request):
         }],
         mode = 'payment',
         customer_email = get_customer_email(request),
-        success_url = get_success_url(),
-        cancel_url = get_cancel_url(),
+        success_url = get_success_url(request),
+        cancel_url = get_cancel_url(request),
         # session['custom'] is a string representing the uuid of the
         # ProjectInvestment object
         client_reference_id = request.session['custom'],
     )
     return JsonResponse({'id': session.id})
 
-def get_success_url():
-    if settings.DEBUG:
-        return "https://example.com"
-    else:
-        return reverse_lazy(
+def get_success_url(request):
+    url = request.build_absolute_uri(
+        reverse(
             'crowdfunding:success',
             current_app = 'crowdfunding'
         )
-
-def get_cancel_url():
+    )
     if settings.DEBUG:
+        logger.debug(url)
         return "https://example.com"
     else:
-        return reverse_lazy(
+        return url
+
+def get_cancel_url(request):
+    url = request.build_absolute_uri(
+        reverse(
             'crowdfunding:cancel',
             current_app = 'crowdfunding'
         )
+    )
+    if settings.DEBUG:
+        logger.debug(url)
+        return "https://example.com"
+    else:
+        return url
 
 def stripe_checkout(request):
     if request.session.test_cookie_worked():

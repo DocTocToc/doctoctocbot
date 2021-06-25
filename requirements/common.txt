@@ -63,3 +63,4 @@ django-postgres-fuzzycount
 pyyaml
 git+https://github.com/DocTocToc/django-durationwidget.git@800d9393ca2e99acb39ced8cd73dea27503423d1
 django-widget-tweaks
+django-leaflet

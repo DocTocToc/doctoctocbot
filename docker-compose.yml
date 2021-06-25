@@ -4,7 +4,7 @@ services:
           
   database:
     restart: always                                                                       
-    image: postgres:10.16
+    image: postgis/postgis:10-3.1
     command: >
       postgres
       -c config_file=/etc/postgresql.conf

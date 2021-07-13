@@ -46,7 +46,8 @@ urlpatterns += [
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
     path('', include('invite.urls')),
-    path('accounts/',
+    path(
+        'accounts/',
         include('django.contrib.auth.urls')
     ),
     path('financement/', include('crowdfunding.urls')),
@@ -61,6 +62,7 @@ urlpatterns += [
     path('invitations/', include('invitations.urls', namespace='invitations')),
     path('authorize/', include('authorize.urls')),
     path('cas/', include('mama_cas.urls')),
+    path('choice/', include('choice.urls')),
 ]
 
 

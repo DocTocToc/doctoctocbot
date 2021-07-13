@@ -3,13 +3,14 @@ from datetime import date
 from os.path import stat
 from sys import getprofile
 from typing import List
-
+import json
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
+from django.contrib.gis.db import models
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import models, connection
+from django.db import connection
 from django.db.utils import DatabaseError
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
@@ -211,11 +212,15 @@ class SocialUser(models.Model):
 
     def screen_name_tag(self):
         try:
-            return self.profile.json.get("screen_name", None)
-        except Profile.DoesNotExist:
+            _json = self.profile.json
+        except (Profile.DoesNotExist, AttributeError) as e:
             return
-        except AttributeError:
+        if not _json:
             return
+        if isinstance(_json, str):
+            logger.debug("_json is string")
+            _json = json.loads(_json)
+        return _json.get("screen_name", None)
     
     screen_name_tag.short_description = 'Screen name'
     
@@ -438,11 +443,12 @@ class Profile(models.Model):
     mini_image_tag.short_description = 'Image'   
 
     def screen_name_tag(self):
-        if self.json is not None:
-            screen_name = self.json.get("screen_name", None)
-            return screen_name
-        else:
+        _json = self.json
+        if not _json:
             return None
+        if isinstance(_json, str):
+            _json = json.loads(_json.replace("\'", "\""))
+        return _json.get("screen_name", None)
     
     screen_name_tag.short_description = 'Screen name'
     

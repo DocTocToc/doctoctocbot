@@ -263,7 +263,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
-            'templates',     
+            os.path.join(config('STATIC_ROOT') + '/choice/framework7/src/'),
+            'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -287,6 +288,7 @@ WSGI_APPLICATION = 'doctocnet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('DATABASE_NAME', default='postgres'),
         'USER': config('DATABASE_USER', default='postgres'),
         'PASSWORD': config('DATABASE_PASSWORD', default=''),
@@ -790,6 +792,20 @@ CONSTANCE_CONFIG = {
         0.01,
         "retweet ratio threshold to notify a status"
     ),
+    "choice_matrix_bot_user_id": (
+        "@bot:medica.im",
+        "Matrix User ID of the Matrix bot used for Choice app"
+    ),
+    "choice_room_cas_url_base": (
+        "https://doctoctoc.net/cas/login"\
+        "?service=https://matrix.medica.im/_matrix/client/r0/login/cas/ticket"\
+        "?redirectUrl=https://element.medica.im/#/room/#",
+        "Choice app: base url to CAS server redirecting to Matrix room"
+    ),
+    "choice_matrix_homeserver_url": (
+        "medica.im",
+        "url of Matrix homeserver"    
+    )
 }
 
 MESSENGER_DM_LIMIT = 15
@@ -810,3 +826,6 @@ MAMA_CAS_SERVICES = [
     },
 ]
 MAMA_CAS_LOGIN_TEMPLATE = "cas/login.html"
+
+#MATRIX                                                                         
+MATRIX_BOT_PASSWORD=config('MATRIX_BOT_PASSWORD', default='')                        

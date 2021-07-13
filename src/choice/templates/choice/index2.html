@@ -1,0 +1,248 @@
+{% extends "doctocnet/base.html" %}
+{% load static %}
+{% load leaflet_tags %}
+
+{% block head_css %}
+    {{ block.super }}
+    {% leaflet_css %}
+{% endblock head_css %}
+
+{% block head_javascript %}
+    {{ block.super }}
+    {% leaflet_js %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/framework7/5.7.10/js/framework7-lite.bundle.min.js"></script>
+<script defer>
+    // Import Framework7
+
+// Import Framework7-Svelte Plugin
+import Framework7Svelte from 'framework7-svelte';
+
+// Import Framework7 Styles
+import '{% static "choice/framework7/node_modules/framework7/framework7-bundle.css" %};
+
+// Import Icons and App Custom Styles
+import '{% static "choice/framework7/src/css/icons.css" %}';
+import '{% static "choice/framework7/src/css/apps.css" %}';
+
+// Import App Component
+import App from '{% static "choice/framework7/src/components/app.svelte" %}';
+
+// Init F7 Svelte Plugin
+Framework7.use(Framework7Svelte)
+
+// Mount Svelte App
+const app = new App({
+  target: document.getElementById('app'),
+});
+</script>
+
+{% endblock head_javascript %}
+
+{% block style %}
+    {{ block.super }}
+    .leaflet-container {  /* all maps */
+        width:  640px;
+        height: 600px;
+    }
+    #reunion.leaflet-container {
+        width:  320px;
+        height: 300px;
+    }
+    #guadeloupe.leaflet-container {
+        width:  320px;
+        height: 200px;
+    }
+    #paris.leaflet-container {
+        width:  640px;
+        height: 200px;
+    }
+{% endblock style %}
+
+{% block head_meta %}
+    {{ block.super }}
+  <!--
+  Customize this policy to fit your own app's needs. For more guidance, see:
+      https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+  Some notes:
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+      * Enable inline JS: add 'unsafe-inline' to default-src
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+
+  <meta name="theme-color" content="#007aff">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+{% endblock head_meta %}
+
+
+{% block content %}
+
+<form>
+  <label for="school">School</label>
+  <input type="text" id="school" name="school" disabled><br>
+  <label for="des">DES</label>
+  <input type="text" id="des" name="des" disabled><br>
+  <input type="submit" value="Submit">
+</form>
+
+  <div class="row">
+      {% leaflet_map "main" callback="main_map_init" %}
+  </div>
+  <div class="row">
+      {% leaflet_map "paris" callback="map_init_1" %}
+  </div>
+  <div class="row">
+      {% leaflet_map "guadeloupe" callback="map_init_2" %}
+      {% leaflet_map "reunion" callback="map_init_3" %}
+  </div>
+
+<div id="app"></div>
+
+{% static 'choice/framework7/src/js/app.js' %}
+
+    <script type="text/javascript">
+        function main_map_init (map, options) {
+            var dataurl = '{% url "choice:school-geojson" %}';
+            // Download GeoJSON via Ajax
+            $.getJSON(dataurl, function (data) {
+                // Add GeoJSON layer
+                L.geoJson(data, {
+                  onEachFeature: function (feature, layer) {
+                    layer.bindPopup(feature.properties.popup);
+                    layer.bindTooltip(feature.properties.tooltip, {
+                        permanent: true,
+                        className: "my-label",
+                        offset: [0, 0],
+                        opacity: 1,
+                        direction: tooltipDirection[feature.id],
+                        offset: tooltipOffset[feature.id],
+                    });
+                    layer.on("click", function (event) {
+                        //var clickedMarker = event.layer;
+                        // do some stuff…
+                        console.log(event.target.feature);
+                        console.warn(event.target.feature.properties.tooltip);
+                        let school = event.target.feature.properties.tooltip;
+                        document.getElementById('school').value=school;
+                    });
+                   }
+                }).addTo(map);
+            });
+        }
+        window.addEventListener("map:init", function (e) {
+            var detail = e.detail;
+            detail.map.setView([47.0,1.9], 6);
+            
+        }, false);
+        
+        
+        function map_init(map, lat, lon, zoom) {
+            main_map_init(map);
+            // zoom to point & add it to map
+            if (lat && lon && zoom) {
+                map.setView([lat, lon], zoom);
+            }
+        }
+
+        function map_init_1(map) {
+            map_init(map)//, "48.85412905051129", "2.348224546028645", 11)
+            map.fitBounds([
+                [48.79,2.04],
+                [48.93,2.50]
+            ]);
+        }
+
+        function map_init_2(map) {
+          map_init(map, "16.22345856351926", "-61.52940457148963", 9)
+        }
+    
+        function map_init_3(map) {
+          map_init(map, "-21.34275260405316", "55.49455549736145", 9)
+        }
+
+        let tooltipDirection = {
+            1: "auto",
+            2: "top",
+            3: "right",
+            4: "auto",
+            5: "bottom",
+            6: "left",
+            7: "top",
+            8: "auto",
+            9: "right",
+            10: "auto",
+            11: "bottom",
+            12: "left",
+            13: "right",
+            14: "left",
+            15: "right",
+            16: "bottom",
+            17: "bottom",
+            18: "top",
+            19: "top",
+            20: "left",
+            21: "auto",
+            22: "right",
+            23: "auto",
+            24: "auto",
+            25: "auto",
+            26: "right",
+            27: "top",
+            28: "auto",        
+            29: "left",
+            30: "top",
+            31: "left",
+            32: "auto",
+            33: "left",
+            34: "bottom",
+            35: "left",
+            36: "bottom",
+            37: "auto",     
+        };
+        let tooltipOffset = {
+            1: [0, 0],
+            2: [-10, 0],
+            3: [0, 0],
+            4: [0, 0],
+            5: [-15, 20],
+            6: [-20, 0],
+            7: [-15, 0],
+            8: [0, 0],
+            9: [0, 0],
+            10: [0, 0],
+            11: [-10, 20],
+            12: [-20, 0],
+            13: [0, 0],
+            14: [-20, 0],
+            15: [0, 0],
+            16: [0, 0],
+            17: [-20, 20],
+            18: [-10, 0],
+            19: [0, 0],
+            20: [-20, 0],
+            21: [0, 0],
+            22: [0, 0],
+            23: [0, 0],
+            24: [0, 0],
+            25: [0, 0],
+            26: [0, 0],
+            27: [-10, -5],
+            28: [0, 0],        
+            29: [-20, 0],
+            30: [0, 0],
+            31: [-15, 20],
+            32: [0, 0],
+            33: [-20, 25],
+            34: [-20, 20],
+            35: [-20, 0],
+            36: [-10, 20],
+            37: [0, 0],     
+        };
+
+    </script>
+{% endblock content %}  

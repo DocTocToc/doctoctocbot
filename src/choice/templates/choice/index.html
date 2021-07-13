@@ -5,8 +5,8 @@
 
 {% block head_css %}
   {{ block.super }}
-  <link rel='stylesheet' href="{% static 'choice/svelte/public/build/bundle.css' %}">
-  <link rel='stylesheet' href="{% static 'choice/svelte/public/global.css' %}">
+  <!--link rel='stylesheet' href="{% static 'choice/selector/public/build/bundle.css' %}"-->
+  <link rel='stylesheet' href="{% static 'choice/selector/global.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
   {% leaflet_css %}
 {% endblock head_css %}
@@ -52,7 +52,7 @@
  
   <div id="app-container"></div>
 
-  <script type="text/javascript" src="{% static 'choice/svelte/public/build/bundle.js' %}"></script>
+  <script type="text/javascript" src="{% static 'choice/selector/build/bundle.js' %}"></script>
 
   <script>
   var myapp= new app({

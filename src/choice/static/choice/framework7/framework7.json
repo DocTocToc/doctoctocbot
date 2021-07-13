@@ -1,0 +1,26 @@
+{
+  "cwd": "/home/elkcloner/git/doctoctocbot/src/choice/static/choice/framework7",
+  "type": [
+    "web"
+  ],
+  "name": "choice",
+  "framework": "svelte",
+  "template": "blank",
+  "bundler": "webpack",
+  "cssPreProcessor": false,
+  "theming": {
+    "customColor": false,
+    "color": "#007aff",
+    "darkTheme": false,
+    "iconFonts": true,
+    "fillBars": false
+  },
+  "customBuild": false,
+  "webpack": {
+    "developmentSourceMap": true,
+    "productionSourceMap": true,
+    "hashAssets": false,
+    "preserveAssetsPaths": false,
+    "inlineAssets": true
+  }
+}

@@ -32,3 +32,35 @@ class CommunityAccessControl(models.Model):
             community=self.community.name,
             authorize=self.authorize
         )
+
+  
+class Account(models.Model):
+    access_token = models.CharField(
+        max_length=258,
+        blank=True
+    )
+    device_id = models.CharField(
+        max_length=255,
+        blank=True
+    )
+    user_id = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True,
+    )
+    password = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text = "temporary storage, erased after access_token creation"
+    )
+    homeserver = models.URLField()
+    nio_store = models.CharField(
+        max_length=255,
+        blank=True,
+        default='nio_store',        
+    )
+    
+    def __str__(self):
+        return self.user_id

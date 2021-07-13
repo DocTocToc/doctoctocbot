@@ -1,5 +1,6 @@
 from typing import List
 import logging
+import json
 from rest_framework import serializers
 from .models import Hashtag, Tweetdj
 from taggit_serializer.serializers import (TagListSerializerField,

@@ -3,6 +3,8 @@ FROM python:3.8 AS prod
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
 
+RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
+
 RUN apt-get clean && apt-get update && apt-get install -y \
   locales \
   python-pygraphviz \
@@ -11,8 +13,12 @@ RUN apt-get clean && apt-get update && apt-get install -y \
   libgl1-mesa-glx \
   libgtk-3-dev \
   libdbus-glib-1-2 \
-  python-yaml
-
+  python-yaml \
+  binutils \
+  libproj-dev \
+  gdal-bin \
+  libolm-dev/buster-backports
+ 
 RUN echo "Europe/Paris" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
 #    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \

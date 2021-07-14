@@ -393,7 +393,17 @@ class UserCategoryRelationship(models.Model):
         unique_together = ("social_user", "moderator", "category", "community")
         get_latest_by = "created"
 
-    
+
+def get_sentinel_social_media():
+    return SocialMedia.objects.get_or_create(
+        name="deleted",
+        emoji="␡",
+    )[0]
+
+def get_sentinel_social_media_id():
+    return get_sentinel_social_media().id
+
+
 class SocialMedia(models.Model):
     name = models.CharField(
         max_length=255,

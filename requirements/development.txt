@@ -8,3 +8,4 @@ django-cors-headers
 coverage
 mock
 responses
+factory_boy

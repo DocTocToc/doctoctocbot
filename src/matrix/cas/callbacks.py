@@ -25,8 +25,16 @@ def authorize(user):
         logger.error(f"No socialuser for {user}")
         return False
     user_category_qs = user.socialuser.category.all()
-    if not user_category_qs:
-        return False
+    if user_category_qs:
+        if forbidden_category_filter(user) == False:
+            return False
+        if ok_category_filter:
+            return True
+    if filtersocial(user):
+        return True
+    return False
+
+def forbidden_category_filter(user):
     # NO access set of categories
     # (unauthorized categories should NOT have access)
     no_category_set = set(
@@ -42,6 +50,11 @@ def authorize(user):
         return False
     # YES access set of categories
     # (authorized categories should have access)
+
+def ok_category_filter(user):
+    user_category_set = set(
+        user.socialuser.category.values_list("id", flat=True)
+    )
     yes_category_set = set(
         CategoryAccessControl.objects\
         .filter(authorize=True).values_list("category", flat=True)
@@ -49,8 +62,6 @@ def authorize(user):
     # if one or more categories of the user belonged to authorized categories:
     # YES access (grant access)
     if user_category_set & yes_category_set:
-        return True
-    if filtersocial(user):
         return True
 
 def _filter(fs, socialuser):

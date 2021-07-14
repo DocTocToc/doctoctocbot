@@ -44,7 +44,7 @@
     <h4 class="alert-heading">Authentification</h4>
     <p>Vous devez vous connecter via votre compte Twitter pour accéder aux salons.</p>
     <hr>
-    <a class="mb-0" href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}" class="card-link btn btn-outline-primary">
+    <a class="mb-0" href="{% url 'social:begin' 'twitter' %}?next={{ request.get_full_path|urlencode }}" class="card-link btn btn-outline-primary">
       <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
     </a>
   </div>

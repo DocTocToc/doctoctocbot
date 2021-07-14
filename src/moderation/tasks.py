@@ -2,13 +2,11 @@ import os
 import random
 import time
 import datetime
-from unicodedata import category
-from typing import List
 from versions.exceptions import DeletionOfNonCurrentVersionError
 
 from celery import shared_task
 from bot.bin.user import getuser_lst
-from .profile import twitterprofile
+from moderation.profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
@@ -25,7 +23,6 @@ from moderation.models import (
     CategoryMetadata,
     Moderator,
     Queue,
-    SocialMedia,
 )
 from request.models import Queue as Request_Queue
 from request.utils import accept_delete_queue
@@ -517,6 +514,32 @@ def update_bots_friends():
         except AttributeError:
             logger.error(f"API_FRIENDS_PERIOD is not set.")
             pass
+
+@shared_task
+def handle_twitter_followers(user_id, bot_screen_name):
+        try:
+            su = SocialUser.objects.get(user_id=user_id)
+        except SocialUser.DoesNotExist:
+            return
+        update_social_ids(
+            su,
+            cached=False,
+            bot_screen_name=bot_screen_name,
+            relationship='followers',
+        )
+
+@shared_task
+def handle_twitter_friends(user_id, bot_screen_name):
+        try:
+            su = SocialUser.objects.get(user_id=user_id)
+        except SocialUser.DoesNotExist:
+            return
+        update_social_ids(
+            su,
+            cached=False,
+            bot_screen_name=bot_screen_name,
+            relationship='friends',
+        )
 
 @shared_task
 def handle_pending_moderations():

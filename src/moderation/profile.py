@@ -23,16 +23,6 @@ FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
 
-def socialuser(backend, user, response, *args, **kwargs):
-    from .models import SocialUser, SocialMedia
-    if backend.name == 'twitter':
-        sm_mi, created1 = SocialMedia.objects.get_or_create(name=backend.name)
-        logger.debug(f'socialmedia: {sm_mi}, created: {created1}')
-        tuid_int = kwargs['uid']
-        su_mi, created2 = SocialUser.objects.get_or_create(user_id=tuid_int, social_media=sm_mi)
-        logger.debug(f'socialuser: {su_mi}, created: {created2}')
-        return {'socialuser': su_mi}
-
 def create_twitter_social_user(userid):
     try:
         twitter = SocialMedia.objects.get(name='twitter')
@@ -61,30 +51,6 @@ def create_twitter_social_user_and_profile(userid):
         bot_screen_name = random.choice(bot_screen_names)
         create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
     return su, created
-    
-def user(backend, user, response, *args, **kwargs):
-    from users.models import User
-    if backend.name == 'twitter':
-        logger.debug(f"user.socialuser {user.socialuser} {type(user.socialuser)}")
-        if user.socialuser is None:
-            user.socialuser = kwargs['socialuser']
-            user.save()
-        logger.debug(f'socialmedia: {user}')
-        
-def profile(backend, user, response, *args, **kwargs):
-    if backend.name == 'twitter':
-        logger.debug(f"user.socialuser {user.socialuser} type:{type(user.socialuser)}")
-        try:
-            p = user.socialuser.profile
-            logger.debug(f"user.socialuser.profile {p} type:{type(p)}")
-            p.json = response
-            p.save()
-            logger.debug(f"user.socialuser.profile {user.socialuser.profile} type:{type(user.socialuser.profile)}")
-        except Profile.DoesNotExist:
-            p = Profile.objects.create(json=response, socialuser=user.socialuser) 
-            logger.debug(f"user.socialuser.profile {user.socialuser.profile} type:{type(user.socialuser.profile)}")
-        
-        avatar(p, response)
 
 def twitterprofile(jsn):
     if not jsn or not isinstance(jsn, dict):
@@ -117,7 +83,6 @@ def twitterprofile(jsn):
         except IntegrityError as e:
             logger.debug(e)
             return
-    
     avatar(p, jsn)
             
 def avatar(profile, response):

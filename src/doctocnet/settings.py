@@ -378,14 +378,16 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
-    'moderation.profile.socialuser',
+    'moderation.twitter.social_auth_twitter_pipeline.socialuser',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
-    'moderation.profile.user',
-    'moderation.profile.profile',
-    'doctocnet.twitterinfo.show_profile',  # <--- set the path to the function
+    'moderation.twitter.social_auth_twitter_pipeline.user',
+    'moderation.twitter.social_auth_twitter_pipeline.profile',
+    'moderation.twitter.social_auth_twitter_pipeline.network',
+    #'doctocnet.twitterinfo.show_profile',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
@@ -561,6 +563,7 @@ TWITTER_APP_CONSUMER_KEY = config('TWITTER_APP_CONSUMER_KEY')
 TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
+SOCIAL_AUTH_TWITTER_SCREEN_NAME = config('BOT_SCREEN_NAME')
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = config('TWITTER_CONSUMER_SECRET')
 

@@ -14,7 +14,7 @@
 	  };
 
       async function fetch_diplomas() {
-  	    await fetch(`https://local.doctoctoc.net/choice/api/diploma/`)
+  	    await fetch(`/choice/api/diploma/`)
   	      .then(r => r.json())
   	      .then(data => {
   	        diplomas = data;

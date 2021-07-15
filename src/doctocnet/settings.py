@@ -420,6 +420,8 @@ CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 CELERY_TASK_ROUTES = {
     'bot.tasks.handle_on_status': {'queue': 'retweet'},
+    'moderation.tasks.handle_twitter_followers': {'queue': 'retweet'},
+    'moderation.tasks.handle_twitter_friends': {'queue': 'retweet'},
     'autotweet.tasks.handle_get_all_replies': {'queue': 'tree'},
 }
 

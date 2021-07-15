@@ -66,6 +66,9 @@ def ok_category_filter(user):
 
 def _filter(fs, socialuser):
     def _filter_friend(fs, socialuser):
+        if not Friend.objects.filter(user=socialuser).exists():
+            logger.debug(f"No Friend object for {socialuser}")
+            return
         friend_ids = Friend.objects.filter(user=socialuser).latest().id_list
         friend_filter_ids = []
         for category in fs.friend_category.all():

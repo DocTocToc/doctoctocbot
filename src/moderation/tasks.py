@@ -469,7 +469,7 @@ def update_moderators_friends():
         community = Community.objects.get(id=dct["community"])
         update_social_ids(
             su,
-            cached=False,
+            cached=True,
             bot_screen_name=community.account.username,
             relationship='friends',
         )
@@ -484,7 +484,7 @@ def update_bots_followers():
             continue
         update_social_ids(
             su,
-            cached=False,
+            cached=True,
             bot_screen_name=account.username,
             relationship='followers',
         )
@@ -504,7 +504,7 @@ def update_bots_friends():
             continue
         update_social_ids(
             su,
-            cached=False,
+            cached=True,
             bot_screen_name=account.username,
             relationship='friends',
         )

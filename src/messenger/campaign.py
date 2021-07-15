@@ -49,7 +49,7 @@ def run_campaign(campaign: Campaign):
     bot_screen_name = bot_su.screen_name_tag()
     update_social_ids(
         bot_su,
-        cached=False,
+        cached=True,
         bot_screen_name=bot_screen_name,
         relationship="followers",    
     )

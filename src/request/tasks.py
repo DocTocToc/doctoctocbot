@@ -172,14 +172,14 @@ def handle_accept_follower_twitter(userid: int, community__id: int):
         return
     followers = update_social_ids(
         user=userid,
-        cached=False,
+        cached=True,
         bot_screen_name=username,
         relationship="followers"
     )
     if not followers:
         followers = update_social_ids(
             user=userid,
-            cached=True,
+            cached=False,
             bot_screen_name=username,
             relationship="followers"
         )

@@ -10,6 +10,7 @@ from choice.models import (
     School,
 )
 from constance import config
+from urllib.parse import quote
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +84,10 @@ class RoomSerializer(serializers.ModelSerializer):
         depth = 1
  
     def get_room_link(self, obj):
-        cas_url = config.choice_room_cas_url_base
+        cas_url = config.choice_cas_url
         homeserver_url =  config.choice_matrix_homeserver_url
-        return f"{cas_url}{obj.room_alias}:{homeserver_url}"
+        next = quote(f"{cas_url}{config.choice_matrix_room_url}{obj.room_alias}:{homeserver_url}", safe='')
+        return f"{cas_url}{next}"
     
     def get_active(self, obj):
         request = self.context.get('request', None)
@@ -93,7 +95,6 @@ class RoomSerializer(serializers.ModelSerializer):
             user = request.user
         else:
             return
-        logger.debug(user)
         participant = Participant.objects.get(user=user)
         pr = obj.participantroom_set.get(
             participant=participant

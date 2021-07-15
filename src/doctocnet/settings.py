@@ -799,16 +799,20 @@ CONSTANCE_CONFIG = {
         "@bot:medica.im",
         "Matrix User ID of the Matrix bot used for Choice app"
     ),
-    "choice_room_cas_url_base": (
+    "choice_cas_url": (
         "https://doctoctoc.net/cas/login"\
         "?service=https://matrix.medica.im/_matrix/client/r0/login/cas/ticket"\
-        "?redirectUrl=https://element.medica.im/#/room/#",
+        "?redirectUrl=",
         "Choice app: base url to CAS server redirecting to Matrix room"
     ),
     "choice_matrix_homeserver_url": (
         "medica.im",
         "url of Matrix homeserver"    
-    )
+    ),
+    "choice_matrix_room_url": (
+        "https://element.medica.im/#/room/#",
+        "Base url for a Matrix room, without the alias"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15

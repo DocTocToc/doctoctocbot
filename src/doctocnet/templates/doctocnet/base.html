@@ -34,20 +34,15 @@
 {% endblock head_javascript %}
 
 <style>
+body { padding-top: 70px; }
 {% block style %}
-body {
-  padding-top: 4rem;
-}
 {% endblock style %}
 </style>
-
-
 <title>{{ site.name }} | {% block title %} Home {% endblock title %}</title>
 
 </head>
 
 <body data-spy="scroll" data-target="#navbar-main">
-
 <script>
 $(document).ready(function() {
 $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
@@ -62,9 +57,7 @@ $('body').on('mouseenter mouseleave', '.dropdown', function (e) {
 });
 });
 </script>
-
 {% include "doctocnet/navbar.html" %}
-  
   <main role="main" class="container">
     {% block content %}
     if you see this, something is wrong!

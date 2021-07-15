@@ -49,7 +49,13 @@
     </a>
   </div>
   {% endif %}
- 
+  {% if user.is_authenticated %}
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">{medica} messenger</h4>
+    <p>Pour démarrer le messenger, cliquer sur ce bouton puis sur <b>"Se connecter avec l’authentification unique"</b>.</p>
+    <a href="https://element.medica.im/#/login" target="_blank" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">{medica} messenger</a>
+  </div>
+  {% endif %}
   <div id="app-container"></div>
 
   <script type="text/javascript" src="{% static 'choice/selector/build/bundle.js' %}"></script>

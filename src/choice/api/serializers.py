@@ -84,10 +84,11 @@ class RoomSerializer(serializers.ModelSerializer):
         depth = 1
  
     def get_room_link(self, obj):
-        cas_url = config.choice_cas_url
+        #cas_url = config.choice_cas_url
         homeserver_url =  config.choice_matrix_homeserver_url
-        next = quote(f"{cas_url}{config.choice_matrix_room_url}{obj.room_alias}:{homeserver_url}", safe='')
-        return f"{cas_url}{next}"
+        room_url = config.choice_matrix_room_url
+        #next = quote(f"{cas_url}{config.choice_matrix_room_url}{obj.room_alias}:{homeserver_url}", safe='')
+        return f"{room_url}{obj.room_alias}:{homeserver_url}"
     
     def get_active(self, obj):
         request = self.context.get('request', None)

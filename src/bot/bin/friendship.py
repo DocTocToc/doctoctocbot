@@ -71,7 +71,7 @@ def create_friendship_members(community: Community, users=400):
         return
     friend_id: List[int] = update_social_ids(
         user=bot_social_user,
-        cached=False,
+        cached=True,
         bot_screen_name=bot_screen_name,
         relationship="friends"
     )

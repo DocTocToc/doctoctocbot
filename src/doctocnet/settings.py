@@ -378,12 +378,12 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
-    'moderation.twitter.social_auth_twitter_pipeline.socialuser',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
+    'moderation.twitter.social_auth_twitter_pipeline.socialuser',
     'moderation.twitter.social_auth_twitter_pipeline.user',
     'moderation.twitter.social_auth_twitter_pipeline.profile',
     'moderation.twitter.social_auth_twitter_pipeline.network',

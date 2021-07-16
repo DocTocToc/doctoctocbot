@@ -9,7 +9,11 @@ logger = logging.getLogger('root')
 def user(backend, user, response, *args, **kwargs):
     if backend.name == 'twitter':
         if user.socialuser is None:
-            user.socialuser = kwargs['socialuser']
+            try:
+                socialuser = SocialUser.objects.get(user_id=kwargs['uid'])
+            except SocialUser.DoesNotExist:
+                return
+            user.socialuser = socialuser
             user.save()
 
 def socialuser(backend, user, response, *args, **kwargs):

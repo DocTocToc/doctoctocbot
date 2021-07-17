@@ -9,6 +9,7 @@ from choice.models import (
     Room,
     School,
 )
+from choice.utils import room_url
 from constance import config
 from urllib.parse import quote
 
@@ -84,11 +85,7 @@ class RoomSerializer(serializers.ModelSerializer):
         depth = 1
  
     def get_room_link(self, obj):
-        #cas_url = config.choice_cas_url
-        homeserver_url =  config.choice_matrix_homeserver_url
-        room_url = config.choice_matrix_room_url
-        #next = quote(f"{cas_url}{config.choice_matrix_room_url}{obj.room_alias}:{homeserver_url}", safe='')
-        return f"{room_url}{obj.room_alias}:{homeserver_url}"
+        return room_url(obj)
     
     def get_active(self, obj):
         request = self.context.get('request', None)

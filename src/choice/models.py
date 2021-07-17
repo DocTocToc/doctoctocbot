@@ -8,6 +8,7 @@ class School(models.Model):
     name = models.CharField(max_length=255, blank=False)
     university = models.CharField(max_length=255, blank=False)
     geometry = models.PointField()
+    active = models.BooleanField(default=True)
     
     @property
     def tooltip(self):
@@ -15,10 +16,9 @@ class School(models.Model):
 
     @property
     def popup(self):
-        return '{} - {} - {}'.format(
+        return '{} - {}'.format(
             self.name,
             self.university,
-            self.id,
         )
 
     def __str__(self):

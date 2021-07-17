@@ -4,6 +4,7 @@ from choice.models import School
 from django.urls import include, path
 from rest_framework import routers
 from choice.api import views
+from choice.views import SchoolGeoJSONLayerView
 
 app_name = 'choice'
 
@@ -17,18 +18,9 @@ router.register(r'participant-room', views.ParticipantRoomViewSet)
 urlpatterns = [
     path(
         'data/school/',
-        GeoJSONLayerView.as_view(
-            model=School,
-            geometry_field = 'geometry',
-            properties=['popup', 'slug', 'tooltip',]    
-        ),
+        SchoolGeoJSONLayerView.as_view(),
         name='school-geojson'
     ),
-    #path(
-    #    '',
-    #    TemplateView.as_view(template_name='choice/schools.html'),
-    #    name='home'
-    #),
     path(
         '',
         TemplateView.as_view(template_name='choice/index.html'),

@@ -50,10 +50,17 @@
   </div>
   {% endif %}
   {% if user.is_authenticated %}
-  <div class="alert alert-info" role="alert">
+  <div class="alert alert-warning" role="alert">
     <h4 class="alert-heading">{medica} messenger</h4>
-    <p>Pour démarrer le messenger, cliquer sur ce bouton puis sur <b>"Se connecter avec l’authentification unique"</b>.</p>
-    <a href="https://element.medica.im/#/login" target="_blank" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">{medica} messenger</a>
+    <p>Avant de rejoindre le salon de votre choix, vous devez démarrer le messenger.</p>
+    <ol>
+    <li>
+    Démarrer le messenger en cliquant ici
+    <a href="https://element.medica.im/#/login" target="_blank" class="my-1 btn btn-outline-primary" role="button" aria-pressed="true">Démarrer {medica} messenger!</a>
+    </li>
+    <li>
+    Un nouvel onglet s'ouvre sur la page de connexion. Cliquer sur <button type="button" class="my-1 btn btn-outline-success btn-sm disabled" disabled>Se connecter avec l’authentification unique</button></p>
+    </li>  
   </div>
   {% endif %}
   <div id="app-container"></div>

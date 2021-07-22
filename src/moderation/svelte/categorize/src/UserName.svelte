@@ -18,12 +18,12 @@
 
     async function fetchApi() {
     	let url = getBaseUrl() + apiPath + '?search=' + screenName
-    	//console.log(url)
+    	console.log(url)
 	    await fetch(url)
 	      .then(r => r.json())
 	      .then(data => {
 	        //console.log(data);
-	        socialusers = data.results;
+	        socialusers = data;
 	      });
 	    return socialusers;
 	  };

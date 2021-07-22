@@ -1,0 +1,32 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load leaflet_tags %}
+
+{% block head_css %}
+  {{ block.super }}
+  <link rel='stylesheet' href="{% static 'moderation/categorize/build/bundle.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  {% leaflet_css %}
+{% endblock head_css %}
+
+{% block head_javascript %}
+    {{ block.super }}
+    {% leaflet_js %}
+{% endblock head_javascript %}
+
+{% block style %}
+    {{ block.super }}
+{% endblock style %}
+
+{% block title %}{% trans "User" %}{% endblock title %}
+
+{% block content %}
+    <div id="app-container"></div>
+    <script type="text/javascript" src="{% static 'moderation/categorize/build/bundle.js' %}"></script>
+    <script>
+    var myapp= new app({
+      "target": document.getElementById("app-container"),
+    })
+    </script>
+{% endblock content %}

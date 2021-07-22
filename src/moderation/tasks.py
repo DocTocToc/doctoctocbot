@@ -47,6 +47,9 @@ from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
 from moderation.profile import update_twitter_followers_profiles
 from community.helpers import get_community_bot_screen_name
+from bot.tweepy_api import get_api
+from moderation.profile import create_twitter_social_user_and_profile
+from tweepy.error import TweepError
 
 logger = get_task_logger(__name__)
 
@@ -709,3 +712,35 @@ def handle_update_twitter_followers_profiles(community: str):
     except Community.DoesNotExist:
         return
     update_twitter_followers_profiles(community_mi)
+
+@shared_task
+def handle_create_twitter_socialuser(screen_name: str):
+    if not screen_name:
+        return
+    api = get_api()
+    if not api:
+        logger.error(
+            f'Could not get functional API.'
+        )
+        return
+    try:
+        tweepy_user = get_api().get_user(screen_name=screen_name)
+    except TweepError as e:
+        logger.error('Tweepy error "%s' % e)
+    except AttributeError as e:
+        logger.error(f"AttributeError: {e}")
+        return
+    user_id=tweepy_user.id
+    su, created = create_twitter_social_user_and_profile(user_id)
+    if created and su:
+        logger.debug(
+            f'Done creating SocialUser object {su}.'
+        )
+    elif su:
+        logger.warn(
+            f'SocialUser object {su} already exists.'
+        )
+    else:
+        logger.error(
+            f'Error, no new user was created.'
+        )

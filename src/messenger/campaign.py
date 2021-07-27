@@ -136,10 +136,14 @@ def send(campaign: Campaign):
                 message = msg,
                 user = recipient
             )
+            skip=False
             if receipts:
                 for r in receipts:
                     if r.event_id:
-                        continue
+                        skip=True
+                        break
+            if skip:
+                continue
             try:
                 res = api.send_direct_message(
                     recipient_id=recipient.user_id,

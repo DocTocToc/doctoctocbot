@@ -126,23 +126,20 @@ def send(campaign: Campaign):
         logger.error("'messenger__campaign__dm_limit' not set", e)
         current_limit = 100
     for recipient in campaign.recipients.all():
+        if current_limit == 0:
+            return
+        sleep_random(campaign)
         for msg in messages:
+            text=_format(msg, recipient, campaign)
             receipts = Receipt.objects.filter(
                 campaign = campaign,
                 message = msg,
                 user = recipient
             )
-            skip = False
             if receipts:
                 for r in receipts:
                     if r.event_id:
-                        skip = True
-            if skip:
-                continue
-            text=_format(msg, recipient, campaign)
-            sleep_random(campaign)
-            if current_limit == 0:
-                return
+                        continue
             try:
                 res = api.send_direct_message(
                     recipient_id=recipient.user_id,

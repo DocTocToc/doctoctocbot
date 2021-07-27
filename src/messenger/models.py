@@ -105,6 +105,7 @@ class Receipt(models.Model):
         help_text = _('DM event id created if the message was successfully sent.'),
         null=True,
         blank=True,
+        default=None,
     )
     error = models.TextField(
         verbose_name = _('Error message'),

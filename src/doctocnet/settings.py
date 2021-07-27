@@ -698,6 +698,14 @@ CONSTANCE_CONFIG = {
         3600,
         "normalize Celery task time limit in seconds"
     ),
+    "timeline_soft_time_limit": (
+        3600,
+        "community_members_timeline Celery task soft time limit in seconds"
+    ),
+    "timeline_time_limit": (
+        3600,
+        "community_members_timeline Celery task time limit in seconds"
+    ),
     "messenger__tasks__handle_campaign__time_limit": (
         3600,
         "handle_campaign celery task (hard) time limit"

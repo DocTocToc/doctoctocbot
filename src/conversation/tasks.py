@@ -113,7 +113,10 @@ def update_retweet(days):
                 tweetdj.deleted=True
                 tweetdj.save()
 
-@shared_task
+@shared_task(
+    soft_time_limit=config.timeline_soft_time_limit,
+    time_limit=config.timeline_time_limit
+)
 def handle_community_members_timeline(community_name: str):
     try:
         community = Community.objects.get(name=community_name)

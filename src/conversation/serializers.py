@@ -79,21 +79,21 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
         try:
             return obj.json['user']['name']
         except (AttributeError, KeyError) as e:
-            logger.error(e)
+            logger.debug(e)
             return ""
 
     def get_user_screen_name(self, obj):
         try:
             return obj.json['user']['screen_name']
         except (AttributeError, KeyError) as e:
-            logger.error(e)
+            logger.debug(e)
             return ""
 
     def get_created_at(self, obj):
         try:
             return obj.json['created_at']
         except (AttributeError, KeyError) as e:
-            logger.error(e)
+            logger.debug(e)
             return ""
 
     def get_text(self, obj):
@@ -103,10 +103,10 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             try:
                 return obj.json['text']
             except KeyError as e:
-                logger.error(e)
+                logger.debug(e)
                 return ""
         except AttributeError as e:
-            logger.error(e)
+            logger.debug(e)
             return ""
 
     def get_author_category(self, obj):
@@ -169,7 +169,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
                 try:
                     return tweetdj.json["entities"]["media"]
                 except KeyError as e:
-                    logger.error(e)
+                    logger.debug(e)
                     return
                 
     def get_reply_count(self, obj):

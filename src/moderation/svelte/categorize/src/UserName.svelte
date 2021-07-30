@@ -1,5 +1,7 @@
 <script>
    import CreateSocialUser from "./CreateSocialUser.svelte"
+   import HealthCareProvider from "./HealthCareProvider.svelte"
+
     let input = '';
 	let screenName = '';
 	let apiProtocolDomain = "https://local.doctoctoc.net";
@@ -7,6 +9,7 @@
 
 	let data;
 	let socialusers=null;
+	let humanId=0;
 
 	function getBaseUrl() {
 	    if (window.location.hostname == "localhost") {
@@ -22,7 +25,7 @@
 	    await fetch(url)
 	      .then(r => r.json())
 	      .then(data => {
-	        //console.log(data);
+	        console.log(data);
 	        socialusers = data;
 	      });
 	    return socialusers;
@@ -53,21 +56,15 @@
     {#each socialusers as socialuser (socialuser.id) }
     <div class="parent">
     <ul>
-    <li><a href="{getBaseUrl()}/admin/moderation/socialuser/{socialuser.id}/change/">🔗 SocialUser admin</a>
-    <li>SocialUser id: {socialuser.id}</li>
-    <li><a href="https://twitter.com/intent/user?user_id={socialuser.profile.json.id_str}">🔗 Twitter profile</a></li>
-    <li>Twitter user id: {socialuser.user_id}</li>
-    <li>Twitter screen name: {socialuser.profile.json.screen_name}</li>
-    <li>Twitter name: {socialuser.profile.json.name}</li>
-    <li>category:
-        <div class="parent">
-        <ul>
-        {#each socialuser.category as cat}
-          <li>{cat.label}</li>
-        {/each}
-        </ul>
-        </div>
-    </li>
+      <li><img src="{socialuser.profile.biggeravatar}" alt="user avatar"/></li>
+      <li>SocialUser id: {socialuser.id}</li>
+      <li><a href="https://twitter.com/intent/user?user_id={socialuser.profile.json.id_str}" target="_blank">🔗 Twitter profile</a></li>
+      <li>Twitter user id: {socialuser.user_id}</li>
+      <li>Twitter screen name: {socialuser.profile.json.screen_name}</li>
+      <li>Twitter name: {socialuser.profile.json.name}</li>
+      <li>category<ul>{#each socialuser.category as cat}<li>{cat.label}</li>{/each}</ul></li>
+      <li><a href="{getBaseUrl()}/admin/moderation/socialuser/{socialuser.id}/change/" target="_blank">🔗 SocialUser admin</a>
+      <li>Health Care Provider <HealthCareProvider bind:humanId={socialuser.human[0].id}/></li>
     </ul>
     </div>
     {/each}
@@ -75,11 +72,7 @@
   {/key}
 	  
 <style>
-		div.parent {
-			text-align: center;
-			}
 		ul { 
-			display: inline-block; 
 			text-align: left; 
 			}
 </style>

@@ -63,6 +63,7 @@ urlpatterns += [
     path('authorize/', include('authorize.urls')),
     path('cas/', include('mama_cas.urls')),
     path('choice/', include('choice.urls')),
+    path('hcp/', include('hcp.urls')),
 ]
 
 

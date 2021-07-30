@@ -19,6 +19,7 @@ dj-database-url
 lxml
 beautifulsoup4==4.7.1
 djangorestframework
+django-filter
 django-crispy-forms
 requests
 django-registration

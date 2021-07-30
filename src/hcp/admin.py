@@ -28,7 +28,7 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
     extra = 5
     fk_name = 'healthcareprovider'
     readonly_fields = ['healthcareprovider', 'created', 'updated',]
-    autocomplete_fields = ['human', 'taxonomy', 'creator',]
+    autocomplete_fields = ['healthcareprovider', 'taxonomy', 'creator',]
 
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

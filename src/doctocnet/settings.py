@@ -169,6 +169,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'constance',
     'rest_framework',
+    'django_filters',
     'doctocnet',
     'landing',
     'social_django',

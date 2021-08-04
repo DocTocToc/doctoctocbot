@@ -54,9 +54,9 @@ class SocialUserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SocialUserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = [
-        'id',
-        'user_id',
-        'screen_name',
+        '=id',
+        '=user_id',
+        '=screen_name',
         
     ]
     if settings.DEBUG :

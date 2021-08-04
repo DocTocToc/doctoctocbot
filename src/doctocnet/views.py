@@ -22,7 +22,7 @@ def media_access(request, path):
     access_granted = False
 
     user = request.user
-    logger.debug(f"path:{path}")
+    #logger.debug(f"path:{path}")
     if not user.is_authenticated:
         if not path.startswith("documents/"):
             access_granted=True

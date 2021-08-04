@@ -2,7 +2,12 @@ import logging
 
 from django.contrib import admin
 
-from hcp.models import Taxonomy, HealthCareProvider, HealthCareProviderTaxonomy
+from hcp.models import (
+    Taxonomy,
+    HealthCareProvider,
+    HealthCareProviderTaxonomy,
+    TaxonomyCategory
+)
 from modeltranslation.admin import TranslationAdmin
 from moderation.models import Human
 
@@ -131,6 +136,27 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
     taxonomy_tag.short_description = 'Taxonomy'
 
 
+class TaxonomyCategoryAdmin(admin.ModelAdmin):
+    list_display = (
+        'code',
+        'grouping',
+        'classification',
+        'specialization',
+        'category',
+        'community',
+    )
+    readonly_fields = (
+        'code',
+    )
+    search_fields = (
+        'code',
+        'grouping',
+        'classification',
+        'specialization',
+        'category',
+    )
+
+
 admin.site.register(Taxonomy, TaxonomyAdmin)
 admin.site.register(HealthCareProvider, HealthCareProviderAdmin)
-
+admin.site.register(TaxonomyCategory, TaxonomyCategoryAdmin)

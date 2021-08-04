@@ -28,12 +28,15 @@ from moderation.models import (
     DoNotRetweet,
     SocialMedia,
     CategoryMetadata,
+    get_default_socialmedia,
 )
+from hcp.models import HealthCareProvider
 from community.models import Community
 from moderation.admin_tags import admin_tag_category
 from common.list_filter import by_null_filter
 
 from modeltranslation.admin import TranslationAdmin
+from django.contrib import auth
 
 logger = logging.getLogger(__name__)
 
@@ -161,17 +164,17 @@ class BotFollower(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         for userid in list(Account.objects.values_list('userid', flat=True)):
             if self.value() == str(userid):
-                logger.debug(f"{self.value()=}")
+                #logger.debug(f"{self.value()=}")
                 try:
                     su = SocialUser.objects.get(user_id=userid)
                 except SocialUser.DoesNotExist:
                     return SocialUser.objects.none()
-                logger.debug(f"{su=}")
+                #logger.debug(f"{su=}")
                 try:
                     followers_ids = Follower.objects.filter(user=su).latest().id_list
                 except Follower.DoesNotExist:
                     return SocialUser.objects.none()
-                logger.debug(f"{followers_ids=}")
+                #logger.debug(f"{followers_ids=}")
                 return queryset.filter(user_id__in=followers_ids)
 
 class BotFriend(admin.SimpleListFilter):
@@ -184,17 +187,17 @@ class BotFriend(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         for userid in list(Account.objects.values_list('userid', flat=True)):
             if self.value() == str(userid):
-                logger.debug(f"{self.value()=}")
+                #logger.debug(f"{self.value()=}")
                 try:
                     su = SocialUser.objects.get(user_id=userid)
                 except SocialUser.DoesNotExist:
                     return SocialUser.objects.none()
-                logger.debug(f"{su=}")
+                #logger.debug(f"{su=}")
                 try:
                     friends_ids = Friend.objects.filter(user=su).latest().id_list
                 except Follower.DoesNotExist:
                     return SocialUser.objects.none()
-                logger.debug(f"{friends_ids=}")
+                #logger.debug(f"{friends_ids=}")
                 return queryset.filter(user_id__in=friends_ids)
 
 
@@ -212,6 +215,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'block_tag',
         'active',
         'user_id',
+        'hcp_admin',
     )
     fields = (
         'screen_name_tag',
@@ -226,6 +230,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'follow_request_tag',
         'block_tag',
         'active',
+        'hcp_admin',
     )
     readonly_fields = (
         'screen_name_tag',
@@ -237,6 +242,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category_moderator_lst',
         'follow_request_tag',
         'block_tag',
+        'hcp_admin',
     )
     search_fields = (
         'user_id',
@@ -249,6 +255,11 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFriend,
         by_null_filter('category', 'Category'),
     )
+
+    def get_queryset(self, request):
+        qs = super(SocialUserAdmin, self).get_queryset(request)
+        self.request = request
+        return qs
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super(SocialUserAdmin, self)\
@@ -325,6 +336,21 @@ class SocialUserAdmin(admin.ModelAdmin):
 
     category_tag.short_description = 'Category'
 
+    def hcp_admin(self, obj):
+        human = obj.human_set.first()
+        if not human:
+            return
+        hcp = HealthCareProvider.objects.filter(human=human).first()
+        if hcp:
+            url = reverse("admin:hcp_healthcareprovider_change", args=(hcp.id,))
+            txt = "hcp change"
+        else:
+            url = f"/admin/hcp/healthcareprovider/add/?human={human.id}"
+            txt = "hcp add"
+        return mark_safe(
+            f'<a href="{url}">{txt}</a>'
+        ) 
+    hcp_admin.short_description = "hcp admin"
 
 class CategoryAdmin(TranslationAdmin):
     list_display = (

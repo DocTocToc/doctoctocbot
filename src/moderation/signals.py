@@ -7,6 +7,7 @@ from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
 from moderation.moderate import create_moderation
 from community.helpers import get_community_bot_screen_name
+from django.db.models import Q
 
 from moderation.models import (
     Queue,
@@ -16,7 +17,10 @@ from moderation.models import (
     Category,
     Moderator,
     Human,
+    get_default_socialmedia,
 )
+
+from hcp.models import HealthCareProviderTaxonomy, TaxonomyCategory
 
 from moderation.tasks import (
     handle_create_update_profile,
@@ -145,3 +149,38 @@ def accept_follower(sender, instance, created, **kwargs):
                 args=[instance.pk],
             )
     """
+
+@receiver(post_save, sender=HealthCareProviderTaxonomy)
+def add_category_from_taxonomy(sender, instance, created, **kwargs):
+    def get_socialuser_from_human(human: Human):
+        return human.socialuser.filter(
+            social_media=get_default_socialmedia(),
+            active=True
+        ).first()
+
+    def add_usercategoryrelationship(hcpt, tc):
+        social_user = get_socialuser_from_human(hcpt.healthcareprovider.human)
+        moderator = get_socialuser_from_human(hcpt.creator)
+        if not social_user or not moderator:
+            return
+        try:
+            ucr = UserCategoryRelationship.objects.create(
+                social_user=social_user,
+                moderator=moderator,
+                category=tc.category,
+                community=tc.community,
+            )
+            logger.debug(ucr)
+        except DatabaseError:
+            return
+
+    taxonomy = instance.taxonomy
+    qs = TaxonomyCategory.objects.filter(
+        Q(code=taxonomy.code) | \
+        Q(grouping=taxonomy.grouping) | \
+        Q(classification=taxonomy.classification) | \
+        Q(specialization=taxonomy.specialization)
+    )
+    logger.debug(qs)
+    for tc in qs:
+        add_usercategoryrelationship(instance, tc)

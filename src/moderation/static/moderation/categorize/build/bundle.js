@@ -1038,7 +1038,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (55:24) 
+    // (65:24) 
     function create_if_block_1(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -1103,7 +1103,7 @@ var app = (function () {
     	};
     }
 
-    // (52:2) {#if socialusers && socialusers.length == 0 && screenName}
+    // (62:2) {#if socialusers && socialusers.length == 0 && screenName}
     function create_if_block(ctx) {
     	let p;
     	let t1;
@@ -1165,7 +1165,7 @@ var app = (function () {
     	};
     }
 
-    // (65:22) {#each socialuser.category as cat}
+    // (75:22) {#each socialuser.category as cat}
     function create_each_block_1(ctx) {
     	let li;
     	let t_value = /*cat*/ ctx[12].label + "";
@@ -1189,7 +1189,7 @@ var app = (function () {
     	};
     }
 
-    // (56:4) {#each socialusers as socialuser (socialuser.id) }
+    // (66:4) {#each socialusers as socialuser (socialuser.id) }
     function create_each_block(key_1, ctx) {
     	let div;
     	let ul1;
@@ -1430,7 +1430,7 @@ var app = (function () {
     	};
     }
 
-    // (51:2) {#key socialusers}
+    // (61:2) {#key socialusers}
     function create_key_block(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -1629,6 +1629,7 @@ var app = (function () {
 
     let apiProtocolDomain = "https://local.doctoctoc.net";
     let apiPath = "/moderation/api/socialuser/";
+    let screenNameValue = "";
 
     function getBaseUrl() {
     	if (window.location.hostname == "localhost") {
@@ -1682,6 +1683,11 @@ var app = (function () {
     			socialuser.human[0].id = value;
     			$$invalidate(2, socialusers);
     		}
+    	}
+
+    	{
+    		$$invalidate(0, input = new URL(document.location).searchParams.get("screen_name"));
+    		console.log(screenNameValue);
     	}
 
     	return [

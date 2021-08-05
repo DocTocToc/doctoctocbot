@@ -11,10 +11,14 @@ from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
 from conversation.utils import screen_name
 from moderation.moderate import  handle_twitter_dm_response
-
+from django.contrib.auth import get_user_model 
 from django.utils.translation import activate
 from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
+from webpush import send_user_notification
+
+from django.urls import reverse
+
 from moderation.models import (
     Moderation,
     SocialUser,
@@ -714,7 +718,11 @@ def handle_update_twitter_followers_profiles(community: str):
     update_twitter_followers_profiles(community_mi)
 
 @shared_task
-def handle_create_twitter_socialuser(screen_name: str):
+def handle_create_twitter_socialuser(
+        screen_name: str,
+        username: str,
+        domain: str
+    ):
     if not screen_name:
         return
     api = get_api()
@@ -736,6 +744,20 @@ def handle_create_twitter_socialuser(screen_name: str):
         logger.debug(
             f'Done creating SocialUser object {su}.'
         )
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return
+        payload = {
+            "head": f"SocialUser {screen_name} created!",
+            "body": f"Creation of SocialUser {screen_name} was successful.", 
+            "url": f"https://{domain}{reverse('moderation:user')}?screen_name={screen_name}"
+        }
+        #logger.debug(payload)
+        send_user_notification(
+            user=user, payload=payload, ttl=1000
+        )       
     elif su:
         logger.warn(
             f'SocialUser object {su} already exists.'

@@ -6,11 +6,21 @@
 	let screenName = '';
 	let apiProtocolDomain = "https://local.doctoctoc.net";
 	let apiPath = "/moderation/api/socialuser/";
+	let screenNameValue = '';
 
 	let data;
 	let socialusers=null;
 	let humanId=0;
 
+	$: {
+		input = (new URL(document.location)).searchParams.get('screen_name');
+		console.log(screenNameValue);
+	}
+	
+	function getScreenNameValue() {
+		return (new URL(document.location)).searchParams.get('screen_name')
+	}
+	
 	function getBaseUrl() {
 	    if (window.location.hostname == "localhost") {
 	    	return apiProtocolDomain

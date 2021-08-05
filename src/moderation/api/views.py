@@ -89,8 +89,13 @@ class CreateTwitterSocialUser(APIView):
         screen_name: str = kwargs.get('screen_name', None)
         if not screen_name:
             return bad_request(request)
+        try:
+            username = request.user.username
+        except:
+            return bad_request(request)
+        domain = request.site.domain
         handle_create_twitter_socialuser.apply_async(
-            args=(screen_name,),
+            args=(screen_name, username, domain),
             ignore_result=True
         )
         return Response(status=200)

@@ -149,8 +149,7 @@ SECRET_KEY = config('SECRET_KEY')
 #ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default="*")
 ALLOWED_HOSTS = ['*']
 
-if not DEBUG or DEBUG_HTTPS:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 

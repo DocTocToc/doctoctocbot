@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load leaflet_tags %}
+{% load webpush_notifications %}
 
 {% block head_css %}
   {{ block.super }}
@@ -21,7 +22,12 @@
 
 {% block title %}{% trans "User" %}{% endblock title %}
 
+{% block head_extra %}
+  {% webpush_header %}
+{% endblock head_extra %}
+
 {% block content %}
+    {% webpush_button %}
     <div id="app-container"></div>
     <script type="text/javascript" src="{% static 'moderation/categorize/build/bundle.js' %}"></script>
     <script>

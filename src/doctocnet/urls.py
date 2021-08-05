@@ -64,6 +64,7 @@ urlpatterns += [
     path('cas/', include('mama_cas.urls')),
     path('choice/', include('choice.urls')),
     path('hcp/', include('hcp.urls')),
+    path('webpush/', include('webpush.urls'))
 ]
 
 

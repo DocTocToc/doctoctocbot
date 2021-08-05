@@ -227,6 +227,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'leaflet',
     'choice',
+    'webpush',
 ]
 
 if DEBUG:
@@ -848,4 +849,10 @@ MAMA_CAS_SERVICES = [
 MAMA_CAS_LOGIN_TEMPLATE = "cas/login.html"
 
 #MATRIX                                                                         
-MATRIX_BOT_PASSWORD=config('MATRIX_BOT_PASSWORD', default='')                        
+MATRIX_BOT_PASSWORD=config('MATRIX_BOT_PASSWORD', default='')               
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY', default=''),
+    "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY', default=''),
+    "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL', default='')
+}

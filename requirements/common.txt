@@ -68,3 +68,4 @@ django-leaflet
 #django-geojson==3.1.0
 git+https://github.com/DocTocToc/django-geojson.git@31cf507e504d4b7aec99b28d4c503cd8839185bc
 matrix-nio[e2e]
+django-webpush

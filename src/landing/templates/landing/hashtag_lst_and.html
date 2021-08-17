@@ -1,8 +1,10 @@
+{% load i18n %}
+
 {% for hashtag in hashtag_lst %}
     {% if forloop.first %}
         #{{ hashtag }}
     {% elif forloop.last %}
-        et #{{ hashtag }}
+      {% trans "and" %} #{{ hashtag }}
     {% else %}
         , #{{ hashtag }}
     {% endif %}

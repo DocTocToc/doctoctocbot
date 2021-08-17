@@ -25,14 +25,14 @@
 <h1>{% block title %} {% trans "Categories" %} {% endblock title %}</h1>
 
 <p>
-Après avoir retweeté votre {% hashtag_lst %}, {% bot_link_text %} vous envoie
+Après avoir retweeté votre {% hashtag_lst_or %}, {% bot_link_text %} vous envoie
 un DM vous invitant à choisir la catégorie qui correspond le mieux à votre question.
 </p>
 <p>
 Vous pouvez ajouter la catégorie directement dans votre question
 sous forme de hashtag.
 <q>
-{% hashtag_lst %} <b>#traitement</b> F 10 éruption
+{% hashtag %} <b>#traitement</b> F 10 éruption
 prurigineuse depuis 3 jours suite à prescription de...
 </q>
 Si {% bot_link_text %} détecte un hashtag correspondant à une catégorie,

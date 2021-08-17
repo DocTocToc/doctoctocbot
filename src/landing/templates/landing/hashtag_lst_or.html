@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{% for hashtag in hashtag_lst %}
+    {% if forloop.first %}
+        #{{ hashtag }}
+    {% elif forloop.last %}
+        {% trans "or" %} #{{ hashtag }}
+    {% else %}
+        , #{{ hashtag }}
+    {% endif %}
+{% endfor %}
+ 

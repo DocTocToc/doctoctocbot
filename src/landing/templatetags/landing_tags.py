@@ -29,19 +29,32 @@ def community_name(context):
     site = get_current_site(context)
     return site.community.get().name
 
-@register.inclusion_tag('landing/hashtag_lst.html', takes_context=True)
-def hashtag_lst(context):
+def get_hashtag_lst(context):
     community = get_community(context['request'])
     try:
-        hashtag_lst= list(
+        return list(
             Retweet.objects.filter(
                 community=community,
                 retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
         )
     except DatabaseError:
-        hashtag_lst=None
-    logger.debug(f"hashtag_lst: {hashtag_lst}")
+        return
+
+@register.inclusion_tag('landing/hashtag_lst_and.html', takes_context=True)
+def hashtag_lst_and(context):
+    hashtag_lst = get_hashtag_lst(context)
     return {'hashtag_lst': hashtag_lst}
+
+@register.inclusion_tag('landing/hashtag_lst_or.html', takes_context=True)
+def hashtag_lst_or(context):
+    hashtag_lst = get_hashtag_lst(context)
+    return {'hashtag_lst': hashtag_lst}
+
+@register.simple_tag(takes_context=True)
+def hashtag(context):
+    hashtag_lst = get_hashtag_lst(context)
+    if hashtag_lst:
+        return hashtag_lst[0]
 
 @register.inclusion_tag('landing/category_and_lst.html', takes_context=True)
 def membership_category_and(context):

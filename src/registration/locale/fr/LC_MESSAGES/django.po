@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 20:51+0200\n"
-"PO-Revision-Date: 2020-05-24 22:58+0300\n"
+"POT-Creation-Date: 2021-08-17 04:19+0200\n"
+"PO-Revision-Date: 2021-08-17 05:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,16 +18,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: registration/forms.py:31
+#: registration/forms.py:34
 msgid "Email (Be sure to use the same email to which the invitation was sent)"
 msgstr ""
 "Email (Merci d'utiliser la même adresse email que celle à laquelle "
 "l'invitation a été envoyée)"
 
-#: registration/forms.py:150
+#: registration/forms.py:153
 msgid "I have read and agree to the Terms of Service"
 msgstr "J'ai lu et j'approuve les conditions d'utilisation du service"
 
 #: registration/validators.py:21
 msgid "This name is reserved and cannot be registered."
 msgstr "Ce nom est réservé et ne peut pas être utilisé"
+
+#: registration/validators.py:22
+msgid "A username cannot contain the '@' character."
+msgstr "Un nom d'utilisateur ne peut contenir le caractère '@'."

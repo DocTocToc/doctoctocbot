@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 20:51+0200\n"
-"PO-Revision-Date: 2021-04-23 18:25+0300\n"
+"POT-Creation-Date: 2021-08-17 04:19+0200\n"
+"PO-Revision-Date: 2021-08-10 14:09+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -92,6 +92,14 @@ msgstr ""
 #: landing/templates/landing/guidelines/index.html:31
 msgid "Community guidelines"
 msgstr "Charte de la communauté"
+
+#: landing/templates/landing/hashtag_lst_and.html:7
+msgid "and"
+msgstr "et"
+
+#: landing/templates/landing/hashtag_lst_or.html:7
+msgid "or"
+msgstr "ou"
 
 #: landing/templates/landing/index.html:6
 msgid "Home"
@@ -422,7 +430,7 @@ msgstr ""
 "membres!"
 
 #: landing/templates/landing/user.html:33
-#: landing/templates/landing/usernav.html:15 landing/views.py:73
+#: landing/templates/landing/usernav.html:15 landing/views.py:75
 msgid "Profile"
 msgstr "Profil"
 

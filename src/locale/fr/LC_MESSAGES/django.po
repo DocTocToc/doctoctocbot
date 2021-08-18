@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 20:51+0200\n"
+"POT-Creation-Date: 2021-08-17 04:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,55 @@ msgstr ""
 
 #: authorize/views.py:32
 msgid "Authorize our app"
+msgstr ""
+
+#: awareness/models.py:71 messenger/models.py:75 messenger/models.py:85
+#: messenger/models.py:132
+msgid "Campaign"
+msgstr ""
+
+#: awareness/models.py:72 messenger/models.py:86
+msgid "Campaign linked to this receipt."
+msgstr ""
+
+#: awareness/models.py:79 choice/models.py:116 messenger/models.py:99
+msgid "User"
+msgstr ""
+
+#: awareness/models.py:80 messenger/models.py:100
+msgid "Receipt for a message sent to this user"
+msgstr ""
+
+#: awareness/models.py:85 messenger/models.py:104
+msgid "DM event id"
+msgstr ""
+
+#: awareness/models.py:86 messenger/models.py:105
+msgid "DM event id created if the message was successfully sent."
+msgstr ""
+
+#: awareness/models.py:92 messenger/models.py:111
+msgid "Error message"
+msgstr ""
+
+#: awareness/models.py:93 messenger/models.py:112
+msgid "Error message recorded if the message was not successfully sent."
+msgstr ""
+
+#: awareness/models.py:107 messenger/models.py:120
+msgid "Receipt"
+msgstr ""
+
+#: awareness/models.py:108 messenger/models.py:121
+msgid "Receipts"
+msgstr ""
+
+#: choice/models.py:115
+msgid "Django user"
+msgstr ""
+
+#: choice/templates/choice/index.html:48
+msgid "Sign in with Twitter"
 msgstr ""
 
 #: community/models.py:405
@@ -150,7 +199,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: messenger/models.py:19 messenger/models.py:93 messenger/models.py:137
+#: messenger/models.py:19 messenger/models.py:93 messenger/models.py:138
 msgid "Message"
 msgstr ""
 
@@ -162,71 +211,31 @@ msgstr ""
 msgid "Messages from this Campaign"
 msgstr ""
 
-#: messenger/models.py:75 messenger/models.py:85 messenger/models.py:131
-msgid "Campaign"
-msgstr ""
-
 #: messenger/models.py:76
 msgid "Campaigns"
-msgstr ""
-
-#: messenger/models.py:86
-msgid "Campaign linked to this receipt."
 msgstr ""
 
 #: messenger/models.py:94
 msgid "Receipt for this message."
 msgstr ""
 
-#: messenger/models.py:99
-msgid "User"
-msgstr ""
-
-#: messenger/models.py:100
-msgid "Receipt for a message sent to this user"
-msgstr ""
-
-#: messenger/models.py:104
-msgid "DM event id"
-msgstr ""
-
-#: messenger/models.py:105
-msgid "DM event id created if the message was successfully sent."
-msgstr ""
-
-#: messenger/models.py:110
-msgid "Error message"
-msgstr ""
-
-#: messenger/models.py:111
-msgid "Error message recorded if the message was not successfully sent."
-msgstr ""
-
-#: messenger/models.py:119
-msgid "Receipt"
-msgstr ""
-
-#: messenger/models.py:120
-msgid "Receipts"
-msgstr ""
-
-#: messenger/models.py:132 messenger/models.py:138
+#: messenger/models.py:133 messenger/models.py:139
 msgid "Messages are part of this campaign."
 msgstr ""
 
-#: messenger/models.py:142
+#: messenger/models.py:143
 msgid "Order"
 msgstr ""
 
-#: messenger/models.py:143
+#: messenger/models.py:144
 msgid "What order to display this person within the department."
 msgstr ""
 
-#: messenger/models.py:147
+#: messenger/models.py:148
 msgid "Campaign Message"
 msgstr ""
 
-#: messenger/models.py:148
+#: messenger/models.py:149
 msgid "Campaign Messages"
 msgstr ""
 

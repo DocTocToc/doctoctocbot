@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-16 20:51+0200\n"
+"POT-Creation-Date: 2021-08-17 04:19+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:467
+#: moderation/admin.py:493
 msgid "state"
 msgstr "état"
 
-#: moderation/admin.py:477
+#: moderation/admin.py:503
 msgid "Pending"
 msgstr "En attente"
 
-#: moderation/admin.py:492
+#: moderation/admin.py:518
 msgid "community"
 msgstr "communauté"
 
@@ -57,67 +57,67 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:487
+#: moderation/models.py:503
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:488
+#: moderation/models.py:504
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:489
+#: moderation/models.py:505
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:490
+#: moderation/models.py:506
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:829
+#: moderation/models.py:845
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:830
+#: moderation/models.py:846
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:831
+#: moderation/models.py:847
 msgid "Ban"
 msgstr "Exclure"
 
-#: moderation/social.py:187
+#: moderation/social.py:186
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:204
+#: moderation/social.py:203
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:204
+#: moderation/social.py:203
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:281
+#: moderation/social.py:280
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:284
+#: moderation/social.py:283
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:288
+#: moderation/social.py:287
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:375
+#: moderation/social.py:374
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:153
+#: moderation/tasks.py:157
 #, python-brace-format
 msgid ""
 "\n"
@@ -126,7 +126,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:170
+#: moderation/tasks.py:174
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -142,12 +142,16 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/tasks.py:185
+#: moderation/tasks.py:189
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/views.py:60
+#: moderation/templates/moderation/user.html:23
+msgid "User"
+msgstr ""
+
+#: moderation/views.py:38
 msgid "Moderators"
 msgstr "Modérateurs"
 

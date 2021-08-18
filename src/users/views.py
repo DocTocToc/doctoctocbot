@@ -3,6 +3,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
 from django.shortcuts import render, redirect
+from django.utils.translation import ugettext as _
 
 from social_django.models import UserSocialAuth
 
@@ -49,10 +50,10 @@ def password(request):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, _('Your password was successfully updated!'))
             return redirect('users:password')
         else:
-            messages.error(request, 'Please correct the error below.')
+            messages.error(request, _('Please correct the error below.'))
     else:
         form = PasswordForm(request.user)
     return render(request, 'users/password.html', {'form': form})

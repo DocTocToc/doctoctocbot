@@ -227,6 +227,7 @@ INSTALLED_APPS = [
     'leaflet',
     'choice',
     'webpush',
+    'awareness',
 ]
 
 if DEBUG:
@@ -465,9 +466,6 @@ SCRAPING_HOUR_DELTA = config('SCRAPING_HOUR_DELTA', cast=int)
 
 # crispy_forms options
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# django-registration
-ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
 MIGRATION_MODULES = {
     'sites': 'doctocnet.data_migrations.sites_migrations',

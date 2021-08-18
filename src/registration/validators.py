@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 #where lower(data::text)::jsonb @> lower('[{"city":"New York"}]')::jsonb
 
 RESERVED_NAME = _(u"This name is reserved and cannot be registered.")
+AT_SIGN = _(u"A username cannot contain the '@' character.")
 
 def CaseInsensitiveReservedSocialUsername(value):
     """
@@ -39,3 +40,13 @@ def CaseInsensitiveReservedSocialUsername(value):
     if row[0]:
         raise ValidationError(RESERVED_NAME, code='unique')
 
+
+def no_at_sign(value):
+    """
+    Validator which disallows @.
+    """
+    # Only run if the username is a string.
+    if not isinstance(value, six.text_type):
+        return
+    if "@" in value:
+        raise ValidationError(AT_SIGN)

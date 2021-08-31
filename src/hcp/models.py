@@ -30,10 +30,9 @@ class Taxonomy(models.Model):
         
 
 class HealthCareProvider(models.Model):
-    human = models.ForeignKey(
+    human = models.OneToOneField(
        'moderation.Human',
        on_delete=models.CASCADE,
-       unique=True,
     )
     taxonomy = models.ManyToManyField(
         Taxonomy,

@@ -227,7 +227,7 @@ INSTALLED_APPS = [
     'leaflet',
     'choice',
     'webpush',
-    'awareness',
+#    'awareness',
 ]
 
 if DEBUG:

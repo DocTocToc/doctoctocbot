@@ -13,6 +13,7 @@ from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
 from django.db.models.aggregates import Sum, Count
+from moderation.admin_tags import screen_name_link_su_pk
 
 from versions.admin import VersionedAdmin
 
@@ -127,10 +128,10 @@ class TweetdjAdmin(admin.ModelAdmin):
         'retweetedstatus',
         'deleted',
         'tag_list',
-        'retweeted_by_screen_name',
         'rt_by_count',
-        'quoted_by_screen_name',
+        'retweeted_by_screen_name',
         'qt_by_count',
+        'quoted_by_screen_name',
     )
     search_fields = ['json__text',]
     fields = (
@@ -147,9 +148,9 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'parentid',
         'tags',
-        'retweeted_by',
+        'retweeted_by_screen_name',
         'rt_by_count',
-        'quoted_by',
+        'quoted_by_screen_name',
         'qt_by_count',
     )
     readonly_fields = (
@@ -163,9 +164,11 @@ class TweetdjAdmin(admin.ModelAdmin):
         'created_at',
         'quotedstatus',
         'retweetedstatus',
+        'hashtag',
         'parentid',
+        'retweeted_by_screen_name',
         'rt_by_count',
-        'quoted_by',
+        'quoted_by_screen_name',
         'qt_by_count',
     )
     list_filter = (
@@ -222,22 +225,24 @@ class TweetdjAdmin(admin.ModelAdmin):
     def retweeted_by_screen_name(self, obj):
         rtby_lst = []
         for rtby in obj.retweeted_by.all():
-            snt = rtby.screen_name_tag()
+            snt = screen_name_link_su_pk(rtby.pk)
             if snt:
                 rtby_lst.append(snt)
-        return "\n".join(rtby_lst)
-            
+        return mark_safe(
+            " | ".join(rtby_lst)
+        )
 
     retweeted_by_screen_name.short_description = "RT by"
 
     def quoted_by_screen_name(self, obj):
         qtby_lst = []
         for qtby in obj.quoted_by.all():
-            snt = qtby.screen_name_tag()
+            snt = screen_name_link_su_pk(qtby.pk)
             if snt:
                 qtby_lst.append(snt)
-        return "\n".join(qtby_lst)
-            
+        return mark_safe(
+            " | ".join(qtby_lst)
+        )
 
     quoted_by_screen_name.short_description = "QT by"
 

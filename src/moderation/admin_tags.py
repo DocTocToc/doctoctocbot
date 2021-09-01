@@ -53,4 +53,17 @@ def admin_tag_screen_name_link(user_id):
         )
     except SocialUser.DoesNotExist:
         return
-
+    
+def screen_name_link_su_pk(su_pk):
+    """ Return SocialUser screen name html link tag from Twitter user_id
+    """
+    try:
+        su = SocialUser.objects.get(id=su_pk)
+        return mark_safe(
+            '<a href="{link}">{tag}</a>'.format(
+                link = reverse("admin:moderation_socialuser_change", args=(su_pk,)),
+                tag = su.screen_name_tag()
+            )
+        )
+    except SocialUser.DoesNotExist:
+        return

@@ -31,6 +31,8 @@ from moderation.models import (
     get_default_socialmedia,
 )
 from hcp.models import HealthCareProvider
+from hcp.admin_tags import taxonomy_tag
+
 from community.models import Community
 from moderation.admin_tags import admin_tag_category
 from common.list_filter import by_null_filter
@@ -215,6 +217,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'block_tag',
         'active',
         'user_id',
+        'hcp_taxonomy_tag',
         'hcp_admin',
     )
     fields = (
@@ -230,6 +233,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'follow_request_tag',
         'block_tag',
         'active',
+        'hcp_taxonomy_tag',
         'hcp_admin',
     )
     readonly_fields = (
@@ -242,6 +246,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category_moderator_lst',
         'follow_request_tag',
         'block_tag',
+        'hcp_taxonomy_tag',
         'hcp_admin',
     )
     search_fields = (
@@ -351,6 +356,12 @@ class SocialUserAdmin(admin.ModelAdmin):
             f'<a href="{url}">{txt}</a>'
         ) 
     hcp_admin.short_description = "hcp admin"
+    
+    def hcp_taxonomy_tag(self, obj):
+        return taxonomy_tag(obj)
+
+    hcp_taxonomy_tag.short_description = _("Specialty")
+
 
 class CategoryAdmin(TranslationAdmin):
     list_display = (

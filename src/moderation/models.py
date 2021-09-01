@@ -156,8 +156,8 @@ class Human(models.Model):
     
     def __str__(self):
         pk = self.pk
-        su = "-".join( [str(su) for su in self.socialuser.all()] )
-        user = "-".join( [str(user) for user in self.djangouser.all()] )
+        su = self.socialuser.all().first()
+        user = self.djangouser.all().first()
         return f"{pk} / {su} / {user}"
 
 

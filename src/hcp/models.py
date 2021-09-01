@@ -47,7 +47,7 @@ class HealthCareProvider(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.human} : {self.taxonomy.all()}"
+        return f"{self.human}"
 
 
 class HealthCareProviderTaxonomy(models.Model):

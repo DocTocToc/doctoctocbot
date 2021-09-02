@@ -1,4 +1,4 @@
-FROM python:3.8 AS prod
+FROM python:3.8-buster AS prod
 
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1

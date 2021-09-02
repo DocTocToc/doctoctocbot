@@ -153,12 +153,6 @@ class Human(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        pk = self.pk
-        su = self.socialuser.all().first()
-        user = self.djangouser.all().first()
-        return f"{pk} / {su} / {user}"
 
 
 class SocialUser(models.Model):

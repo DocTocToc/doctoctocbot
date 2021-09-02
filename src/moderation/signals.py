@@ -1,6 +1,6 @@
 import logging
 from django.db.utils import DatabaseError
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
@@ -53,11 +53,12 @@ def createprofile_queue(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def log_usercategoryrelationship(sender, instance, created, **kwargs):
-    logger.debug(f"ucr saved: sender: {sender}; instance: {instance}; created: {created}")
-    logger.debug(f"instance.social_user.user_id: {instance.social_user.user_id}")
-    if instance.moderator:
-        logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
-    logger.debug(f"instance.category: {instance.category}")
+    if settings.DEBUG:
+        logger.debug(f"ucr saved: sender: {sender}; instance: {instance}; created: {created}")
+        logger.debug(f"instance.social_user.user_id: {instance.social_user.user_id}")
+        if instance.moderator:
+            logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
+        logger.debug(f"instance.category: {instance.category}")
     
 @receiver(post_save, sender=UserCategoryRelationship)
 def moderator(sender, instance, created, **kwargs):
@@ -164,15 +165,15 @@ def add_category_from_taxonomy(sender, instance, created, **kwargs):
         if not social_user or not moderator:
             return
         try:
-            ucr = UserCategoryRelationship.objects.create(
-                social_user=social_user,
-                moderator=moderator,
-                category=tc.category,
-                community=tc.community,
-            )
-            logger.debug(ucr)
-        except DatabaseError:
-            return
+            with transaction.atomic():
+                ucr = UserCategoryRelationship.objects.create(
+                    social_user=social_user,
+                    moderator=moderator,
+                    category=tc.category,
+                    community=tc.community,
+                )
+        except IntegrityError as e:
+            logger.error(e)
 
     taxonomy = instance.taxonomy
     qs = TaxonomyCategory.objects.filter(
@@ -181,6 +182,5 @@ def add_category_from_taxonomy(sender, instance, created, **kwargs):
         Q(classification=taxonomy.classification) | \
         Q(specialization=taxonomy.specialization)
     )
-    logger.debug(qs)
     for tc in qs:
         add_usercategoryrelationship(instance, tc)

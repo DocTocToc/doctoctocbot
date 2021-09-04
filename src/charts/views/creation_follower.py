@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from charts.utils import get_userid_lst, get_user_id, get_bot_id
 from bot.lib.datetime import get_datetime_tz_from_twitter_str
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +17,7 @@ class CreationFollowerChartView(LoginRequiredMixin, View):
 
     
 class CreationFollowerChartData(APIView):
-    authentication_classes = []
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     
     @staticmethod
     def get_data(userid_lst):
@@ -62,14 +62,21 @@ class CreationFollowerChartData(APIView):
             "data_user": None,
         }
 
-        member_userid_lst = get_userid_lst(request)
-        data = CreationFollowerChartData.get_data(member_userid_lst)
-        res["data"] = data
-
         user_id = get_user_id(request)
+        logger.debug(f'{user_id=}')
         if user_id:
             data = CreationFollowerChartData.get_data([user_id])
             res["data_user"] = data
+
+        member_userid_lst = get_userid_lst(request)
+        try:
+            member_userid_lst.remove(user_id)
+        except ValueError:
+            pass
+        data = CreationFollowerChartData.get_data(member_userid_lst)
+        res["data"] = data
+
+
 
         bot_id = get_bot_id(request)
         if bot_id:

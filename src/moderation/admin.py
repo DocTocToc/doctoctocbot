@@ -714,6 +714,7 @@ class TwitterListAdmin(admin.ModelAdmin):
     
     member_count_tag.short_description = 'Members'
 
+
 class FollowerAdmin(admin.ModelAdmin):
     list_display = (
         'id',
@@ -726,6 +727,14 @@ class FollowerAdmin(admin.ModelAdmin):
         'user',
         'id_list',
         'created'
+    )
+    list_filter = (
+        ('created', DateRangeFilter),
+    )
+    search_fields = (
+        'user__user_id',
+        'user__profile__json__screen_name',
+        'id_list',
     )
 
 

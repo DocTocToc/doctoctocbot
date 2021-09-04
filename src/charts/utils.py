@@ -1,11 +1,30 @@
 from moderation.models import UserCategoryRelationship
 from community.helpers import get_community
+from community.helpers import get_community_bot_socialuser
+from users.utils import get_twitter_social_user
 
+def get_bot_id(request):
+    community = get_community(request)
+    if not community:
+        return
+    bot_su = get_community_bot_socialuser(community)
+    return bot_su.user_id
+
+def get_user_id(request):
+    if not request.user.is_authenticated:
+        return
+    current_user = request.user
+    su = get_twitter_social_user(current_user)
+    if not su:
+        return
+    return su.user_id
 
 def get_userid_lst(request):
     community = get_community(request)
     categories = community.membership.all()
-    return UserCategoryRelationship.objects.filter(
-        category__in = categories,
-        community = community
+    return list(
+        UserCategoryRelationship.objects.filter(
+            category__in = categories,
+            community = community
         ).values_list('social_user__user_id', flat=True)
+    )

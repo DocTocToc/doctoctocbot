@@ -84,6 +84,11 @@ class Community(models.Model):
         default = 0,
         help_text = "Pending moderation period (hour)"
     )
+    moderator_moderation_period = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Interval before same moderation sent again to moderator"
+    )
     viral_moderation = models.BooleanField(
         default=False,
         help_text = "Does a verified follower immediately become a moderator?",

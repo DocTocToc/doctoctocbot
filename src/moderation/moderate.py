@@ -3,6 +3,7 @@ import ast
 import random
 import os
 from typing import List
+from django.utils import timezone
 from django.db.utils import IntegrityError, DatabaseError
 from django.db.models import F
 from django.conf import settings
@@ -292,10 +293,26 @@ def follower_mod(queue):
 
 def create_moderation_instance(userid: int, queue: Queue):
     try:
-        moderator_mi = SocialUser.objects.get(user_id = userid)
+        moderator_mi = SocialUser.objects.get(user_id=userid)
     except SocialUser.DoesNotExist:
         return
-    Moderation.objects.create(moderator = moderator_mi, queue = queue)
+    community = queue.community
+    interval = community.moderator_moderation_period
+    try:
+        moderation = Moderation.objects.filter(
+            moderator=moderator_mi,
+            queue=queue
+        ).latest('version_start_date')
+    except Moderation.DoesNotExist:
+        moderation = None
+    if moderation and interval:
+        if (timezone.now() - moderation.version_start_date) < interval:
+            logger.warn(
+                f'Moderation for same queue / moderator created less than '
+                f'{interval} ago.'
+            )
+            return
+    Moderation.objects.create(moderator=moderator_mi, queue=queue)
     
 def verified_follower(su: SocialUser, community) -> List[int]:
     try:

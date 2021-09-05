@@ -439,7 +439,10 @@ class QueueAdmin(VersionedAdmin):
     list_display_show_identity = False
     list_display_show_end_date = False
     list_display_show_start_date = True
-    
+
+    def get_ordering(self, request):
+        return ['-version_start_date', ] + self.ordering
+
     def screen_name_link(self, obj):
         try:
             su = SocialUser.objects.get(user_id=obj.user_id)
@@ -596,7 +599,9 @@ class ModerationAdmin(VersionedAdmin):
     search_fields = (
         'queue__user_id',
     )
-    ordering = ['-version_start_date',]
+
+    def get_ordering(self, request):
+        return ['-version_start_date', ] + self.ordering
 
     def get_search_results(self, request, queryset, search_term):
         # search_term is what you input in admin site

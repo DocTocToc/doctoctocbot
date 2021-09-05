@@ -517,7 +517,11 @@ class Queue(Versionable):
     
     def __str__(self):
         return (f"Queue {self.user_id} {self.status_id} {self.type}")
-    
+
+    class Meta:
+        ordering = ['-version_start_date']
+
+
     def profile(self):
         try:
             su = SocialUser.objects.get(user_id=self.user_id)

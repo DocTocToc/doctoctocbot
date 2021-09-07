@@ -16,6 +16,7 @@ from moderation.profile import create_update_profile_twitter
 from moderation.social import update_social_ids
 from request.utils import update_request_queue
 from moderation.twitter.user import TwitterUser
+from moderation.profile import is_profile_uptodate
 
 logger = logging.getLogger(__name__)
 
@@ -29,18 +30,18 @@ def create_queue(community, uid, bot_screen_name):
     socialuser = addsocialuser_from_userid(uid)
     if not socialuser:
         return
-    create_update_profile_twitter(
-            socialuser,
-            bot_screen_name=bot_screen_name,
-            cache=False
-    )
+    if not is_profile_uptodate(uid):
+        create_update_profile_twitter(
+                socialuser,
+                bot_screen_name=bot_screen_name,
+                cache=False
+        )
     with transaction.atomic():
         # if pending, current Queue with same uid exists,
         # don't create a duplicate
-        if Queue.objects.filter(
+        if Queue.objects.current.filter(
             uid=uid,
             socialmedia=socialmedia,
-            socialuser=socialuser,
             community=community,
             state=Queue.PENDING,
             version_end_date__isnull=True,

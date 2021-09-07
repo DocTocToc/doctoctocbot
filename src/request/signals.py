@@ -24,6 +24,7 @@ def dm_admin(sender, instance, created, **kwargs):
         created
         and (instance.state == Queue.PENDING)
         and (instance.id == instance.identity)
+        and instance.version_end_date is None
     ):
         try:
             screen_name = instance.socialuser.screen_name_tag()

@@ -3,12 +3,15 @@ from datetime import datetime
 import pytz
 from typing import Optional
 from dateutil.relativedelta import relativedelta
+
+from django.db.utils import DatabaseError
+from django.db import transaction
 from celery import shared_task
+
 from community.models import Community
 from request.twitter_request import get_incoming_friendship
 from request.models import Queue
 from moderation.models import addsocialuser_from_userid, SocialMedia
-from django.db.utils import DatabaseError
 from moderation.profile import create_update_profile_twitter
 from moderation.social import update_social_ids
 from request.utils import update_request_queue
@@ -31,16 +34,28 @@ def create_queue(community, uid, bot_screen_name):
             bot_screen_name=bot_screen_name,
             cache=False
     )
-    try:
-        Queue.objects.create(
+    with transaction.atomic():
+        # if pending, current Queue with same uid exists,
+        # don't create a duplicate
+        if Queue.objects.filter(
             uid=uid,
             socialmedia=socialmedia,
             socialuser=socialuser,
             community=community,
-            state=Queue.PENDING
-        )
-    except DatabaseError as e:
-        logger.error(f"Database error during Request Queue creation; {e}")
+            state=Queue.PENDING,
+            version_end_date__isnull=True,
+        ).exists():
+            return
+        try:
+            Queue.objects.create(
+                uid=uid,
+                socialmedia=socialmedia,
+                socialuser=socialuser,
+                community=community,
+                state=Queue.PENDING
+            )
+        except DatabaseError as e:
+            logger.error(f"Database error during Request Queue creation; {e}")
 
 """ Return True if current pending request queue exists
 """

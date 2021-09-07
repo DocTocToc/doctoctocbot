@@ -32,16 +32,21 @@ def dm_admin(sender, instance, created, **kwargs):
         activate_language(instance.community)
         community_name = instance.community.name
         if screen_name:
-            text = _("Please handle @{screen_name} follow request for {community_name} community.").format(
-                screen_name=screen_name,
+            text = _("Please handle {tag} follow request for {community_name} community.").format(
+                tag=f'@{screen_name}',
                 community_name=community_name
             )
         else:
-            text = _("You have a new follow request.")
-        
+            if instance.socialmedia.name == "twitter":
+                tag = f"https://twitter.com/intent/user?user_id={instance.uid}"
+            else:
+                tag = instance.uid
+            text = _("Please handle {tag} follow request for {community_name} community.").format(
+                tag=tag,
+                community_name=community_name
+            )
         try:
             dev_cat = Category.objects.get(name='dev')
-            logger.debug(dev_cat)
         except Category.DoesNotExist:
             return
         try:

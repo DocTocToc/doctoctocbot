@@ -3,7 +3,7 @@ import random
 import time
 import datetime
 from versions.exceptions import DeletionOfNonCurrentVersionError
-
+from conversation.models import Tweetdj
 from celery import shared_task
 from bot.bin.user import getuser_lst
 from moderation.profile import twitterprofile
@@ -86,7 +86,6 @@ def handle_create_update_profile(userid: int, bot_screen_name=None):
         create_update_profile_local(su)
 
 def handle_create_all_profiles():
-    from conversation.models import Tweetdj
     su_qs_lst = SocialUser.objects.values('user_id', 'profile')
     user_id_request_lst = []
     

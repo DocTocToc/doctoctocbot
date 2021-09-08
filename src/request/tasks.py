@@ -23,14 +23,17 @@ logger = logging.getLogger(__name__)
 """Create a queue
 """
 def create_queue(community, uid, bot_screen_name):
+    logger.debug(f"Enter create_queue(({community}, {uid}, {bot_screen_name})")
     try:
         socialmedia = SocialMedia.objects.get(name='twitter')
     except SocialMedia.DoesNotExist:
         return
     socialuser = addsocialuser_from_userid(uid)
+    logger.debug(f'{socialuser=}')
     if not socialuser:
         return
     if not is_profile_uptodate(uid):
+        logger.debug(f'create_update_profile_twitter({uid})')
         create_update_profile_twitter(
                 socialuser,
                 bot_screen_name=bot_screen_name,
@@ -39,24 +42,28 @@ def create_queue(community, uid, bot_screen_name):
     with transaction.atomic():
         # if pending, current Queue with same uid exists,
         # don't create a duplicate
-        if Queue.objects.current.filter(
+        qs = Queue.objects.current.filter(
             uid=uid,
             socialmedia=socialmedia,
             community=community,
             state=Queue.PENDING,
-            version_end_date__isnull=True,
-        ).exists():
+            version_end_date__isnull=True
+        )
+        logger.debug(f'{qs=} | {bool(qs)=}')
+        if qs:
+            logger.debug("Previous identical Queue already exists: {qs}")
             return
         try:
-            Queue.objects.create(
+            _q = Queue.objects.create(
                 uid=uid,
                 socialmedia=socialmedia,
                 socialuser=socialuser,
                 community=community,
                 state=Queue.PENDING
             )
-        except DatabaseError as e:
-            logger.error(f"Database error during Request Queue creation; {e}")
+            logger.debug(f'Queue created: {_q}')
+        except:
+            logger.error(f"Database error during Request Queue creation")
 
 """ Return True if current pending request queue exists
 """
@@ -152,6 +159,7 @@ def backoff(community, uid):
 
 @shared_task
 def handle_incoming_friendship():
+    logger.debug("in")
     for community in Community.objects.all():
         try:
             bot_screen_name = community.account.username
@@ -166,12 +174,16 @@ def handle_incoming_friendship():
             # queue.
             # This gives enough time for accept / decline tasks to be completed
             if backoff(community, uid):
+                logger.debug(f'backoff({community}, {uid}) is True')
                 continue
             if decline_backoff(community, uid):
+                logger.debug(f'decline_backoff({community}, {uid}) is True')
                 continue
             if pending_request_exists(community, uid):
+                logger.debug(f'pending_request_exists({community}, {uid}) is True')
                 continue
             if accept_request_exists(community, uid):
+                logger.debug(f'accept_request_exists({community}, {uid}) is True')
                 continue
             create_queue(community, uid, bot_screen_name)
 

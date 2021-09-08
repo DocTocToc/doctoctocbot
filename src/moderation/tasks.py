@@ -29,7 +29,6 @@ from moderation.models import (
     Queue,
 )
 from request.models import Queue as Request_Queue
-from request.utils import accept_delete_queue
 from bot.models import Account
 
 from common.utils import trim_grouper
@@ -637,6 +636,9 @@ ucr: pk of UserCategoryRelationship instance
 """
 @shared_task
 def handle_accept_follower(ucr_pk: int):
+    #noop
+    return
+
     try:
         ucr = UserCategoryRelationship.objects.get(pk=ucr_pk)
         logger.debug(f"ucr: {ucr}")
@@ -670,6 +672,8 @@ ucr: pk of UserCategoryRelationship instance
 """
 @shared_task
 def handle_accept_follower_twitter(ucr_pk: int):
+    return
+    """
     try:
         ucr = UserCategoryRelationship.objects.get(pk=ucr_pk)
     except UserCategoryRelationship.DoesNotExist:
@@ -677,27 +681,20 @@ def handle_accept_follower_twitter(ucr_pk: int):
     if ucr.category in ucr.community.follower.all():
         uid = ucr.social_user.user_id
         username = ucr.community.account.username
-        success = True
-        """
+        success = False
         success = accept_follower(
             uid,
             username,
         )
-        """
         if success:
-            accept_delete_queue(
-                uid=uid,
-                community=ucr.community
-            )
-            
+            #accept_queue
     else:
         return
-        """
         decline_follower(
             ucr.social_user.user_id,
             ucr.community.account.username,
         )
-        """
+    """
 
 @shared_task
 def handle_update_twitter_followers_profiles(community: str):

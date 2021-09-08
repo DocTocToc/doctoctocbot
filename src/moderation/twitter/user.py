@@ -68,7 +68,7 @@ class TwitterUser:
         )
         resp = api.create_block(user_id=self.id)
         logger.debug(resp)
-        time.sleep(1)
+        time.sleep(5)
         resp = api.destroy_block(user_id=self.id)
         logger.debug(resp)
 

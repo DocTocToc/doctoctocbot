@@ -2,7 +2,7 @@ import logging
 from django.db.utils import DatabaseError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from request.models import Queue, RequestDm
+from request.models import Queue as RequestQueue, RequestDm
 from dm.api import senddm
 from django.utils.translation import gettext as _
 from moderation.models import Category
@@ -18,11 +18,11 @@ from request.utils import request_dm
 
 logger = logging.getLogger(__name__) 
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def dm_admin(sender, instance, created, **kwargs):
     if (
         created
-        and (instance.state == Queue.PENDING)
+        and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
         and instance.version_end_date is None
     ):
@@ -62,20 +62,20 @@ def dm_admin(sender, instance, created, **kwargs):
             )
             logger.debug(dm)
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def message_requestor_slot(sender, instance, created, **kwargs):
     if (
         created
-        and (instance.state == Queue.PENDING)
+        and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
     ):
         message_requestor(instance)
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def create_moderation_queue(sender, instance, created, **kwargs):
     if (
         created
-        and (instance.state == Queue.PENDING)
+        and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
     ):
         try:
@@ -88,23 +88,23 @@ def create_moderation_queue(sender, instance, created, **kwargs):
         except DatabaseError:
             return
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def follower_protected_requestor(sender, instance, created, **kwargs):
     if (
         created
-        and (instance.state == Queue.PENDING)
+        and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
     ):
         twitter_user = TwitterUser(socialuser=instance.socialuser)
         if twitter_user.is_protected():
             twitter_user.friend(instance.community)
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def accept_decline_autotweet(sender, instance, created, **kwargs):
     is_twitter = instance.socialmedia.name == 'twitter'
-    current_version = Queue.objects.current_version(instance)
+    current_version = RequestQueue.objects.current_version(instance)
     if (
-        instance.state == Queue.ACCEPT
+        instance.state == RequestQueue.ACCEPT
         and is_twitter
         and current_version
     ):
@@ -115,7 +115,7 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
         )
         """
     elif (
-        instance.state == Queue.DECLINE
+        instance.state == RequestQueue.DECLINE
         and is_twitter
         and current_version
     ):
@@ -124,13 +124,15 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
             args=[instance.uid, instance.community.id]
         )
 
-@receiver(post_save, sender=Queue)
+@receiver(post_save, sender=RequestQueue)
 def request_dm(sender, instance, created, **kwargs):
     if (
         instance.community.twitter_request_dm
         and created
-        and (instance.state == Queue.PENDING)
+        and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
+        and instance.version_end_date is None
+
     ):
         has_requestdm = False
         try:

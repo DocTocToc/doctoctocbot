@@ -175,6 +175,7 @@ services:
       - redis
       - database
       - celery_retweet_worker
+    working_dir: /code/src
   chrome:
     image: selenium/standalone-chrome:3.14
     privileged: true

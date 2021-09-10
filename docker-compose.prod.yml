@@ -118,7 +118,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8085:80"
+      - "8086:80"
   celery_retweet_worker:
     image: dtn_prod
   celery_tree_worker:

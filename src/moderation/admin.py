@@ -28,6 +28,7 @@ from moderation.models import (
     DoNotRetweet,
     SocialMedia,
     CategoryMetadata,
+    ModerationOptIn,
     get_default_socialmedia,
 )
 from hcp.models import HealthCareProvider
@@ -838,12 +839,14 @@ class CategoryMetadataAdmin(TranslationAdmin):
         'label_fr',
         'label_en',
         'dm',
+        'self_dm',
     )
     fields = (
         'name',
         'label',
         'description',
         'dm',
+        'self_dm',
     )
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size':'72'})},
@@ -888,6 +891,14 @@ class SocialMediaAdmin(admin.ModelAdmin):
         'emoji',
     )
 
+@admin.register(ModerationOptIn)
+class ModerationOptInAdmin(admin.ModelAdmin):
+    list_display = (
+        'type',
+        'option',
+        'authorize',
+    )
+    
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)

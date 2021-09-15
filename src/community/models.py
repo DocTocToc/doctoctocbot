@@ -169,6 +169,10 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    twitter_self_moderation_dm = models.TextField(
+        blank=True,
+        null=True,
+    )
     blog = models.ForeignKey(
         'community.Blog',
         on_delete=models.PROTECT,

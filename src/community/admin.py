@@ -86,6 +86,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_follow_member',
         'twitter_request_dm',
         'twitter_request_dm_text',
+        'twitter_self_moderation_dm',
         'blog',
     )
     readonly_fields = (

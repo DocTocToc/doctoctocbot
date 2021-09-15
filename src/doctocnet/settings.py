@@ -824,6 +824,10 @@ CONSTANCE_CONFIG = {
         "https://element.medica.im/#/room/#",
         "Base url for a Matrix room, without the alias"
     ),
+    "moderation__self_categorize__backoff": (
+        90,
+        "backoff period between 2 self moderation DM in days"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15

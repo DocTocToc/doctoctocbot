@@ -125,21 +125,21 @@ def create_human(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):
     if created:
-        # Moderation instances areversionable. They get cloned and saved.
+        # Moderation instances are versionable. They get cloned and saved.
         # Make sure this is the first time this versionable entity is saved.
-        if (
+        if not (
             instance.id == instance.identity
             and instance.state == None
         ):
-            logger.debug("inside sendmoderationdm()")
-            transaction.on_commit(
-                lambda: handle_sendmoderationdm.apply_async(
-                    args=[],
-                    kwargs={'mod_instance_id': instance.id},
-                    countdown=5
-                    )
+            return
+        transaction.on_commit(
+            lambda: handle_sendmoderationdm.apply_async(
+                args=[],
+                kwargs={'mod_instance_id': instance.id},
+                countdown=5
                 )
-            
+            )
+
 @receiver(post_save, sender=UserCategoryRelationship)
 def accept_follower(sender, instance, created, **kwargs):
     return

@@ -2,6 +2,7 @@ import os
 import random
 import time
 import datetime
+from typing import Optional
 from versions.exceptions import DeletionOfNonCurrentVersionError
 from conversation.models import Tweetdj
 from celery import shared_task
@@ -9,6 +10,7 @@ from bot.bin.user import getuser_lst
 from moderation.profile import twitterprofile
 from moderation.lists.poll import poll_lists_members, create_update_lists
 from django.conf import settings
+from constance import config
 from conversation.utils import screen_name
 from moderation.moderate import  handle_twitter_dm_response
 from django.contrib.auth import get_user_model 
@@ -16,7 +18,7 @@ from django.utils.translation import activate
 from django.db import transaction, DatabaseError
 from dm.models import DirectMessage
 from webpush import send_user_notification
-
+from moderation.moderate import self_categorize
 from django.urls import reverse
 
 from moderation.models import (
@@ -27,6 +29,8 @@ from moderation.models import (
     CategoryMetadata,
     Moderator,
     Queue,
+    ModerationOptIn,
+    Follower,
 )
 from request.models import Queue as Request_Queue
 from bot.models import Account
@@ -49,10 +53,14 @@ from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
 from moderation.profile import update_twitter_followers_profiles
-from community.helpers import get_community_bot_screen_name
+from community.helpers import (
+    get_community_bot_screen_name,
+    get_community_bot_socialuser
+)
 from bot.tweepy_api import get_api
 from moderation.profile import create_twitter_social_user_and_profile
 from tweepy.error import TweepError
+from optin.models import Option, OptIn
 
 logger = get_task_logger(__name__)
 
@@ -139,7 +147,8 @@ def handle_sendmoderationdm(self, mod_instance_id):
     try:
         community = mod_mi.queue.community
     except:
-        community = None
+        logger.error(f'Queue {mod_mi.queue} community field is null')
+        return
     activate_language(community)
 
     qr = quickreply(mod_instance_id)
@@ -167,32 +176,42 @@ def handle_sendmoderationdm(self, mod_instance_id):
         status_str = ""
     if not sn:
         return
-    dm_txt = (
-        _(
-            "Please help us verify this user: @{screen_name} \n"
-            "According to your knowledge or your review of the account, "
-            "in which category would you put this user: @{screen_name} ?\n"
-            "Please choose the most appropriate category by pushing one of the"
-            " buttons below. "
-            "{status_str}"
-        ).format(screen_name=sn, status_str=status_str)
-    )
+    if mod_mi.queue.type == Queue.SELF:
+        self_mod_msg = community.twitter_self_moderation_dm
+        if not self_mod_msg:
+            logger.error(
+                f'Fill out twitter_self_moderation_dm field for {community=}'
+            )
+            return
+        dm_txt = self_mod_msg.format(screen_name=sn)
+    else:
+        dm_txt = (
+            _(
+                "Please help us verify this user: @{screen_name} \n"
+                "According to your knowledge or your review of the account, "
+                "in which category would you put this user: @{screen_name} ?\n"
+                "Please choose the most appropriate category by pushing one of the"
+                " buttons below. "
+                "{status_str}"
+            ).format(screen_name=sn, status_str=status_str)
+        )
     logger.debug(f"dm_txt: {dm_txt}")
     
     # social graph DM
-    res = send_graph_dm(
-        mod_mi.queue.user_id,
-        mod_mi.moderator.user_id,
-        mod_mi.queue.community.account.username,
-        _("You will soon receive a verification request for this user."),
-        mod_mi.queue.community
-    )
-    logger.info(f"graph: {res}")
-    handle_twitter_dm_response(
-        res,
-        mod_mi.moderator.id,
-        mod_mi.queue.community.id
-    )
+    if not mod_mi.queue.type == Queue.SELF:
+        res = send_graph_dm(
+            mod_mi.queue.user_id,
+            mod_mi.moderator.user_id,
+            mod_mi.queue.community.account.username,
+            _("You will soon receive a verification request for this user."),
+            mod_mi.queue.community
+        )
+        logger.debug(f"graph: {res}")
+        handle_twitter_dm_response(
+            res,
+            mod_mi.moderator.id,
+            mod_mi.queue.community.id
+        )
     # verification DM
     res = senddm(
         dm_txt,
@@ -367,10 +386,46 @@ def process_cat_mi(cat_mi, moderated_su_mi, moderator_su_mi, mod_mi):
         if community.viral_moderation:
             handle_viral_moderation.apply_async(args=(moderated_su_mi.id,))
 
+def process_meta_mi_stop(
+        meta_mi,
+        moderated_su_mi,
+        moderator_su_mi,
+        mod_mi,
+        type
+    ):
+    if type not in [Queue.SELF, Queue.FOLLOWER]:
+        return
+    try:
+        option = Option.objects.get(name=f'twitter_dm_moderation_{type}')
+    except Option.DoesNotExist:
+        return        
+    try:
+        mod_optin = ModerationOptIn.objects.get(
+            option=option,
+            type=type
+        )
+    except ModerationOptIn.DoesNotExist:
+        return
+    optin = OptIn.objects.current.filter(
+        option=option,
+        socialuser=moderator_su_mi
+    ).first()
+    if optin:
+        optin = optin.clone()
+        optin.authorize=mod_optin.authorize
+        optin.save()
+    else:
+        optin = OptIn.objects.create(
+            option=option,
+            socialuser=moderator_su_mi,
+            authorize=mod_optin.authorize   
+        )
+    delete_moderation_queue(mod_mi)
+
 def process_meta_mi(meta_mi, moderated_su_mi, moderator_su_mi, mod_mi):
-    """Process meta moderation anwsers such as 'stop', 'fail' or 'busy'
+    """Process meta moderation answers such as 'stop', 'fail' or 'busy'
     """
-    queue= mod_mi.queue
+    queue = mod_mi.queue
     if not queue:
         return
     community=queue.community
@@ -383,20 +438,34 @@ def process_meta_mi(meta_mi, moderated_su_mi, moderator_su_mi, mod_mi):
             mod_mi.state = meta_mi
             mod_mi.save()
             mod_mi.delete()
-        # make moderator inactive
-        moderator_mi = moderator_su_mi.moderator.filter(
-            active=True,
-            community=community
-        ).first()
-        if moderator_mi:
-            moderator_mi.public=False
-            moderator_mi.active=False
-            moderator_mi.save()
-        # create new moderation
-        create_moderation(
-            community,
-            queue,
-        )
+        # if self moderation, create/update optin
+        if mod_mi.queue.type in [Queue.SELF, Queue.FOLLOWER]:
+            process_meta_mi_stop(
+                meta_mi, 
+                moderated_su_mi,
+                moderator_su_mi,
+                mod_mi,
+                queue.type
+            )
+            return
+        if mod_mi.queue.type == Queue.MODERATOR:
+            # make moderator inactive
+            moderator_mi = moderator_su_mi.moderator.filter(
+                active=True,
+                community=community
+            ).first()
+            if moderator_mi:
+                moderator_mi.public=False
+                moderator_mi.active=False
+                moderator_mi.save()
+                # create new moderation
+                create_moderation(
+                    community,
+                    queue,
+                )
+        # if STOP answer comes from dev or senior, consider it as mistake
+        if mod_mi.queue.type in [Queue.DEVELOPER, Queue.SENIOR]:
+            pass
     elif meta_mi.name == "fail":
         logger.debug(f"SocialUser {moderator_su_mi}: fail")
         # clone moderation instance and change its state to 'fail'
@@ -762,3 +831,25 @@ def handle_create_twitter_socialuser(
         logger.error(
             f'Error, no new user was created.'
         )
+
+@shared_task
+def handle_self_categorize(community_id: int, max: Optional[int] = None):
+    try:
+        community = Community.objects.get(id=community_id)
+    except Community.DoesNotExist:
+        return
+    bot_su = get_community_bot_socialuser(community)
+    try:
+        follower = Follower.objects.filter(user=bot_su).latest()
+    except:
+        return
+    backoff = config.messenger__models__backoff_default
+    for su in SocialUser.objects.filter(
+        user_id__in=follower.id_list,
+        category=None
+    )[:max]:
+        self_categorize(su, community)
+        time.sleep(backoff)
+        
+    
+    

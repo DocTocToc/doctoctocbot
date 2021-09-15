@@ -23,6 +23,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from conversation.models import Tweetdj
+from optin.models import Option
 
 logger = logging.getLogger(__name__)
 
@@ -335,6 +336,10 @@ class CategoryMetadata(CategoryBase):
         default=False,
         help_text="Add to DM Quick Reply list?"
     )
+    self_dm = models.BooleanField(
+        default=False,
+        help_text="Add to self Moderation DM Quick Reply list?"
+    )
 
 
     class Meta:
@@ -493,11 +498,13 @@ class Queue(Versionable):
     SENIOR = 'senior'
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
+    SELF = 'self'
     QUEUE_TYPE_CHOICES = [
         (MODERATOR, _('Moderator')),
         (SENIOR, _('Senior')),
         (DEVELOPER, _('Developer')),
         (FOLLOWER, _('Follower')),
+        (SELF, _('Self')),
     ]
     user_id = models.BigIntegerField()
     status_id = models.BigIntegerField(
@@ -589,7 +596,7 @@ class Moderation(Versionable):
         null=True,
         blank=True,
     )
-    
+
 
     class Meta:
         ordering = ['-version_start_date']
@@ -861,6 +868,26 @@ class DoNotRetweet(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.socialuser, self.current)
+
+
+class ModerationOptIn(models.Model):
+    """Algorithm followed to create or update moderation related OptIns
+    """
+    type = models.CharField(
+        max_length=9,
+        choices=Queue.QUEUE_TYPE_CHOICES
+    ) 
+    option = models.ForeignKey(
+        Option,
+        verbose_name='OptIn option',
+        on_delete=models.PROTECT,
+    )
+    authorize = models.BooleanField(
+        default=None
+    )
+
+    def __str__(self):
+        return "{} {} {}".format(self.type, self.option, self.authorize)    
 
 
 def addsocialuser(tweetdj_instance):

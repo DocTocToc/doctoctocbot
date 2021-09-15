@@ -2,6 +2,8 @@ import logging
 import ast
 import random
 import os
+from datetime import datetime, timedelta
+import pytz
 from typing import List
 from django.utils import timezone
 from django.db.utils import IntegrityError, DatabaseError
@@ -25,6 +27,8 @@ from community.models import Community
 from community.models import CommunityCategoryRelationship
 from community.helpers import activate_language
 from dm.api import senddm
+from optin.models import Option, OptIn
+from constance import config
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +88,7 @@ def quickreply(moderation_instance_id):
              }
     
     try:
-        moderation_instance=Moderation.objects.get(id=moderation_instance_id)
+        moderation_instance = Moderation.objects.get(id=moderation_instance_id)
     except Moderation.DoesNotExist:
         return
     try:
@@ -105,7 +109,12 @@ def quickreply(moderation_instance_id):
         opt["description"] = ccr.category.description or ccr.category.label
         options.append(opt)
     
-    for cm in CategoryMetadata.objects.filter(dm=True):
+    if moderation_instance.queue.type == Queue.SELF:
+        cat_meta = CategoryMetadata.objects.filter(self_dm=True)
+    else:
+        cat_meta = CategoryMetadata.objects.filter(dm=True)
+
+    for cm in cat_meta:
         opt = dict(option)
         opt["label"] = cm.label
         opt["metadata"] = f"moderation{moderation_instance_id}{cm.name}"
@@ -227,6 +236,7 @@ def create_moderation(queue):
     SENIOR = 'senior'
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
+    SELF = 'self'
     """
     random.seed(os.urandom(128))
     if settings.MODERATION["dev"]:
@@ -240,6 +250,8 @@ def create_moderation(queue):
         developer_mod(queue)
     elif queue.type == Queue.FOLLOWER:
         follower_mod(queue)
+    elif queue.type == Queue.SELF:
+        self_mod(queue)
 
 def developer_mod(queue):
     uid: List = SocialUser.objects.devs()
@@ -279,6 +291,28 @@ def moderator_mod(queue):
     create_moderation_instance(chosen_mod_uid, queue)
 
 def follower_mod(queue):
+    def choose_follower(uid):
+        if not uid:
+            return
+        chosen_mod_uid = random.choice(uid)
+        try:
+            socialuser = SocialUser.objects.get(user_id=uid)
+        except SocialUser.DoesNotExist:
+            return chosen_mod_uid
+        try:
+            option = Option.objects.get(name='twitter_dm_moderation_follower')
+        except Option.DoesNotExist:
+            return chosen_mod_uid
+        try:
+            optin = OptIn.objects.get(
+                option=option,
+                socialuser=socialuser
+            )
+        except OptIn.DoesNotExist:
+            return chosen_mod_uid
+        if not optin.authorize:
+            uid.remove(chosen_mod_uid)
+            return choose_follower(uid)
     try:
         su = SocialUser.objects.get(user_id=queue.user_id)
     except SocialUser.DoesNotExist:
@@ -288,8 +322,32 @@ def follower_mod(queue):
     if not uid:
         senior_mod(queue)
     else:
-        chosen_mod_uid = random.choice(uid)
+        chosen_mod_uid = choose_follower(uid)
+        if not chosen_mod_uid:
+            senior_mod(queue)
+            return
         create_moderation_instance(chosen_mod_uid, queue)
+        
+def self_mod(queue):
+    ok = False
+    try:
+        su = SocialUser.objects.get(user_id = queue.user_id)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        option = Option.objects.get(name='twitter_dm_moderation_self')
+    except Option.DoesNotExist:
+        return
+    try:
+        optin = OptIn.objects.get(
+            option=option,
+            socialuser=su
+        )
+        ok=optin.authorize
+    except OptIn.DoesNotExist:
+        ok=True
+    if ok:
+        create_moderation_instance(queue.user_id, queue)
 
 def create_moderation_instance(userid: int, queue: Queue):
     try:
@@ -344,3 +402,27 @@ def verified_follower(su: SocialUser, community) -> List[int]:
         user_id__in=followers,
         id__in=ucr_qs.values_list('social_user', flat=True)
     ).values_list('user_id', flat=True)
+    
+def self_categorize(socialuser: SocialUser, community: Community):
+    def is_backoff(start: datetime, backoff_delta: timedelta):
+        return (datetime.now(pytz.utc) - start) < backoff_delta
+    # days
+    backoff = config.moderation__self_categorize__backoff
+    backoff_delta = timedelta(days=backoff)
+    try:
+        queue = Queue.objects.filter(
+            user_id=socialuser.user_id,
+            community=community,
+            type=Queue.SELF
+        ).latest('version_start_date')
+    except Queue.DoesNotExist:
+        queue =None
+    if not queue or not is_backoff(queue.version_start_date, backoff_delta):
+        try:
+            Queue.objects.create(
+                user_id=socialuser.user_id,
+                community=community,
+                type=Queue.SELF
+            )
+        except DatabaseError as e:
+            logger.error(e)

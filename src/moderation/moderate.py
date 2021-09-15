@@ -98,17 +98,24 @@ def quickreply(moderation_instance_id):
     if community:
         activate_language(community)
 
-    for ccr in CommunityCategoryRelationship.objects.filter(
-        quickreply=True,
-        community=community
-        ):
+    if moderation_instance.queue.type == Queue.SELF:
+        ccr_qs = CommunityCategoryRelationship.objects.filter(
+            self=True,
+            community=community
+        )
+    else:
+        ccr_qs = CommunityCategoryRelationship.objects.filter(
+            quickreply=True,
+            community=community
+        )
+    for ccr in ccr_qs:
         logger.debug(f"Category name: {ccr.category.name}")
         opt = dict(option)
         opt["label"] = ccr.category.label
         opt["metadata"] = f"moderation{moderation_instance_id}{ccr.category.name}"
         opt["description"] = ccr.category.description or ccr.category.label
         options.append(opt)
-    
+
     if moderation_instance.queue.type == Queue.SELF:
         cat_meta = CategoryMetadata.objects.filter(self_dm=True)
     else:

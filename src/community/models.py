@@ -294,6 +294,10 @@ class CommunityCategoryRelationship(models.Model):
         default=False,
         help_text="Include in DM quickreply?"
     )
+    self = models.BooleanField(
+        default=False,
+        help_text="Include in self moderation?"
+    )  
     socialgraph = models.BooleanField(
         default=False,
         help_text="Include in moderation social graph?"

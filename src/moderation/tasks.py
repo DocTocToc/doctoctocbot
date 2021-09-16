@@ -129,7 +129,7 @@ def handle_check_all_profile_pictures():
 
 @shared_task(bind=True, max_retries=2)
 def handle_sendmoderationdm(self, mod_instance_id):
-    logger.debug("inside handle_sendmodarationdm()")
+    logger.debug(f'inside handle_sendmoderationdm({mod_instance_id})')
     # community
     try:
         mod_mi = Moderation.objects.get(pk=mod_instance_id)

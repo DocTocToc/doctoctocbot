@@ -437,8 +437,8 @@ class QueueAdmin(VersionedAdmin):
         'type',
         'community',    
     )
-    list_display_show_identity = False
-    list_display_show_end_date = False
+    list_display_show_identity = True
+    list_display_show_end_date = True
     list_display_show_start_date = True
 
     def get_ordering(self, request):

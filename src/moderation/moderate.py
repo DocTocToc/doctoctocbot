@@ -100,7 +100,7 @@ def quickreply(moderation_instance_id):
 
     if moderation_instance.queue.type == Queue.SELF:
         ccr_qs = CommunityCategoryRelationship.objects.filter(
-            self=True,
+            quickreply_self=True,
             community=community
         )
     else:
@@ -346,13 +346,14 @@ def self_mod(queue):
     except Option.DoesNotExist:
         return
     try:
-        optin = OptIn.objects.get(
+        optin = OptIn.objects.as_of().get(
             option=option,
             socialuser=su
         )
         ok=optin.authorize
     except OptIn.DoesNotExist:
         ok=True
+    logger.debug(f'{ok=}')
     if ok:
         create_moderation_instance(queue.user_id, queue)
 
@@ -412,6 +413,8 @@ def verified_follower(su: SocialUser, community) -> List[int]:
     
 def self_categorize(socialuser: SocialUser, community: Community):
     def is_backoff(start: datetime, backoff_delta: timedelta):
+        if not backoff_delta:
+            return False
         return (datetime.now(pytz.utc) - start) < backoff_delta
     # days
     backoff = config.moderation__self_categorize__backoff

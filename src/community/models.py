@@ -294,7 +294,7 @@ class CommunityCategoryRelationship(models.Model):
         default=False,
         help_text="Include in DM quickreply?"
     )
-    self = models.BooleanField(
+    quickreply_self = models.BooleanField(
         default=False,
         help_text="Include in self moderation?"
     )  

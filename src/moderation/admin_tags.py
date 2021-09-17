@@ -67,3 +67,18 @@ def screen_name_link_su_pk(su_pk):
         )
     except SocialUser.DoesNotExist:
         return
+
+def socialmedia_account(su: SocialUser):
+    try:
+        emoji = su.social_media.emoji
+    except:
+        emoji = None
+    if not emoji:
+        emoji = su.social_media.name
+    if su.social_media.name == "twitter":
+        href = f"https://twitter.com/intent/user?user_id={su.user_id}"
+        return mark_safe(
+            f'<a href="{href}">{emoji}@{su.screen_name_tag()}</a>'
+        )
+    else:
+        return emoji

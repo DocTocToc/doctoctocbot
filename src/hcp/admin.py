@@ -9,7 +9,8 @@ from hcp.models import (
     TaxonomyCategory
 )
 from modeltranslation.admin import TranslationAdmin
-from moderation.models import Human
+from moderation.models import Human, SocialUser
+from moderation.admin_tags import socialmedia_account
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
     extra = 5
     fk_name = 'healthcareprovider'
     readonly_fields = ['healthcareprovider', 'created', 'updated',]
-    autocomplete_fields = ['healthcareprovider', 'taxonomy', 'creator',]
+    autocomplete_fields = ['healthcareprovider', 'taxonomy',]
 
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -48,7 +49,7 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
                     creator_ids.extend(
                         list(
                             HealthCareProviderTaxonomy.objects \
-                            .filter(creator__id=parent_id) \
+                            .filter(healthcareprovider__id=parent_id) \
                             .values_list("creator__id", flat=True)
                         )
                     )
@@ -109,6 +110,7 @@ class TaxonomyAdmin(TranslationAdmin):
 class HealthCareProviderAdmin(admin.ModelAdmin):
     list_display = (
         'human',
+        'somed_account_tag',
         'taxonomy_tag',
         'created',
         'updated',
@@ -123,7 +125,9 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
         'updated',
     )
     search_fields = (
-        'human',
+        #'human__socialuser',
+        'taxonomy__classification_en',
+        'taxonomy__specialization_en',
     )
     inlines = (HealthCareProviderTaxonomyInline,)
 
@@ -131,9 +135,20 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
 
 
     def taxonomy_tag(self, obj):
-        return " ".join( [str(taxonomy) for taxonomy in obj.taxonomy.all()] )
+        return " | ".join( [str(taxonomy) for taxonomy in obj.taxonomy.all()] )
 
     taxonomy_tag.short_description = 'Taxonomy'
+    
+    def somed_account_tag(self, obj):
+        su_id_lst = [su.id for su in obj.human.socialuser.all()]
+        try:
+            su = SocialUser.objects.filter(id__in=su_id_lst).latest()
+        except SocialUser.DoesNotExist:
+            return
+        return socialmedia_account(su)
+    
+    somed_account_tag.short_description = 'SoMed'
+
 
 
 class TaxonomyCategoryAdmin(admin.ModelAdmin):

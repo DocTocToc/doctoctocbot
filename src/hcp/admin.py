@@ -126,6 +126,7 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
     )
     search_fields = (
         #'human__socialuser',
+        'taxonomy__code',
         'taxonomy__classification_en',
         'taxonomy__specialization_en',
     )

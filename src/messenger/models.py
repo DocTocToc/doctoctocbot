@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import IntegerRangeField
 from moderation.models import SocialUser, Category
 from django.utils.translation import gettext as _
 from constance import config
@@ -52,6 +53,13 @@ class Campaign(models.Model):
     crowdfunding_campaign = models.ManyToManyField(
         'crowdfunding.Campaign',
         blank=True,
+    )
+    retweet_range = IntegerRangeField(
+        blank=True,
+        null=True,
+        help_text = _(
+            u'Min and/or max retweet(s) required to send msg. Bounds: [)'
+        )    
     )
     recipients = models.ManyToManyField(
         SocialUser,

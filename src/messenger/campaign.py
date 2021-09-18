@@ -1,11 +1,12 @@
 import logging
+import random
+import time
+import datetime
 from moderation.social import update_social_ids
 from messenger.models import Campaign, Receipt
 from moderation.models import SocialUser, Follower
 from crowdfunding.models import ProjectInvestment
-import random
-import time
-import datetime
+from conversation.models import Tweetdj
 from django.utils.formats import localize
 from constance import config
 from bot.tweepy_api import get_api
@@ -73,6 +74,8 @@ def recipients(campaign: Campaign):
         qs = filter_category(qs, campaign)
     if campaign.restrict_by_crowdfunding is not None:
         qs = filter_crowdfunding(qs, campaign)
+    if campaign.retweet_range:
+        qs = filter_retweet_range(qs, campaign)
     return qs
 
 def filter_category(qs, campaign):
@@ -109,6 +112,19 @@ def filter_crowdfunding(qs, campaign):
     else:
         logger.debug("exclude")
         qs = qs.filter(~Q(id__in=ids))
+    return qs
+
+def filter_retweet_range(qs, campaign):
+    range = campaign.retweet_range
+    filtered_su_ids = []
+    #su_ids = qs.values_list("id", flat=True)
+    bot_su = campaign.account
+    tweetdj_rt_by_bot_qs = Tweetdj.objects.filter(retweeted_by=bot_su)
+    for su in qs:
+        count = tweetdj_rt_by_bot_qs.filter(socialuser=su).count()
+        if count in range:
+            filtered_su_ids.append(su.id)
+    qs = qs.filter(id__in=filtered_su_ids)
     return qs
 
 def send(campaign: Campaign):

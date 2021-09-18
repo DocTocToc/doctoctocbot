@@ -37,6 +37,7 @@ class Command(BaseCommand):
                     'No Taxonomy object with pk = "%s"' % taxonomy_pk
                 )
             )
+            return
         hcp_qs = HealthCareProvider.objects.filter(taxonomy=taxonomy)
         if not hcp_qs:
             self.stdout.write(

@@ -93,25 +93,26 @@ def handle_create_update_profile(userid: int, bot_screen_name=None):
         create_update_profile_local(su)
 
 def handle_create_all_profiles():
-    su_qs_lst = SocialUser.objects.values('user_id', 'profile')
+    user_id_lst = SocialUser.objects.filter(
+        profile__isnull=True
+    ).values_list('user_id', flat=True)
     user_id_request_lst = []
     
-    for su in su_qs_lst:
-        if not su["profile"]:
-            try:
-                tweetdj_mi = Tweetdj.objects.filter(
-                    userid = su["user_id"],
-                    json__isnull=False,
-                ).latest()
-            except Tweetdj.DoesNotExist:
-                user_id_request_lst.append(su["user_id"])
-                continue
-            logger.debug(f"type: {type(tweetdj_mi.json)} \n value:{tweetdj_mi.json}")
-            try:
-                userjson = tweetdj_mi.json.get("user")
-            except AttributeError:
-                continue
-            twitterprofile(userjson)
+    for user_id in user_id_lst:
+        try:
+            tweetdj_mi = Tweetdj.objects.filter(
+                userid = user_id,
+                json__isnull=False,
+            ).latest()
+        except Tweetdj.DoesNotExist:
+            user_id_request_lst.append(user_id)
+            continue
+        logger.debug(f"type: {type(tweetdj_mi.json)} \n value:{tweetdj_mi.json}")
+        try:
+            userjson = tweetdj_mi.json.get("user")
+        except AttributeError:
+            continue
+        twitterprofile(userjson)
     
     if user_id_request_lst:
         for user_id_lst in trim_grouper(user_id_request_lst, 100):

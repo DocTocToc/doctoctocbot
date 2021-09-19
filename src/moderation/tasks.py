@@ -3,24 +3,26 @@ import random
 import time
 import datetime
 from typing import Optional
+
 from versions.exceptions import DeletionOfNonCurrentVersionError
-from conversation.models import Tweetdj
 from celery import shared_task
-from bot.bin.user import getuser_lst
-from moderation.profile import twitterprofile
-from moderation.lists.poll import poll_lists_members, create_update_lists
+from django.contrib.auth import get_user_model 
+from django.db import transaction, DatabaseError
+from django.urls import reverse
 from django.conf import settings
 from constance import config
-from conversation.utils import screen_name
-from moderation.moderate import  handle_twitter_dm_response
-from django.contrib.auth import get_user_model 
-from django.utils.translation import activate
-from django.db import transaction, DatabaseError
-from dm.models import DirectMessage
 from webpush import send_user_notification
-from moderation.moderate import self_categorize
-from django.urls import reverse
 
+from bot.bin.user import getuser_lst
+from conversation.models import Tweetdj
+from conversation.utils import screen_name
+from dm.models import DirectMessage
+from moderation.profile import twitterprofile
+from moderation.lists.poll import poll_lists_members, create_update_lists
+from moderation.moderate import (
+    handle_twitter_dm_response,
+    self_categorize
+)
 from moderation.models import (
     Moderation,
     SocialUser,
@@ -33,13 +35,10 @@ from moderation.models import (
     Follower,
 )
 from request.models import Queue as Request_Queue
-from bot.models import Account
-
 from common.utils import trim_grouper
 from django.utils.translation import gettext as _
 from moderation.social import send_graph_dm
 from bot.onstatus import triage_status
-
 from moderation.moderate import quickreply
 from dm.api import senddm
 from community.models import Community
@@ -52,13 +51,15 @@ from community.helpers import activate_language
 from moderation.social import update_social_ids
 from celery.utils.log import get_task_logger
 from moderation.moderate import viral_moderation
-from moderation.profile import update_twitter_followers_profiles
+from moderation.profile import (
+    update_twitter_followers_profiles,
+    create_twitter_social_user_and_profile
+)
 from community.helpers import (
     get_community_bot_screen_name,
     get_community_bot_socialuser
 )
 from bot.tweepy_api import get_api
-from moderation.profile import create_twitter_social_user_and_profile
 from tweepy.error import TweepError
 from optin.models import Option, OptIn
 
@@ -69,7 +70,6 @@ logger = get_task_logger(__name__)
 def handle_poll_lists_members(community_name: str):
     poll_lists_members(community_name)
     
-
 @shared_task
 def handle_create_update_lists(community_name: str):
     create_update_lists(community_name)
@@ -549,46 +549,6 @@ def update_moderators_friends():
             relationship='friends',
         )
         time.sleep(settings.API_FRIENDS_PERIOD)
-
-@shared_task
-def update_bots_followers():
-    for account in Account.objects.filter(active=True):
-        try:
-            su = SocialUser.objects.get(user_id=account.userid)
-        except SocialUser.DoesNotExist:
-            continue
-        update_social_ids(
-            su,
-            cached=True,
-            bot_screen_name=account.username,
-            relationship='followers',
-        )
-        try:
-            period = settings.API_FOLLOWERS_PERIOD
-            time.sleep(period)
-        except AttributeError:
-            logger.error(f"API_FOLLOWERS_PERIOD is not set.")
-            pass
-
-@shared_task
-def update_bots_friends():
-    for account in Account.objects.filter(active=True):
-        try:
-            su = SocialUser.objects.get(user_id=account.userid)
-        except SocialUser.DoesNotExist:
-            continue
-        update_social_ids(
-            su,
-            cached=True,
-            bot_screen_name=account.username,
-            relationship='friends',
-        )
-        try:
-            period = settings.API_FRIENDS_PERIOD
-            time.sleep(period)
-        except AttributeError:
-            logger.error(f"API_FRIENDS_PERIOD is not set.")
-            pass
 
 @shared_task
 def handle_twitter_followers(user_id, bot_screen_name):

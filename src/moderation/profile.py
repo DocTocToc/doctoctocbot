@@ -28,16 +28,15 @@ def create_twitter_social_user(userid):
         twitter = SocialMedia.objects.get(name='twitter')
     except SocialMedia.DoesNotExist:
         logger.error('Twitter SocialMedia object does not exist.')
-        return
+        return None, None
     try:
-        su, created = SocialUser.objects.get_or_create(
+        return SocialUser.objects.get_or_create(
             user_id=userid,
             social_media=twitter
         )
     except IntegrityError as e:
         logger.error(e)
         return None, None
-    return su, created
 
 def create_twitter_social_user_and_profile(userid):
     try:

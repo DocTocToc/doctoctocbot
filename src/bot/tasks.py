@@ -76,7 +76,7 @@ def update_network(user_id, bot_screen_name, relationship):
         bot_screen_name=bot_screen_name,
         relationship=relationship,
     )
- 
+
 @shared_task
 def handle_add_followers_to_socialusers():
     exist_ids = list(SocialUser.objects.values_list("user_id", flat=True))
@@ -85,10 +85,7 @@ def handle_add_followers_to_socialusers():
             _su = SocialUser.objects.get(user_id=account.userid)
         except SocialUser.DoesNotExist:
             continue
-        try:
-            follower_ids = Follower.objects.filter(user=_su).latest().id_list
-        except Follower.DoesNotExist:
-            update_network(_su.user_id, account.username, 'followers')
+        update_network(_su.user_id, account.username, 'followers')
         try:
             follower_ids = Follower.objects.filter(user=_su).latest().id_list
         except Follower.DoesNotExist:
@@ -111,10 +108,7 @@ def handle_add_friends_to_socialusers():
             su = SocialUser.objects.get(user_id=account.userid)
         except SocialUser.DoesNotExist:
             continue
-        try:
-            friend_ids = Friend.objects.filter(user=su).latest().id_list
-        except Friend.DoesNotExist:
-            update_network(su.user_id, account.username, 'friends')
+        update_network(su.user_id, account.username, 'friends')
         try:
             friend_ids = Friend.objects.filter(user=su).latest().id_list
         except Friend.DoesNotExist:
@@ -128,7 +122,7 @@ def handle_add_friends_to_socialusers():
                     account.username,
                     cache=True
                 )
-            
+  
 @shared_task
 def update_bots_followers():
     for account in Account.objects.filter(active=True):

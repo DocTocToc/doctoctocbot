@@ -97,7 +97,11 @@ def handle_add_followers_to_socialusers():
         for userid in new_ids:
             su, created = create_twitter_social_user(userid)
             if su and created:
-                create_update_profile_twitter(su, account.username)
+                create_update_profile_twitter(
+                    su,
+                    account.username,
+                    cache=True
+                )
 
 @shared_task
 def handle_add_friends_to_socialusers():
@@ -119,7 +123,11 @@ def handle_add_friends_to_socialusers():
         for userid in new_ids:
             su, created = create_twitter_social_user(userid)
             if su and created:
-                create_update_profile_twitter(su, account.username)
+                create_update_profile_twitter(
+                    su,
+                    account.username,
+                    cache=True
+                )
             
 @shared_task
 def update_bots_followers():

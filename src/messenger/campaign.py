@@ -144,7 +144,6 @@ def send(campaign: Campaign):
     for recipient in campaign.recipients.all():
         if current_limit == 0:
             return
-        sleep_random(campaign)
         for msg in messages:
             text=_format(msg, recipient, campaign)
             receipts = Receipt.objects.filter(
@@ -160,6 +159,7 @@ def send(campaign: Campaign):
                         break
             if skip:
                 continue
+            sleep_random(campaign)
             try:
                 res = api.send_direct_message(
                     recipient_id=recipient.user_id,

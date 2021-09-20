@@ -27,7 +27,6 @@ def retweeted_by_changed(sender, instance, action, **kwargs):
                 if status:
                     add_status = Addstatus(status._json)
                     add_status.addtweetdj(update=True)
-                    add_status.add_image()
                 else:
                     return
             instance.refresh_from_db()
@@ -58,6 +57,8 @@ def retweeted_by_changed(sender, instance, action, **kwargs):
                         rt_target=ts.retweet_count,
                         category=ts.category.all()
                     ):
+                    # archive image of notified status
+                    add_status.add_image()
                     notify(
                         statusid=instance.statusid,
                         json=instance.json,

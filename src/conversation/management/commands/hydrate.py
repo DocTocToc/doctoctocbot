@@ -6,7 +6,7 @@ from tweepy import TweepError
 import logging
 
 logger = logging.getLogger(__name__)
-    
+
 def truncated_count():
     return Tweetdj.objects.filter(json__truncated=True).count()
 

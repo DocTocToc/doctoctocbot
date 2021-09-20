@@ -3,12 +3,16 @@ from django.contrib.postgres.fields import JSONField
 from datetime import timedelta
 from constance import config
 from django.utils.dateparse import parse_duration
+from django.core.validators import MinValueValidator
+
+def retweet_count_min_value():
+    return config.hive__models__tweetsubscription__retweet_count_min_value
 
 def default_age():
     duration = config.hive__models__tweetsubscription__age
     return parse_duration(duration)
 
-# Create your models here.
+
 class TweetSubscription(models.Model):
     socialuser = models.ForeignKey(
         'moderation.SocialUser',
@@ -25,7 +29,8 @@ class TweetSubscription(models.Model):
     )
     retweet_count = models.PositiveIntegerField(
         null=True,
-        blank=True,  
+        blank=True,
+        validators=[MinValueValidator(retweet_count_min_value)]
     )
     broadcast_count = models.PositiveIntegerField(
         null=True,

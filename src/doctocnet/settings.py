@@ -806,6 +806,10 @@ CONSTANCE_CONFIG = {
         0.01,
         "retweet ratio threshold to notify a status"
     ),
+    "hive__models__tweetsubscription__retweet_count_min_value": (
+        2,
+        "minimal value for the retweet count of a subscription"
+    ),
     "choice_matrix_bot_user_id": (
         "@bot:medica.im",
         "Matrix User ID of the Matrix bot used for Choice app"

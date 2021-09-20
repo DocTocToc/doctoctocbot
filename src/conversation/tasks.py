@@ -138,7 +138,7 @@ def handle_category_timeline(category_name: str):
 @shared_task
 def handle_retweeted_by(rt_statusid: int, rt_userid: int, by_socialuserid: int):
     """
-    Get or create the quoted status, then add the given socialuser
+    Get or create the retweeted status, then add the given socialuser
     to retweeted_by m2m
     """
     status, _ = Tweetdj.objects.get_or_create(

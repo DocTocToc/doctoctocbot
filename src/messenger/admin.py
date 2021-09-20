@@ -50,12 +50,14 @@ class ReceiptAdmin(admin.ModelAdmin):
         'error',
         'created',
     )
+    search_fields = (
+        'user',
+        'event_id',
+    )
     list_filter = [
         'campaign',
         'message',
         EventIdListFilter,
-        'error',
-        'user',
         'created',
     ]
     fields = (

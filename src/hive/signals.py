@@ -58,6 +58,7 @@ def retweeted_by_changed(sender, instance, action, **kwargs):
                         category=ts.category.all()
                     ):
                     # archive image of notified status
+                    add_status = Addstatus(instance.json)
                     add_status.add_image()
                     notify(
                         statusid=instance.statusid,

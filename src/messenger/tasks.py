@@ -3,7 +3,7 @@ from constance import config
 from celery import shared_task
 from messenger.models import Campaign
 from celery.utils.log import get_task_logger
-from messenger.campaign import run_campaign
+from messenger.campaign import CampaignManager
 
 logger = logging.getLogger(__name__)
 celery_logger = get_task_logger(__name__)
@@ -16,5 +16,9 @@ def handle_campaign(name):
         campaign = Campaign.objects.get(name=name)
     except Campaign.DoesNotExist:
         return
-    run_campaign(campaign)
+    #run_campaign(campaign)
+    logger.debug(f'{campaign=}')
+    cm = CampaignManager(campaign)
+    logger.debug(f'{cm=}')
+    cm.start()
 

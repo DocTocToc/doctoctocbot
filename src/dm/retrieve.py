@@ -32,7 +32,6 @@ def savedm():
             if not DirectMessage.objects.filter(id=dm_id).exists():
                 createdm(dm)
                 #logger.debug(f'created new record for {dm["id"]} text:{dm.message_create["message_data"]["text"]}')
-        time.sleep(60)
         
 def createdm(dm):
     _id = int(dm.id)

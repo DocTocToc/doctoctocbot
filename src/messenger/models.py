@@ -42,6 +42,7 @@ class Campaign(models.Model):
     )
     restrict_by_category = models.BooleanField(
         null=True,
+        blank=True
     )
     categories = models.ManyToManyField(
         Category,
@@ -49,6 +50,7 @@ class Campaign(models.Model):
     )
     restrict_by_crowdfunding = models.BooleanField(
         null=True,
+        blank=True
     )
     crowdfunding_campaign = models.ManyToManyField(
         'crowdfunding.Campaign',

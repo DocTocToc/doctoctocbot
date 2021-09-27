@@ -48,10 +48,13 @@ class Command(BaseCommand):
             return
         su_lst = []
         for hcp in hcp_qs:
-            su = hcp.human.socialuser.all().last()
+            su = hcp.human.socialuser.filter(active=True).last()
             su_lst.append(su)
+        su_lst = list(filter(None, su_lst))
         if not friend:
-            screen_name_lst = [f'@{su.screen_name_tag()}' for su in su_lst]
+            screen_name_lst = [
+                su.screen_name_tag() for su in su_lst if su.screen_name_tag()
+            ]
             result = (
                 f"Taxonomy: {taxonomy.code} | {taxonomy.classification_en} "
                 f"{taxonomy.specialization_en} "
@@ -79,8 +82,8 @@ class Command(BaseCommand):
                     su_friend_lst.append(su)
                 else:
                     su_nofriend_lst.append(su)
-            f_sn_lst = [f'@{su.screen_name_tag()}' for su in su_friend_lst]
-            nof_sn_lst = [f'@{su.screen_name_tag()}' for su in su_nofriend_lst]
+            f_sn_lst = [f'@{su.screen_name_tag()}' for su in su_friend_lst if su.screen_name_tag()]
+            nof_sn_lst = [f'@{su.screen_name_tag()}' for su in su_nofriend_lst if su.screen_name_tag()]
             f_count = len(f_sn_lst)
             nof_count = len(nof_sn_lst)
             result = (

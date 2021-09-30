@@ -4,6 +4,10 @@ from bot.models import Account
 import logging
 import typing
 from bot.tweepy_api import get_api as get_tweepy_api
+from dm.models import DirectMessage
+
+from django.db.models import Q
+import tweepy
 
 from django.conf import settings
 
@@ -38,11 +42,22 @@ def getapi(__screen_name: typing.Optional[str]=None):
     if api_dict:    
         return twitter.Api(**api_dict)
 
-def getdm(bot_screen_name):
+def getdm(bot_screen_name, bot_user_id: int):
     count=50
     api = get_tweepy_api(username=bot_screen_name, backend=True)
-    if api:
-        return api.list_direct_messages(count=count)
+    if not api:
+        return
+    dm_id_lst = list(
+        DirectMessage.objects.filter(
+            Q(sender_id=bot_user_id) | Q(recipient_id=bot_user_id)    
+        ).values_list("id", flat=True)
+    )
+    dm_lst = []
+    for dm in tweepy.Cursor(api.list_direct_messages, count=count).items():
+        if int(dm.id) in dm_id_lst:
+            return dm_lst
+        dm_lst.append(dm)
+    return dm_lst
 
 def senddm_tweepy(
         recipient_id,

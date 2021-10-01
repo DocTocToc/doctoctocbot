@@ -260,6 +260,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFollower,
         BotFriend,
         by_null_filter('category', 'Category'),
+        'active',
     )
 
     def get_queryset(self, request):
@@ -504,52 +505,6 @@ class ProfileAdmin(admin.ModelAdmin):
     socialuser_link.short_description = 'SocialUser'
 
 
-class ModerationStateListFilter(admin.SimpleListFilter):
-    title = _('state')
-    parameter_name = 'state'
-    
-    def lookups(self, request, model_admin):
-        state: List[Tuple] = list(
-            CategoryMetadata.objects.values_list(
-                'name',
-                'label',
-            )
-        )
-        state.append( ('pending', _('Pending'),) )
-        return state
-
-    def queryset(self, request, queryset):
-        if not self.value():
-            return queryset
-        elif self.value()=='pending':
-            return queryset.filter(state=None)
-        else:
-            return queryset.filter(
-                state__name=self.value()
-            )
-
-
-class CommunityListFilter(admin.SimpleListFilter):
-    title = _('community')
-    parameter_name = 'queue'
-    
-    def lookups(self, request, model_admin):
-        state: List[Tuple] = list(
-            Community.objects.values_list(
-                'name',
-                'name',
-            )
-        )
-        return state
-
-    def queryset(self, request, queryset):
-        if not self.value():
-            return queryset
-        else:
-            return queryset.filter(
-                queue__community__name=self.value()
-            )
-
 class ModerationAdmin(VersionedAdmin):
     list_display = (
         'state',
@@ -590,15 +545,15 @@ class ModerationAdmin(VersionedAdmin):
         'status_object',    
     )
     list_filter = (
-        ModerationStateListFilter,
-        CommunityListFilter,
+        'queue__community',
         'queue__type',
+        'state',
     )
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
     search_fields = (
-        'queue__user_id',
+        'moderator__profile__json__screen_name',
     )
 
     def get_ordering(self, request):
@@ -606,7 +561,9 @@ class ModerationAdmin(VersionedAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         # search_term is what you input in admin site
-        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        orig_queryset = queryset
+        queryset, use_distinct = super(ModerationAdmin, self).get_search_results(
+            request, queryset, search_term)
 
         user_ids = list(
             Profile.objects.filter(
@@ -621,8 +578,9 @@ class ModerationAdmin(VersionedAdmin):
         queryset |= self.model.objects.filter(
             queue__user_id__in=user_ids
         )
+        queryset = queryset & orig_queryset
         return queryset, use_distinct
-    
+
     def queue_type(self, obj):
         type = obj.queue.type or ""
         return type

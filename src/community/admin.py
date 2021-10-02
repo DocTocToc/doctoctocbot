@@ -92,14 +92,15 @@ class CommunityAdmin(admin.ModelAdmin):
     readonly_fields = (
         'created',
     )
-    
+
 
 class RetweetAdmin(admin.ModelAdmin):
     list_display = (
         'community',
         'hashtag',
         'category',
-        'retweet',  
+        'retweet',
+        'favorite',  
     )
 
 

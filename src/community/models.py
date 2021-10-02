@@ -202,6 +202,7 @@ class Retweet(models.Model):
         blank=True,
     )
     retweet = models.BooleanField(default=False)
+    favorite = models.BooleanField(default=False)
     moderation = models.BooleanField(default=True)
     require_question = models.BooleanField(default=True)
     allow_retweet = models.BooleanField(default=False)

@@ -6,7 +6,7 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import activate
-from community.models import Community
+from community.models import Community, Trust
 from bot.tweepy_api import get_api
 from moderation.models import UserCategoryRelationship, SocialMedia, SocialUser
 
@@ -102,14 +102,25 @@ def get_community_member_id(community) -> Optional[List[int]]:
     bot_social_user = get_community_bot_socialuser(community)
     if not bot_social_user:
         return
+    qs = UserCategoryRelationship.objects.filter(
+        category__in=categories,
+        community=community,
+        social_user__social_media=twitter,
+    )
+    for category in categories:
+        for trust in Trust.objects.filter(
+            from_community=community,
+            category=category,
+            authorized=True
+        ):
+            qs |= UserCategoryRelationship.objects.filter(
+                category=category,
+                community=trust.to_community,
+                social_user__social_media=twitter,
+            )
     member_id: List[int] = (
-        UserCategoryRelationship.objects
-        .filter(
-            category__in=categories,
-            community=community,
-            social_user__social_media=twitter,
-        )
-        .exclude(social_user__twitter_follow_request=bot_social_user)
+        qs.exclude(social_user__twitter_follow_request=bot_social_user)
+        .distinct()
         .values_list("social_user__user_id", flat=True)
     )
     return member_id

@@ -6,7 +6,8 @@ from hcp.models import (
     Taxonomy,
     HealthCareProvider,
     HealthCareProviderTaxonomy,
-    TaxonomyCategory
+    TaxonomyCategory,
+    BiomedicalOccupationDiscipline,
 )
 from modeltranslation.admin import TranslationAdmin
 from moderation.models import Human, SocialUser
@@ -172,6 +173,17 @@ class TaxonomyCategoryAdmin(admin.ModelAdmin):
         'category',
     )
 
+
+@admin.register(BiomedicalOccupationDiscipline)
+class BiomedicalOccupationDisciplineAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'slug',
+        'tag',
+        'summary',
+        'description',
+        'umls_cui',   
+    )
 
 admin.site.register(Taxonomy, TaxonomyAdmin)
 admin.site.register(HealthCareProvider, HealthCareProviderAdmin)

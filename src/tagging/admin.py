@@ -298,7 +298,14 @@ class CategoryAdmin(admin.ModelAdmin):
         'community',
     )
 
+@admin.register(TagKeyword)
+class TagKeywordAdmin(admin.ModelAdmin):
+    list_display = (
+        'tag',
+        'keyword',
+    )
+
+
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(Process, ProcessAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(TagKeyword)

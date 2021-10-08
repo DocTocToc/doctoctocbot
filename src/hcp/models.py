@@ -113,3 +113,29 @@ class TaxonomyCategory(models.Model):
     def __str__(self):
         return f"{self.code} {self.grouping} {self.classification} " \
                f"{self.specialization} | {self.category}"
+
+
+class BiomedicalOccupationDiscipline(models.Model):
+    name = models.CharField(
+        max_length=255,
+        blank=False
+    )
+    slug = models.SlugField(
+        null=True
+    )
+    tag = models.CharField(
+        max_length=36,
+        unique=True,
+    )
+    summary = models.CharField(
+        max_length=72
+    )
+    description = models.TextField()
+    umls_cui = models.CharField(
+        max_length=8,
+        unique=True,
+        help_text="Unified Medical Language System: Concept Unique Identifier"
+    ) 
+
+    def __str__(self):
+        return f"{self.name}"

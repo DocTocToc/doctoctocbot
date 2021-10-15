@@ -1,7 +1,5 @@
 import logging
-import requests
 import time
-from pathlib import Path
 
 from django.conf import settings
 from celery import shared_task
@@ -39,24 +37,19 @@ def handle_on_status(json: dict, community: str):
     from bot.onstatus import triage
     logger.info(f"handling status {json} for community {community}")
     triage(json=json, community=community)
-    
+
 @shared_task
-def handle_image(url, filename):
-    for name in ["thumb", "large"]:
-        if name == "thumb":
-            filepath = settings.BOT_IMAGES_THUMBNAILS_PATH + "/" + filename
-        elif name == "large":
-            filepath = settings.BOT_IMAGES_PATH + "/" + filename
-        full_url = url + f"?name={name}"
-        r = requests.get(full_url, allow_redirects=True)
-        with open(filepath, 'wb') as f:
-            f.write(r.content)
-        file = Path(filepath)
-        if file.is_file():
-            logger.debug(f"{name} image %s written on disk." % filepath)
-        else:
-            logger.error(f"{name} image %s not found on disk." % filepath)
-     
+def handle_triage_status(status_id: int, community: str):
+    from bot.onstatus import triage_status
+
+    try:
+        community = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    triage_status(status_id, community)
+
+
+
 @shared_task
 def handle_create_friendship(userid, communityid):
     try:

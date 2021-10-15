@@ -781,7 +781,7 @@ class Moderator(models.Model):
 
 
     class Meta:
-        pass
+        unique_together = ['socialuser', 'community']
 
 
     def __str__(self):

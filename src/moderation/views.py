@@ -77,7 +77,7 @@ class ModeratorPublicList(TemplateView):
         n = 3
         moderators = list(divide_chunks(moderators, n))    
         context["moderators"] = moderators
-        context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url()}"
+        context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url(community)}"
         logger.debug(context)
         return context
 

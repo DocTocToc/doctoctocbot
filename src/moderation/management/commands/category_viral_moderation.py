@@ -5,7 +5,7 @@ viral moderation settings.
 
 from typing import List
 from django.core.management.base import BaseCommand, CommandError
-from moderation.moderate import viral_moderation
+from moderation.dm import viral_moderation
 from moderation.models import (
     SocialUser,
     SocialMedia,

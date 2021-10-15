@@ -181,6 +181,23 @@ def update_profile_pictures(socialuser):
         if img_url:
             save_profile_pictures(img_url, profile)
 
+def create_update_profile(userid, bot_screen_name):
+    try:
+        su: SocialUser = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        sm: SocialMedia = su.social_media
+    except AttributeError:
+        return
+    if sm.name == 'twitter':
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name
+        )
+    elif sm.name == settings.THIS_SOCIAL_MEDIA:
+        create_update_profile_local(su)
+
 def create_update_profile_twitter(
         su: SocialUser,
         bot_screen_name=None,

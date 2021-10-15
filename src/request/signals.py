@@ -15,6 +15,7 @@ from request.tasks import (
     handle_decline_follower_twitter,
 )
 from request.utils import request_dm
+from moderation.moderate import create_initial_moderation
 
 logger = logging.getLogger(__name__) 
 
@@ -79,14 +80,16 @@ def create_moderation_queue(sender, instance, created, **kwargs):
         and (instance.id == instance.identity)
     ):
         try:
-            ModerationQueue.objects.create(
+            queue = ModerationQueue.objects.create(
                 user_id= instance.uid,
                 status_id=None,
                 community=instance.community,
                 type=ModerationQueue.FOLLOWER,
             )
         except DatabaseError:
+            logger.error(f"Creation of moderation queue for {instance} failed")
             return
+        create_initial_moderation(queue)
 
 @receiver(post_save, sender=RequestQueue)
 def follower_protected_requestor(sender, instance, created, **kwargs):

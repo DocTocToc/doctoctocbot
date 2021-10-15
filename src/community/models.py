@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.sites.models import Site
 import logging
@@ -80,9 +81,12 @@ class Community(models.Model):
         blank=True,
         help_text="ISO language code",
     )
-    pending_moderation_period = models.PositiveIntegerField(
-        default = 0,
-        help_text = "Pending moderation period (hour)"
+    pending_moderation_period = models.DurationField(
+        null = True,
+        blank = True,
+        default = timedelta,
+        help_text = "Duration before moderation sent to other moderator " \
+                    "Format: [DD] [HH:[MM:]]ss[.uuuuuu]"
     )
     moderator_moderation_period = models.DurationField(
         null=True,

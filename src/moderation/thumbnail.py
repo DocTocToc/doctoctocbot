@@ -15,8 +15,12 @@ def divide_chunks(l, n):
                 yield l[i:i + n]
 
 
-def generate_thumbnail():
-    moderators_qs = Moderator.objects.filter(public=True)
+def generate_thumbnail(community):
+    moderators_qs = Moderator.objects.filter(
+        active=True,
+        public=True,
+        community=community
+    )
     moderators = [moderator.socialuser.profile.normalavatar.path for moderator in moderators_qs]
     if not moderators:
         return
@@ -44,11 +48,14 @@ def generate_thumbnail():
     
     f = BytesIO()
     thumbnail.save(f, format='JPEG')
-    image_instance, _ = Image.objects.get_or_create(name="moderators")
-    image_instance.img.save('moderators.jpg',
+    base_name=f"moderators_{community.name}"
+    image_instance, _ = Image.objects.get_or_create(
+        name=base_name
+    )
+    image_instance.img.save(f'{base_name}.jpg',
                        InMemoryUploadedFile(f,
                                             None,
-                                            'moderators.jpeg',
+                                            f'{base_name}.jpeg',
                                             'image/jpeg',
                                             f.seek(0,os.SEEK_END),
                                             None)
@@ -56,9 +63,9 @@ def generate_thumbnail():
     f.close()
     return image_instance.img.url
     
-def get_thumbnail_url():
+def get_thumbnail_url(community):
     try:
-        thumbnail = Image.objects.get(name="moderators")
+        thumbnail = Image.objects.get(name=f"moderators_{community.name}")
     except Image.DoesNotExist:
         return generate_thumbnail()
 

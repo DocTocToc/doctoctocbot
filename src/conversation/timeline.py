@@ -3,7 +3,6 @@ import tweepy
 import logging
 from bot.tweepy_api import get_api
 from datetime import datetime, timezone
-from bot.lib.statusdb import Addstatus
 from community.helpers import (
     get_community_member_id,
     get_community_twitter_tweepy_api,
@@ -39,6 +38,8 @@ def community_timeline(community):
             logger.error(f"Tweepy Error: {e}")
 
 def get_user_timeline(userid, api):
+    from bot.lib.statusdb import Addstatus
+
     first: bool = True
     high_statusid: int = 0
     tut_last = TwitterUserTimeline.objects.filter(userid=userid).last()

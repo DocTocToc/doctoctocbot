@@ -9,7 +9,11 @@ import logging
 from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, DatabaseError, transaction
 from django.conf import settings
-from bot.tasks import handle_image
+from conversation.tasks import (
+    handle_image,
+    handle_retweeted_by,
+    handle_quoted_by
+)
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
 from conversation.models import Tweetdj
@@ -74,6 +78,22 @@ class Addstatus:
             logger.error("database error %s", e)
             return False
         logger.debug("added m2m hashtag relationship to %s", status)
+        if status.retweetedstatus:
+            handle_retweeted_by.apply_async(
+                kwargs={
+                    'rt_statusid': status.json["retweeted_status"]["id"],
+                    'rt_userid': status.json["retweeted_status"]["user"]["id"],
+                    'by_socialuserid': status.socialuser.id
+                }
+            )
+        elif status.quotedstatus:
+            handle_quoted_by.apply_async(
+                kwargs={
+                    'quoted_statusid': status.json["quoted_status"]["id"],
+                    'quoted_userid': status.json["quoted_status"]["user"]["id"],
+                    'by_socialuserid': status.socialuser.id
+                }
+            )
         return True
 
     def update(self):

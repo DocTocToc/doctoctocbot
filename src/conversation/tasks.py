@@ -1,10 +1,13 @@
 import logging
 import tweepy
+import requests
 from random import shuffle
 from datetime import timedelta
 from django.utils import timezone
+from django.conf import settings
 from celery import shared_task
 from constance import config
+from pathlib import Path
 
 from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
@@ -159,3 +162,20 @@ def handle_quoted_by(quoted_statusid: int, quoted_userid: int, by_socialuserid: 
         userid=quoted_userid
     )
     status.quoted_by.add(by_socialuserid)
+    
+@shared_task
+def handle_image(url, filename):
+    for name in ["thumb", "large"]:
+        if name == "thumb":
+            filepath = settings.BOT_IMAGES_THUMBNAILS_PATH + "/" + filename
+        elif name == "large":
+            filepath = settings.BOT_IMAGES_PATH + "/" + filename
+        full_url = url + f"?name={name}"
+        r = requests.get(full_url, allow_redirects=True)
+        with open(filepath, 'wb') as f:
+            f.write(r.content)
+        file = Path(filepath)
+        if file.is_file():
+            logger.debug(f"{name} image %s written on disk." % filepath)
+        else:
+            logger.error(f"{name} image %s not found on disk." % filepath)

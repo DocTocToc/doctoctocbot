@@ -60,50 +60,29 @@ def getdm(bot_screen_name, bot_user_id: int):
     return dm_lst
 
 def senddm_tweepy(
-        recipient_id,
         text,
-        return_json=True,
-        quick_reply=None,
-        attachment=None,
+        recipient_id,
+        quick_reply_type=None,
+        attachment_type=None,
+        attachment_media_id=None,
         screen_name=None
     ):
-    api_ = getapi(screen_name)
-    if not api_:
+    api = get_tweepy_api(screen_name)
+    if not api:
         return
     try:
-        response = api_.PostDirectMessage(
-            text=text,
-            user_id=user_id,
-            return_json=True,
-            quick_reply=quick_reply,
-            attachment=attachment,
+        response = api.send_direct_message(
+            recipient_id,
+            text,
+            quick_reply_type=quick_reply_type,
+            attachment_type=attachment_type,
+            attachment_media_id=attachment_media_id,
         )
+        logger.debug(f"{response=} {type(response)=}")
+        return response
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
-
-    try:
-        response["event"]["created_timestamp"]
-    except KeyError:
-        """
-        {'errors': [{'code': 349, 'message': 'You cannot send messages to this user.'}]}
-        """
-        try:
-            error_msg = json.dumps(response)
-        except:
-            error_msg = "Unknown message_create event (DM) error"
-
-        logger.error(error_msg)
-        return error_msg
-
-    userid = response["event"]["message_create"]["target"]["recipient_id"]
-    txt = response["event"]["message_create"]["message_data"]["text"]
-    if screen_name:
-        account = f"@{screen_name}"
-    else:
-        account =  "default account"
-    msg = f"Sending DM '{txt}' to user_id {userid} from {account} was successful"
-    logger.info(msg)
-    return response
+        return e
 
 def senddm(text,
            user_id=None,

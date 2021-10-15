@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
-from moderation.moderate import create_moderation
+from moderation.moderate import create_initial_moderation
 from community.helpers import get_community_bot_screen_name
 from django.db.models import Q
 
@@ -22,21 +22,18 @@ from moderation.models import (
 
 from hcp.models import HealthCareProviderTaxonomy, TaxonomyCategory
 
-from moderation.tasks import (
-    handle_create_update_profile,
-    handle_sendmoderationdm,
-    handle_accept_follower,
-)
-
-
 logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Queue)
 def create_moderation_receiver(sender, instance, created, **kwargs):
     if created:
-        logger.debug(f"inside create_moderation if created {sender}, {instance}, {created}")
-        create_moderation(instance)
+        logger.debug(
+            f"inside create_moderation_receiver if created:\n"
+            f"{sender}, {instance}, {created}"
+        )
+        create_initial_moderation(instance)
 
+"""
 @receiver(post_save, sender=Queue)
 def createprofile_queue(sender, instance, created, **kwargs):
     if created:
@@ -50,6 +47,7 @@ def createprofile_queue(sender, instance, created, **kwargs):
             args=[instance.user_id],
             kwargs={'bot_screen_name': bot_screen_name}
         )
+"""
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def log_usercategoryrelationship(sender, instance, created, **kwargs):
@@ -59,22 +57,12 @@ def log_usercategoryrelationship(sender, instance, created, **kwargs):
         if instance.moderator:
             logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
         logger.debug(f"instance.category: {instance.category}")
-    
-@receiver(post_save, sender=UserCategoryRelationship)
-def moderator(sender, instance, created, **kwargs):
-    if created:
-        try:
-            mod_cat = Category.objects.get(name="moderator")
-        except Category.DoesNotExist:
-            return
-        if instance.category == mod_cat:
-            with transaction.atomic():
-                try:
-                    Moderator.objects.create(socialuser=instance.social_user)
-                except DatabaseError:
-                    return
-            generate_thumbnail()
 
+@receiver(post_save, sender=Moderator)
+def moderator(sender, instance, created, **kwargs):
+    generate_thumbnail(instance.community)
+
+"""
 @receiver(post_save, sender=UserCategoryRelationship)
 def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
     logger.debug(f"instance {instance}")
@@ -84,7 +72,9 @@ def createprofile_usercategoryrelationship(sender, instance, created, **kwargs):
         args=(instance.social_user.user_id,),
         kwargs={'bot_screen_name': bot_screen_name}
     )
-    
+"""
+
+"""    
 @receiver(post_save, sender=Moderation)
 def createupdatemoderatorprofile(sender, instance, created, **kwargs):
     if created:
@@ -97,13 +87,16 @@ def createupdatemoderatorprofile(sender, instance, created, **kwargs):
                 args=[instance.moderator.user_id],
                 kwargs={'bot_screen_name': bot_screen_name}
             )
+"""
 
+"""
 @receiver(post_save, sender=SocialUser)
 def create_update_socialuser_profile(sender, instance, created, **kwargs):
     if created:
         if not hasattr(instance, 'profile'):
             logger.debug(f"instance.user_id: {instance.user_id}")
             handle_create_update_profile.apply_async(args=(instance.user_id,))
+"""
 
 @receiver(post_save, sender=SocialUser)
 def create_human(sender, instance, created, **kwargs):
@@ -122,6 +115,7 @@ def create_human(sender, instance, created, **kwargs):
                     f'{instance}.'
                 )
 
+"""
 @receiver(post_save, sender=Moderation)   
 def sendmoderationdm(sender, instance, created, **kwargs):
     if created:
@@ -139,6 +133,7 @@ def sendmoderationdm(sender, instance, created, **kwargs):
                 countdown=5
                 )
             )
+"""
 
 @receiver(post_save, sender=UserCategoryRelationship)
 def accept_follower(sender, instance, created, **kwargs):

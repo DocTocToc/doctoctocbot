@@ -102,6 +102,11 @@ class RetweetAdmin(admin.ModelAdmin):
         'retweet',
         'favorite',  
     )
+    list_filter = (
+        'community',
+        'hashtag',
+        'category',
+    )
 
 
 class TextDescriptionAdmin(TranslationAdmin):

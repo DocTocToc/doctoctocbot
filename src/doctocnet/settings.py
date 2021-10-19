@@ -228,6 +228,7 @@ INSTALLED_APPS = [
     'choice',
     'webpush',
 #    'awareness',
+    'network',
 ]
 
 if DEBUG:

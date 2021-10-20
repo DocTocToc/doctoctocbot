@@ -4,6 +4,11 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Account(models.Model):
     userid = models.BigIntegerField(unique=True)
     username = models.CharField(max_length=15)
+    socialuser = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.PROTECT,
+        null=True,
+    )
     twitter_consumer_key = models.CharField(max_length=100)
     twitter_consumer_secret = models.CharField(max_length=100)
     twitter_access_token = models.CharField(max_length=100)

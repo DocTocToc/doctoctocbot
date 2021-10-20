@@ -1,11 +1,11 @@
 from django.contrib import admin
-
 from bot.models import Account, Greet
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
         'userid',
         'username',
+        'socialuser',
         'password_hidden',
         'email',
         'phone',
@@ -25,6 +25,7 @@ class AccountAdmin(admin.ModelAdmin):
     fields = (
         'userid',
         'username',
+        'socialuser',
         'password',
         'email',
         'phone',
@@ -48,6 +49,7 @@ class AccountAdmin(admin.ModelAdmin):
         'cookies_tag',
         'password_hidden',
     )
+    autocomplete_fields = ["socialuser"]
     
     def cookies_tag(self, obj):
         if obj.cookies:

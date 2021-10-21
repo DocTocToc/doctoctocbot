@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-17 04:19+0200\n"
+"POT-Creation-Date: 2021-10-20 23:30+0200\n"
 "PO-Revision-Date: 2020-07-02 23:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,17 +18,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: moderation/admin.py:493
-msgid "state"
-msgstr "état"
+#: moderation/admin.py:365
+msgid "Specialty"
+msgstr ""
 
-#: moderation/admin.py:503
-msgid "Pending"
-msgstr "En attente"
+#: moderation/dm.py:289
+#, python-brace-format
+msgid ""
+"\n"
+" Tweet: https://twitter.com/{screen_name}/status/{status_id}"
+msgstr ""
+"\n"
+" Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/admin.py:518
-msgid "community"
-msgstr "communauté"
+#: moderation/dm.py:315
+#, python-brace-format
+msgid ""
+"Please help us verify this user: @{screen_name} \n"
+"According to your knowledge or your review of the account, in which category "
+"would you put this user: @{screen_name} ?\n"
+"Please choose the most appropriate category by pushing one of the buttons "
+"below. {status_str}"
+msgstr ""
+"Merci de nous aider à vérifier cet utilisateur: @{screen_name} \n"
+"D'après ce que vous savez, ou d'après ce que vous pouvez lire sur son fil "
+"Twitter, quelle catégorie convient le mieux à cet utilisateur: "
+"@{screen_name} ?\n"
+"Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
+"boutons ci-dessous. {status_str}"
+
+#: moderation/dm.py:331
+msgid "You will soon receive a verification request for this user."
+msgstr ""
+"Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
 #: moderation/forms.py:18
 msgid "Submit"
@@ -57,33 +79,54 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:503
+#: moderation/models.py:517
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:504
+#: moderation/models.py:518
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:505
+#: moderation/models.py:519
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:506
+#: moderation/models.py:520
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:845
+#: moderation/models.py:521
+msgid "Self"
+msgstr ""
+
+#: moderation/models.py:864
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:846
+#: moderation/models.py:865
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:847
+#: moderation/models.py:866
 msgid "Ban"
 msgstr "Exclure"
+
+#: moderation/moderate.py:57
+#, python-brace-format
+msgid "Current moderations for user {user_id} with {community} exist."
+msgstr ""
+
+#: moderation/moderate.py:61
+#, python-brace-format
+msgid ""
+"\n"
+"User added a status update: {status_url}"
+msgstr ""
+
+#: moderation/moderate.py:69
+#, python-brace-format
+msgid "User {user_tag} is waiting for moderation\n"
+msgstr ""
 
 #: moderation/social.py:186
 msgid "Followers"
@@ -117,36 +160,6 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
-#: moderation/tasks.py:157
-#, python-brace-format
-msgid ""
-"\n"
-" Tweet: https://twitter.com/{screen_name}/status/{status_id}"
-msgstr ""
-"\n"
-" Tweet: https://twitter.com/{screen_name}/status/{status_id}"
-
-#: moderation/tasks.py:174
-#, python-brace-format
-msgid ""
-"Please help us verify this user: @{screen_name} \n"
-"According to your knowledge or your review of the account, in which category "
-"would you put this user: @{screen_name} ?\n"
-"Please choose the most appropriate category by pushing one of the buttons "
-"below. {status_str}"
-msgstr ""
-"Merci de nous aider à vérifier cet utilisateur: @{screen_name} \n"
-"D'après ce que vous savez, ou d'après ce que vous pouvez lire sur son fil "
-"Twitter, quelle catégorie convient le mieux à cet utilisateur: "
-"@{screen_name} ?\n"
-"Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
-"boutons ci-dessous. {status_str}"
-
-#: moderation/tasks.py:189
-msgid "You will soon receive a verification request for this user."
-msgstr ""
-"Vous allez bientôt recevoir une demande de vérification pour ce compte."
-
 #: moderation/templates/moderation/user.html:23
 msgid "User"
 msgstr ""
@@ -154,6 +167,15 @@ msgstr ""
 #: moderation/views.py:38
 msgid "Moderators"
 msgstr "Modérateurs"
+
+#~ msgid "state"
+#~ msgstr "état"
+
+#~ msgid "Pending"
+#~ msgstr "En attente"
+
+#~ msgid "community"
+#~ msgstr "communauté"
 
 #~ msgid "Please help us verify this user: @{screen_name} {status_str}"
 #~ msgstr ""

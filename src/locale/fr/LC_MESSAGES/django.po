@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-17 04:19+0200\n"
+"POT-Creation-Date: 2021-10-20 23:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,156 +34,119 @@ msgstr ""
 msgid "Authorize our app"
 msgstr ""
 
-#: awareness/models.py:71 messenger/models.py:75 messenger/models.py:85
-#: messenger/models.py:132
-msgid "Campaign"
-msgstr ""
-
-#: awareness/models.py:72 messenger/models.py:86
-msgid "Campaign linked to this receipt."
-msgstr ""
-
-#: awareness/models.py:79 choice/models.py:116 messenger/models.py:99
-msgid "User"
-msgstr ""
-
-#: awareness/models.py:80 messenger/models.py:100
-msgid "Receipt for a message sent to this user"
-msgstr ""
-
-#: awareness/models.py:85 messenger/models.py:104
-msgid "DM event id"
-msgstr ""
-
-#: awareness/models.py:86 messenger/models.py:105
-msgid "DM event id created if the message was successfully sent."
-msgstr ""
-
-#: awareness/models.py:92 messenger/models.py:111
-msgid "Error message"
-msgstr ""
-
-#: awareness/models.py:93 messenger/models.py:112
-msgid "Error message recorded if the message was not successfully sent."
-msgstr ""
-
-#: awareness/models.py:107 messenger/models.py:120
-msgid "Receipt"
-msgstr ""
-
-#: awareness/models.py:108 messenger/models.py:121
-msgid "Receipts"
-msgstr ""
-
 #: choice/models.py:115
 msgid "Django user"
+msgstr ""
+
+#: choice/models.py:116 messenger/models.py:109
+msgid "User"
 msgstr ""
 
 #: choice/templates/choice/index.html:48
 msgid "Sign in with Twitter"
 msgstr ""
 
-#: community/models.py:405
+#: community/models.py:423
 msgid "Status limit"
 msgstr ""
 
-#: community/models.py:406
+#: community/models.py:424
 msgid "Total number of status."
 msgstr ""
 
-#: community/models.py:412
+#: community/models.py:430
 msgid "Status rate (per minute)"
 msgstr ""
 
-#: community/models.py:413
+#: community/models.py:431
 msgid "Number of status per minute."
 msgstr ""
 
-#: community/models.py:417
+#: community/models.py:435
 msgid "Author category"
 msgstr ""
 
-#: community/models.py:418
+#: community/models.py:436
 msgid "Category of the author of the status."
 msgstr ""
 
-#: community/models.py:422
+#: community/models.py:440
 msgid "Author specialty"
 msgstr ""
 
-#: community/models.py:423
+#: community/models.py:441
 msgid "Specialty of the author of the status."
 msgstr ""
 
-#: community/models.py:427
+#: community/models.py:445
 msgid "Date and Time search"
 msgstr ""
 
-#: community/models.py:428
+#: community/models.py:446
 msgid "Search status by date and time."
 msgstr ""
 
-#: community/models.py:432
+#: community/models.py:450
 msgid "Category search"
 msgstr ""
 
-#: community/models.py:433
+#: community/models.py:451
 msgid "Search status by category."
 msgstr ""
 
-#: community/models.py:437
+#: community/models.py:455
 msgid "Tag search"
 msgstr ""
 
-#: community/models.py:438
+#: community/models.py:456
 msgid "Search status by tag."
 msgstr ""
 
-#: community/models.py:442
+#: community/models.py:460
 msgid "Status category"
 msgstr ""
 
-#: community/models.py:443
+#: community/models.py:461
 msgid "Access status category."
 msgstr ""
 
-#: community/models.py:447
+#: community/models.py:465
 msgid "Status tag"
 msgstr ""
 
-#: community/models.py:448
+#: community/models.py:466
 msgid "Access status tag."
 msgstr ""
 
-#: community/models.py:452
+#: community/models.py:470
 msgid "Protected status"
 msgstr ""
 
-#: community/models.py:453
+#: community/models.py:471
 msgid "Access status from protected account."
 msgstr ""
 
-#: community/models.py:457
+#: community/models.py:475
 msgid "Status media"
 msgstr ""
 
-#: community/models.py:458
+#: community/models.py:476
 msgid "Access status media."
 msgstr ""
 
-#: community/models.py:462
+#: community/models.py:480
 msgid "Reply count"
 msgstr ""
 
-#: community/models.py:463
+#: community/models.py:481
 msgid "Access status reply count."
 msgstr ""
 
-#: community/models.py:477
+#: community/models.py:495
 msgid "Name of the blog."
 msgstr ""
 
-#: community/models.py:481
+#: community/models.py:499
 msgid "Link text."
 msgstr ""
 
@@ -199,43 +162,83 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: messenger/models.py:19 messenger/models.py:93 messenger/models.py:138
+#: messenger/models.py:20 messenger/models.py:103 messenger/models.py:148
 msgid "Message"
 msgstr ""
 
-#: messenger/models.py:20 messenger/models.py:64
+#: messenger/models.py:21 messenger/models.py:74
 msgid "Messages"
 msgstr ""
 
-#: messenger/models.py:65
+#: messenger/models.py:63
+msgid "Min and/or max retweet(s) required to send msg. Bounds: [)"
+msgstr ""
+
+#: messenger/models.py:75
 msgid "Messages from this Campaign"
 msgstr ""
 
-#: messenger/models.py:76
+#: messenger/models.py:85 messenger/models.py:95 messenger/models.py:142
+msgid "Campaign"
+msgstr ""
+
+#: messenger/models.py:86
 msgid "Campaigns"
 msgstr ""
 
-#: messenger/models.py:94
+#: messenger/models.py:96
+msgid "Campaign linked to this receipt."
+msgstr ""
+
+#: messenger/models.py:104
 msgid "Receipt for this message."
 msgstr ""
 
-#: messenger/models.py:133 messenger/models.py:139
+#: messenger/models.py:110
+msgid "Receipt for a message sent to this user"
+msgstr ""
+
+#: messenger/models.py:114
+msgid "DM event id"
+msgstr ""
+
+#: messenger/models.py:115
+msgid "DM event id created if the message was successfully sent."
+msgstr ""
+
+#: messenger/models.py:121
+msgid "Error message"
+msgstr ""
+
+#: messenger/models.py:122
+msgid "Error message recorded if the message was not successfully sent."
+msgstr ""
+
+#: messenger/models.py:130
+msgid "Receipt"
+msgstr ""
+
+#: messenger/models.py:131
+msgid "Receipts"
+msgstr ""
+
+#: messenger/models.py:143 messenger/models.py:149
 msgid "Messages are part of this campaign."
 msgstr ""
 
-#: messenger/models.py:143
+#: messenger/models.py:153
 msgid "Order"
 msgstr ""
 
-#: messenger/models.py:144
+#: messenger/models.py:154
 msgid "What order to display this person within the department."
 msgstr ""
 
-#: messenger/models.py:148
+#: messenger/models.py:158
 msgid "Campaign Message"
 msgstr ""
 
-#: messenger/models.py:149
+#: messenger/models.py:159
 msgid "Campaign Messages"
 msgstr ""
 
@@ -243,12 +246,7 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: request/signals.py:35
+#: request/signals.py:37 request/signals.py:46
 #, python-brace-format
-msgid ""
-"Please handle @{screen_name} follow request for {community_name} community."
-msgstr ""
-
-#: request/signals.py:40
-msgid "You have a new follow request."
+msgid "Please handle {tag} follow request for {community_name} community."
 msgstr ""

@@ -260,6 +260,14 @@ class SocialUser(models.Model):
                 community_lst.append(community)
         return community_lst
 
+    def twitter_followers_count(self):
+        try:
+            return len(self.follower_set.latest().id_list)
+        except Follower.DoesNotExist as e:
+            logger.error(f'{e}')
+        except Exception as e:
+            logger.error(f'{e}')
+
     class Meta:
         ordering = ('user_id',)
         get_latest_by = "user_id"

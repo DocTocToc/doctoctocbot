@@ -229,6 +229,7 @@ INSTALLED_APPS = [
     'webpush',
 #    'awareness',
     'network',
+    'fontawesome-free'
 ]
 
 if DEBUG:

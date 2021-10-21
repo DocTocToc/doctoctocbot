@@ -1,0 +1,191 @@
+{% load i18n %}
+{% load static %}
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>{{ network.label }}</title>
+    <style>
+        body {
+            position: relative;
+        }
+    </style>
+    <script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="20">
+<div class="container p-3">
+<div class="d-grid gap-3">
+<nav class="navbar navbar-light bg-light px-3 sticky-top">
+  <a class="navbar-brand" href="#">{% trans "Network" %} {{ network.label }}</a>
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading0">Réseau</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading1">Bots</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading2">Web</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading3">Forum</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading4">Messenger</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#scrollspyHeading5">Blog</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="https://twitter.com/{{ network.twitter_account.username }}"><i class="fab fa-twitter"></i></a>
+    </li>
+  </ul>
+</nav>
+<div id="scrollspyHeading0">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Réseau</h4>
+      <p class="card-text">
+      {{ network.label }} est un réseau d'entraide francophone qui regroupe
+      {{ network.twitter_followers_count }} professionnels de santé et
+      étudiants en santé.
+      Ses membres financent, développent et administrent des applications
+      numériques libres et open source pour faciliter le partage d'expérience
+      et de connaissance et trouver des réponses à toutes leurs questions
+      professionnelles.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="scrollspyHeading1">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Bots Twitter</h4>
+      <p class="card-text">
+      Nos bots Twitter vont diffuser vos questions à leurs
+      {{ network.twitter_followers_count }} abonnés.
+      Mode d'emploi: installez l'app mobile Twitter et créez un compte.
+      Abonnez-vous au compte du bot de votre communauté.
+      Écrivez votre question dans un tweet en n'oubliant pas d'ajouter
+      le bon hashtag et un point d'interrogation.
+      </p>
+
+  <table class="table container-md">
+  <thead>
+    <tr>
+      {#<th scope="col">#</th>#}
+      <th scope="col">{% trans "Community" %}</th>
+      <th scope="col">{% trans "Members" %}</th>
+      <th scope="col">Twitter</th>
+      <th scope="col">Hashtag</th>
+      <th scope="col" class="text-end">{% trans "Followers" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for community in network.community.all %}
+    <tr>
+      {#<th scope="row">{{forloop.counter}}</th>#}
+      <td>{{ community.name }}</td>
+      <td>{% for member in community.membership.all %}{{ member.label }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+      <td><a href="https://twitter.com/{{ community.account.socialuser.screen_name_tag }}">@{{ community.account.socialuser.screen_name_tag }}</a></td>
+      <td>{% for hashtag in community.hashtag.all %}#{{ hashtag.hashtag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+      <td class="text-end">{{ community.account.socialuser.twitter_followers_count }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+       <th colspan="4" class="text-end"></th>
+       <th colspan="1" class="text-end">Total: {{ network.twitter_followers_count }}</th>
+    </tr>
+</tfoot>
+</table>
+    </div>
+  </div>
+</div>
+
+<div id="scrollspyHeading2">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">{% trans "Websites" %}</h4>
+      <p class="card-text">
+      Chaque communauté a son site web où sont archivées les questions et où
+      vous retrouvez vos réglages, préférences et statistiques personnelles.
+      </p>
+  <table class="table container-md">
+  <thead>
+    <tr>
+      {#<th scope="col">#</th>#}
+      <th scope="col">{% trans "Community" %}</th>
+      <th scope="col">{% trans "Members" %}</th>
+      <th scope="col">{% trans "Website" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for community in network.community.all %}
+    <tr>
+      {#<th scope="row">{{forloop.counter}}</th>#}
+      <td>{{ community.name }}</td>
+      <td>{% for member in community.membership.all %}{{ member.label }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+      <td><a href="https://{{ community.site.domain }}">{{ community.site.domain }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+    </div>
+  </div>
+</div>
+
+<div id="scrollspyHeading3">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Forum</h4>
+      <p class="card-text">
+      Un forum interprofessionnel réservé aux pros de santé vérifiés permet de
+      discuter, partager et s'entraider en toute sérénité.
+      </p>
+  <a href="https://discussion.doctoctoc.net" class="btn btn-link btn-lg" role="button">Forum {{ network.label }}</a>
+    </div>
+  </div>
+</div>
+
+<div id="scrollspyHeading4">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Messenger</h4>
+      <p class="card-text">
+      La messagerie chiffrée {medica} messenger vous permet de discuter
+      en privé avec tout membre du réseau et de créer des salons de discussion.
+      Vous pouvez aussi passer des appels audio et vidéo.
+      </p>
+      <a href="https://doctoctoc.net/messenger/get-started/" class="btn btn-link btn-lg" role="button">{medica} messenger</a>
+    </div>
+  </div>  
+</div>
+
+<div id="scrollspyHeading5">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Blog</h4>
+      <p class="card-text">
+      Apprendre, s'entraider, soigner: nos colonnes vous sont ouvertes!
+      </p>
+      <a href="https://blog.doctoctoc.net/" class="btn btn-link btn-lg" role="button">Blog {{ network.label }}</a>
+    </div>
+  </div>  
+</div>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

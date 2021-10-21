@@ -16,7 +16,8 @@ class NetworkAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'label',
-        'twitter_account',   
+        'twitter_account',
+        'site',
 )
     inlines = (NetworkCommunityInline,)
 

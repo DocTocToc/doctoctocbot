@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.sites.models import Site
+from django.contrib.sites.managers import CurrentSiteManager
 
 class Network(models.Model):
     name = models.CharField(
@@ -22,6 +24,18 @@ class Network(models.Model):
         null=True,
         blank=True,
     )
+    site = models.OneToOneField(
+        Site,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="network",
+    )
+    objects = models.Manager()
+    on_site = CurrentSiteManager()
+
+    def twitter_followers_count(self):
+        return sum([c.account.socialuser.twitter_followers_count() for c in self.community.all()])
 
 
 class NetworkCommunity(models.Model):

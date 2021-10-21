@@ -12,7 +12,7 @@ from rest_framework.decorators import (
     renderer_classes,
 )
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import bad_request, server_error
@@ -20,7 +20,7 @@ from django.contrib.auth.models import AnonymousUser
 
 logger = logging.getLogger(__name__)
 
-@permission_classes([AllowAny])
+@permission_classes([IsAdminUser])
 class NetworkViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A simple ViewSet for viewing networks.

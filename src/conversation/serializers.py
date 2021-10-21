@@ -78,21 +78,21 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_user_name(self, obj):
         try:
             return obj.json['user']['name']
-        except (AttributeError, KeyError) as e:
+        except (AttributeError, KeyError, TypeError) as e:
             logger.debug(e)
             return ""
 
     def get_user_screen_name(self, obj):
         try:
             return obj.json['user']['screen_name']
-        except (AttributeError, KeyError) as e:
+        except (AttributeError, KeyError, TypeError) as e:
             logger.debug(e)
             return ""
 
     def get_created_at(self, obj):
         try:
             return obj.json['created_at']
-        except (AttributeError, KeyError) as e:
+        except (AttributeError, KeyError, TypeError) as e:
             logger.debug(e)
             return ""
 
@@ -105,14 +105,18 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             except KeyError as e:
                 logger.debug(e)
                 return ""
-        except AttributeError as e:
+        except (AttributeError, TypeError) as e:
             logger.debug(e)
             return ""
 
     def get_author_category(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.author_category:
-            author_id = obj.json['user']['id']
+            try:
+                author_id = obj.json['user']['id']
+            except TypeError as e:
+                logger.debug(e)
+                return
             community = get_community(self.context['request'])
             try:
                 su = SocialUser.objects.get(user_id=author_id)
@@ -128,7 +132,11 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_status_category(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.status_category:
-            status_id = obj.json['id']
+            try:
+                status_id = obj.json['id']
+            except TypeError as e:
+                logger.debug(e)
+                return
             community = get_community(self.context['request'])
             try:
                 tweetdj = Tweetdj.objects.get(statusid=status_id)
@@ -143,7 +151,11 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_status_tag(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.status_tag:
-            status_id = obj.json['id']
+            try:
+                status_id = obj.json['id']
+            except TypeError as e:
+                logger.debug(e)
+                return
             community = get_community(self.context['request'])
             try:
                 tweetdj = Tweetdj.objects.get(statusid=status_id)
@@ -158,7 +170,11 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_media(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.status_media:
-            status_id = obj.json['id']
+            try:
+                status_id = obj.json['id']
+            except TypeError as e:
+                logger.debug(e)
+                return
             try:
                 tweetdj = Tweetdj.objects.get(statusid=status_id)
             except Tweetdj.DoesNotExist:
@@ -175,7 +191,11 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     def get_reply_count(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.reply_count:
-            status_id = obj.json['id']
+            try:
+                status_id = obj.json['id']
+            except TypeError as e:
+                logger.debug(e)
+                return
             community = get_community(self.context['request'])
             return reply_by_member_count(status_id, community)
 

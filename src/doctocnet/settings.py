@@ -257,7 +257,7 @@ if DEBUG:
         'corsheaders.middleware.CorsMiddleware',
     ]
 
-ROOT_URLCONF = 'doctocnet.urls'
+ROOT_URLCONF = config('ROOT_URLCONF', default='doctocnet.urls')
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 

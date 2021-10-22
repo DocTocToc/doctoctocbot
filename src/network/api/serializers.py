@@ -4,7 +4,7 @@ from rest_framework.fields import CurrentUserDefault
 from network.models import (
     Network,
 )
-from community.models import Community
+from community.models import Community, Retweet
 from moderation.models import SocialUser
 from bot.models import Account
 from choice.utils import room_url
@@ -36,14 +36,23 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = (
             'id',
+            'userid',
             'username',
             'socialuser',
+            'launch',
         )
         depth = 2
 
 
 class CommunitySerializer(serializers.ModelSerializer):
     account = AccountSerializer(read_only=True)
+    hashtag = serializers.SerializerMethodField()
+
+    def get_hashtag(self, community):
+        return Retweet.objects.filter(
+            community=community,
+            retweet=True,
+        ).values_list('hashtag__hashtag', flat=True).distinct()
 
 
     class Meta:
@@ -57,12 +66,12 @@ class CommunitySerializer(serializers.ModelSerializer):
             'created',
             'site'
         ]
-        depth = 3
-
+        depth = 2
 
 
 class NetworkSerializer(serializers.ModelSerializer):
     community = CommunitySerializer(many=True, read_only=True)
+    twitter_account = AccountSerializer(many=False, read_only=True)
     #community = serializers.SlugRelatedField(
     #    many=True,
     #    read_only=True,

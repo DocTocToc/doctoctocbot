@@ -6,6 +6,7 @@ from network.models import Network
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -13,6 +14,8 @@ from rest_framework.decorators import (
     renderer_classes,
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from network.api.serializers import NetworkSerializer
+from django.contrib.sites.models import Site
 from network.api.serializers import NetworkSerializer
 
 logger = logging.getLogger(__name__)
@@ -27,5 +30,5 @@ class NetworkView(APIView):
         logger.debug(request.site)
         network = Network.objects.filter(site=request.site).first()
         logger.debug(f'{network}')
-        serializer = NetworkSerializer(network)
-        return Response({'serializer': serializer, 'network': network})
+        data = NetworkSerializer(network).data
+        return Response({'network': data})

@@ -21,13 +21,14 @@
 </head>
 
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="20">
-<div class="container p-3">
+
+<div class="container">
 <div class="d-grid gap-3">
 <nav class="navbar navbar-light bg-light px-3 sticky-top">
   <a class="navbar-brand" href="#">{% trans "Network" %} {{ network.label }}</a>
   <ul class="nav nav-pills">
     <li class="nav-item">
-      <a class="nav-link" href="#scrollspyHeading0">Réseau</a>
+      <a class="nav-link" href="#scrollspyHeading0">{% trans "Network" %}</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="#scrollspyHeading1">Bots</a>
@@ -52,15 +53,41 @@
 <div id="scrollspyHeading0">
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Réseau</h4>
+      <h4 class="card-title">{% trans "Network" %}</h4>
       <p class="card-text">
-      {{ network.label }} est un réseau d'entraide francophone qui regroupe
+      {{ network.label }} est un réseau social d'entraide regroupant
       {{ network.twitter_followers_count }} professionnels de santé et
-      étudiants en santé.
-      Ses membres financent, développent et administrent des applications
-      numériques libres et open source pour faciliter le partage d'expérience
-      et de connaissance et trouver des réponses à toutes leurs questions
-      professionnelles.
+      étudiants en santé francophones répartis dans
+      {{ network.community|length }} communautés.
+      </p>
+  <table class="table w-auto">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">{% trans "Community" %}</th>
+      <th scope="col">{% trans "Members" %}</th>
+    </tr>
+  </thead>
+  <tbody >
+    {% for community in network.community %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td class="flex-row">{{ community.name }}</td>
+      <td class="flex-row">{% for member in community.membership %}{{ member.label }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+      <p class="card-text">
+      Nous, pros de santé, avons créé et modérons ces commmunautés.
+      Nous échangeons expérience et connaissance et nous trouvons
+      collectivement des réponses à toutes nos questions médicales et
+      professionnelles, du cas clinique complexe à la dernière tracasserie
+      administrative.
+      Pour protéger nos échanges des influences économiques,
+      financières et politiques extérieures, nous
+      assurons nous-mêmes le financement, le développement et la mise
+      en œuvre de nos outils numériques et nous refusons la publicité.
       </p>
     </div>
   </div>
@@ -69,42 +96,41 @@
 <div id="scrollspyHeading1">
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Bots Twitter</h4>
+      <h4 class="card-title">{% trans "Twitter bots" %}</h4>
       <p class="card-text">
-      Nos bots Twitter vont diffuser vos questions à leurs
+      Nos bots Twitter diffusent vos questions à leurs
       {{ network.twitter_followers_count }} abonnés.
-      Mode d'emploi: installez l'app mobile Twitter et créez un compte.
+      Mode d'emploi: installez l'app mobile
+      <a href="https://twitter.com">Twitter</a> et créez un compte.
       Abonnez-vous au compte du bot de votre communauté.
-      Écrivez votre question dans un tweet en n'oubliant pas d'ajouter
+      Rédigez votre question dans un tweet en n'oubliant pas d'ajouter
       le bon hashtag et un point d'interrogation.
       </p>
 
-  <table class="table container-md">
+  <table class="table w-auto">
   <thead>
     <tr>
       {#<th scope="col">#</th>#}
       <th scope="col">{% trans "Community" %}</th>
-      <th scope="col">{% trans "Members" %}</th>
       <th scope="col">Twitter</th>
       <th scope="col">Hashtag</th>
       <th scope="col" class="text-end">{% trans "Followers" %}</th>
     </tr>
   </thead>
   <tbody>
-    {% for community in network.community.all %}
+    {% for community in network.community %}
     <tr>
       {#<th scope="row">{{forloop.counter}}</th>#}
       <td>{{ community.name }}</td>
-      <td>{% for member in community.membership.all %}{{ member.label }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
       <td><a href="https://twitter.com/{{ community.account.socialuser.screen_name_tag }}">@{{ community.account.socialuser.screen_name_tag }}</a></td>
-      <td>{% for hashtag in community.hashtag.all %}#{{ hashtag.hashtag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+      <td>{% for hashtag in community.hashtag.all %}#{{ hashtag }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
       <td class="text-end">{{ community.account.socialuser.twitter_followers_count }}</td>
     </tr>
     {% endfor %}
   </tbody>
   <tfoot>
     <tr>
-       <th colspan="4" class="text-end"></th>
+       <th colspan="3" class="text-end"></th>
        <th colspan="1" class="text-end">Total: {{ network.twitter_followers_count }}</th>
     </tr>
 </tfoot>
@@ -121,21 +147,19 @@
       Chaque communauté a son site web où sont archivées les questions et où
       vous retrouvez vos réglages, préférences et statistiques personnelles.
       </p>
-  <table class="table container-md">
+  <table class="table w-auto">
   <thead>
     <tr>
       {#<th scope="col">#</th>#}
       <th scope="col">{% trans "Community" %}</th>
-      <th scope="col">{% trans "Members" %}</th>
       <th scope="col">{% trans "Website" %}</th>
     </tr>
   </thead>
   <tbody>
-    {% for community in network.community.all %}
+    {% for community in network.community %}
     <tr>
       {#<th scope="row">{{forloop.counter}}</th>#}
       <td>{{ community.name }}</td>
-      <td>{% for member in community.membership.all %}{{ member.label }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
       <td><a href="https://{{ community.site.domain }}">{{ community.site.domain }}</a></td>
     </tr>
     {% endfor %}
@@ -163,7 +187,7 @@
     <div class="card-body">
       <h4 class="card-title">Messenger</h4>
       <p class="card-text">
-      La messagerie chiffrée {medica} messenger vous permet de discuter
+      Notre messagerie chiffrée {medica} messenger vous permet de discuter
       en privé avec tout membre du réseau et de créer des salons de discussion.
       Vous pouvez aussi passer des appels audio et vidéo.
       </p>

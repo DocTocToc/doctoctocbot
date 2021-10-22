@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-20 23:30+0200\n"
-"PO-Revision-Date: 2021-10-21 00:31+0300\n"
+"POT-Creation-Date: 2021-10-22 04:09+0200\n"
+"PO-Revision-Date: 2021-10-22 05:10+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,28 +18,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: network/templates/network/network.html:23
+#: network/templates/network/network.html:28
+#: network/templates/network/network.html:31
+#: network/templates/network/network.html:56
 msgid "Network"
 msgstr "Réseau"
 
-#: network/templates/network/network.html:75
-#: network/templates/network/network.html:117
+#: network/templates/network/network.html:67
+#: network/templates/network/network.html:114
+#: network/templates/network/network.html:154
 msgid "Community"
 msgstr "Communauté"
 
-#: network/templates/network/network.html:76
-#: network/templates/network/network.html:118
+#: network/templates/network/network.html:68
 msgid "Members"
 msgstr "Membres"
 
-#: network/templates/network/network.html:79
+#: network/templates/network/network.html:99
+msgid "Twitter bots"
+msgstr "Robots Twitter"
+
+#: network/templates/network/network.html:117
 msgid "Followers"
 msgstr "Abonnés"
 
-#: network/templates/network/network.html:108
+#: network/templates/network/network.html:145
 msgid "Websites"
 msgstr "Sites web"
 
-#: network/templates/network/network.html:119
+#: network/templates/network/network.html:155
 msgid "Website"
 msgstr "Site web"

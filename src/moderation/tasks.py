@@ -100,8 +100,13 @@ def handle_sendmoderationdm(mod_instance_id):
     sendmoderationdm(moderation)
 
 @shared_task
-def handle_poll_moderation_dm():
-    poll_moderation_dm()
+def handle_poll_moderation_dm(community: str):
+    poll_moderation_dm(community)
+
+@shared_task
+def handle_all_poll_moderation_dm():
+    for community in Community.objects.filter(active=True):
+        handle_poll_moderation_dm.apply_async(args=(community.name,))
 
 @shared_task
 def update_moderators_friends():

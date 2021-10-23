@@ -136,11 +136,11 @@ def create_first_community(apps, schema_editor):
             twitter_access_token = settings.TWITTER_ACCESS_TOKEN,
             twitter_access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET,
             active = True,
-            launch = datetime.datetime.now(tz=datetime.timezone.utc),
-            backend_twitter_consumer_key = settings.TWITTER_CONSUMER_KEY,
-            backend_twitter_consumer_secret = settings.TWITTER_CONSUMER_SECRET,
-            backend_twitter_access_token = settings.TWITTER_ACCESS_TOKEN,
-            backend_twitter_access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET,
+            #launch = datetime.datetime.now(tz=datetime.timezone.utc),
+            #backend_twitter_consumer_key = settings.TWITTER_CONSUMER_KEY,
+            #backend_twitter_consumer_secret = settings.TWITTER_CONSUMER_SECRET,
+            #backend_twitter_access_token = settings.TWITTER_ACCESS_TOKEN,
+            #backend_twitter_access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET,
         )
         account.hashtag.set(hashtag_mi_lst)
     except DatabaseError:

@@ -1,4 +1,5 @@
 {% extends "doctocnet/base.html" %}
+{% load i18n %}
 {% block title %}{{view.title}}{% endblock title %}
 {% block head_meta %}
 {{ block.super }}
@@ -6,7 +7,7 @@
 {% endblock head_meta %}
 {% block content %}
 <h2>{{view.title}}</h2>
-<a href="{% url "landing:moderation" %}">Rejoignez-nous!</a>
+<a href="{% url "landing:moderation" %}">{% trans "Join us!" %}</a>
 
 
 {% for chunk in moderators %}

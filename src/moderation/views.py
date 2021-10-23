@@ -28,12 +28,14 @@ from social_django.models import UserSocialAuth
 from moderation.models import UserCategoryRelationship
 from django.core.mail import send_mail
 from bot.tasks import handle_create_friendship
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
 
 
-
+@method_decorator(cache_page(60 * 60), name='dispatch')
 class ModeratorPublicList(TemplateView):
     title = _("Moderators")
     template_name = "moderation/moderators.html"

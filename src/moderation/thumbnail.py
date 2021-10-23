@@ -66,7 +66,6 @@ def generate_thumbnail(community):
 def get_thumbnail_url(community):
     try:
         thumbnail = Image.objects.get(name=f"moderators_{community.name}")
+        return thumbnail.img.url
     except Image.DoesNotExist:
-        return generate_thumbnail()
-
-    return thumbnail.img.url
+        return generate_thumbnail(community)

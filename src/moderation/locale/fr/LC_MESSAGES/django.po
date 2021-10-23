@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 04:09+0200\n"
-"PO-Revision-Date: 2020-07-02 23:51+0300\n"
+"POT-Creation-Date: 2021-10-23 02:43+0200\n"
+"PO-Revision-Date: 2021-10-23 03:45+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: moderation/admin.py:365
 msgid "Specialty"
-msgstr ""
+msgstr "Spécialité"
 
 #: moderation/dm.py:289
 #, python-brace-format
@@ -160,11 +160,15 @@ msgstr "{title} de {screen_name}: {total}"
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
 
+#: moderation/templates/moderation/moderators.html:10
+msgid "Join us!"
+msgstr "Rejoignez-nous!"
+
 #: moderation/templates/moderation/user.html:23
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 
-#: moderation/views.py:38
+#: moderation/views.py:40
 msgid "Moderators"
 msgstr "Modérateurs"
 

@@ -929,3 +929,30 @@ def addsocialuser_from_userid(userid: int):
             logger.error(e)
             return
     return su
+
+
+class Prospect(models.Model):
+    socialuser = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.PROTECT,
+    )
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text=(
+            "Is this Prospect active?"
+        )
+    )
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "{} {} {}".format(self.socialuser, self.community, self.active)
+    
+    class Meta:
+        unique_together = ['socialuser', 'community']

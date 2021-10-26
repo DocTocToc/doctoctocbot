@@ -30,6 +30,7 @@ from moderation.models import (
     CategoryMetadata,
     ModerationOptIn,
     get_default_socialmedia,
+    Prospect,
 )
 from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag
@@ -856,7 +857,25 @@ class ModerationOptInAdmin(admin.ModelAdmin):
         'option',
         'authorize',
     )
-    
+
+
+@admin.register(Prospect)
+class ProspectAdmin(admin.ModelAdmin):
+    list_display = (
+        'socialuser',
+        'community',
+        'active',
+        'created',
+        'updated',
+    )
+    list_filter = (
+    'community',
+    'active',
+    )
+    search_fields = (
+    'socialuser__profile__json',
+    )
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)

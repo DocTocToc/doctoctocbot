@@ -192,8 +192,10 @@ class SocialUser(models.Model):
             "deactivated or deleted."
         )
     )
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
     objects = AuthorizedManager()
-    
+
     def __str__(self):
         try:
             return f'{self.pk} | {self.screen_name_tag()} | {self.user_id}'

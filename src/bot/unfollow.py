@@ -99,6 +99,8 @@ class Unfollow():
         )
 
     def random_sample(self):
+        if self.sample > len(self.candidates) or self.sample < 0:
+            return
         self.candidates[:] = sample(
             self.candidates,
             self.sample

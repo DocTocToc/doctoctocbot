@@ -36,6 +36,12 @@ class Command(BaseCommand):
             help="destroy unrequited friendship after this many days"
         )
         parser.add_argument(
+            "-s",
+            "--sample",
+            type=int,
+            help="size of a random sample of friends to process"
+        )
+        parser.add_argument(
             '--force_unfollow',
             dest='force_unfollow',
             action='store_true'
@@ -47,6 +53,7 @@ class Command(BaseCommand):
         count: int = options['count']
         days: int = options['days']
         force_unfollow = options['force_unfollow']
+        sample = options['sample']
         logger.debug(f'{force_unfollow=}')
         socialuser = get_socialuser_from_screen_name(screen_name)
         if not socialuser:
@@ -67,7 +74,8 @@ class Command(BaseCommand):
             socialuser=socialuser,
             count=count,
             delta=days,
-            force_unfollow=force_unfollow
+            force_unfollow=force_unfollow,
+            sample=sample,
         )
         unfollowed_dict = unfollow.process()
         self.stdout.write(

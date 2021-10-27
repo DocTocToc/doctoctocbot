@@ -1,4 +1,5 @@
 import logging
+from random import sample
 from typing import Optional
 from datetime import datetime, timedelta
 from dataclasses import dataclass
@@ -54,7 +55,8 @@ class Unfollow():
             to_socialuser: Optional[SocialUser] = None,
             count: Optional[int] = None,
             delta: Optional[int] = 7, # days
-            force_unfollow: bool = False
+            force_unfollow: bool = False,
+            sample: Optional[int] = None,
         ):
         self.socialuser = socialuser
         self.transfer = transfer
@@ -64,6 +66,7 @@ class Unfollow():
         self.candidates: List[User] = []
         self.delta = delta
         self.force_unfollow = force_unfollow
+        self.sample = sample
 
     def process(self):
         if self.count is None:
@@ -72,6 +75,8 @@ class Unfollow():
         logger.debug(f'0. Count:{len(self.candidates)}\n{self.candidates}')
         self.update_social()
         self.get_no_follow_back()
+        if self.sample:
+            self.random_sample()
         self.add_prospect()
         logger.debug(f'\n1. Count:{len(self.candidates)}\n{self.candidates}')
         self.friend_since()
@@ -88,7 +93,16 @@ class Unfollow():
         logger.info(unfollowed_dict)
 
     def get_api(self):
-        return get_api(username=self.socialuser.screen_name_tag())
+        return get_api(
+            username=self.socialuser.screen_name_tag(),
+            backend=True
+        )
+
+    def random_sample(self):
+        self.candidates[:] = sample(
+            self.candidates,
+            self.sample
+        )
 
     def order_since(self):
         self.candidates[:] = sorted(

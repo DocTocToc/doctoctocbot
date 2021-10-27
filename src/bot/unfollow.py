@@ -17,6 +17,7 @@ from moderation.models import (
     Profile,
     Prospect,
 )
+from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class Unfollow():
         self.filter_count()
         logger.debug(f'\n5. Count:{len(self.candidates)}\n{self.candidates}')
         unfollowed_dict = self.unfollow()
-        logger.debug(unfollowed_dict)
+        logger.info(unfollowed_dict)
 
     def get_api(self):
         return get_api(username=self.socialuser.screen_name_tag())
@@ -158,13 +159,25 @@ class Unfollow():
     def create_update_profiles(self):
         n = 100
         ids = [user.id for user in self.candidates]
+        # do not update recently updated profiles
+        one_day_ago = timezone.now() - timedelta(days=1) 
+        ids_recent_update = (
+            SocialUser.objects
+            .filter(profile__updated__gte=one_day_ago)
+            .values_list("user_id", flat=True)
+        )
+        ids[:] = [ id_ for id_ in ids if id_ not in ids_recent_update]
         split: List[List[int]] = [ids[i:i+n] for i in range(0, len(ids), n)]
         try:
             twitter = SocialMedia.objects.get(name='twitter')
         except SocialMedia.DoesNotExist:
             return
         for ids in split:
-            users = self.api.lookup_users(ids)
+            try:
+                users = self.api.lookup_users(ids)
+            except TweepError as e:
+                logger.error(e)
+                continue
             for user in users:
                 try:
                     su, _ = SocialUser.objects.get_or_create(
@@ -184,8 +197,20 @@ class Unfollow():
                         continue
 
     def get_no_follow_back(self):
-        friend = Friend.objects.filter(user=self.socialuser).latest("id")
-        follower = Follower.objects.filter(user=self.socialuser).latest("id")
+        try:
+            friend = Friend.objects.filter(user=self.socialuser).latest("id")
+        except Friend.DoesNotExist:
+            logger.error(
+                f'No Friend object for SocialUser {self.socialuser} was found'
+            )
+            return
+        try:
+            follower = Follower.objects.filter(user=self.socialuser).latest("id")
+        except Follower.DoesNotExist:
+            logger.error(
+                f'No Follower object for SocialUser {self.socialuser} was found'
+            )
+            return
         friends_ids_set = set(friend.id_list)
         followers_ids_set = set(follower.id_list)
         candidates_ids_set = friends_ids_set - followers_ids_set

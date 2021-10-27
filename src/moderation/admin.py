@@ -221,6 +221,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'user_id',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'created',
+        'updated',
     )
     fields = (
         'screen_name_tag',
@@ -237,6 +239,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'active',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'created',
+        'updated',
     )
     readonly_fields = (
         'screen_name_tag',
@@ -250,6 +254,8 @@ class SocialUserAdmin(admin.ModelAdmin):
         'block_tag',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'created',
+        'updated',
     )
     search_fields = (
         'user_id',

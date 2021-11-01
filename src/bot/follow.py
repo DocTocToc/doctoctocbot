@@ -10,6 +10,7 @@ from django.db.utils import DatabaseError
 from django.db import IntegrityError
 from moderation.social import update_social_ids
 from django.conf import settings
+from community.models import Community
 from moderation.models import (
     SocialUser,
     Friend,
@@ -17,6 +18,8 @@ from moderation.models import (
     SocialMedia,
     Profile,
     Prospect,
+    UserCategoryRelationship,
+    Category,
 )
 from tweepy.error import TweepError
 
@@ -25,17 +28,17 @@ logger = logging.getLogger(__name__)
 @dataclass
 class User:
     id: int
-    since: datetime = None
+    latest: datetime = None
 
     def __repr__(self):
-        if self.since:
-            dt=datetime.strftime(self.since, '%Y/%m/%d %H:%M:%S')
+        if self.latest:
+            dt=datetime.strftime(self.latest, '%Y/%m/%d %H:%M:%S')
         else:
             dt=""
         return(
             f"User:\n"
             f"    id: {self.id}\n"
-            f"    since: {dt}\n"
+            f"    latest: {dt}\n"
         )
 
 
@@ -47,25 +50,24 @@ class Candidates:
         return "Users:\n{}".format('\n'.join(self.users))
 
 
-class Unfollow():
+class Follow():
     def __init__(
             self,
             socialuser: SocialUser,
-            transfer: bool = False,
-            to_socialuser: Optional[SocialUser] = None,
             count: Optional[int] = None,
             delta: Optional[int] = 7, # days
-            force_unfollow: bool = False,
+            force_follow: bool = False,
             sample: Optional[int] = None,
         ):
         self.socialuser = socialuser
-        self.transfer = transfer
-        self.to_socialuser = to_socialuser,
+        self.friends: List[int] = self.get_friends()
+        self.community = self.get_community()
+        self.network: List[Community] = self.get_network()
         self.count = count
         self.api = self.get_api()
         self.candidates: List[User] = []
         self.delta = delta
-        self.force_unfollow = force_unfollow
+        self.force_follow = force_follow
         self.sample = sample
 
     def process(self):
@@ -74,23 +76,24 @@ class Unfollow():
         self.candidates = []
         logger.debug(f'0. Count:{len(self.candidates)}\n{self.candidates}')
         self.update_social()
-        self.get_no_follow_back()
-        if self.sample:
-            self.random_sample()
-        self.add_prospect()
+        self.add_potential_members()
         logger.debug(f'\n1. Count:{len(self.candidates)}\n{self.candidates}')
-        self.friend_since()
-        if self.delta:
-            self.filter_since()
+        self.add_prospects()
         logger.debug(f'\n2. Count:{len(self.candidates)}\n{self.candidates}')
-        self.filter_protected()
+        if self.sample:
+            self.candidates[:]=self.random_sample(self.candidates)
         logger.debug(f'\n3. Count:{len(self.candidates)}\n{self.candidates}')
-        self.order_since()
+        self.friend_latest()
         logger.debug(f'\n4. Count:{len(self.candidates)}\n{self.candidates}')
-        self.filter_count()
+        if self.delta:
+            self.filter_latest()
         logger.debug(f'\n5. Count:{len(self.candidates)}\n{self.candidates}')
-        unfollowed_dict = self.unfollow()
-        logger.info(unfollowed_dict)
+        self.order_latest()
+        logger.debug(f'\n6. Count:{len(self.candidates)}\n{self.candidates}')
+        self.filter_count()
+        logger.debug(f'\n7. Count:{len(self.candidates)}\n{self.candidates}')
+        followed_dict = self.follow()
+        logger.info(followed_dict)
 
     def get_api(self):
         return get_api(
@@ -98,80 +101,83 @@ class Unfollow():
             backend=True
         )
 
-    def random_sample(self):
-        if self.sample > len(self.candidates) or self.sample < 0:
+    def get_community(self):
+        try:
+            return self.socialuser.account.community
+        except:
             return
-        self.candidates[:] = sample(
-            self.candidates,
+
+    def get_network(self):
+        community_list = [self.community]
+        for network in self.community.network_set.all():
+            for community in network.community.all():
+                community_list.append(community)
+        return community_list
+
+    def get_friends(self):
+        try:
+            return Friend.objects.filter(user=self.socialuser).latest("id").id_list
+        except Friend.DoesNotExist:
+            logger.error(
+                f'No Friend object for SocialUser {self.socialuser} was found'
+            )
+            return []
+
+    def random_sample(self, iterable):
+        if self.sample > len(iterable) or self.sample < 0:
+            return iterable
+        return sample(
+            iterable,
             self.sample
         )
 
-    def order_since(self):
-        self.candidates[:] = sorted(
-            self.candidates,
-            key=lambda t: datetime.strftime(t.since, '%Y/%m/%d %H:%M:%S'),
+    def order_latest(self):
+        candidates = [user for user in self.candidates if not user.latest]
+        candidates.extend(
+            sorted(
+                [user for user in self.candidates if user.latest],
+                key=lambda t: datetime.strftime(t.latest, '%Y/%m/%d %H:%M:%S')
+            )
         )
+        self.candidates=candidates
 
     def filter_count(self):
         del self.candidates[self.count:]
 
-    def unfollow(self):
-        if settings.DEBUG and not self.force_unfollow:
+    def follow(self):
+        if settings.DEBUG and not self.force_follow:
             for user in self.candidates:
-                logger.debug(f"{user} was unfollowed.")
+                logger.debug(f"{user} was followed.")
         else:
-            unfollowed_dict = {
+            followed_dict = {
                 "candidates": len(self.candidates),
-                "unfollowed": 0    
+                "followed": 0    
             }
             for idx, user in enumerate(self.candidates):
                 try:
-                    response = self.api.destroy_friendship(
-                        user_id=str(user.id)
-                    )
+                    response = self.api.create_friendship(user_id=str(user.id))
                 except TweepError as e:
                     logger.error(e)
-                    unfollowed_dict.update({
+                    followed_dict.update({
                         idx: {'error': str(e)}
                     })
                     continue
                 try:
                     screen_name = response._json['screen_name']
                     logger.debug(
-                        f"User {screen_name} was unfollowed\n ({user})"
+                        f"User {screen_name} was followed\n ({user})"
                     )
-                    unfollowed_dict.update({
+                    followed_dict.update({
                         idx: {'screen_name': screen_name},
-                        'unfollowed': unfollowed_dict['unfollowed'] + 1
+                        'followed': followed_dict['followed'] + 1
                     })
                 except:
                     logger.error(response)
-                    unfollowed_dict.update({
+                    followed_dict.update({
                         idx: {'error': str(response)}
                     })
                     continue
-            return unfollowed_dict
-
-    def add_prospect(self):
-        logger.debug(f'{bool(self.candidates)=}')
-        if not self.candidates:
-            return
-        socialusers = SocialUser.objects.filter(
-            user_id__in=[user.id for user in self.candidates]
-        )
-        try:
-            community=self.socialuser.account.community
-        except:
-            community=None
-        prospects = [
-            Prospect(socialuser=su, community=community) for su in socialusers
-        ]
-        batch_size = len(prospects)
-        Prospect.objects.bulk_create(
-            prospects,
-            batch_size,
-            ignore_conflicts=True
-        )
+            return followed_dict
 
     def update_social(self):
         for relationship in ['friends', 'followers']:
@@ -221,65 +227,67 @@ class Unfollow():
                         logger.debug(e)
                         continue
 
-    def get_no_follow_back(self):
-        try:
-            friend = Friend.objects.filter(user=self.socialuser).latest("id")
-        except Friend.DoesNotExist:
-            logger.error(
-                f'No Friend object for SocialUser {self.socialuser} was found'
+    def add_potential_members(self):
+        potential_members_ids = list(
+            UserCategoryRelationship.objects
+            .filter(community__in=self.network)
+            .filter(category__in=self.community.membership.all())
+            .exclude(
+                social_user__in=SocialUser.objects.filter(
+                    user_id__in=self.friends
+                    )
+                )
+            .exclude(
+                category__in=Category.objects.filter(
+                    community_relationship__do_not_follow=True,
+                    community_relationship__community=self.community,
+                )
+            ).values_list("social_user__user_id", flat=True)
+        )
+        logger.debug(f'{potential_members_ids=}')
+        if self.sample and potential_members_ids:
+            potential_members_ids[:] = self.random_sample(
+                potential_members_ids
             )
-            return
-        try:
-            follower = Follower.objects.filter(user=self.socialuser).latest("id")
-        except Follower.DoesNotExist:
-            logger.error(
-                f'No Follower object for SocialUser {self.socialuser} was found'
-            )
-            return
-        friends_ids_set = set(friend.id_list)
-        followers_ids_set = set(follower.id_list)
-        candidates_ids_set = friends_ids_set - followers_ids_set
-        for candidate_id in candidates_ids_set:
-            self.candidates.append(User(candidate_id))
+        for user_id in potential_members_ids:
+            self.candidates.append(User(user_id))
 
-    def filter_since(self):
+    def add_prospects(self):
+        prospects_ids = list(
+            Prospect.objects.filter(
+                community=self.community,
+                active=True,
+            ).exclude(
+                socialuser__user_id__in=self.friends
+            ).values_list("socialuser__user_id", flat=True)
+        )
+        logger.debug(f'{prospects_ids=}')
+        if self.sample and prospects_ids:
+            prospects_ids[:] = self.random_sample(
+                prospects_ids
+            )
+        for user_id in prospects_ids:
+            self.candidates.append(User(user_id))
+
+    def filter_latest(self):
         self.candidates[:] = [
             user for user in self.candidates if self.process_delta(user)
         ]
 
-    def filter_protected(self):
-        self.create_update_profiles()
-        protected_ids = SocialUser.objects.filter(
-            user_id__in=[user.id for user in self.candidates],
-            profile__json__protected = True
-        ).values_list("user_id", flat=True)
-        logger.debug(f'{protected_ids=}')
-        self.candidates[:] = [
-            user for user in self.candidates if user.id not in protected_ids
-        ]
-
     def process_delta(self, user):
-        if not user.since:
-            return False
-        delta_computed: timedelta = timezone.now() - user.since
+        if not user.latest:
+            return True
+        delta_computed: timedelta = timezone.now() - user.latest
         delta_limit = timedelta(days=self.delta)
         return delta_computed > delta_limit
 
-    def friend_since(self):
+    def friend_latest(self):
         for user in self.candidates:
             try:
-                latest_not_friend = Friend.objects \
+                latest_friend = Friend.objects \
                 .filter(user=self.socialuser) \
-                .exclude(id_list__contains=[user.id]) \
+                .filter(id_list__contains=[user.id]) \
                 .latest("id")
             except Friend.DoesNotExist:
                 continue
-            try:
-                earliest_friend = Friend.objects \
-                .filter(user=self.socialuser) \
-                .filter(id_list__contains=[user.id]) \
-                .filter(id__gte=latest_not_friend.id) \
-                .earliest()
-            except Friend.DoesNotExist:
-                continue
-            user.since = earliest_friend.created
+            user.latest = latest_friend.created

@@ -1,5 +1,5 @@
 import logging
-from bot.unfollow import Unfollow
+from bot.follow import Follow
 from moderation.social import get_socialuser_from_screen_name
 from django.core.management.base import BaseCommand, CommandError
 from moderation.profile import create_twitter_social_user_and_profile
@@ -13,7 +13,7 @@ from django.db.utils import DatabaseError
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = 'Destroy friendship with friends who do not follow back'
+    help = 'Create friendships based on categories and prospects'
     
     def add_arguments(self, parser):
         parser.add_argument(
@@ -25,34 +25,34 @@ class Command(BaseCommand):
             "-c",
             "--count",
             type=int,
-            help="count represents the number of friendships to destroy"
+            help="count represents the number of friendships to create"
         )
         parser.add_argument(
             "-d",
             "--days",
             type=int,
-            help="destroy unrequited friendship after this many days"
+            help="create friendship this many days after last creation"
         )
         parser.add_argument(
             "-s",
             "--sample",
             type=int,
-            help="size of a random sample of friends to process"
+            help="size of a random sample of socialusers to process"
         )
         parser.add_argument(
-            '--force-unfollow',
-            dest='force_unfollow',
+            '--force-follow',
+            dest='force_follow',
             action='store_true'
         )
-        parser.set_defaults(force_unfollow=False)
+        parser.set_defaults(force_follow=False)
 
     def handle(self, *args, **options):
         screen_name: str =  options['screen_name']
         count: int = options['count']
         days: int = options['days']
-        force_unfollow = options['force_unfollow']
+        force_follow = options['force_follow']
         sample = options['sample']
-        logger.debug(f'{force_unfollow=}')
+        logger.debug(f'{force_follow=}')
         socialuser = get_socialuser_from_screen_name(screen_name)
         if not socialuser:
             self.stdout.write(
@@ -68,16 +68,16 @@ class Command(BaseCommand):
                 )
             )
             return
-        unfollow = Unfollow(
+        follow = Follow(
             socialuser=socialuser,
             count=count,
             delta=days,
-            force_unfollow=force_unfollow,
+            force_follow=force_follow,
             sample=sample,
         )
-        unfollowed_dict = unfollow.process()
+        followed_dict = follow.process()
         self.stdout.write(
             self.style.SUCCESS(
-                unfollowed_dict
+                followed_dict
             )
         )

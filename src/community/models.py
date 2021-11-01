@@ -306,7 +306,11 @@ class CommunityCategoryRelationship(models.Model):
     socialgraph = models.BooleanField(
         default=False,
         help_text="Include in moderation social graph?"
-    )    
+    )
+    do_not_follow = models.BooleanField(
+        default=False,
+        help_text="Bot should not follow SocialUsers from this category"
+    )
     color = models.CharField(
         max_length=20,
         null=True,

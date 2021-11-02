@@ -9,28 +9,23 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def get_timeline_with_rts(screen_name):
-    API = get_api(username=screen_name, backend=True)
-    try:
-        return API.user_timeline(
-            include_rts=True,
-            count=200
-        )
-    except AttributeError:
-        return
-
 def record_timeline():
     for community in Community.objects.filter(active=True):
-        status_lst = get_timeline_with_rts(community.account.username)
-        if status_lst:
-            for status in status_lst:
-                add_status_tl(status, community)
+        su = community.account.socialuser
+        if not su:
+            continue
+        record_user_timeline(
+            su.user_id,
+            count=200,
+            force=False,
+            retweeted=True
+        )
         
-        
-def record_user_timeline(user_id, count=200, force=False):
+def record_user_timeline(user_id, count=200, force=False, retweeted=False):
     """
     Send requests to record user timeline as long as not all tweets during one
     request already exist in database.
+    retweeted: bool If status is a retweet, add retweeted status to database
     """
     max_statusid = None
     api=get_api()
@@ -43,14 +38,18 @@ def record_user_timeline(user_id, count=200, force=False):
                 user_id=user_id,
                 count=count,
                 max_id=max_statusid,
-                tweet_mode="extended"
+                tweet_mode="extended",
+                include_rts=True
             )
             if not status_lst:
                 logger.warn("request is empty")
                 break
             for status in status_lst:
                 dbstatus = Addstatus(status._json)
-                created = dbstatus.addtweetdj()
+                tweetdj, created = dbstatus.addtweetdj(update=True)
+                if retweeted and tweetdj.retweetedstatus:
+                    dbstatus = Addstatus(status._json["retweeted_status"])
+                    dbstatus.addtweetdj(update=True)
                 statusid = status._json["id"]
                 if max_statusid is None:
                     max_statusid = statusid

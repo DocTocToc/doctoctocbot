@@ -26,7 +26,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = models.Tweetdj.objects.all().order_by('-created_at')
+    queryset = models.Tweetdj.objects.all().order_by('-statusid')
     serializer_class = TweetdjSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = (AllowAny,)
@@ -101,12 +101,8 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
 
     def filter_by_site(self, queryset):
         try:
-            userid = get_current_site(self.request).community.first().account.userid
+            su = get_current_site(self.request).community.account.socialuser
         except:
-            return queryset
-        try:
-            su = SocialUser.objects.get(user_id=userid)
-        except SocialUser.DoesNotExist:
             return queryset
         return queryset.filter(retweeted_by=su)
     

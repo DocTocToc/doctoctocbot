@@ -166,8 +166,8 @@ def record_replies(statusids, community, rc):
         statuses.sort(key=lambda x: x.id)
         for status in statuses:
             db = Addstatus(status._json)
-            _new_tweetdj = db.addtweetdj()
-            if _new_tweetdj:
+            _, created = db.addtweetdj()
+            if created:
                 logger.info(f"Status {status.id} was added to DB")
             in_reply_to_status_id = status._json["in_reply_to_status_id"]
             if in_reply_to_status_id:

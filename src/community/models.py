@@ -25,7 +25,7 @@ class Community(models.Model):
         blank=True,
     )
     created =  models.DateTimeField(auto_now_add=True)
-    site = models.ForeignKey(
+    site = models.OneToOneField(
         Site,
         on_delete=models.CASCADE,
         null=True,

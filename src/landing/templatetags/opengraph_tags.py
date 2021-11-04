@@ -19,7 +19,7 @@ from django.db.utils import DatabaseError
 from community.models import Community
 from django.conf import settings
 from django.utils.translation import gettext as _
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.contrib.staticfiles.storage import staticfiles_storage
 from community.helpers import get_community, activate_language
 from community.models import Retweet

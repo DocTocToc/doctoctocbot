@@ -1,4 +1,4 @@
-FROM python:3.8-buster AS prod
+FROM python:3.10-buster AS prod
 
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
@@ -33,8 +33,8 @@ ENV LANGUAGE fr_FR
 ENV LC_ALL fr_FR.UTF-8
 
 ADD ./requirements /code/requirements
-RUN pip install pip==21.0.1
-RUN pip install --upgrade -r /code/requirements/common.txt
+# RUN pip install pip==21.0.1
+RUN pip install -r /code/requirements/common.txt --upgrade
 
 RUN mkdir /var/log/celery && touch /var/log/celery/celery.log
 RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/gunicorn.log

@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 import logging
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.utils.safestring import mark_safe
 from django.db import IntegrityError, transaction
 from django.db import models
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Status(models.Model):
     statusid = models.BigIntegerField(unique=True, primary_key=True)
-    json = JSONField()
+    json = models.JSONField()
     community = models.ForeignKey(
         "community.Community",
         on_delete=models.CASCADE,

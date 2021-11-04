@@ -512,7 +512,7 @@ class ProfileAdmin(admin.ModelAdmin):
     socialuser_link.short_description = 'SocialUser'
 
 
-class ModerationAdmin(VersionedAdmin):
+class ModerationAdmin(admin.ModelAdmin):
     list_display = (
         'state',
         'queue_link',
@@ -525,6 +525,8 @@ class ModerationAdmin(VersionedAdmin):
         'tweet_link',
         'status_object',
         'community',
+        'version_start_date',
+        'version_end_date',
     )
     fields = (
         'state',
@@ -556,15 +558,16 @@ class ModerationAdmin(VersionedAdmin):
         'queue__type',
         'state',
     )
-    list_display_show_identity = True
-    list_display_show_end_date = True
-    list_display_show_start_date = True
+    #list_display_show_identity = True
+    #list_display_show_end_date = True
+    #list_display_show_start_date = True
     search_fields = (
         'moderator__profile__json__screen_name',
     )
 
     def get_ordering(self, request):
-        return ['-version_start_date', ] + self.ordering
+        #return ['-version_start_date', ] + self.ordering
+        return ['-version_start_date', ]
 
     def get_search_results(self, request, queryset, search_term):
         # search_term is what you input in admin site

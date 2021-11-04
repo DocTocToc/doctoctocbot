@@ -229,7 +229,7 @@ INSTALLED_APPS = [
     'webpush',
 #    'awareness',
     'network',
-    'fontawesome-free'
+    'fontawesomefree'
 ]
 
 if DEBUG:
@@ -863,3 +863,5 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY', default=''),
     "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL', default='')
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from datetime import timedelta
 from constance import config
 from django.utils.dateparse import parse_duration
@@ -92,10 +91,10 @@ class NotificationLog(models.Model):
         null=True,
         blank=True,
     )
-    success_log = JSONField(
+    success_log = models.JSONField(
         null = True    
     )
-    error_log = JSONField(
+    error_log = models.JSONField(
         null = True    
     )
     created = models.DateTimeField(

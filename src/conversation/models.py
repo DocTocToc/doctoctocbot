@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.utils import DatabaseError
@@ -48,7 +47,7 @@ class Tweetdj(models.Model):
         on_delete=models.SET_NULL,
         related_name="tweets"
     )
-    json = JSONField(
+    json = models.JSONField(
         null=True
     )
     created_at = models.DateTimeField(null=True)
@@ -56,20 +55,23 @@ class Tweetdj(models.Model):
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    retweetedstatus = models.NullBooleanField(
+    retweetedstatus = models.BooleanField(
         default=None,
         help_text="Has retweeted_status",
         verbose_name="RT",
+        null=True,
     )
-    quotedstatus = models.NullBooleanField(
+    quotedstatus = models.BooleanField(
         default=None,
         help_text="Has quoted_status",
         verbose_name="QT",
+        null=True,
     )
-    deleted = models.NullBooleanField(
+    deleted = models.BooleanField(
         default=None,
         help_text="Has this tweet been deleted?",
         verbose_name="Del",
+        null=True,
     )
     hashtag = models.ManyToManyField(
         Hashtag,

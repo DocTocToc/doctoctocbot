@@ -6,7 +6,6 @@ from typing import List
 import json
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import JSONField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -15,6 +14,7 @@ from django.db.utils import DatabaseError
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.templatetags.static import static
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
@@ -449,7 +449,7 @@ def get_default_socialmedia():
      
 class Profile(models.Model):
     socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
-    json = JSONField(default=dict)
+    json = models.JSONField(default=dict)
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
     normalavatar = models.ImageField(upload_to='twitter/profile/images/normal',
@@ -557,7 +557,6 @@ class Queue(Versionable):
             return None
     
     def mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         if self.profile() is not None:
             p = self.profile()
             url = p.miniavatar.url
@@ -638,7 +637,6 @@ class Moderation(Versionable):
         return p
 
     def moderator_mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         p = getattr(self.moderator, 'profile', None)
         #logging.debug(f"profile: {p}")
         if p is not None:
@@ -650,7 +648,6 @@ class Moderation(Versionable):
     moderator_mini_image_tag.short_description = 'Moderator image'
 
     def moderated_mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         userid = self.queue.user_id
         su = SocialUser.objects.get(user_id=userid)
         p = getattr(su, 'profile', None)
@@ -699,7 +696,7 @@ class TwitterList(models.Model):
     uid = models.CharField(max_length=25, blank=True, null=True)
     label = models.CharField(max_length=50, blank=True, null=True)
     local_description = models.TextField(blank=True, null=True)
-    json = JSONField(blank=True, null=True)
+    json = models.JSONField(blank=True, null=True)
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,

@@ -56,7 +56,7 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             req_tags = [int(tag) for tag in req_tags]
             logger.debug(f"{req_tags=}")
             # categories
-            community = get_current_site(self.request).community.first()
+            community = get_current_site(self.request).community
             cat_ids = list(
                 Category.objects.filter(
                     is_category=True,

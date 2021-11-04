@@ -8,8 +8,13 @@ def taxonomy_tag(su: SocialUser):
     def get_tag(taxonomy):
         tag_lst = [taxonomy.classification, taxonomy.specialization]
         return " - ".join(filter(None, tag_lst))
+    if su is None:
+        return
     human = su.human_set.first()
-    taxonomy_lst = human.healthcareprovider.taxonomy.all()
+    try:
+        taxonomy_lst = human.healthcareprovider.taxonomy.all()
+    except AttributeError:
+        return
     if not taxonomy_lst:
         return
     if len(taxonomy_lst)==1:

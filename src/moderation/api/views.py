@@ -4,8 +4,7 @@ from moderation.tasks import handle_create_twitter_socialuser
 
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.postgres.fields.jsonb import KeyTextTransform
-
+from django.db.models.fields.json import KeyTransform
 from rest_framework.views import APIView
 from rest_framework import filters
 from rest_framework.decorators import action
@@ -25,7 +24,8 @@ class ModeratorFilterBackend(DRYPermissionFiltersBase):
         """
         return queryset.filter(
             socialuser=request.user.socialuser,
-            community__in=get_current_site(request).community.all(),
+            #community=get_current_site(request).community,
+            community__in=get_current_site(request).community.all()
         )
 
 class ModeratorViewSet(viewsets.ModelViewSet):
@@ -50,7 +50,7 @@ class SocialUserViewSet(viewsets.ModelViewSet):
     Additionally we also provide an extra `highlight` action.
     """
     queryset = SocialUser.objects.all() \
-        .annotate(screen_name=KeyTextTransform('screen_name', 'profile__json__screen_name'))
+        .annotate(screen_name=KeyTransform('screen_name', 'profile__json'))
     serializer_class = serializers.SocialUserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = [

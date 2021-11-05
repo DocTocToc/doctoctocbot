@@ -731,6 +731,8 @@ class ModeratorAdmin(admin.ModelAdmin):
         'public',
         'senior',
         'community',
+        'created',
+        'updated',
     )
     fields = (
         'pk',
@@ -739,9 +741,13 @@ class ModeratorAdmin(admin.ModelAdmin):
         'public',
         'senior',
         'community',
+        'created',
+        'updated',
     )
     readonly_fields = (
         'pk',
+        'created',
+        'updated',
     )
     search_fields = ['socialuser',]
     autocomplete_fields = ['socialuser',]

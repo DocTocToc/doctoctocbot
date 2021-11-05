@@ -785,7 +785,8 @@ class Moderator(models.Model):
         default=False,
         help_text="Is this moderator a seasoned moderator?",
     )
-
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated =  models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         unique_together = ['socialuser', 'community']

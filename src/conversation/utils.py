@@ -354,7 +354,7 @@ def created_at(statusid):
     """
     with connection.cursor() as cursor:
         try:
-            cursor.execute("SELECT json -> 'created_at' from conversation_tweetdj where statusid = %s", [statusid])
+            cursor.execute("SELECT json ->> 'created_at' from conversation_tweetdj where statusid = %s", [statusid])
         except Error as e:
             err_msg = f'''Error while retrieving created_at for status 
                       {statusid}: {str(e)}'''

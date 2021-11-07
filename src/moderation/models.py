@@ -161,6 +161,11 @@ class Human(models.Model):
         return f"{self.pk} || {su} || {user}"
 
 
+class SocialUserManager(models.Manager):
+    def get_by_natural_key(self, user_id):
+        return self.get(user_id=user_id)
+
+
 class SocialUser(models.Model):
     user_id = models.BigIntegerField(unique=True)
     social_media = models.ForeignKey(
@@ -270,9 +275,16 @@ class SocialUser(models.Model):
         except Exception as e:
             logger.error(f'{e}')
 
+
+    objects = SocialUserManager()
+
     class Meta:
         ordering = ('user_id',)
         get_latest_by = "user_id"
+
+
+    def natural_key(self):
+        return (self.user_id,)
 
 
 class CategoryBase(models.Model):
@@ -734,6 +746,7 @@ class Follower(models.Model):
         
         name = screen_name or str(self.user.user_id)
         return "followers of %s " % name
+
 
 class Friend(models.Model):
     user = models.ForeignKey(

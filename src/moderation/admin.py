@@ -38,7 +38,7 @@ from hcp.admin_tags import taxonomy_tag
 from community.models import Community
 from moderation.admin_tags import admin_tag_category
 from common.list_filter import by_null_filter
-
+from moderation.admin_tags import socialuser_tag
 from modeltranslation.admin import TranslationAdmin
 from django.contrib import auth
 
@@ -79,24 +79,14 @@ class CategoryRelationshipInline(admin.TabularInline):
                 )
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
-    """
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == 'moderator':
-            if request.user.socialuser:
-                kwargs['initial'] = request.user.socialuser.id
-                return db_field.formfield(**kwargs)
-        return super(CategoryRelationshipInline, self) \
-            .formfield_for_manytomany(db_field, request, **kwargs)
-    """
-
     def social_user_screen_name_tag(self, obj):
         screen_name = obj.social_user.profile.json.get("screen_name", None)
         return screen_name
-    
+
     def moderator_screen_name_tag(self, obj):
         screen_name = obj.moderator.profile.json.get("screen_name", None)
         return screen_name
-    
+
     moderator_screen_name_tag.short_description = 'Moderator screen name'
     social_user_screen_name_tag.short_description = 'Social User screen name'
     readonly_fields = (
@@ -106,7 +96,7 @@ class CategoryRelationshipInline(admin.TabularInline):
         'updated',
     )
 
-    
+
 class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
     extra = 10
@@ -144,14 +134,12 @@ class ProtectedFilter(admin.SimpleListFilter):
     parameter_name = 'protected' # you can put anything here
 
     def lookups(self, request, model_admin):
-    # This is where you create filter options; we have two:
         return [
             ('unprotected', 'Unprotected'),
             ('protected', 'Protected'),
         ]
 
     def queryset(self, request, queryset):
-    # This is where you process parameters selected by use via filter options:
         if self.value() == 'unprotected':
             return queryset.distinct().filter(profile__json__protected=False)
         if self.value() == 'protected':
@@ -168,18 +156,16 @@ class BotFollower(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         for userid in list(Account.objects.values_list('userid', flat=True)):
             if self.value() == str(userid):
-                #logger.debug(f"{self.value()=}")
                 try:
                     su = SocialUser.objects.get(user_id=userid)
                 except SocialUser.DoesNotExist:
                     return SocialUser.objects.none()
-                #logger.debug(f"{su=}")
                 try:
                     followers_ids = Follower.objects.filter(user=su).latest().id_list
                 except Follower.DoesNotExist:
                     return SocialUser.objects.none()
-                #logger.debug(f"{followers_ids=}")
                 return queryset.filter(user_id__in=followers_ids)
+
 
 class BotFriend(admin.SimpleListFilter):
     title = 'Bot Friend'
@@ -303,7 +289,7 @@ class SocialUserAdmin(admin.ModelAdmin):
             return "🚫"
 
     profile_link.short_description = 'Profile'
-    
+
     def follow_request_tag(self, obj):
         # return HTML link that will not be escaped
         tfr = obj.twitter_follow_request.all()
@@ -318,7 +304,7 @@ class SocialUserAdmin(admin.ModelAdmin):
             )
         )
     follow_request_tag.short_description = 'Follow req'
-    
+
     def block_tag(self, obj):
         # return HTML link that will not be escaped
         return mark_safe(
@@ -558,9 +544,6 @@ class ModerationAdmin(admin.ModelAdmin):
         'queue__type',
         'state',
     )
-    #list_display_show_identity = True
-    #list_display_show_end_date = True
-    #list_display_show_start_date = True
     search_fields = (
         'moderator__profile__json__screen_name',
     )
@@ -689,18 +672,24 @@ class TwitterListAdmin(admin.ModelAdmin):
     member_count_tag.short_description = 'Members'
 
 
+class ArrayLength(models.Func):
+    function = 'CARDINALITY'
+
+
 class FollowerAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'user',
         '__str__',
-        'created'
+        'created',
+        'count_tag',
     )
     readonly_fields = (
         'id',
         'user',
         'id_list',
-        'created'
+        'created',
+        'count_tag',
     )
     list_filter = (
         ('created', DateRangeFilter),
@@ -711,19 +700,24 @@ class FollowerAdmin(admin.ModelAdmin):
         'id_list',
     )
 
+    def get_queryset(self, request):
+        qs = super(FollowerAdmin, self).get_queryset(request)
+        return qs.annotate(count=ArrayLength('id_list'))
+
+    def count_tag(self, obj):
+        return obj.count
+
+    count_tag.short_description = _('Count')
+    count_tag.admin_order_field = '-count'
+
 
 class FriendAdmin(FollowerAdmin):
-    pass
+    def get_queryset(self, request):
+        qs = super(FriendAdmin, self).get_queryset(request)
+        return qs.annotate(count=ArrayLength('id_list'))
 
-
-#class CommunityInline(admin.TabularInline):
-#    model = Moderator.community.through
-#    extra = 5
 
 class ModeratorAdmin(admin.ModelAdmin):
-#    inlines = [
-#        CommunityInline,  
-#    ]
     list_display = (
         'pk',
         'socialuser',
@@ -757,12 +751,7 @@ class ModeratorAdmin(admin.ModelAdmin):
         'senior',
         'community',
     )
-"""    
-    def community_tag(self, obj):
-        return list(obj.community.values_list('name', flat=True))
-    
-    community_tag.short_description = "Community"
-"""
+
 
 class DoNotRetweetAdmin(admin.ModelAdmin):
     list_display = (
@@ -778,10 +767,12 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
     )
     fields = (
         'socialuser',
+        'socialuser_tag',
         'action',
         'start',
         'stop',
         'moderator',
+        'moderator_tag',
         'created',
         'updated',
         'current',
@@ -791,20 +782,28 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
         'created',
         'updated',
     )
-    list_filter = (
-        'current',
-        ('start', DateRangeFilter),
-        ('stop', DateRangeFilter),
-        ('created', DateRangeFilter),
-        ('updated', DateRangeFilter),
+    raw_id_fields = (
         'socialuser',
         'moderator',
-        'action',
-
     )
     search_fields = (
         'comment',    
     )
+    list_filter = (
+        'current',
+        ('start', DateRangeFilter),
+        ('stop', DateRangeFilter),
+        'action',
+    )
+    def socialuser_tag(self, obj):
+        return socialuser_tag(obj)
+
+    socialuser_tag.short_description = 'SocialUser'
+
+    def moderator_tag(self, obj):
+        return socialuser_tag(obj)
+
+    socialuser_tag.short_description = 'Moderator'
 
 
 class CategoryMetadataAdmin(TranslationAdmin):
@@ -826,6 +825,7 @@ class CategoryMetadataAdmin(TranslationAdmin):
         models.CharField: {'widget': TextInput(attrs={'size':'72'})},
     }
 
+
 class HumanAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
@@ -837,25 +837,36 @@ class HumanAdmin(admin.ModelAdmin):
     fields = (
         'pk',
         'socialuser',
+        'socialuser_tag',
         'djangouser',
+        'djangouser_tag',
         'created',
         'updated',
     )
     readonly_fields = (
         'pk',
+        'socialuser_tag',
+        'djangouser_tag',
         'created',
         'updated',    
     )
-    search_fields = ['socialuser__profile__json__screen_name', 'djangouser__username']
-    
+    search_fields = [
+        'socialuser__profile__json__screen_name',
+        'djangouser__username'
+    ]
+    raw_id_fields = (
+        'djangouser',
+        'socialuser',
+    )
+
     def socialuser_tag(self, obj):
-        return [su for su in obj.socialuser.all()]
-    
+        return socialuser_tag(obj)
+
     socialuser_tag.short_description = 'SocialUser'
-    
+
     def djangouser_tag(self, obj):
-        return [user for user in obj.djangouser.all()]
-    
+        return socialuser_tag(obj)
+
     djangouser_tag.short_description = 'Django user'
 
 
@@ -864,6 +875,7 @@ class SocialMediaAdmin(admin.ModelAdmin):
         'name',
         'emoji',
     )
+
 
 @admin.register(ModerationOptIn)
 class ModerationOptInAdmin(admin.ModelAdmin):

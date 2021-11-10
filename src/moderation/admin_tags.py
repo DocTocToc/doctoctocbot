@@ -82,3 +82,10 @@ def socialmedia_account(su: SocialUser):
         )
     else:
         return emoji
+    
+def socialuser_tag(obj: SocialUser):
+    return mark_safe(
+        "<br />".join(
+            [str(su) for su in obj.socialuser.all()]
+        )
+    )

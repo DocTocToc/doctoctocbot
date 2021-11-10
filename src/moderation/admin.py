@@ -38,7 +38,7 @@ from hcp.admin_tags import taxonomy_tag
 from community.models import Community
 from moderation.admin_tags import admin_tag_category
 from common.list_filter import by_null_filter
-from moderation.admin_tags import socialuser_tag
+from moderation.admin_tags import m2m_field_tag
 from modeltranslation.admin import TranslationAdmin
 from django.contrib import auth
 
@@ -767,12 +767,10 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
     )
     fields = (
         'socialuser',
-        'socialuser_tag',
         'action',
         'start',
         'stop',
         'moderator',
-        'moderator_tag',
         'created',
         'updated',
         'current',
@@ -795,15 +793,6 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
         ('stop', DateRangeFilter),
         'action',
     )
-    def socialuser_tag(self, obj):
-        return socialuser_tag(obj)
-
-    socialuser_tag.short_description = 'SocialUser'
-
-    def moderator_tag(self, obj):
-        return socialuser_tag(obj)
-
-    socialuser_tag.short_description = 'Moderator'
 
 
 class CategoryMetadataAdmin(TranslationAdmin):
@@ -860,12 +849,12 @@ class HumanAdmin(admin.ModelAdmin):
     )
 
     def socialuser_tag(self, obj):
-        return socialuser_tag(obj)
+        return m2m_field_tag(obj.socialuser)
 
     socialuser_tag.short_description = 'SocialUser'
 
     def djangouser_tag(self, obj):
-        return socialuser_tag(obj)
+        return m2m_field_tag(obj.djangouser)
 
     djangouser_tag.short_description = 'Django user'
 

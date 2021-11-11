@@ -135,7 +135,7 @@ class Receipt(models.Model):
             f"Message {self.message} "
         )
 
-    
+
 class CampaignMessage(models.Model):
     campaign = models.ForeignKey(
         Campaign,

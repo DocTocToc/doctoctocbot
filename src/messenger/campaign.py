@@ -3,16 +3,21 @@ import random
 import time
 import datetime
 import re
+
+from constance import config
+from tweepy import TweepError
+
+from django.db.models import Q
+from django.utils.formats import date_format
+from community.helpers import activate_language
+
+from dm.models import DirectMessage
+from bot.tweepy_api import get_api
 from moderation.social import update_social_ids
 from messenger.models import Campaign, Receipt, Message
 from moderation.models import SocialUser, Follower
 from crowdfunding.models import ProjectInvestment
 from conversation.models import Tweetdj
-from constance import config
-from bot.tweepy_api import get_api
-from tweepy import TweepError
-from django.db.models import Q
-from dm.models import DirectMessage
 
 logger = logging.getLogger(__name__)
 
@@ -167,6 +172,10 @@ class MessageManager:
         self.sender = self.campaign.account
         self.api = api
         self.text = None
+        self.retweeted_qs = Tweetdj.objects.filter(
+            retweeted_by=self.sender,
+            socialuser=self.recipient
+        )
 
     def is_message_sent(self):
         if self.has_valid_receipt():
@@ -213,9 +222,24 @@ class MessageManager:
             if receipt.event_id:
                 return True
 
+    def first_retweet_date(self) -> str:
+        try:
+            community = self.campaign.account.account.community
+        except:
+            community = None
+        if community:
+            activate_language(community)
+        try:
+            dt = self.retweeted_qs.earliest('statusid').created_at
+            return date_format(dt, format='DATE_FORMAT', use_l10n=True)
+        except Tweetdj.DoesNotExist:
+            return
+
     def _format(self):
         d = {
             'screen_name' : self.recipient.profile.screen_name_tag(),
+            'retweet_count' : self.retweeted_qs.count(),
+            'first_retweet_date' : self.first_retweet_date(),
         }
         return self.message.content.format(**d)
 

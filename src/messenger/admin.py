@@ -16,7 +16,24 @@ class CampaignMessageInline(admin.TabularInline):
 
 class CampaignAdmin(admin.ModelAdmin):
     inlines = (CampaignMessageInline,)
-    autocomplete_fields = ['account', 'recipients']
+    raw_id_fields = ('account', 'recipients')
+    fields = (
+        'name',
+        'account',
+        'restrict_by_category',
+        'categories',
+        'restrict_by_crowdfunding',
+        'crowdfunding_campaign',
+        'retweet_range',
+        'recipients',
+        'created',
+        'updated',
+        'backoff',
+    )
+    readonly_fields = (
+        'created',
+        'updated',
+    )
 
 
 class EventIdListFilter(admin.SimpleListFilter):

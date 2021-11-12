@@ -7,6 +7,7 @@ from messenger.models import (
     CampaignMessage
 )
 from constance import config
+from django.db.models import Count
 
 
 class CampaignMessageInline(admin.TabularInline):
@@ -17,6 +18,17 @@ class CampaignMessageInline(admin.TabularInline):
 class CampaignAdmin(admin.ModelAdmin):
     inlines = (CampaignMessageInline,)
     raw_id_fields = ('account', 'recipients')
+    list_display  = (
+        'name',
+        'account',
+        'restrict_by_category',
+        'restrict_by_crowdfunding',
+        'retweet_range',
+        'recipients_count_tag',
+        'created',
+        'updated',
+        'backoff',
+    )
     fields = (
         'name',
         'account',
@@ -26,14 +38,26 @@ class CampaignAdmin(admin.ModelAdmin):
         'crowdfunding_campaign',
         'retweet_range',
         'recipients',
+        'recipients_count_tag',
         'created',
         'updated',
         'backoff',
     )
     readonly_fields = (
+        'recipients_count_tag',
         'created',
         'updated',
     )
+
+    def get_queryset(self, request):
+        qs = super(CampaignAdmin, self).get_queryset(request)
+        return qs.annotate(recipients_count=Count('recipients'))
+
+    def recipients_count_tag(self, obj):
+        return obj.recipients_count
+
+    recipients_count_tag.admin_order_field = ('-recipients_count')
+    recipients_count_tag.description_field = ('recipients count')
 
 
 class EventIdListFilter(admin.SimpleListFilter):

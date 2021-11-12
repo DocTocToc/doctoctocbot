@@ -36,7 +36,7 @@ def generate_thumbnail(community):
         h=(n//w)+1
     total_width = w*width
     total_height = h*height
-    thumbnail = Img.new('RGB', (total_width, total_height))
+    thumbnail = Img.new('RGB', (int(total_width), int(total_height)))
     x_offset = 0
     y_offset = 0
     for chunk in divide_chunks(images, w):

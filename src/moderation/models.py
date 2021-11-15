@@ -31,6 +31,9 @@ def get_default_community():
     return None
 
 class AuthorizedManager(models.Manager):
+    def get_by_natural_key(self, user_id):
+        return self.get(user_id=user_id)
+
     def category_users(self, category: str):
         """
         Return list of users bigint user_id from a category name
@@ -161,11 +164,6 @@ class Human(models.Model):
         return f"{self.pk} || {su} || {user}"
 
 
-class SocialUserManager(models.Manager):
-    def get_by_natural_key(self, user_id):
-        return self.get(user_id=user_id)
-
-
 class SocialUser(models.Model):
     user_id = models.BigIntegerField(unique=True)
     social_media = models.ForeignKey(
@@ -199,6 +197,7 @@ class SocialUser(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True, null=True)
     updated =  models.DateTimeField(auto_now=True, null=True)
+
     objects = AuthorizedManager()
 
     def __str__(self):
@@ -275,8 +274,6 @@ class SocialUser(models.Model):
         except Exception as e:
             logger.error(f'{e}')
 
-
-    objects = SocialUserManager()
 
     class Meta:
         ordering = ('user_id',)

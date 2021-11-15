@@ -6,7 +6,10 @@ from datetime import datetime, timedelta
 import pytz
 from typing import List
 from django.utils import timezone
-from django.db.utils import IntegrityError, DatabaseError
+from django.db import (
+    IntegrityError,
+    DatabaseError,
+)
 from django.db.models import F
 from django.conf import settings
 from django.utils.translation import activate
@@ -45,7 +48,7 @@ def process_unknown_user(user_id, status_id, hrh):
                                 .order_by('community').distinct('community')
     logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
-        logger.debug(dct)
+        logger.debug(f'{dct=}')
         addtoqueue(
             user_id,
             status_id,
@@ -88,22 +91,37 @@ def addtoqueue(user_id, status_id, community_name):
         logger.error(e)
         return
     # Is there already a queue for this user and this community?
-    if Moderation.objects.current.filter(
+    mod_qs = Moderation.objects.current.filter(
         queue__user_id = user_id,
         queue__community = community,
-    ).exists():
+    )
+    logger.debug(f'{mod_qs=}')
+    if mod_qs.exists():
+        logger.debug(f"Moderation already exists: {mod_qs=}")
         warn_senior_moderator(user_id, status_id, community)
         return
     try:
-        queue = Queue.objects.create(
+        queue, created = Queue.objects.get_or_create(
             user_id = user_id,
             status_id = status_id,
             community = community
         )
-    except DatabaseError as e:
-        logger.error(e)
-    logger.debug(queue)
-    create_initial_moderation(queue)
+        logger.debug(f'{queue}')
+        if created:
+            create_initial_moderation(queue)
+    except IntegrityError:
+        logger.error(
+            "Integrity error while attempting to get_or_create Queue with "
+            f"{user_id=} {status_id=} {community=}"
+        )
+    except Queue.MultipleObjectsReturned:
+        logger.error(
+            "MultipleObjectsReturned error while attempting to"
+            "get_or_create Queue with "
+            f"{user_id=} {status_id=} {community=}"
+        )
+    except Exception as e:
+        raise e
 
 def remove_done_moderations(community_name):
     try:

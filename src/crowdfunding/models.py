@@ -42,6 +42,12 @@ class ProjectInvestment(models.Model):
         'Project',
         on_delete=models.CASCADE
     )
+    campaign = models.ForeignKey(
+        'Campaign',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -154,10 +160,9 @@ class Campaign(models.Model):
         ordering = ['start_datetime']
     
     def __str__(self):
-        return "Campaign {}:{} / {} start: {} end: {}".format(
+        return "Campaign {}:{} ({} - {})".format(
             self.id,
             self.project.name,
-            self.project.description[:140],
             self.start_datetime.date(),
             self.end_datetime.date(),
         )

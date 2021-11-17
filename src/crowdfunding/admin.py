@@ -34,6 +34,7 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
     list_display = (
         'uuid',
         'project',
+        'campaign',
         'user_tag',
         'socialuser_tag',
         'name',
@@ -47,6 +48,7 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
     )
     readonly_fields = (
         'payment_intent',
+        'datetime',
     )
     search_fields = [
         'user__last_name',
@@ -63,6 +65,7 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'datetime',
         'public',
         'project',
+        'campaign',
         'invoice_pdf',
     ]
     ordering = ['-datetime',]

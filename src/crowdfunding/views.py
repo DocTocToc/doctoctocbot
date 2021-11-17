@@ -28,7 +28,7 @@ from .constants import ITEM_NAME
 from .forms import CrowdfundingHomeAuthenticatedForm, CrowdfundingHomeDjangoUserForm
 from .models import ProjectInvestment, PaymentProcessorWebhook
 from .tasks import handle_tweet_investment
-from crowdfunding.project import get_project
+from crowdfunding.project import get_project, get_campaign
 from customer.models import Customer
 import logging
 logger = logging.getLogger(__name__)
@@ -68,13 +68,24 @@ def confirm_order(
         return order
 
 def tweet_project_investment(pi: ProjectInvestment):
+    try:
+        project_id = pi.project.id
+    except AttributeError:
+        project_id = None
+    try:
+        campaign_id = pi.campaign.id
+    except AttributeError:
+        campaign_id = None
+
     handle_tweet_investment.apply_async(
-        args=(
+        args=[
             pi.user.id,
-            pi.get_rank(),
             pi.public,
-            pi.project.id
-        )
+        ],
+        kwargs={
+            'project_id': project_id,
+            'campaign_id': campaign_id
+        }
     )
 
 def fulfill_order(session):
@@ -286,6 +297,7 @@ class InvestViewAuthenticated(FormView):
         pi.public = public
         pi.user = self.request.user
         pi.project = get_project(self.request)
+        pi.campaign = get_campaign(self.request)
         try:
             pi.save()
         except DatabaseError:

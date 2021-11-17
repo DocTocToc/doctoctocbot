@@ -54,7 +54,7 @@ class Community(models.Model):
         related_name='community',
         blank=True,
     )
-    crowdfunding = models.ForeignKey(
+    crowdfunding = models.OneToOneField(
         'crowdfunding.Project',
         on_delete=models.CASCADE,
         null=True,

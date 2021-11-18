@@ -1,7 +1,7 @@
 import logging
 from django.db.utils import DatabaseError
 from django.db import transaction, IntegrityError
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
@@ -58,8 +58,8 @@ def log_usercategoryrelationship(sender, instance, created, **kwargs):
             logger.debug(f"instance.moderator.user_id: {instance.moderator.user_id}")
         logger.debug(f"instance.category: {instance.category}")
 
-@receiver(post_save, sender=Moderator)
-def moderator(sender, instance, created, **kwargs):
+@receiver([post_save, post_delete], sender=Moderator)
+def moderator(sender, instance, **kwargs):
     generate_thumbnail(instance.community)
 
 """

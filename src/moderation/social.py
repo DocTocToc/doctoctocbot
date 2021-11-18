@@ -1,4 +1,6 @@
 import pytz
+import time
+from typing import Optional
 from moderation.models import SocialUser, Follower, Friend, Category
 from bot.tweepy_api import get_api
 from bot.models import Account
@@ -18,6 +20,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone, translation
 from tweepy import TweepError
+import tweepy
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image
 from django.core.files import File
@@ -35,7 +38,7 @@ def get_socialuser_from_user_id(user_id):
 def get_socialuser_from_screen_name(screen_name):
     try:
         return SocialUser.objects.get(
-            profile__json__screen_name__iexact=screen_name
+            profile__json__screen_name=screen_name
         )
     except SocialUser.DoesNotExist:
         return
@@ -53,7 +56,13 @@ def get_socialuser(user):
 
 
 # TODO: fix type to accept string for username
-def update_social_ids(user, cached=False, bot_screen_name=None, relationship=None):
+def update_social_ids(
+        user,
+        cached = False,
+        bot_screen_name = None,
+        relationship = None,
+        delta: Optional[timedelta] = None,
+    ):
     if relationship is None:
         return
     if not relationship in ['friends', 'followers']:
@@ -70,11 +79,15 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     logger.debug(f"SocialUser: {su}")
     if not su:
         return
-    if followers:
-        hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
+    cache_delta = timedelta()
+    if delta:
+        cache_delta = delta
     else:
-        hourdelta = settings.FRIEND_TIMEDELTA_HOUR
-    datetime_limit = datetime.now(pytz.utc) - timedelta(hours=hourdelta)
+        if followers:
+            cache_delta = timedelta(hours=settings.FOLLOWER_TIMEDELTA_HOUR)
+        else:
+            cache_delta = timedelta(hours=settings.FRIEND_TIMEDELTA_HOUR)
+    datetime_limit = datetime.now(pytz.utc) - cache_delta
     logger.debug(f"{datetime_limit}")
 
     if followers:
@@ -141,8 +154,18 @@ def record_friendsids(su, usersids):
 
 def _followersids(user_id, bot_screen_name):
     api = get_api(bot_screen_name)
+    followers_ids = []
     try:
-        return api.followers_ids(user_id)
+        for page in tweepy.Cursor(
+            api.followers_ids,
+            user_id=user_id
+            ).pages():
+            logger.debug(f'{len(page)}')
+            logger.debug(f'{page[:10]}')
+            followers_ids.extend(page)
+            #if len(page) == 5000:
+            #    time.sleep(60)
+        return followers_ids
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
     except AttributeError as e:
@@ -150,8 +173,18 @@ def _followersids(user_id, bot_screen_name):
 
 def _friendsids(user_id, bot_screen_name):
     api = get_api(bot_screen_name)
+    friends_ids = []
     try:
-        return api.friends_ids(user_id)
+        for page in tweepy.Cursor(
+            api.friends_ids,
+            user_id=user_id
+            ).pages():
+            logger.debug(f'{len(page)}')
+            logger.debug(f'{page[:10]}')
+            friends_ids.extend(page)
+            #if len(page) == 5000:
+            #    time.sleep(60)
+        return friends_ids
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
     except AttributeError as e:

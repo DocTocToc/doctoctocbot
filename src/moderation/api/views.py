@@ -24,8 +24,7 @@ class ModeratorFilterBackend(DRYPermissionFiltersBase):
         """
         return queryset.filter(
             socialuser=request.user.socialuser,
-            #community=get_current_site(request).community,
-            community__in=get_current_site(request).community.all()
+            community=get_current_site(request).community,
         )
 
 class ModeratorViewSet(viewsets.ModelViewSet):

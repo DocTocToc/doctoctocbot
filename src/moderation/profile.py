@@ -38,7 +38,7 @@ def create_twitter_social_user(userid):
         logger.error(e)
         return None, None
 
-def create_twitter_social_user_and_profile(userid):
+def create_twitter_social_user_and_profile(userid, cache=False):
     try:
         su, created = create_twitter_social_user(userid)
     except TypeError:
@@ -48,7 +48,11 @@ def create_twitter_social_user_and_profile(userid):
             .filter(active=True) \
             .values_list("username", flat=True)
         bot_screen_name = random.choice(bot_screen_names)
-        create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name,
+            cache=cache
+        )
     return su, created
 
 def twitterprofile(jsn):
@@ -203,6 +207,13 @@ def create_update_profile_twitter(
         bot_screen_name=None,
         cache=False
     ):
+    try:
+        su.profile
+        has_profile = True
+    except SocialUser.profile.RelatedObjectDoesNotExist:
+        has_profile = False
+    if cache and has_profile:
+        return
     userid = su.user_id
     try:
         tweetdj_mi = Tweetdj.objects.filter(

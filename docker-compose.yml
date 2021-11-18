@@ -5,6 +5,7 @@ services:
   database:
     restart: always                                                                       
     image: postgis/postgis:14-3.1
+    shm_size: 512m
     command: >
       postgres
       -c config_file=/etc/postgresql.conf
@@ -13,7 +14,7 @@ services:
       -c log_min_duration_statement=${DATABASE_LOG_MIN_DURATION_STATEMENT}
       -c shared_buffers=${DATABASE_SHARED_BUFFERS}
     volumes:                                                                    
-      - "${DATABASE_DATA_DIR_NEW}:/var/lib/postgresql/data"
+      - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"
       - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"
       - "${DATABASE_BACKUP_DIR}:/backup"
       - "${DATABASE_LOG_DIR}:/var/log/postgresql"
@@ -179,7 +180,7 @@ services:
   chrome:
     image: selenium/standalone-chrome:3.14
     privileged: true
-    shm_size: 2g
+    shm_size: 1g
   tree_search:
     env_file:
       - .env

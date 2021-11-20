@@ -198,8 +198,9 @@ class Prospect():
             if self.friends[su.user_id] >= self.min_friend
             and self.followers[su.user_id] >= self.min_follower
             and (
-                self.friends[su.user_id] / self.graph_count(su, 'follower')
-                > 0.01
+                self.graph_count(su, 'follower')
+                and
+                (self.friends[su.user_id]/self.graph_count(su,'follower')>0.01)
             )
         ]
         su_lst_friend=sorted(

@@ -62,6 +62,7 @@ def update_social_ids(
         bot_screen_name = None,
         relationship = None,
         delta: Optional[timedelta] = None,
+        api = None
     ):
     if relationship is None:
         return
@@ -93,8 +94,6 @@ def update_social_ids(
     if followers:
         try:
             si = Follower.objects.filter(user=su).last()
-            if si:
-                logger.debug(f"Followers id_list: {si.id_list}")
         except Follower.DoesNotExist:
             si = None
             logger.debug(f"Follower instance does not exist for user {su.user_id}")
@@ -120,9 +119,17 @@ def update_social_ids(
         return si.id_list
 
     if followers:
-        usersids = _followersids(su.user_id, bot_screen_name)
+        usersids = _followersids(
+            su.user_id,
+            bot_screen_name=bot_screen_name,
+            api=api
+        )
     else:
-        usersids = _friendsids(su.user_id, bot_screen_name)
+        usersids = _friendsids(
+            su.user_id,
+            bot_screen_name=bot_screen_name,
+            api=api
+        )
 
     if usersids is None:
         return
@@ -152,8 +159,9 @@ def record_friendsids(su, usersids):
     except DatabaseError as e:
         logger.error(f"Database error while saving Friends of user.user_id: {e}")
 
-def _followersids(user_id, bot_screen_name):
-    api = get_api(bot_screen_name)
+def _followersids(user_id, bot_screen_name=None, api=None):
+    if not api:
+        api = get_api(bot_screen_name)
     followers_ids = []
     try:
         for page in tweepy.Cursor(
@@ -171,8 +179,9 @@ def _followersids(user_id, bot_screen_name):
     except AttributeError as e:
         logger.error(f"Attribute Error ({api =}): {e}")
 
-def _friendsids(user_id, bot_screen_name):
-    api = get_api(bot_screen_name)
+def _friendsids(user_id, bot_screen_name=None, api=None):
+    if not api:
+        api = get_api(bot_screen_name)
     friends_ids = []
     try:
         for page in tweepy.Cursor(

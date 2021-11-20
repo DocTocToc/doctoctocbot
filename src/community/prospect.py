@@ -1,5 +1,8 @@
 import logging
-from datetime import timedelta
+import pytz
+import time
+import itertools
+from datetime import timedelta, datetime
 from typing import List, Optional
 from collections import Counter
 from moderation.models import (
@@ -22,9 +25,10 @@ class Prospect():
             self,
             community: Community,
             category: Category,
-            bot: SocialUser,
-            min_follower: int = 5,
-            min_friend: int = 5,
+            min_follower: Optional[int] = None,
+            min_friend: Optional[int] = None,
+            network_cache: Optional[int] = None,
+            most_common:  Optional[int] = None
         ):
         self.community=community
         self.category=category
@@ -35,8 +39,10 @@ class Prospect():
         self.members_su_id: List[int] = self.get_members_su_id()
         self.friends: Optional[Counter] = None
         self.followers: Optional[Counter] = None
-        self.min_follower=min_follower
-        self.min_friend=min_friend
+        self.min_follower=min_follower or 5
+        self.min_friend=min_friend or 5
+        self.network_cache = network_cache or 7
+        self.most_common = most_common
 
     def graph_count(self, socialuser, relationship):
         if relationship == 'follower':
@@ -95,19 +101,35 @@ class Prospect():
             qs.values_list("social_user__id", flat=True)
         )
 
+    def known_network(self):
+        cache_delta=timedelta(days=self.network_cache)
+        datetime_limit = datetime.now(pytz.utc) - cache_delta
+        cached_friends=Friend.objects.filter(
+            user__id__in=self.members_su_id,
+            created__gte=datetime_limit
+        ).values('id').count()
+        cached_friends_ratio =  cached_friends / len(self.members_su_id)
+        cached_followers=Follower.objects.filter(
+            user__id__in=self.members_su_id,
+            created__gte=datetime_limit
+        ).values('id').count()
+        cached_followers_ratio =  cached_followers / len(self.members_su_id)
+        return f'{cached_friends_ratio=}\n{cached_followers_ratio=}\n'
+
     def update_network(self):
         for su_id in self.members_su_id:
             try:
                 su=SocialUser.objects.get(id=su_id)
             except SocialUser.DoesNotExist:
                 continue
+            logger.info(f'{self.known_network()}')
             for relationship in ['friends', 'followers']:
                 update_social_ids(
                     su,
                     cached=True,
                     bot_screen_name=self.bot.screen_name_tag(),
                     relationship=relationship,
-                    delta=timedelta(days=2)
+                    delta=timedelta(days=self.network_cache),
                 )
 
     def update_bot_network(self):
@@ -158,15 +180,17 @@ class Prospect():
                     cache=True
                 )
 
-    def display(self, most_common):
-        logger.debug(f'{self.friends.total()=}')
-        logger.debug(f'{self.followers.total()=}')
-        friends_m_c = self.friends.most_common(most_common)
-        followers_m_c = self.followers.most_common(most_common)
+    def display(self):
+        #logger.debug(f'{self.friends.total()=}')
+        #logger.debug(f'{self.followers.total()=}')
+        m_c_follower = self.most_common or self.min_follower
+        m_c_friend = self.most_common or self.min_friend
+        friends_m_c = self.friends.most_common(m_c_friend)
+        followers_m_c = self.followers.most_common(m_c_follower)
         uid_set = set()
         for lst_tpl in [friends_m_c, followers_m_c]:
             lst = [tpl[0] for tpl in lst_tpl]
-            logger.debug(lst)
+            #logger.debug(lst)
             uid_set |= set(lst)
         su_lst = list(SocialUser.objects.filter(user_id__in=uid_set))
         su_lst[:] = [
@@ -188,23 +212,39 @@ class Prospect():
             key=lambda su: self.followers[su.user_id],
             reverse=True
         )
-        logger.debug(
-            f'\n{most_common=} Friends '
+        
+        display_str = self.known_network()
+        display_str += (
+            f'\n{m_c_friend=} Friends '
             f'(among {self.friends.total()}):'
+            '\n'
         )
-
-        for su in su_lst_friend:
-            logger.debug(
-                f'{su.user_id} '
+        
+        friend_str = ""
+        str_len = len(str(len(su_lst_friend)))
+        for count, su in enumerate(su_lst_friend):
+            friend_str += (
+                f'{str(count).zfill(str_len)}. '
                 f'count:{self.friends[su.user_id]} '
-                f'{su.screen_name_tag()}'
-            )
-        logger.debug(
-            f'\n{most_common=} Followers '
-            f'(among {self.followers.total()}):')
-        for su in su_lst_follower:
-            logger.debug(
                 f'{su.user_id} '
-                f'count:{self.followers[su.user_id]} '
                 f'{su.screen_name_tag()}'
+                '\n'
             )
+        display_str += friend_str
+        display_str += (
+            f'\n{m_c_follower=} Followers '
+            f'(among {self.followers.total()}):'
+            '\n'
+        )
+        follower_str = ""
+        str_len = len(str(len(su_lst_follower)))
+        for count, su in enumerate(su_lst_follower):
+            follower_str += (
+                f'{str(count).zfill(str_len)}. '
+                f'count:{self.followers[su.user_id]} '
+                f'{su.user_id} '
+                f'{su.screen_name_tag()}'
+                '\n'
+            )
+        display_str += follower_str
+        return display_str

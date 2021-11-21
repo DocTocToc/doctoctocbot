@@ -5,7 +5,6 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
 from moderation.thumbnail import generate_thumbnail
-from moderation.moderate import create_initial_moderation
 from community.helpers import get_community_bot_screen_name
 from django.db.models import Q
 
@@ -24,14 +23,6 @@ from hcp.models import HealthCareProviderTaxonomy, TaxonomyCategory
 
 logger = logging.getLogger(__name__)
 
-@receiver(post_save, sender=Queue)
-def create_moderation_receiver(sender, instance, created, **kwargs):
-    if created:
-        logger.debug(
-            f"inside create_moderation_receiver if created:\n"
-            f"{sender}, {instance}, {created}"
-        )
-        create_initial_moderation(instance)
 
 """
 @receiver(post_save, sender=Queue)

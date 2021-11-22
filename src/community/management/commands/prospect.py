@@ -42,6 +42,12 @@ class Command(BaseCommand):
             action='store_true',
             help='add this flag to update the network (followers and friends)'
         )
+        parser.add_argument(
+            '--cat_follower_ratio',
+            dest='cat_follower_ratio',
+            type=float,
+            help='minimum ratio of users belonging to category among followers'
+        )
 
     def handle(self, *args, **options):
         community_name = options["community"]
@@ -51,6 +57,7 @@ class Command(BaseCommand):
         cache = options["cache"]
         update_network: bool = options["update_network"]
         most_common = options["most_common"]
+        cat_follower_ratio = options["cat_follower_ratio"]
 
         try:
             community = Community.objects.get(name=community_name)
@@ -77,7 +84,8 @@ class Command(BaseCommand):
             min_follower=follower,
             min_friend=friend,
             network_cache = cache,
-            most_common = most_common
+            most_common = most_common,
+            cat_follower_ratio = cat_follower_ratio
         )
         if update_network:
             p.update_network()

@@ -31,7 +31,8 @@ class Prospect():
             min_friend: Optional[int] = None,
             network_cache: Optional[int] = None,
             most_common:  Optional[int] = None,
-            last_status_age: Optional[int] = 365,
+            last_status_age: Optional[int] = None,
+            cat_follower_ratio: Optional[float] = None,
         ):
         self.community=community
         self.category=category
@@ -48,6 +49,7 @@ class Prospect():
         self.most_common = most_common
         self.language = self.language()
         self.last_status_age = last_status_age
+        self.cat_follower_ratio = cat_follower_ratio or 0.02
         
     def language(self):
         return self.community.language
@@ -211,10 +213,8 @@ class Prospect():
     def display(self):
         #logger.debug(f'{self.friends.total()=}')
         #logger.debug(f'{self.followers.total()=}')
-        m_c_follower = self.most_common or self.min_follower
-        m_c_friend = self.most_common or self.min_friend
-        friends_m_c = self.friends.most_common(m_c_friend)
-        followers_m_c = self.followers.most_common(m_c_follower)
+        friends_m_c = self.friends.most_common(self.most_common)
+        followers_m_c = self.followers.most_common(self.most_common)
         uid_set = set()
         for lst_tpl in [friends_m_c, followers_m_c]:
             lst = [tpl[0] for tpl in lst_tpl]
@@ -233,7 +233,10 @@ class Prospect():
             and (
                 self.graph_count(su, 'follower')
                 and
-                (self.friends[su.user_id]/self.graph_count(su,'follower')>0.01)
+                (
+                    (self.friends[su.user_id] / self.graph_count(su,'follower'))
+                    > self.cat_follower_ratio
+                )
             )
         ]
         su_lst_friend=sorted(
@@ -249,7 +252,7 @@ class Prospect():
         
         display_str = self.known_network()
         display_str += (
-            f'\n{m_c_friend=} Friends '
+            f'\n{len(friends_m_c)} Friends '
             f'(among {self.friends.total()}):'
             '\n'
         )
@@ -276,7 +279,7 @@ class Prospect():
             )
         display_str += friend_str
         display_str += (
-            f'\n{m_c_follower=} Followers '
+            f'\n{len(followers_m_c)} Followers '
             f'(among {self.followers.total()}):'
             '\n'
         )

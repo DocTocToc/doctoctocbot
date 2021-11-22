@@ -17,6 +17,8 @@ from conversation.models import Tweetdj
 from moderation.social import update_social_ids
 from community.helpers import get_community_bot_socialuser
 from moderation.profile import create_twitter_social_user_and_profile
+from django.db.models import F, ExpressionWrapper, BigIntegerField
+from django.db.models.functions import Cast
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,8 @@ class Prospect():
             min_follower: Optional[int] = None,
             min_friend: Optional[int] = None,
             network_cache: Optional[int] = None,
-            most_common:  Optional[int] = None
+            most_common:  Optional[int] = None,
+            last_status_age: Optional[int] = 365,
         ):
         self.community=community
         self.category=category
@@ -43,6 +46,11 @@ class Prospect():
         self.min_friend=min_friend or 5
         self.network_cache = network_cache or 7
         self.most_common = most_common
+        self.language = self.language()
+        self.last_status_age = last_status_age
+        
+    def language(self):
+        return self.community.language
 
     def graph_count(self, socialuser, relationship):
         if relationship == 'follower':
@@ -180,6 +188,26 @@ class Prospect():
                     cache=True
                 )
 
+    def filter_last_status_age(self, qs):
+        datetime_limit = (
+            datetime.now(pytz.utc) - timedelta(days=self.last_status_age)
+        )
+        ts_limit = datetime_limit.timestamp()*1000 #milliseconds since epoch
+        qs = qs.annotate(
+            statusid =
+                Cast(
+                    F('profile__json__status__id'),
+                    BigIntegerField()
+                )
+        )
+        qs = qs.annotate(
+            timestamp=ExpressionWrapper(
+                F('statusid').bitrightshift(22) + 1288834974657,
+                output_field=BigIntegerField()
+            )
+        )
+        return qs.filter(timestamp__gte=ts_limit)
+
     def display(self):
         #logger.debug(f'{self.friends.total()=}')
         #logger.debug(f'{self.followers.total()=}')
@@ -192,7 +220,12 @@ class Prospect():
             lst = [tpl[0] for tpl in lst_tpl]
             #logger.debug(lst)
             uid_set |= set(lst)
-        su_lst = list(SocialUser.objects.filter(user_id__in=uid_set))
+        qs = SocialUser.objects.filter(user_id__in=uid_set)
+        if self.language:
+            qs = qs.filter(profile__json__status__lang=self.language)
+        if self.last_status_age:
+            qs=self.filter_last_status_age(qs)
+        su_lst = list(qs)
         su_lst[:] = [
             su for su in su_lst
             if self.friends[su.user_id] >= self.min_friend
@@ -222,13 +255,23 @@ class Prospect():
         )
         
         friend_str = ""
-        str_len = len(str(len(su_lst_friend)))
+        rank_str_len = len(str(len(su_lst_friend)))
+        count_str_len = len(
+            str(
+                self.friends[su_lst_friend[0].user_id]
+            )
+        )
         for count, su in enumerate(su_lst_friend):
+            if self.category in su.category.all():
+                cat = '[*]'
+            else:
+                cat = '[ ]'
             friend_str += (
-                f'{str(count).zfill(str_len)}. '
-                f'count:{self.friends[su.user_id]} '
-                f'{su.user_id} '
-                f'{su.screen_name_tag()}'
+                f'{str(count).zfill(rank_str_len)}. '
+                f'count:{str(self.friends[su.user_id]).zfill(count_str_len)} '
+                f'{cat} '
+                f'{su.screen_name_tag()} '
+                f'{[cat.name for cat in su.category.all()]}'
                 '\n'
             )
         display_str += friend_str
@@ -238,13 +281,23 @@ class Prospect():
             '\n'
         )
         follower_str = ""
-        str_len = len(str(len(su_lst_follower)))
+        rank_str_len = len(str(len(su_lst_follower)))
+        count_str_len = len(
+            str(
+                self.followers[su_lst_follower[0].user_id]
+            )
+        )
         for count, su in enumerate(su_lst_follower):
+            if self.category in su.category.all():
+                cat = '[*]'
+            else:
+                cat = '[ ]'
             follower_str += (
-                f'{str(count).zfill(str_len)}. '
-                f'count:{self.followers[su.user_id]} '
-                f'{su.user_id} '
-                f'{su.screen_name_tag()}'
+                f'{str(count).zfill(rank_str_len)}. '
+                f'count:{str(self.followers[su.user_id])} '
+                f'{cat} '
+                f'{su.screen_name_tag()} '
+                f'{[cat.name for cat in su.category.all()]}'
                 '\n'
             )
         display_str += follower_str

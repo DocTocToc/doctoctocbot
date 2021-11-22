@@ -57,7 +57,7 @@ class Command(BaseCommand):
         except Community.DoesNotExist:
             self.stdout.write(
                 self.style.ERROR(
-                    f"'{community_name}' does not exist."
+                    f"Community '{community_name}' does not exist."
                 )
             )
             return
@@ -66,7 +66,7 @@ class Command(BaseCommand):
         except Category.DoesNotExist:
             self.stdout.write(
                 self.style.ERROR(
-                    f"'{category_name}' does not exist."
+                    f"Category '{category_name}' does not exist."
                 )
             )
             return

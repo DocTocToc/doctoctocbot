@@ -94,7 +94,7 @@ def moderator_id_view(request):
 
         moderator = Moderator.objects.filter(
             socialuser=socialuser,
-            community__in=get_current_site(request).community.all()
+            community=get_current_site(request).community
             ).first()
         return Response({"id": moderator.id})
 

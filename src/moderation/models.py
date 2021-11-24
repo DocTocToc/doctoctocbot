@@ -825,7 +825,7 @@ class Moderator(models.Model):
         try:
             return (
                 request.user.socialuser == self.socialuser and
-                self.community in get_current_site(request).community.all()
+                self.community == get_current_site(request).community
             )
         except:
             return False
@@ -838,7 +838,7 @@ class Moderator(models.Model):
         try:
             return (
                 request.user.socialuser == self.socialuser and
-                self.community in get_current_site(request).community.all()
+                self.community == get_current_site(request).community
             )
         except:
             return False

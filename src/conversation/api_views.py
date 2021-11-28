@@ -47,9 +47,15 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
         logger.debug(f"{req_to_datetime=}")
         if req_to_datetime and len(req_to_datetime) == 1:
             qs = self.filter_by_to_datetime(qs, req_to_datetime[0])
-        
+
         req_tags = self.request.query_params.getlist('tag')
-        logger.debug(f"params type: {type(req_tags)}\n params: {req_tags}")
+        logger.debug(f"params type: {type(req_tags)}\n params: {req_tags=}")
+        
+        req_author = self.request.query_params.getlist('author')
+        logger.debug(f"params type: {type(req_author)}\n params: {req_author=}")
+        if req_author and req_author[0] == 'self':
+            qs = self.filter_by_author_is_self(qs)
+
         if req_tags:
             logger.debug(f"{req_tags=}")
             # convert to int
@@ -93,6 +99,15 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs[:api_access.status_limit]
         return qs
 
+    def filter_by_author_is_self(self, queryset):
+        user = self.request.user
+        if not user.is_authenticated:
+            return queryset
+        uids = [sa.uid for sa in user.social_auth.filter(provider='twitter')]
+        logger.debug(f'{uids=}')
+        if not uids:
+            return queryset
+        return queryset.filter(userid__in=uids)
 
     def filter_by_protected(self, queryset):
         """ Filter out statuses authored by protected accounts

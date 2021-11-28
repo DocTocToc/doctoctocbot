@@ -22,7 +22,27 @@
 
 {% block head_css %}
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+<!-- Inform modern browsers that this page supports both dark and light color schemes,
+  and the page author prefers light. -->
+<meta name="color-scheme" content="light dark">
+<script>
+  // If `prefers-color-scheme` is not supported, but @media query is, fall back to light mode.
+  // i.e. In this case, inject the `light` CSS before the others, with
+  // no media filter so that it will be downloaded with highest priority.
+  if (window.matchMedia("(prefers-color-scheme: dark)").media === "not all") {
+    document.documentElement.style.display = "none";
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css\" onload=\"document.documentElement.style.display = ''\">"
+    );
+  }
+</script>
+<!-- Load the alternate CSS first ... -->
+<link rel="stylesheet" href="{% static "/doctocnet/bootstrap_night/bootstrap-night.css" %}" media="(prefers-color-scheme: dark)">
+<!-- ... and then the primary CSS last for a fallback on very old browsers that don't support media filtering -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous" media="(prefers-color-scheme: no-preference), (prefers-color-scheme: light)">
+
+<!-- Bootstrap CSS -->
 <!--  link rel="stylesheet" href="{% static "doctocnet/_nav.scss" %}" type="text/css"-->
 <!--  link rel="stylesheet" href="{% static "doctocnet/_navbar.scss" %}" type="text/css" -->
 <!--  link rel="stylesheet" href="{% static "doctocnet/_reboot.scss" %}" type="text/css" -->

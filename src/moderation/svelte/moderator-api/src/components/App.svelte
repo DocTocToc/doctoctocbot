@@ -20,7 +20,7 @@
 
   async function getModeratorId() 
   {
-    let response = await fetch(`${window.location.origin}/moderation/api/moderator-id/`);
+    let response = await fetch(`/moderation/api/moderator-id/`);
     let data = await response.json()
     let id =  data.id;
     return id;
@@ -28,11 +28,11 @@
 
   getModeratorId()
     .then(id => console.log(`moderator id: ${id}`))
-  
+ 
   // async data fetching function
   const fetchModerator = async (data, component) => {
     const id = await getModeratorId();
-    const response = await fetch(`${window.location.origin}/moderation/api/moderators/${id}/`);
+    const response = await fetch(`/moderation/api/moderators/${id}/`);
     const json = await response.json();
     const jsn = json;
     console.log(jsn);
@@ -42,7 +42,7 @@
   
   const patchModerator = async (data) => {
 	  const id = await getModeratorId();
-	  const url = `${window.location.origin}/moderation/api/moderators/${id}/`;
+	  const url = `/moderation/api/moderators/${id}/`;
 	  var active = document.getElementById("activeswitch").checked;
 	  var _public = document.getElementById("publicprivateswitch").checked;
 	  

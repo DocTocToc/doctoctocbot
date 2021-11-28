@@ -483,7 +483,12 @@ class ApiAccess(models.Model):
         default=False,
         verbose_name=_('Reply count'),
         help_text=_("Access status reply count."),
-    )   
+    )
+    filter_author_self = models.BooleanField(
+        default=False,
+        verbose_name=_('Filter author self'),
+        help_text=_("Filter status by authenticated author."),
+    )
 
     def __str__(self):
         return f"API Access: community = {self.community} ; level = {self.level}"

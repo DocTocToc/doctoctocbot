@@ -105,14 +105,14 @@
           </a>
         </li>
         {% endif %}
-        {% if site.community.get.blog %}
+        {% if site.community.blog %}
         <li class="nav-item">
-          <a href="{{ site.community.get.blog.url }}" title="{{ site.community.get.blog.name }}" id="blog" class="nav-link">
-         {{ site.community.get.blog.link }}
+          <a href="{{ site.community.blog.url }}" title="{{ site.community.blog.name }}" id="blog" class="nav-link">
+         {{ site.community.blog.link }}
           </a>
         </li>
         {% endif %}
-        {% if site.community.get.matrix.authorize %}
+        {% if site.community.matrix.authorize %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMessenger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {% trans "Messenger" %}

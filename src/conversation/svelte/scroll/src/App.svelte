@@ -5,6 +5,7 @@
 	import Status from "./Status.svelte";
 	import Categories from "./Categories.svelte";
     import DatePicker from "./DatePicker.svelte";
+    import AuthorFilter from "./AuthorFilter.svelte";
     import en from "../public/lang/en.json";
     import fr from "../public/lang/fr.json";
 
@@ -45,6 +46,7 @@
 	let selected_tags = [];
 	let cat_query = "";
 	let tag_query = "";
+	let authorQuery = "";
 	const initialUrl = `${baseURL}/conversation/api/v1/tweets/?format=json&page=1`;
 	let hasMore = false;
 	
@@ -54,7 +56,8 @@
 	let has_search_tag = false;
 	let has_status_category = false;
 	let has_status_tag = false;
-	
+	let has_filter_author_self = false;
+
 	// Error handling
 	function errorResponse(code, msg) {
 	    return e => {
@@ -77,7 +80,8 @@
 	    	return;
 	    }
 	    //console.log(`fetching: ${data_url}${cat_query}${tag_query}`)
-		const response = await fetch(`${data_url}${cat_query}${tag_query}${from_datetime_query}${to_datetime_query}`);
+	    let url = `${data_url}${cat_query}${tag_query}${from_datetime_query}${to_datetime_query}${authorQuery}`;
+		const response = await fetch(url);
 		resTweets = await response.json();
 		//console.log(resTweets);
 		newBatch = resTweets["results"];
@@ -128,12 +132,13 @@
            	return
         }
         api_access = await response.json();
-        //console.log(api_access);
+        console.log(api_access);
     	has_search_datetime = api_access["search_datetime"];
     	has_search_category = api_access["search_category"];
     	has_search_tag = api_access["search_tag"];
     	has_status_category = api_access["status_category"];
     	has_status_tag = api_access["status_tag"];
+    	has_filter_author_self = api_access["filter_author_self"];
     };
 
 	onMount(()=> {
@@ -150,14 +155,29 @@
 		...data,
     ...newBatch
   ];
-	
+
+  const onChangeQuery = function() {
+		data = [];
+		newBatch = [];
+		nextUrl = null;
+		fetchDataTweets();
+		};
+
+  $: onChangeQuery(
+		  authorQuery,
+		  cat_query,
+		  tag_query,
+		  from_datetime_query,
+		  to_datetime_query
+	);
+/*
   $: if ( cat_query.length > 0 ) {
     data = [];
     newBatch = [];
     nextUrl = null;
     fetchDataTweets();
   };
-    
+
   $: if ( tag_query.length > 0 ) {
     data = [];
     newBatch = [];
@@ -178,7 +198,7 @@
 	nextUrl = null;
 	fetchDataTweets();
   };
-
+*/
 </script>
 
 <style>
@@ -192,15 +212,15 @@
   }
 
   ul {
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
-      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+    /*box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);*/
     display: flex;
     flex-direction: column;
     border-radius: 2px;
     width: 100%;
     max-width: 800px;
     max-height: 800px;
-    background-color: white;
+    /*background-color: white;*/
     overflow-x: scroll;
     list-style: none;
     padding: 0;
@@ -213,21 +233,24 @@
     font-size: 14px;
   }
 
-  li:hover {
+  /*li:hover {
     background-color: #eeeeee;
-  }
+  }*/
   
   .scroll-footer {
     font-size: smaller;
   }
 </style>
 
-
-
 <div class="container">
   <div class="row">
     <div class="col-md-auto">
-      {#if has_search_category}
+      {#if has_filter_author_self==true}
+      <AuthorFilter
+      bind:authorQuery
+      />
+      {/if}
+      {#if has_search_category==true}
       <Categories
         bind:categories
         bind:selected_categories
@@ -235,7 +258,7 @@
         title={$_("status_categories")}
         id={"cat"}/>
       {/if}
-      {#if has_search_tag}
+      {#if has_search_tag==true}
       <Categories
         categories={tags}
         bind:selected_categories={selected_tags}
@@ -243,7 +266,7 @@
         title={$_("status_tags")}
         id={"tag"}/>
       {/if}
-      {#if has_search_datetime}
+      {#if has_search_datetime==true}
         <DatePicker
           bind:from_datetime_query
           bind:to_datetime_query/>

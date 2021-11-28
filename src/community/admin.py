@@ -152,6 +152,7 @@ class ApiAccessAdmin(admin.ModelAdmin):
         'status_protected',
         'status_media',
         'reply_count',
+        'filter_author_self',
     )
     list_filter = (
     'community',

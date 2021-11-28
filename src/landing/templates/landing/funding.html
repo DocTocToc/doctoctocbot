@@ -2,7 +2,7 @@
 {% load landing_tags %}
 {% load community_text %}
 {% load i18n %}
-<div class="jumbotron my-1 py-2">
+<div class="jumbotron my-0 mx-0 py-2">
   <h2 class="display-6">{% trans "Hello, I am" %} {% bot_link_text %}!</h2>
   <p class="lead">
     {% trans "I retweet questions tagged with" %}
@@ -16,6 +16,6 @@
   <hr class="my-2">
   <p>
   {% trans "I run without ads or sponsors. I need your support to stay online and offer new services." %}
-  <a class="btn btn-outline-primary" href="{% url "crowdfunding:start" %}" role="button">{% trans "I give my support!" %}</a>
+  <a class="btn btn-primary" href="{% url "crowdfunding:start" %}" role="button">{% trans "I give my support!" %}</a>
   <p>
 </div>

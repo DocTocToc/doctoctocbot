@@ -8,8 +8,6 @@
 
 {% block head_css %}
 {{ block.super }}
-<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
-<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
 {% endblock head_css %}
 
 {% block head_javascript %}
@@ -17,19 +15,7 @@
 <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
 {% endblock head_javascript %}
 
-
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col col-lg-2">
-      {% profile %}
-    </div>
-    <div class="col-md-auto">
-      {% include "landing/usernav.html" %}
-      <div class="tab-pane" id="socialauth">
-        <a type="button" class="btn btn-primary" href="/settings">{% trans "Connection settings" %}</a>
-      </div>
-    </div>
-  </div>
-</div>  
+{% include "landing/usernav.html" %}
+<a type="button" class="btn btn-primary" href="/settings">{% trans "Connection settings" %}</a> 
 {% endblock %}

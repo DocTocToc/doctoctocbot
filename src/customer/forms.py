@@ -10,34 +10,6 @@ from bootstrap_modal_forms.forms import BSModalForm, BSModalModelForm
 
 
 class CustomerReadOnlyForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(CustomerReadOnlyForm, self).__init__(*args, **kwargs)
-        try:
-            customer = Customer.objects.get(user=self.user)
-        except Customer.DoesNotExist:
-            return
-        self.helper = FormHelper()
-        self.helper.form_id = 'customer-form'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.form_method = 'post'
-        self.helper.form_action = '/customer/'
-        self.helper.form_group_wrapper_class = 'row'
-        self.helper.label_class = 'offset-md-1 col-md-1'
-        self.helper.field_class = 'col-md-8'
-        self.fields['country'].label = _('Country')
-        self.helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-        self.fields['id'].initial=customer.id
-        self.fields['first_name'].initial=customer.first_name
-        self.fields['last_name'].initial=customer.last_name
-        self.fields['company'].initial=customer.company
-        self.fields['address_1'].initial=customer.address_1
-        self.fields['address_2'].initial=customer.address_2
-        self.fields['country'].initial=customer.country
-        self.fields['email'].initial=customer.email
-        self.fields['city'].initial=customer.city
-        #self.fields['state'].initial=customer.state
-        self.fields['zip_code'].initial=customer.zip_code
 
     id = forms.CharField(
         disabled=True,
@@ -101,6 +73,33 @@ class CustomerReadOnlyForm(forms.Form):
         max_length=32,
         disabled=True,
     )
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        #super(CustomerReadOnlyForm, self).__init__(*args, **kwargs)
+        try:
+            customer = Customer.objects.get(user=self.user)
+        except Customer.DoesNotExist:
+            return
+        self.helper = FormHelper(self)
+        self.helper.form_id = 'customer-form'
+        self.helper.form_method = 'post'
+        self.helper.form_action = '/customer/'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.fields['country'].label = _('Country')
+        self.fields['id'].initial=customer.id
+        self.fields['first_name'].initial=customer.first_name
+        self.fields['last_name'].initial=customer.last_name
+        self.fields['company'].initial=customer.company
+        self.fields['address_1'].initial=customer.address_1
+        self.fields['address_2'].initial=customer.address_2
+        self.fields['country'].initial=customer.country
+        self.fields['email'].initial=customer.email
+        self.fields['city'].initial=customer.city
+        #self.fields['state'].initial=customer.state
+        self.fields['zip_code'].initial=customer.zip_code
 
 
 class CustomerModelForm(BSModalModelForm):
@@ -110,5 +109,4 @@ class CustomerModelForm(BSModalModelForm):
             'silver_id',
             'user',
             'state',
-            
         ]

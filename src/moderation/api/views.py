@@ -27,6 +27,7 @@ class ModeratorFilterBackend(DRYPermissionFiltersBase):
             community=get_current_site(request).community,
         )
 
+
 class ModeratorViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows moderators objects to be viewed or edited.

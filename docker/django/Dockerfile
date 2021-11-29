@@ -5,19 +5,21 @@ ENV DOCKER_CONTAINER 1
 
 RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get clean && apt-get update && apt-get install -y \
-  locales \
-  python-pygraphviz \
-  libgraphviz-dev \
-  build-essential \
-  libgl1-mesa-glx \
-  libgtk-3-dev \
-  libdbus-glib-1-2 \
-  python-yaml \
-  binutils \
-  libproj-dev \
-  gdal-bin \
-  libolm-dev/buster-backports
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    locales \
+    python-pygraphviz \
+    libgraphviz-dev \
+    build-essential \
+    libgl1-mesa-glx \
+    libgtk-3-dev \
+    libdbus-glib-1-2 \
+    python-yaml \
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    libolm-dev/buster-backports \
+ && rm -rf /var/lib/apt/lists/*
  
 RUN echo "Europe/Paris" > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -47,8 +49,10 @@ ENV DJANGO_SETTINGS_MODULE doctocnet.settings
 
 FROM prod AS dev
 
-RUN apt-get clean && apt-get update && apt-get install -y \
-  postgresql-client \
-  gettext
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    gettext \
+ && rm -rf /var/lib/apt/lists/*
+
 
 RUN pip install --upgrade -r /code/requirements/development.txt

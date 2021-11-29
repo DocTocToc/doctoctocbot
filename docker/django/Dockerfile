@@ -5,7 +5,7 @@ ENV DOCKER_CONTAINER 1
 
 RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
-RUN apt-get clean && apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get clean && apt-get update && apt-get install -y \
   locales \
   python-pygraphviz \
   libgraphviz-dev \

@@ -1,3 +1,4 @@
+import logging
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -6,6 +7,7 @@ from crispy_forms.layout import Submit
 
 from discourse.models import AccessControl
 
+logger = logging.getLogger(__name__)
 
 class SelfModerationForm(forms.Form):
     
@@ -25,7 +27,8 @@ class SelfModerationForm(forms.Form):
                 'category__label'
             )
         )
-    except TypeError:
+    except (TypeError, AccessControl.DoesNotExist) as e:
+        logger.error(e)
         CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))
     category = forms.ChoiceField(

@@ -76,6 +76,18 @@ services:
   stream_2:
     image: dtn_dev
     restart: on-failure:1
+  stream_3:
+    image: dtn_dev
+    restart: on-failure:1
+  stream_4:
+    profiles:
+      - donotstart
+  stream_5:
+    profiles:
+      - donotstart
+  stream_6:
+    profiles:
+      - donotstart
   tree_search:
     image: dtn_dev
     restart: on-failure

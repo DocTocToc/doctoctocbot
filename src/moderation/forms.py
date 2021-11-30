@@ -19,18 +19,15 @@ class SelfModerationForm(forms.Form):
         self.helper.form_action = 'moderation:self'
         self.helper.add_input(Submit('submit', _('Submit')))
         self.helper.form_method = 'post'
-
-    try:
-        qs = AccessControl.objects.filter(authorize=True).values_list(
-            'category__name',
-            'category__label'
-        )
-    except ProgrammingError as e:
-        logger.error(e)
-        qs = None
+        
+    qs = AccessControl.objects.filter(authorize=True).values_list(
+        'category__name',
+        'category__label'
+    )
     try:
         CATEGORY_CHOICES = list(qs)
-    except TypeError:
+    except (ProgrammingError, TypeError) as e:
+        logger.error(e)
         CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))
     category = forms.ChoiceField(

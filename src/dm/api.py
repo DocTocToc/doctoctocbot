@@ -1,5 +1,5 @@
 import json
-from .pythontwitter import twitter
+from dm.pythontwitter import twitter
 from bot.models import Account
 import logging
 import typing

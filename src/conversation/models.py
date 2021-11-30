@@ -19,9 +19,19 @@ class GenericBigIntTaggedItem(CommonGenericTaggedItemBase, TaggedItemBase):
     object_id = models.BigIntegerField(verbose_name=_('Object id'), db_index=True)
 
 
+class HashtagManager(models.Manager):
+    def get_by_natural_key(self, hashtag):
+        return self.get(hashtag=hashtag)
+
+
 class Hashtag(models.Model):
     hashtag = models.CharField(max_length=101, unique=True)
     
+    objects = HashtagManager()
+
+    def natural_key(self):
+        return (self.hashtag,)
+
     def __str__(self):
         return self.hashtag
 

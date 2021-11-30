@@ -18,12 +18,15 @@ class SelfModerationForm(forms.Form):
         self.helper.add_input(Submit('submit', _('Submit')))
         self.helper.form_method = 'post'
 
-    CATEGORY_CHOICES = list(
-        AccessControl.objects.filter(authorize=True).values_list(
-            'category__name',
-            'category__label'
+    try:
+        CATEGORY_CHOICES = list(
+            AccessControl.objects.filter(authorize=True).values_list(
+                'category__name',
+                'category__label'
+            )
         )
-    )
+    except TypeError:
+        CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))
     category = forms.ChoiceField(
         label=_('Please choose a category'),
@@ -43,6 +46,3 @@ class SelfModerationForm(forms.Form):
         ),
         required=False,
     )
-    #def create_email(self):
-        # send email using the self.cleaned_data dictionary
-    #    pass

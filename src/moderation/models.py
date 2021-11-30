@@ -304,6 +304,11 @@ class CategoryBase(models.Model):
         abstract = True
 
 
+class CategoryManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class Category(CategoryBase):
     """
     TODO: link to future community fk, make (label, community) unique together
@@ -332,6 +337,8 @@ class Category(CategoryBase):
         )
     )
     
+    objects = CategoryManager()
+
     def __str__(self):
         return self.name
     
@@ -352,6 +359,10 @@ class Category(CategoryBase):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "categories"
+
+
+    def natural_key(self):
+        return (self.name,)
 
 
 class CategoryMetadata(CategoryBase):

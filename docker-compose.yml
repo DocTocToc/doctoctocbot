@@ -13,6 +13,8 @@ services:
       -c log_directory=/var/log/postgresql
       -c log_min_duration_statement=${DATABASE_LOG_MIN_DURATION_STATEMENT}
       -c shared_buffers=${DATABASE_SHARED_BUFFERS}
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:                                                                    
       - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"
       - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"

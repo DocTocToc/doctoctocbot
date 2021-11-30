@@ -1,7 +1,7 @@
 import logging
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.db.utils import ProgrammingError
+from django.db import ProgrammingError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -21,14 +21,16 @@ class SelfModerationForm(forms.Form):
         self.helper.form_method = 'post'
 
     try:
-        CATEGORY_CHOICES = list(
-            AccessControl.objects.filter(authorize=True).values_list(
-                'category__name',
-                'category__label'
-            )
+        qs = AccessControl.objects.filter(authorize=True).values_list(
+            'category__name',
+            'category__label'
         )
-    except (TypeError, AccessControl.DoesNotExist, ProgrammingError) as e:
+    except ProgrammingError as e:
         logger.error(e)
+        qs = None
+    try:
+        CATEGORY_CHOICES = list(qs)
+    except TypeError:
         CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))
     category = forms.ChoiceField(

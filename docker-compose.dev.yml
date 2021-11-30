@@ -10,7 +10,7 @@ services:
       dockerfile: docker/django/Dockerfile
       target: dev
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py migrate --run-syncdb --noinput && python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}

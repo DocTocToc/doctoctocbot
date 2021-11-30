@@ -14,7 +14,7 @@ services:
       -c log_min_duration_statement=${DATABASE_LOG_MIN_DURATION_STATEMENT}
       -c shared_buffers=${DATABASE_SHARED_BUFFERS}
     environment:
-      POSTGRES_USER=${DATABASE_USER}
+      POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:                                                                    
       - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"

@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 
 services:
   django_1:
@@ -10,7 +10,7 @@ services:
       dockerfile: docker/django/Dockerfile
       target: dev
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings python manage.py collectstatic --noinput && gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -18,6 +18,8 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8081:80"
     depends_on:
       - database
       - redis
@@ -27,7 +29,7 @@ services:
     env_file:
       - .env
     image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} --bind 0.0.0.0:80 --worker-tmp-dir /dev/shm --timeout 60 --reload"
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -35,52 +37,31 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+    ports:
+      - "8082:80"
     depends_on:
       - database
       - redis
     working_dir: /code/src
-  nginx:
-    restart: on-failure
+  django_3:
+    restart: always
     env_file:
       - .env
-    image: nginx:latest
+    image: dtn_dev
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
     volumes:
       - ./src:/code/src
-      - ./config/${ENVIRONMENT}/nginx:/etc/nginx/conf.d
-      - ${STATIC_ROOT}:/srv/${PROJECT}/static_root
-      - ${MEDIA_ROOT}:/srv/${PROJECT}/media_root
-      - ${BOT_IMAGES_PATH}:/srv/${PROJECT}/images
-      - ${NGINX_LOG_DIR}:/var/log/nginx
-      - ${LETSENCRYPT_CONF}:/etc/letsencrypt
-      - ./config/nginx/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
-      - ./config/nginx/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
-      - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
+      - ${GNUPGHOME}:${GNUPGHOME}
     ports:
-      - "9000:80"
+      - "8083:80"
     depends_on:
-      - django_1
-      - django_2
-  letsencrypt:
-    restart: "no"
-    build:
-      context: docker/letsencrypt
-      dockerfile: ./Dockerfile
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${LETSENCRYPT_LOG}:/var/log/letsencrypt
-      - ${LETSENCRYPT_CONF}:/etc/letsencrypt
-      - ${LETSENCRYPT_WWW}:/tmp/letsencrypt
-    depends_on:
-      - nginx
-    environment:
-      - DOMAINS=${DOMAINS}
-      - EMAIL=${EMAIL}
-      - WEBROOT_PATH=/tmp/letsencrypt
-      - EXP_LIMIT=30
-      - CHECK_FREQ=${CHECK_FREQ}
-      - CHICKENEGG=${CHICKENEGG}
-      - STAGING=${STAGING}
+      - database
+      - redis
+    working_dir: /code/src
   celery_retweet_worker:
     image: dtn_dev
   celery_tree_worker:
@@ -91,9 +72,14 @@ services:
     image: dtn_dev
   stream_1:
     image: dtn_dev
+    restart: on-failure:1
   stream_2:
     image: dtn_dev
-  stream_3:
+    restart: on-failure:1
+  tree_search:
     image: dtn_dev
-  stream_4:
-    image: dtn_dev
+    restart: on-failure
+    profiles: ["tree_search"]
+  chrome:
+    profiles:
+      - donotstart

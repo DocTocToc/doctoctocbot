@@ -1,7 +1,7 @@
 import logging
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
+from django.db.utils import ProgrammingError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -27,7 +27,7 @@ class SelfModerationForm(forms.Form):
                 'category__label'
             )
         )
-    except (TypeError, AccessControl.DoesNotExist) as e:
+    except (TypeError, AccessControl.DoesNotExist, ProgrammingError) as e:
         logger.error(e)
         CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))

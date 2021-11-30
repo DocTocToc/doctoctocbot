@@ -80,12 +80,15 @@ services:
     image: dtn_dev
     restart: on-failure:1
   stream_4:
+    image: dtn_dev
     profiles:
       - donotstart
   stream_5:
+    image: dtn_dev
     profiles:
       - donotstart
   stream_6:
+    image: dtn_dev
     profiles:
       - donotstart
   tree_search:

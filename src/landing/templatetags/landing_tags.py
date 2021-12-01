@@ -27,7 +27,11 @@ def site_text(context):
 @register.simple_tag(takes_context=True)
 def community_name(context):
     site = get_current_site(context)
-    return site.community.name
+    try:
+        return site.community.name
+    except Community.DoesNotExist:
+        logger.error(f"Site {site} has no community.")
+        return
 
 def get_hashtag_lst(context):
     community = get_community(context['request'])

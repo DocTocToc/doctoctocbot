@@ -300,6 +300,7 @@ class SocialUserAdmin(admin.ModelAdmin):
                 [
                     su.screen_name_tag()
                     for su in tfr
+                    if su.screen_name_tag()
                 ]
             )
         )

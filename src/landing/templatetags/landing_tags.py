@@ -137,6 +137,8 @@ def membership_category_field_lst(context):
     Please apply mesh app fixture mesh_fr_en.json first.
     """
     community = get_community(context['request'])
+    if not community:
+        return
     try:
         lang = context["LANGUAGE_CODE"][:2]
         logger.debug(f"lang: '{lang}'")
@@ -146,7 +148,7 @@ def membership_category_field_lst(context):
     return list(
             community.membership.values_list(field, flat=True)
     )
-    
+
 def follower_category_field_lst(context):
     """
     TODO: return in the language adapted to context or community

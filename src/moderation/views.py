@@ -47,9 +47,11 @@ class ModeratorPublicList(TemplateView):
             # looping till length l 
             for i in range(0, len(l), n):  
                 yield l[i:i + n] 
-        
+
         context = super(ModeratorPublicList, self).get_context_data(*args, **kwargs)
         community = get_community(self.request)
+        if not community:
+            return context
         moderators_qs = (
             Moderator.objects
             .filter(
@@ -80,7 +82,6 @@ class ModeratorPublicList(TemplateView):
         moderators = list(divide_chunks(moderators, n))    
         context["moderators"] = moderators
         context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url(community)}"
-        logger.debug(context)
         return context
 
 

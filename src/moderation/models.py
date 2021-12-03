@@ -467,11 +467,6 @@ def get_default_socialmedia():
         logger.debug("Create at least one SocialMedia object.", e)
 
 
-class ProfileManager(models.Manager):
-    def get_by_natural_key(self, user_id):
-        return self.get(json__id=user_id)
-
-
 class Profile(models.Model):
     socialuser = models.OneToOneField(
         SocialUser,
@@ -493,8 +488,6 @@ class Profile(models.Model):
         upload_to='twitter/profile/images/mini',
         default='twitter/profile/images/mini/default_profile_mini.png'
     )
-    
-    objects = ProfileManager()
 
     def mini_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.miniavatar.url))

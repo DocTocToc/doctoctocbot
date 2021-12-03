@@ -469,7 +469,7 @@ def get_default_socialmedia():
 
 class ProfileManager(models.Manager):
     def get_by_natural_key(self, user_id):
-        return self.get(socialuser__user_id=user_id)
+        return self.get(json__id=user_id)
 
 
 class Profile(models.Model):
@@ -545,8 +545,10 @@ class Profile(models.Model):
         return description
 
     def natural_key(self):
-        return (self.socialuser.natural_key())
-    natural_key.dependencies = ['moderation.socialuser']
+        try:
+            return (self.json["id"],)
+        except TypeError:
+            return
 
 
 class Queue(Versionable):

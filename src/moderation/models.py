@@ -547,7 +547,8 @@ class Profile(models.Model):
     def natural_key(self):
         try:
             return (self.json["id"],)
-        except TypeError:
+        except (TypeError, KeyError) as e:
+            logger.error(e)
             return
 
 

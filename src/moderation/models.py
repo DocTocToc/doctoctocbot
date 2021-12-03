@@ -466,25 +466,42 @@ def get_default_socialmedia():
     except SocialMedia.DoesNotExist as e:
         logger.debug("Create at least one SocialMedia object.", e)
 
-     
+
+class ProfileManager(models.Manager):
+    def get_by_natural_key(self, user_id):
+        return self.get(socialuser__user_id=user_id)
+
+
 class Profile(models.Model):
-    socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
+    socialuser = models.OneToOneField(
+        SocialUser,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
     json = models.JSONField(default=dict)
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    normalavatar = models.ImageField(upload_to='twitter/profile/images/normal',
-                                     default='twitter/profile/images/normal/default_profile_normal.png')
-    biggeravatar = models.ImageField(upload_to='twitter/profile/images/bigger',
-                                     default='twitter/profile/images/bigger/default_profile_bigger.png')
-    miniavatar = models.ImageField(upload_to='twitter/profile/images/mini',
-                                   default='twitter/profile/images/mini/default_profile_mini.png')
+    normalavatar = models.ImageField(
+        upload_to='twitter/profile/images/normal',
+        default='twitter/profile/images/normal/default_profile_normal.png'
+    )
+    biggeravatar = models.ImageField(
+        upload_to='twitter/profile/images/bigger',
+        default='twitter/profile/images/bigger/default_profile_bigger.png'
+    )
+    miniavatar = models.ImageField(
+        upload_to='twitter/profile/images/mini',
+        default='twitter/profile/images/mini/default_profile_mini.png'
+    )
+    
+    objects = ProfileManager()
 
     def mini_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.miniavatar.url))
     
     def get_normalavatar_url(self, obj):
         return obj.normalavatar.url
-    
+
     mini_image_tag.short_description = 'Image'   
 
     def screen_name_tag(self):
@@ -527,6 +544,9 @@ class Profile(models.Model):
         )
         return description
 
+    def natural_key(self):
+        return (self.socialuser.natural_key())
+    natural_key.dependencies = ['moderation.socialuser']
 
 
 class Queue(Versionable):

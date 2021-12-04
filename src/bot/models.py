@@ -1,6 +1,11 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+class AccountManager(models.Manager):
+    def get_by_natural_key(self, user_id):
+        return self.get(userid=user_id)
+
+
 class Account(models.Model):
     userid = models.BigIntegerField(unique=True)
     username = models.CharField(max_length=15)
@@ -47,9 +52,13 @@ class Account(models.Model):
         null=True,
         help_text = "Session cookies for Selenium"
     )
+    objects = AccountManager()
 
     def __str__(self):
         return self.username
+
+    def natural_key(self):
+        return (self.userid,)
 
 
 class Greet(models.Model):

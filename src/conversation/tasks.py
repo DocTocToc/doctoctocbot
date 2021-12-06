@@ -45,12 +45,6 @@ def handle_addsocialuser():
         addsocialuser(instance)
 
 @shared_task
-def handle_get_physician_timeline():
-    from bot.bin.timeline import record_user_timeline
-    for user_id in SocialUser.objects.physician_users():
-        record_user_timeline(user_id)
-
-@shared_task
 def update_retweet(days):
     """Update Retweeted and Tweetdj to reflect unretweets
     TODO: Doesn't work if the same tweet that was unretweeted is retweeted

@@ -6,66 +6,26 @@ from bot.lib.statusdb import Addstatus
 from timeline.models import add_status_tl, Status
 import tweepy
 import logging
+from conversation.timeline import get_user_timeline
+from community.helpers import get_community_twitter_tweepy_api
 
 logger = logging.getLogger(__name__)
 
 def record_timeline():
+    """Record bot timeline of active communities
+    """
     for community in Community.objects.filter(active=True):
         su = community.account.socialuser
         if not su:
             continue
-        record_user_timeline(
-            su.user_id,
-            count=200,
-            force=False,
-            retweeted=True
+        api = get_community_twitter_tweepy_api(community)
+        if not api:
+            continue
+        get_user_timeline(
+            userid=su.user_id,
+            api=api,
+            force=False
         )
-        
-def record_user_timeline(user_id, count=200, force=False, retweeted=False):
-    """
-    Send requests to record user timeline as long as not all tweets during one
-    request already exist in database.
-    retweeted: bool If status is a retweet, add retweeted status to database
-    """
-    max_statusid = None
-    api=get_api()
-    new_tweets = True
-    while new_tweets:
-        if not force:
-            new_tweets = False
-        try:
-            status_lst = api.user_timeline(
-                user_id=user_id,
-                count=count,
-                max_id=max_statusid,
-                tweet_mode="extended",
-                include_rts=True
-            )
-            if not status_lst:
-                logger.warn("request is empty")
-                break
-            for status in status_lst:
-                dbstatus = Addstatus(status._json)
-                tweetdj, created = dbstatus.addtweetdj(update=True)
-                if retweeted and tweetdj.retweetedstatus:
-                    dbstatus = Addstatus(status._json["retweeted_status"])
-                    dbstatus.addtweetdj(update=True)
-                statusid = status._json["id"]
-                if max_statusid is None:
-                    max_statusid = statusid
-                elif statusid < max_statusid:
-                    max_statusid = statusid
-                if created:
-                    if not force:
-                        new_tweets = True
-        except tweepy.TweepError as e:
-            logger.debug(e.response.text)
-            break
-        except tweepy.RateLimitError as e:
-            logger.debug(e.response.text)
-        except AttributeError:
-            return
-        max_statusid -= 1
             
 def get_timeline_id_lst(n=None) -> List:
     """

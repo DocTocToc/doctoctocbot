@@ -13,7 +13,6 @@ from django.db.utils import DatabaseError
 from django.db import transaction
 
 
-
 logger = logging.getLogger(__name__)
 
 def user_id_list_timeline(user_id_list: List):
@@ -37,16 +36,21 @@ def community_timeline(community):
         except tweepy.TweepError as e:
             logger.error(f"Tweepy Error: {e}")
 
-def get_user_timeline(userid, api):
+def get_user_timeline(userid, api, force=False):
     from bot.lib.statusdb import Addstatus
-
     first: bool = True
     high_statusid: int = 0
-    tut_last = TwitterUserTimeline.objects.filter(userid=userid).last()
     try:
-        since_id = tut_last.statusid
-    except AttributeError:
-        since_id = None
+        tut_last=TwitterUserTimeline.objects.filter(userid=userid).last()
+    except TwitterUserTimeline.DoesNotExist:
+        tut_last=None
+    if force:
+        since_id=None
+    else:
+        try:
+            since_id = tut_last.statusid
+        except AttributeError:
+            since_id = None
     logger.debug(f"{since_id=}")
     for status in tweepy.Cursor(api.user_timeline, 
                         user_id=userid, 

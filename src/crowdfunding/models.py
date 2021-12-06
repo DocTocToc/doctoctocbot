@@ -6,8 +6,17 @@ from django.db import models
 from common.international import currencies
 from django.contrib.sites.models import Site
 
+
+class ProjectManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class Project(models.Model):
-    name = models.CharField(max_length=191)
+    name = models.CharField(
+        max_length=191,
+        unique=True,
+    )
     description = models.TextField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -32,9 +41,15 @@ class Project(models.Model):
         choices=currencies, max_length=4, default='EUR',
         help_text='The currency used for billing.'
     )
+    
+    objects = ProjectManager()
 
     def __str__(self):
         return "{}:{}".format(self.id, self.name)
+    
+    def natural_key(self):
+        return (self.name,)
+
 
 class ProjectInvestment(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

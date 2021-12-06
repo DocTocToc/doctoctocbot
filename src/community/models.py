@@ -10,8 +10,17 @@ from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
+
+class CommunityManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class Community(models.Model):
-    name = models.CharField(max_length=101, unique=True)
+    name = models.CharField(
+        max_length=101,
+        unique=True
+    )
     active = models.BooleanField(default=False)
     account = models.OneToOneField(
         'bot.Account',
@@ -185,11 +194,17 @@ class Community(models.Model):
         related_name="community",
     )
 
+    objects = CommunityManager()
+
     def __str__(self):
         return self.name
     
     class Meta:
         verbose_name_plural = "communities"
+
+
+    def natural_key(self):
+        return (self.name,)
 
 
 def get_default_community():
@@ -221,7 +236,21 @@ class Retweet(models.Model):
     class Meta:
         unique_together = ("community", "hashtag", "category")
 
-    
+
+class TrustManager(models.Manager):
+    def get_by_natural_key(
+            self,
+            from_community_name,
+            to_community_name,
+            category_name,
+        ):
+        return self.get(
+            from_community__name=from_community_name,
+            to_community__name=to_community_name,
+            category__name=category_name
+        )
+
+
 class Trust(models.Model):
     '''
     The Trust through model contains information about which community trusts which
@@ -247,6 +276,8 @@ class Trust(models.Model):
     created =  models.DateTimeField(auto_now_add=True)
     authorized = models.BooleanField(default=False)
 
+    objects = TrustManager()
+
     def __str__(self):
         return "{_from} trusts {to} about {category} : {authorized}".format(
             _from=self.from_community,
@@ -258,7 +289,27 @@ class Trust(models.Model):
     class Meta:
         unique_together = ("from_community", "to_community", "category")
 
-    
+
+    def natural_key(self):
+        return (
+            self.from_community.natural_key()
+            + self.to_community.natural_key()
+            + self.category.natural_key()
+        )
+
+
+class CooperationManager(models.Manager):
+    def get_by_natural_key(
+            self,
+            from_community_name,
+            to_community_name,
+        ):
+        return self.get(
+            from_community__name=from_community_name,
+            to_community__name=to_community_name,
+        )
+
+
 class Cooperation(models.Model):
     from_community = models.ForeignKey(
         'Community',
@@ -271,8 +322,10 @@ class Cooperation(models.Model):
         related_name='cooperation_to',
     )
     created =  models.DateTimeField(auto_now_add=True)
-    authorized = models.BooleanField(default=False)  
-    
+    authorized = models.BooleanField(default=False)
+
+    objects = CooperationManager()
+
     def __str__(self):
         return "{_from} trusts {to}: {authorized}".format(
             _from=self.from_community,
@@ -282,6 +335,21 @@ class Cooperation(models.Model):
         
     class Meta:
         unique_together = ("from_community", "to_community")
+
+
+    def natural_key(self):
+        return (
+            self.from_community.natural_key()
+            + self.to_community.natural_key()
+        )
+
+
+class CommunityCategoryRelationshipManager(models.Manager):
+    def get_by_natural_key(self, community_name, category_name):
+        return self.get(
+            community__name=community_name,
+            category__name=category_name,
+        )
 
 
 class CommunityCategoryRelationship(models.Model):
@@ -317,11 +385,17 @@ class CommunityCategoryRelationship(models.Model):
         blank=True
     )
 
+    objects = CommunityCategoryRelationshipManager()
+
     def __str__(self):
         return f"community: {self.community.name} - category: {self.category.name}"
     
     class Meta:
         unique_together = ("community", "category")
+
+
+    def natural_key(self):
+        return (self.community.natural_key() + self.category.natural_key())
 
 
 class TextDescription(models.Model):
@@ -388,6 +462,11 @@ class TextCommunity(models.Model):
             )
 
 
+class AccessLevelManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class AccessLevel(models.Model):
     """API access level categories.
     """
@@ -403,8 +482,21 @@ class AccessLevel(models.Model):
         blank=True
     )
     
+    objects = AccessLevelManager()
+
     def __str__(self):
         return f"{self.label}"
+    
+    def natural_key(self):
+        return (self.name,)
+
+
+class ApiAccessManager(models.Manager):
+    def get_by_natural_key(self, community_name, level_name):
+        return self.get(
+            community__name=community_name,
+            level__name=level_name,
+        )
 
 
 class ApiAccess(models.Model):
@@ -490,6 +582,8 @@ class ApiAccess(models.Model):
         help_text=_("Filter status by authenticated author."),
     )
 
+    objects = ApiAccessManager()
+
     def __str__(self):
         return f"API Access: community = {self.community} ; level = {self.level}"
 
@@ -497,17 +591,31 @@ class ApiAccess(models.Model):
     class Meta:
         unique_together = ("community", "level")
 
+    def natural_key(self):
+        return (self.community.natural_key() + self.level.natural_key())
+
+
+class BlogManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 
 class Blog(models.Model):
     name = models.CharField(
         max_length=254,
         help_text=_("Name of the blog."),
+        unique=True,
     )
     link = models.CharField(
         max_length=254,
         help_text=_("Link text."),
     )
     url = models.URLField()
+    
+    objects = BlogManager()
 
     def __str__(self):
         return f"{self.name} <{self.url}>"
+
+    def natural_key(self):
+        return (self.name,)

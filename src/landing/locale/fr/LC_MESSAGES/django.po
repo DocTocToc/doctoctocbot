@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 02:43+0200\n"
+"POT-Creation-Date: 2021-12-06 13:13+0100\n"
 "PO-Revision-Date: 2021-08-10 14:09+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -430,7 +430,7 @@ msgstr ""
 "membres!"
 
 #: landing/templates/landing/user.html:33
-#: landing/templates/landing/usernav.html:15 landing/views.py:75
+#: landing/templates/landing/usernav.html:16 landing/views.py:75
 msgid "Profile"
 msgstr "Profil"
 
@@ -447,28 +447,28 @@ msgid "Receipt"
 msgstr "Facture"
 
 #: landing/templates/landing/user.html:45
-#: landing/templates/landing/usernav.html:27
+#: landing/templates/landing/usernav.html:28
 msgid "Options"
 msgstr "Options"
 
 #: landing/templates/landing/user.html:49
-#: landing/templates/landing/usernav.html:32
+#: landing/templates/landing/usernav.html:33
 msgid "Moderation"
 msgstr "Modération"
 
-#: landing/templates/landing/user/account.html:29
+#: landing/templates/landing/user/account.html:19
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user/billing.html:44
-msgid "Edit"
-msgstr "Éditer"
+#: landing/templates/landing/user/billing.html:29
+msgid "Edit the form"
+msgstr ""
 
-#: landing/templates/landing/user/moderation.html:29
+#: landing/templates/landing/user/moderation.html:21
 msgid "Collective moderation"
 msgstr "Modération collective"
 
-#: landing/templates/landing/user/moderation.html:31
+#: landing/templates/landing/user/moderation.html:23
 msgid ""
 "You can suspend or resume your participation to collective moderation "
 "through the on/off switch."
@@ -476,7 +476,7 @@ msgstr ""
 "Vous pouvez suspendre ou reprendre votre participation à la modération "
 "collective via l'interrupteur on/off."
 
-#: landing/templates/landing/user/moderation.html:32
+#: landing/templates/landing/user/moderation.html:24
 msgid ""
 "Set if you want to appear on the public list of moderators with the public/"
 "private switch."
@@ -484,47 +484,35 @@ msgstr ""
 "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
 "modérateurs via l'interrupteur public / private."
 
-#: landing/templates/landing/user/profile.html:30
-msgid "User Profile"
-msgstr "Profil utilisateur"
-
-#: landing/templates/landing/user/profile.html:33
-msgid "Twitter screen name:"
-msgstr "Nom d'utilisateur Twitter:"
-
-#: landing/templates/landing/user/profile.html:35
-msgid "Category"
-msgstr "Catégorie"
-
-#: landing/templates/landing/user/profile.html:44
+#: landing/templates/landing/user/profile.html:32
 msgid "Recent badges"
 msgstr "Badges récents"
 
-#: landing/templates/landing/user/profile.html:47
+#: landing/templates/landing/user/profile.html:35
 msgid "Question(s)"
 msgstr "Question(s)"
 
-#: landing/templates/landing/user/profile.html:57
+#: landing/templates/landing/user/profile.html:45
 msgid "Recent Activity"
 msgstr "Activité récente"
 
-#: landing/templates/landing/user/social.html:30
+#: landing/templates/landing/user/social.html:20
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 
-#: landing/templates/landing/usernav.html:18
+#: landing/templates/landing/usernav.html:19
 msgid "Social"
 msgstr "Social"
 
-#: landing/templates/landing/usernav.html:22
+#: landing/templates/landing/usernav.html:23
 msgid "Billing"
 msgstr "Facturation"
 
-#: landing/templates/landing/usernav.html:37
+#: landing/templates/landing/usernav.html:38
 msgid "Account"
 msgstr "Compte"
 
-#: landing/templates/landing/usernav.html:42
+#: landing/templates/landing/usernav.html:43
 msgid "Invitation"
 msgstr "Invitation"
 
@@ -536,6 +524,18 @@ msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid "Edit"
+#~ msgstr "Éditer"
+
+#~ msgid "User Profile"
+#~ msgstr "Profil utilisateur"
+
+#~ msgid "Twitter screen name:"
+#~ msgstr "Nom d'utilisateur Twitter:"
+
+#~ msgid "Category"
+#~ msgstr "Catégorie"
 
 #~ msgid "Authorize this page to open Element"
 #~ msgstr "Autoriser cette pages à ouvrir Element"

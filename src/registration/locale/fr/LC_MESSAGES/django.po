@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 02:43+0200\n"
+"POT-Creation-Date: 2021-12-06 13:13+0100\n"
 "PO-Revision-Date: 2021-08-17 05:20+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,10 +28,10 @@ msgstr ""
 msgid "I have read and agree to the Terms of Service"
 msgstr "J'ai lu et j'approuve les conditions d'utilisation du service"
 
-#: registration/validators.py:21
+#: registration/validators.py:20
 msgid "This name is reserved and cannot be registered."
 msgstr "Ce nom est réservé et ne peut pas être utilisé"
 
-#: registration/validators.py:22
+#: registration/validators.py:21
 msgid "A username cannot contain the '@' character."
 msgstr "Un nom d'utilisateur ne peut contenir le caractère '@'."

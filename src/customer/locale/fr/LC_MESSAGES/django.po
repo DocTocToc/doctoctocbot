@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 02:43+0200\n"
+"POT-Creation-Date: 2021-12-06 13:13+0100\n"
 "PO-Revision-Date: 2019-12-18 16:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,45 +18,45 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: customer/forms.py:28 customer/models.py:64 customer/models.py:65
-msgid "Country"
-msgstr "Pays"
-
-#: customer/forms.py:47 customer/models.py:30 customer/models.py:31
+#: customer/forms.py:19 customer/models.py:30 customer/models.py:31
 msgid "First name"
 msgstr "Prénom"
 
-#: customer/forms.py:52 customer/models.py:35 customer/models.py:36
+#: customer/forms.py:24 customer/models.py:35 customer/models.py:36
 msgid "Last name"
 msgstr "Nom"
 
-#: customer/forms.py:57 customer/models.py:41 customer/models.py:42
+#: customer/forms.py:29 customer/models.py:41 customer/models.py:42
 msgid "Company"
 msgstr "Entreprise"
 
-#: customer/forms.py:62 customer/forms.py:67
+#: customer/forms.py:34 customer/forms.py:39
 msgid "Address"
 msgstr "Adresse"
 
-#: customer/forms.py:73
+#: customer/forms.py:45
 msgid "(select country)"
 msgstr "(Sélectionner le pays)"
 
-#: customer/forms.py:76
+#: customer/forms.py:48
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: customer/forms.py:82 customer/models.py:47 customer/models.py:48
+#: customer/forms.py:54 customer/models.py:47 customer/models.py:48
 msgid "Email"
 msgstr "Courriel"
 
-#: customer/forms.py:87 customer/models.py:69 customer/models.py:70
+#: customer/forms.py:59 customer/models.py:69 customer/models.py:70
 msgid "City"
 msgstr "Ville"
 
-#: customer/forms.py:100 customer/models.py:80 customer/models.py:81
+#: customer/forms.py:72 customer/models.py:80 customer/models.py:81
 msgid "ZIP code"
 msgstr "Code postal"
+
+#: customer/forms.py:91 customer/models.py:64 customer/models.py:65
+msgid "Country"
+msgstr "Pays"
 
 #: customer/models.py:18
 msgid "Id of corresponding Silver Customer record."

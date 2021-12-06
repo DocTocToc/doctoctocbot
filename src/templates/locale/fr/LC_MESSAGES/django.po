@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 02:43+0200\n"
-"PO-Revision-Date: 2021-04-18 15:28+0300\n"
+"POT-Creation-Date: 2021-12-06 13:13+0100\n"
+"PO-Revision-Date: 2021-12-06 15:14+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: templates/404.html:7
 msgid ""
@@ -145,7 +145,8 @@ msgstr ""
 "Seuls les utilisateurs de Twitter vérifiés ont accès à notre messagerie "
 "sécurisée."
 
-#: templates/cas/login.html:60 templates/registration/login.html:25
+#: templates/cas/login.html:60 templates/registration/login.html:23
+#: templates/registration/login.html:35
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
@@ -161,17 +162,11 @@ msgstr ""
 "et si vous avez créé un compte sur\n"
 "<mark>%(scheme)s://%(domain)s</mark>, merci de vous connecter ici:"
 
-#: templates/cas/login.html:86
+#: templates/cas/login.html:86 templates/registration/login.html:66
 msgid "Login"
 msgstr "Se connecter"
 
-#: templates/registration/login.html:12
-msgid "Your username and password didn't match. Please try again."
-msgstr ""
-"Votre nom d'utilisateur et votre mot de passe ne correspondent à aucun "
-"compte connu. Merci de réessayer."
-
-#: templates/registration/login.html:17
+#: templates/registration/login.html:13
 msgid ""
 "Your account doesn't have access to this page. To proceed, please login with "
 "an account that has access."
@@ -179,11 +174,44 @@ msgstr ""
 "Votre compte n'a pas accès à cette page. Pour continuer, vous devez être "
 "connecté avec un compte qui a un accès."
 
-#: templates/registration/login.html:19
-msgid "Please login"
-msgstr "Connectez-vous s'il vous plaît"
+#: templates/registration/login.html:20
+msgid "Twitter"
+msgstr "Twitter"
 
-#: templates/registration/login.html:45
+#: templates/registration/login.html:25
+msgid ""
+"'Sign in with Twitter' is simple and secure. After you click the button, you "
+"will land on a twitter.com page. There, you will be asked to enter your "
+"Twitter credentials. Then, you will be redirected here. We CANNOT know your "
+"Twitter password. Do you think @jack would let us have it?"
+msgstr ""
+"La connexion via Twitter (\"Sign in with Twitter\") est simple et sécurisée. "
+"Après avoir cliqué sur le bouton, votre navigateur vous amènera sur un page "
+"de twitter.com. Là, Twitter vous demandera votre nom d'utilisateur et votre "
+"mot de passe. Ensuite, votre navigateur vous ramènera ici. À aucun moment "
+"nous ne pouvons connaître votre mot de passe Twitter. Pensez-vous que @jack "
+"nous laisserait y avoir accès?"
+
+#: templates/registration/login.html:46
+msgid "Sign in with your username and password"
+msgstr "Se connecter avec son nom d'utilisateur et son mot de passe"
+
+#: templates/registration/login.html:48
+msgid ""
+"Don't hesitate to reset your password if your forgot it (all you need to "
+"remember is the email you used to create your account)."
+msgstr ""
+"Si vous avez oublié votre mot de passe, n'hésitez pas à le réinitialiser "
+"(tout ce dont vous devez vous souvenir est le mail que vous avez utilisé "
+"pour créer votre compte)."
+
+#: templates/registration/login.html:54
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Votre nom d'utilisateur et votre mot de passe ne correspondent à aucun "
+"compte connu. Merci de réessayer."
+
+#: templates/registration/login.html:72
 msgid "Reset your password"
 msgstr "Réinitialiser votre mot de passe"
 
@@ -232,3 +260,11 @@ msgstr "Recherche"
 #: templates/versions/datetimefilter.html:30
 msgid "Clear"
 msgstr "Effacer"
+
+#, fuzzy
+#~| msgid "Login"
+#~ msgid "login"
+#~ msgstr "Se connecter"
+
+#~ msgid "Please login"
+#~ msgstr "Connectez-vous s'il vous plaît"

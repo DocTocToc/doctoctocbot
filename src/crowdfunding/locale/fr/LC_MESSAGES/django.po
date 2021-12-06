@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 02:43+0200\n"
+"POT-Creation-Date: 2021-12-06 13:13+0100\n"
 "PO-Revision-Date: 2021-06-19 01:11+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -153,15 +153,15 @@ msgstr "Régler"
 msgid "Thank you for investing in your independent professional tools"
 msgstr "Merci d'investir dans vos outils professionnels indépendants"
 
-#: crowdfunding/views.py:437 crowdfunding/views.py:461
+#: crowdfunding/views.py:449 crowdfunding/views.py:473
 msgid "Pay with card"
 msgstr "Payez par carte"
 
-#: crowdfunding/views.py:496
+#: crowdfunding/views.py:508
 msgid "UUID verification error."
 msgstr "Erreur de vérification de l'UUID."
 
-#: crowdfunding/views.py:533
+#: crowdfunding/views.py:545
 msgid ""
 "You payment card was not authorized.Pleace try again with this card or "
 "another. {}"
@@ -169,24 +169,24 @@ msgstr ""
 "Votre carte de paiement n'a pas été autorisée. Merci de recommencer avec "
 "cette carte ou une autre. {}"
 
-#: crowdfunding/views.py:542
+#: crowdfunding/views.py:554
 msgid "Too many requests made to the API too quickly"
 msgstr ""
 
-#: crowdfunding/views.py:550
+#: crowdfunding/views.py:562
 msgid "Invalid parameters were supplied to Stripe's API"
 msgstr ""
 
-#: crowdfunding/views.py:559
+#: crowdfunding/views.py:571
 msgid ""
 "Authentication with Stripe's API failed(maybe you changed API keys recently)"
 msgstr ""
 
-#: crowdfunding/views.py:569
+#: crowdfunding/views.py:581
 msgid "Network communication with Stripe failed"
 msgstr ""
 
-#: crowdfunding/views.py:578
+#: crowdfunding/views.py:590
 msgid ""
 "An error occured during the processing of your payment.We will look into the "
 "matter and contact you as soon as possible."
@@ -194,7 +194,7 @@ msgstr ""
 "Une erreur est survenue pendant le traitement de la transaction. Votre carte "
 "de sera pas débitée. Merci d'essayer à nouveau."
 
-#: crowdfunding/views.py:590
+#: crowdfunding/views.py:602
 msgid ""
 "Ann error occurred during the processing of your payment.You will not be "
 "charged. Please try again."

@@ -22,14 +22,14 @@
   <div class="card-body">
     <h5 class="card-title">{% trans 'Sign in with Twitter' %}</h5>
       <p class="card-text">
-        {% blocktranslate %}
-        'Sign in with Twitter' is simple and secure.
-        After you click the button, you will land on a twitter.com page.
-        There, you will be asked to enter your Twitter credentials.
-        Then, you will be redirected here.
-        We CANNOT know your Twitter password.
-        Do you think @jack would let us have it?
-        {% endblocktranslate %}
+{% blocktranslate trimmed %}
+'Sign in with Twitter' is simple and secure.
+After you click the button, you will land on a twitter.com page.
+There, you will be asked to enter your Twitter credentials.
+Then, you will be redirected here.
+We CANNOT know your Twitter password.
+Do you think @jack would let us have it?
+{% endblocktranslate %}
       </p>
     <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}">
     <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
@@ -45,7 +45,7 @@
   <div class="card-body">
     <h5 class="card-title">{% trans 'Sign in with your username and password' %}</h5>
     <p class="card-text">
-    {% blocktranslate %}
+    {% blocktranslate trimmed %}
     Don't hesitate to reset your password if your forgot it
     (all you need to remember is the email you used to create your account).
     {% endblocktranslate %}
@@ -63,7 +63,7 @@
   <td>{{ form.password|as_crispy_field }}</td>
 </div>
 <div class="form-group">
-  <button type="submit" class="btn btn-primary">{% trans "login" %}</button>
+  <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
   <input type="hidden" name="next" value="{{ next }}" />
 </div>
 </form>

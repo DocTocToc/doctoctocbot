@@ -1,5 +1,6 @@
 import time
 import datetime
+import random
 from typing import Optional
 from celery import shared_task
 from django.contrib.auth import get_user_model 
@@ -386,3 +387,40 @@ def handle_self_categorize(community_id: int, max: Optional[int] = None):
     )[:max]:
         self_categorize(su, community)
         time.sleep(backoff)
+
+@shared_task
+def handle_self_moderation(community: str, count: Optional[int] = None):
+    if not count:
+        return
+    try:
+        community = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    bot: SocialUser = community.account.socialuser
+    if not bot:
+        return
+    try:
+        follower = Follower.objects.filter(user=bot).latest()
+    except Follower.DoesNotExist:
+        return
+    exclude_user_id = Queue.objects.current.filter(
+        community=community,
+        type=Queue.SELF,
+    ).values_list('user_id', flat=True)
+    no_cat_su = list(SocialUser.objects
+        .filter(
+            category=None,
+            user_id__in=follower.id_list
+        )
+        .exclude(
+            user_id__in=exclude_user_id
+        )
+    )
+    if not no_cat_su:
+        return
+    k = min(len(no_cat_su), count)
+    su_candidates = random.sample(no_cat_su, k)
+    if not su_candidates:
+        return
+    for su in su_candidates:
+        self_categorize(su, community)

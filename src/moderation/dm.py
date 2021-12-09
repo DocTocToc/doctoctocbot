@@ -27,6 +27,7 @@ from community.helpers import (
     activate_language,
 )
 from conversation.utils import screen_name
+from messenger.format import FormatManager
 
 logger = logging.getLogger(__name__)
 
@@ -162,23 +163,32 @@ class ModerationProcessor:
 
     def process_moderation_optin(self):
         queue_type = self.moderation.queue.type
+        name=f'twitter_dm_moderation_{queue_type}'
         try:
             option = Option.objects.get(
-                name=f'twitter_dm_moderation_{queue_type}'
+                name=name
             )
         except Option.DoesNotExist:
+            logger.error(f"Option {name} does not exist")
             return        
         try:
             mod_optin = ModerationOptIn.objects.get(
                 option=option,
-                type=type
+                type=queue_type
             )
         except ModerationOptIn.DoesNotExist:
+            logger.error(
+                f"ModerationOptIn with {option=} {queue_type=} does not exist"
+            )
             return
-        optin = OptIn.objects.current.filter(
-            option=option,
-            socialuser=self.moderator
-        ).first()
+        try:
+            optin = OptIn.objects.current.filter(
+                option=option,
+                socialuser=self.moderator
+            ).first()
+            logger.debug(optin)
+        except OptIn.DoesNotExist:
+            optin = None
         if optin:
             optin = optin.clone()
             optin.authorize=mod_optin.authorize
@@ -262,6 +272,10 @@ class DirectMessageProcessor:
   
 def sendmoderationdm(mod_mi):
     logger.debug(f'inside sendmoderationdm({mod_mi=})')
+    try:
+        su = SocialUser.objects.get(user_id=mod_mi.queue.user_id)
+    except SocialUser.DoesNotExist:
+        return
     bot_screen_name = get_community_bot_screen_name(
         mod_mi.queue.community
     )
@@ -293,11 +307,7 @@ def sendmoderationdm(mod_mi):
             )
         )
     else:
-        try:
-            su = SocialUser.objects.get(user_id=mod_mi.queue.user_id)
-            sn = su.screen_name_tag()
-        except SocialUser.DoesNotExist:
-            return
+        sn = su.screen_name_tag()
         status_str = ""
     if not sn:
         return
@@ -308,7 +318,13 @@ def sendmoderationdm(mod_mi):
                 f'Fill out twitter_self_moderation_dm field for {community=}'
             )
             return
-        dm_txt = self_mod_msg.format(screen_name=sn)
+        fm = FormatManager(
+            template=self_mod_msg,
+            recipient=su,
+            sender=mod_mi.queue.community.account.socialuser,
+            community=mod_mi.queue.community,
+        )
+        dm_txt = fm.format()
     else:
         dm_txt = (
             _(
@@ -511,7 +527,7 @@ def quickreply(moderation_instance):
     for cm in cat_meta:
         opt = dict(option)
         opt["label"] = cm.label
-        opt["metadata"] = f"moderation{moderation_instance}{cm.name}"
+        opt["metadata"] = f"moderation{moderation_instance.id}{cm.name}"
         opt["description"] = cm.description
         options.append(opt)
     qr["options"] = options

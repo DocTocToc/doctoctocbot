@@ -90,7 +90,7 @@ def addtoqueue(user_id, status_id, community_name):
     except Community.DoesNotExist as e:
         logger.error(e)
         return
-    # Is there already a queue for this user and this community?
+    # Is there already a Moderation for this user and this community?
     mod_qs = Moderation.objects.current.filter(
         queue__user_id = user_id,
         queue__community = community,

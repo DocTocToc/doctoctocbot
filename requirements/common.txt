@@ -72,3 +72,4 @@ git+https://github.com/DocTocToc/django-geojson.git@31cf507e504d4b7aec99b28d4c50
 matrix-nio[e2e]
 django-webpush
 fontawesomefree
+humanize

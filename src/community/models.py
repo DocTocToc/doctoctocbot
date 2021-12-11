@@ -97,6 +97,13 @@ class Community(models.Model):
         help_text = "Duration before moderation sent to other moderator " \
                     "Format: [DD] [HH:[MM:]]ss[.uuuuuu]"
     )
+    pending_self_moderation_period = models.DurationField(
+        null = True,
+        blank = True,
+        default = timedelta,
+        help_text = "Duration before self moderation sent again " \
+                    "Format: [DD] [HH:[MM:]]ss[.uuuuuu]"
+    )
     moderator_moderation_period = models.DurationField(
         null=True,
         blank=True,

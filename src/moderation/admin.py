@@ -499,7 +499,7 @@ class ProfileAdmin(admin.ModelAdmin):
     socialuser_link.short_description = 'SocialUser'
 
 
-class ModerationAdmin(admin.ModelAdmin):
+class ModerationAdmin(VersionedAdmin):
     list_display = (
         'state',
         'queue_link',
@@ -512,8 +512,6 @@ class ModerationAdmin(admin.ModelAdmin):
         'tweet_link',
         'status_object',
         'community',
-        'version_start_date',
-        'version_end_date',
     )
     fields = (
         'state',
@@ -548,6 +546,9 @@ class ModerationAdmin(admin.ModelAdmin):
     search_fields = (
         'moderator__profile__json__screen_name',
     )
+    list_display_show_identity = True
+    list_display_show_end_date = True
+    list_display_show_start_date = True
 
     def get_ordering(self, request):
         #return ['-version_start_date', ] + self.ordering

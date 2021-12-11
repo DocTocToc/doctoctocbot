@@ -39,6 +39,7 @@ from moderation.profile import (
 from community.helpers import get_community_bot_socialuser
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
+from moderation.moderate import self_mod
 
 logger = get_task_logger(__name__)
 
@@ -163,6 +164,9 @@ def handle_pending_moderations():
         # don't reallocate queues with type SENIOR or DEVELOPER
         # TODO: recheck followers and send moderation to verified follower
         if queue.type in [Queue.SENIOR, Queue.DEVELOPER]:
+            continue
+        if queue.type == Queue.SELF:
+            self_mod(queue)
             continue
         try:
             community = queue.community

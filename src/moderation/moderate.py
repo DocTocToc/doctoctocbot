@@ -33,6 +33,7 @@ from constance import config
 from moderation.profile import screen_name
 from common.twitter import get_url_from_user_id
 from django.utils.translation import gettext as _
+from humanize.time import precisedelta
 
 logger = logging.getLogger(__name__)
 
@@ -277,7 +278,10 @@ def create_moderation_instance(userid: int, queue: Queue):
     except SocialUser.DoesNotExist:
         return
     community = queue.community
-    interval = community.moderator_moderation_period
+    if queue.type == Queue.SELF:
+        interval = community.pending_self_moderation_period
+    else:
+        interval = community.moderator_moderation_period
     try:
         moderation = Moderation.objects.filter(
             moderator=moderator_mi,
@@ -289,7 +293,7 @@ def create_moderation_instance(userid: int, queue: Queue):
         if (timezone.now() - moderation.version_start_date) < interval:
             logger.warn(
                 f'Moderation for same queue / moderator created less than '
-                f'{interval} ago.'
+                f'{precisedelta(interval)} ago.'
             )
             return
     try:
@@ -299,7 +303,7 @@ def create_moderation_instance(userid: int, queue: Queue):
         )
     except DatabaseError as e:
         logger.error(f"Error during creation of initial moderation:\n{e}")
-    
+
 def verified_follower(su: SocialUser, community) -> List[int]:
     try:
         bot_screen_name = community.account.username

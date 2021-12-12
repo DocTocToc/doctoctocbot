@@ -75,7 +75,7 @@ def retweeted_category_values_list(context):
     rt_qs = Retweet.objects.filter(
         community=community,
         retweet=True
-    )
+    ).distinct('category')
     lst = [rt.category.label for rt in rt_qs]
     return lst
     

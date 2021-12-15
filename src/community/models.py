@@ -149,10 +149,11 @@ class Community(models.Model):
         blank=True,
         help_text='Categories authorized to follow the account if protected'
     )
-    follow_request_backoff = models.PositiveIntegerField(
-        default = 1,
+    follow_request_backoff = models.DurationField(
+        null=True,
+        blank=True,
         help_text = (
-            "Period in hour during which a follow request will be "
+            "Period during which a follow request will be "
             "automatically declined if the previous one was declined."
         )
     )

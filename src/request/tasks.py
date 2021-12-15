@@ -50,7 +50,7 @@ def create_queue(community, uid, bot_screen_name):
             version_end_date__isnull=True
         )
         logger.debug(f'{qs=} | {bool(qs)=}')
-        if qs:
+        if qs.exists():
             logger.debug("Previous identical Queue already exists: {qs}")
             return
         try:
@@ -62,8 +62,11 @@ def create_queue(community, uid, bot_screen_name):
                 state=Queue.PENDING
             )
             logger.debug(f'Queue created: {_q}')
-        except:
-            logger.error(f"Database error during Request Queue creation")
+        except Exception as e:
+            logger.error(
+                "Database error during Request Queue creation\n"
+                f"{e}"
+            )
 
 """ Return True if current pending request queue exists
 """
@@ -111,15 +114,11 @@ def decline_backoff(community, uid):
             None
         )
         latest_dt: datetime = latest_start_dt or latest_end_dt 
-        backoff_hours = community.follow_request_backoff # hours
-        if not backoff_hours:
+        backoff_delta: timedelta = community.follow_request_backoff
+        if not backoff_delta:
             return
-        backoff_seconds = backoff_hours * 60 * 60
-        delta = datetime.now(pytz.utc) - latest_dt
-        delta_seconds = delta.total_seconds()
-        logger.debug(f"{delta_seconds=}")
-
-        if delta_seconds < backoff_seconds:
+        latest_delta = datetime.now(pytz.utc) - latest_dt
+        if latest_delta < backoff_delta:
             return True
 
 """ Return True if we should back-off from creating a new Queue

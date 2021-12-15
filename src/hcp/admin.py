@@ -41,19 +41,25 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
         if db_field.name == "creator":
             creator_ids = []
             try:
-                parent_id = request.resolver_match.kwargs['object_id']
+                hcp_id: int = int(request.resolver_match.kwargs['object_id'])
             except KeyError:
-                parent_id = None
-            if parent_id:
+                pass
+            else:
                 try:
                     creator_ids.extend(
                         list(
                             HealthCareProviderTaxonomy.objects \
-                            .filter(healthcareprovider__id=parent_id) \
+                            .filter(healthcareprovider__id=hcp_id) \
                             .values_list("creator__id", flat=True)
                         )
                     )
                 except TypeError:
+                    pass
+                # append Human id of HealthCareProvider for self moderation
+                try:
+                    hcp = HealthCareProvider.objects.get(id=hcp_id)
+                    creator_ids.append(hcp.human.id)
+                except HealthCareProvider.DoesNotExist:
                     pass
             if request.user.socialuser:
                 creator_ids.extend(

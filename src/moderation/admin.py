@@ -110,7 +110,7 @@ class UserRelationshipInline(admin.TabularInline):
                 parent_id = request.resolver_match.kwargs['object_id']
             except KeyError:
                 parent_id = None
-            if parent_id:
+            else:
                 try:
                     moderator_ids.extend(
                         list(
@@ -121,11 +121,13 @@ class UserRelationshipInline(admin.TabularInline):
                     )
                 except TypeError:
                     pass
-            if request.user.socialuser:
-                moderator_ids.append(request.user.socialuser.id)
-            kwargs["queryset"] = SocialUser.objects.filter(
-                    id__in=moderator_ids
-                )
+                if request.user.socialuser:
+                    moderator_ids.append(request.user.socialuser.id)
+                # append SocialUser id for self moderation
+                moderator_ids.append(parent_id)
+                kwargs["queryset"] = SocialUser.objects.filter(
+                        id__in=moderator_ids
+                    )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

@@ -38,7 +38,7 @@ def get_socialuser_from_user_id(user_id):
 def get_socialuser_from_screen_name(screen_name):
     try:
         return SocialUser.objects.get(
-            profile__json__screen_name=screen_name
+            profile__json__screen_name__iexact=screen_name
         )
     except SocialUser.DoesNotExist:
         return

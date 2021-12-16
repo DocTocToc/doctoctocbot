@@ -42,8 +42,13 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
             creator_ids = []
             try:
                 hcp_id: int = int(request.resolver_match.kwargs['object_id'])
-            except KeyError:
-                pass
+            except (AttributeError, KeyError):
+                try:
+                    human_id: str =request.GET.get('human')
+                except (AttributeError, KeyError):
+                    pass
+                else:
+                    creator_ids.append(int(human_id))
             else:
                 try:
                     creator_ids.extend(

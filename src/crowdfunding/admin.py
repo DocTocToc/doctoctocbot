@@ -44,6 +44,8 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'datetime',
         'public',
         'invoice',
+        'silver_invoice',
+        'silver_invoice_number_tag',
         'invoice_pdf',
     )
     readonly_fields = (
@@ -70,6 +72,14 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
     ]
     ordering = ['-datetime',]
     date_hierarchy = 'datetime'
+
+    def silver_invoice_number_tag(self, obj):
+        try:
+            return obj.silver_invoice.number
+        except:
+            return
+
+    silver_invoice_number_tag.short_description = "Invoice N°"
     
     def socialuser_tag(self, obj):
         su = obj.user.socialuser

@@ -17,6 +17,9 @@ def handle_tweet_investment(
         project_id: Optional[int] = None,
         campaign_id: Optional[int] = None,
     ):
+    #temporarily cancel tweeting about anonymous investments:
+    if not public:
+        return
     if not userid:
         return
     if not project_id or not campaign_id:

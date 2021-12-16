@@ -6,7 +6,7 @@ from silver.models.billing_entities.provider import Provider as SilverProvider
 from silver.models.documents.invoice import Invoice as SilverInvoice
 from crowdfunding.models import ProjectInvestment
 from customer.models import Customer
-from django.db.utils import DatabaseError, IntegrityError
+from django.db import DatabaseError, IntegrityError
 
 import psycopg2
 
@@ -76,39 +76,40 @@ def create_customer_and_draft_invoice(instance):
         except SilverProvider.DoesNotExist:
             return
         #calculate ProjectInvestment cardinality
-        cardinality = project_investment_cardinality(instance)
-        logger.debug(f"{cardinality=}")
-        try:
-            silver_invoice = SilverInvoice.objects.create(
-                customer=silver_customer,
-                provider=silver_provider,
-                number=cardinality,
-            )
-        except psycopg2.Error as e:
-            logger.error(
-                f"Silver invoice with {silver_customer=} {silver_provider=} "
-                f"{cardinality=}  already exists. {e}"
-            )
+        paid_count = ProjectInvestment.objects.filter(paid=True).count()
+        logger.debug(f"{paid_count=}")
+        cardinality = paid_count + 1
+        while(True):
+            logger.debug(f"{cardinality=}")
             try:
-                silver_invoice= SilverInvoice.objects.get(
+                silver_invoice = SilverInvoice.objects.create(
                     customer=silver_customer,
                     provider=silver_provider,
                     number=cardinality,
                 )
-                logger.warn(
-                    f"{e} \n Silver invoice with {silver_customer=} "
-                    f"{silver_provider=} {cardinality=}  already existed: "
-                    f"{silver_invoice=}"
+                break
+            except IntegrityError as e:
+                logger.error(
+                    f"SilverInvoice with {silver_customer=} {silver_provider=} "
+                    f"{cardinality=}:\n{e}"
                 )
-            except SilverInvoice.DoesNotExist:
-                return
+                try:
+                    silver_invoice= SilverInvoice.objects.get(
+                        customer=silver_customer,
+                        provider=silver_provider,
+                        number=cardinality,
+                    )
+                    break
+                    logger.warn(
+                        f"{e} \n Silver invoice with {silver_customer=} "
+                        f"{silver_provider=} {cardinality=}  already existed: "
+                        f"{silver_invoice=}"
+                    )
+                except SilverInvoice.DoesNotExist:
+                    cardinality+=1
         instance.invoice = silver_invoice.id
+        instance.silver_invoice = silver_invoice
         instance.save()
-
-def project_investment_cardinality(project_investment: ProjectInvestment):
-    return ProjectInvestment.objects.filter(
-        paid=True,
-        datetime__lte=project_investment.datetime).count()
 
 def create_draft_silver_customer(customer_reference: str):
     try:

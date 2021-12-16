@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from common.international import currencies
 from django.contrib.sites.models import Site
+from silver.models import Invoice
 
 
 class ProjectManager(models.Manager):
@@ -79,7 +80,15 @@ class ProjectInvestment(models.Model):
         null=True,
         default=None,
         unique=True,
-        help_text="Id of the invoice in the billing app."
+        help_text="Id of the invoice in the billing app.",
+        verbose_name="Invoice ID"
+    )
+    silver_invoice = models.ForeignKey(
+        Invoice,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text="ForeignKey to Invoice model of Silver billing app.",
     )
     invoice_pdf = models.BooleanField(default=False)
     payment_intent=models.CharField(max_length=27, blank=True)

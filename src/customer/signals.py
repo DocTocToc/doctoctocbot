@@ -1,18 +1,20 @@
 import logging
 import requests
 import re
-from requests.exceptions import HTTPError
 import json
+from urllib.parse import urlparse
+from requests.exceptions import HTTPError
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from urllib.parse import urlparse
+from django.test import Client
 
 from customer.tasks import handle_create_customer_and_draft_invoice
-from crowdfunding.models import ProjectInvestment
 from customer.models import Customer, Provider, Product
-
 from customer.silver import get_headers, get_api_endpoint
 from customer.silver import create_customer_and_draft_invoice
+from crowdfunding.models import ProjectInvestment
+from silver.models import Customer as SilverCustomer
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,35 @@ def customer_instance_is_complete(instance):
     return is_complete
 
 def create_silver_customer(instance):
+    try:
+        sc= SilverCustomer.create(
+            first_name = instance.first_name,
+            last_name = instance.last_name,
+            #payment_due_days =
+            consolidated_billing = False,
+            customer_reference = str(instance.user.id),
+            #sales_tax_number =
+            sales_tax_percent = 0,
+            #sales_tax_name =
+            #currency =
+            company = instance.company,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            #phone = models.CharField(max_length=32, blank=True, null=True)
+            email = instance.email,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            #extra = 
+        )
+        logger.debug(f'Silver Customer: {sc} creation was successful!')
+    except:
+        pass
+    else:
+        Customer.objects.filter(id=instance.id).update(silver_id=sc.id)
+
+def create_silver_customer_old(instance):
     data = json.dumps(silver_customer_json(instance))
     logger.debug(get_api_endpoint("customers"))
     logger.debug(get_headers())
@@ -76,6 +107,34 @@ def create_silver_customer(instance):
         logger.info(f'Customer {instance.last_name} creation was successful!')
 
 def update_silver_customer(instance):
+    try:
+        SilverCustomer.objects.filter(pk=instance.id).update(
+            first_name = instance.first_name,
+            last_name = instance.last_name,
+            #payment_due_days =
+            #consolidated_billing = False,
+            #customer_reference = str(instance.user.id),
+            #sales_tax_number =
+            #sales_tax_percent = 0,
+            #sales_tax_name =
+            #currency =
+            company = instance.company,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            #phone = models.CharField(max_length=32, blank=True, null=True)
+            email = instance.email,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            #extra = 
+        )
+        sc = SilverCustomer.objects.get(id=instance.id)
+        logger.debug(f'Silver Customer: {sc} update was successful!')
+    except:
+        pass
+
+def update_silver_customer_old(instance):
     silver_customer_id = instance.silver_id
     if not silver_customer_id:
         logger.warn(

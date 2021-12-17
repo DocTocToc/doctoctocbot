@@ -31,7 +31,9 @@ def get_api_endpoint(endpoint: str, _id=None):
         _id = ""
     else:
         _id = f"{_id}/"
-    return f"{get_protocol()}{settings.SILVER_URL}/{endpoint}/{_id}"
+    url = f"{get_protocol()}{settings.SILVER_URL}/{endpoint}/{_id}"
+    logger.debug(url)
+    return url
 
 def create_customer_and_draft_invoice(instance):
     if instance.paid is True and instance.invoice is None:

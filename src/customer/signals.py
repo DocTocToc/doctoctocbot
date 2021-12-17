@@ -186,10 +186,11 @@ def update_silver_provider(instance):
         )
         return        
     data = json.dumps(silver_provider_json(instance))
-
+    url = get_api_endpoint("providers", _id=silver_id)
+    logger.debug(f'{url=}')
     try:
         response = requests.put(
-            url=get_api_endpoint("providers", silver_id),
+            url=url,
             data=data,
             headers=get_headers()
         )

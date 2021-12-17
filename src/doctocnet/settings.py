@@ -227,8 +227,8 @@ INSTALLED_APPS = [
     'choice',
     'webpush',
     'network',
-    'fontawesomefree'
-    'silver'
+    'fontawesomefree',
+    'silver',
 ]
 
 if DEBUG:

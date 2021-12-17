@@ -42,7 +42,7 @@ django-markdownify
 django-bootstrap-modal-forms==2.2.0
 pycountry
 simplejson
-django-silver
+git+https://github.com/DocTocToc/silver.git@restless #FKA django-silver
 celery_once
 python-twitter
 ipaddress

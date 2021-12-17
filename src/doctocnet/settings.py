@@ -202,7 +202,6 @@ INSTALLED_APPS = [
     'bootstrap_modal_forms',
     'dal',
     'dal_select2',
-    'silver',
     'rest_framework.authtoken',
     'request',
     'invite',

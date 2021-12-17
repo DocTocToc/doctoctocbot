@@ -226,9 +226,9 @@ INSTALLED_APPS = [
     'leaflet',
     'choice',
     'webpush',
-#    'awareness',
     'network',
     'fontawesomefree'
+    'silver'
 ]
 
 if DEBUG:

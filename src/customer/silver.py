@@ -13,11 +13,11 @@ import psycopg2
 logger = logging.getLogger(__name__)
 
 def get_protocol():
-    if settings.DEBUG or settings.SILVER_IS_LOCAL:
+    if settings.SILVER_IS_LOCAL:
         return "http://"
     else:
         return "https://"
-    
+
 def get_headers():
     assert settings.SILVER_TOKEN, "To use Silver, you must set SILVER_TOKEN in your .env file."
     authorization = f"Token {settings.SILVER_TOKEN}"

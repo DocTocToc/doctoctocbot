@@ -609,6 +609,7 @@ if DEBUG:
     
 
 # Copper (name of Silver billing app inside our project)
+SILVER_REST = False
 SILVER_EXTRA = config('SILVER_EXTRA', default="") # "Tax exempt due to XXX"
 SILVER_SALES_TAX_PERCENT = config('SILVER_SALES_TAX_PERCENT', cast=int, default=0) # 24
 SILVER_SALES_TAX_NAME = config('SILVER_SALES_TAX_NAME', default="") # "VAT"

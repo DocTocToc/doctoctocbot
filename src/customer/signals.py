@@ -9,13 +9,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.test import Client
 
+from silver.models.billing_entities.customer import Customer as SilverCustomer
+from silver.models.billing_entities.provider import Provider as SilverProvider
 from customer.tasks import handle_create_customer_and_draft_invoice
 from customer.models import Customer, Provider, Product
 from customer.silver import get_headers, get_api_endpoint
 from customer.silver import create_customer_and_draft_invoice
 from crowdfunding.models import ProjectInvestment
-from silver.models import Customer as SilverCustomer
-from silver.models import Provider as SilverProvider
 from silver.models import ProductCode
 
 logger = logging.getLogger(__name__)
@@ -249,7 +249,7 @@ def create_silver_provider(instance):
 
 def update_silver_provider(instance):
     try:
-        SilverProvider.objects.filter(pk=instance.silver_id).update(
+        SilverProvider.objects.filter(id=instance.silver_id).update(
             name = instance.name,
             flow = instance.flow,
             company = instance.company,

@@ -15,6 +15,8 @@ from customer.silver import get_headers, get_api_endpoint
 from customer.silver import create_customer_and_draft_invoice
 from crowdfunding.models import ProjectInvestment
 from silver.models import Customer as SilverCustomer
+from silver.models import Provider as SilverProvider
+from silver.models import ProductCode
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +84,7 @@ def create_silver_customer(instance):
     else:
         Customer.objects.filter(id=instance.id).update(silver_id=sc.id)
 
+"""
 def create_silver_customer_old(instance):
     data = json.dumps(silver_customer_json(instance))
     logger.debug(get_api_endpoint("customers"))
@@ -105,6 +108,7 @@ def create_silver_customer_old(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Customer {instance.last_name} creation was successful!')
+"""
 
 def update_silver_customer(instance):
     try:
@@ -134,6 +138,7 @@ def update_silver_customer(instance):
     except:
         pass
 
+"""
 def update_silver_customer_old(instance):
     silver_customer_id = instance.silver_id
     if not silver_customer_id:
@@ -158,6 +163,7 @@ def update_silver_customer_old(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f"Customer {json.loads(response.text)['id']} update was successful!")
+"""
 
 def silver_customer_json(instance):
     """Create a dictionary containing all the values of the Customer instance"""
@@ -216,6 +222,57 @@ def silver_provider_json(instance):
     return data
 
 def create_silver_provider(instance):
+    try:
+        sp = SilverProvider.objects.create(
+            name = instance.name,
+            flow = instance.flow,
+            company = instance.company,
+            email = instance.email,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            extra = instance.extra,
+            invoice_series = instance.invoice_series,
+            invoice_starting_number = instance.invoice_starting_number,
+            proforma_series = instance.proformar_series,
+            proforma_starting_number = instance.proforma_starting_number,
+            default_document_state = instance.default_document_state,
+            meta = instance.meta,
+        )
+    except:
+        pass
+    else:
+        Provider.objects.filter(id=instance.id).update(silver_id=sp.id)
+
+def update_silver_provider(instance):
+    try:
+        SilverProvider.objects.filter(pk=instance.silver_id).update(
+            name = instance.name,
+            flow = instance.flow,
+            company = instance.company,
+            email = instance.email,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            extra = instance.extra,
+            invoice_series = instance.invoice_series,
+            invoice_starting_number = instance.invoice_starting_number,
+            proforma_series = instance.proformar_series,
+            proforma_starting_number = instance.proforma_starting_number,
+            default_document_state = instance.default_document_state,
+            meta = instance.meta,
+        )
+    except:
+        pass
+
+"""
+def create_silver_provider_old(instance):
     data = json.dumps(silver_provider_json(instance))
     try:
         response = requests.post(
@@ -235,8 +292,10 @@ def create_silver_provider(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Provider {instance.company} creation was successful!')
+"""
 
-def update_silver_provider(instance):
+"""
+def update_silver_provider_old(instance):
     silver_id = instance.silver_id
     if not silver_id:
         logger.warn(
@@ -261,6 +320,7 @@ def update_silver_provider(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Provider {instance.company} was successfully updated!')
+"""
 
 @receiver(post_save, sender=Provider)
 def create_update_silver_provider(sender, instance, created, **kwargs):
@@ -277,7 +337,6 @@ def create_update_silver_provider(sender, instance, created, **kwargs):
         create_silver_provider(instance)
     else:
         update_silver_provider(instance)
-
 
 def provider_instance_is_complete(instance):
     is_complete = (
@@ -296,7 +355,26 @@ def provider_instance_is_complete(instance):
     return is_complete
 
 def create_silver_product_code(instance):
-    data = json.dumps({"value": instance.product_code})
+    try:
+        pc = ProductCode.objects.create(
+            value = instance.product_code
+        )
+    except:
+        pass
+    else:
+        Product.objects.filter(pk=instance.pk).update(silver_id=pc.id)
+
+def update_silver_product_code(instance):
+    try:
+        ProductCode.objects.filter(
+            id = instance.silver_id
+        ).update(value=instance.product_code)
+    except:
+        pass
+
+"""
+def create_silver_product_code_old(instance):
+    data=instance.product_code
     try:
         response = requests.post(
             url=get_api_endpoint("product-codes"),
@@ -323,7 +401,7 @@ def create_silver_product_code(instance):
     else:
         logger.info(f'Product {instance.product_code} creation was successful!')
 
-def update_silver_product_code(instance):
+def update_silver_product_code_old(instance):
     silver_id = instance.silver_id
     if not silver_id:
         logger.warn(
@@ -346,6 +424,7 @@ def update_silver_product_code(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'product_code {instance.product_code} was successfully updated!')
+"""
 
 @receiver(post_save, sender=Product)
 def create_update_silver_product_code(sender, instance, created, **kwargs):

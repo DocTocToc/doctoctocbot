@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from requests.exceptions import HTTPError
 
 from django.db.models.signals import post_save
+from django.db import DatabaseError
 from django.dispatch import receiver
 from django.test import Client
 
@@ -248,6 +249,7 @@ def create_silver_provider(instance):
         Provider.objects.filter(id=instance.id).update(silver_id=sp.id)
 
 def update_silver_provider(instance):
+    logger.debug('*****')
     try:
         SilverProvider.objects.filter(id=instance.silver_id).update(
             name = instance.name,
@@ -263,13 +265,13 @@ def update_silver_provider(instance):
             extra = instance.extra,
             invoice_series = instance.invoice_series,
             invoice_starting_number = instance.invoice_starting_number,
-            proforma_series = instance.proformar_series,
+            proforma_series = instance.proforma_series,
             proforma_starting_number = instance.proforma_starting_number,
             default_document_state = instance.default_document_state,
             meta = instance.meta,
         )
-    except:
-        pass
+    except DatabaseError as e:
+        logger.error(e)
 
 """
 def create_silver_provider_old(instance):

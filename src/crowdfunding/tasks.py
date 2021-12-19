@@ -1,11 +1,14 @@
 import logging
+import random
 from typing import Optional
 from bot.tweepy_api import get_api
 from celery import shared_task
-
+from datetime import datetime
+from django.db import DatabaseError
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from crowdfunding.models import Project, Campaign, ProjectInvestment
+from moderation.models import SocialUser
 from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
@@ -89,3 +92,78 @@ def handle_tweet_investment(
     except AttributeError:
         logger.error(f"{api=}")
         return
+
+@shared_task
+def handle_add_campaign(
+        uuid: str
+    ):
+    """add the correct Campaign field to a ProjectInvestment object.
+    """
+    if not isinstance(uuid, str):
+        logger.error(f'{uuid} is not an instance of str')
+        return
+    try:
+        pi=ProjectInvestment.objects.get(uuid=uuid)
+    except ProjectInvestment.DoesNotExist as e:
+        logger.error(f'ProjectInvestment {uuid} does not exist.\n{e}')
+        return
+    if pi.campaign:
+        logger.debug(
+            f'ProjectInvestment {pi} '
+            f'already has a Campaign field: {pi.campaign}'
+        )
+        return
+    user = pi.user
+    if not user:
+        return
+    social_user: list = []
+    for social_auth in user.social_auth.filter(provider='twitter'):
+        for su in SocialUser.objects.filter(user_id=social_auth.uid):
+            social_user.append(su)
+    if not social_user:
+        su = user.socialuser
+        if su:
+            social_user.append(su)
+    if not social_user:
+        add_campaign_from_project(uuid)
+        return
+    social_user.sort(key=lambda x: x.user_id, reverse=True)
+    try:
+        su = social_user[0]
+    except IndexError:
+        return
+    project_qs = Project.objects.filter(
+        community__membership__id__in=[su.category.values_list('id',flat=True)]
+    )
+    if not project_qs or pi.project in project_qs:
+        add_campaign_from_project(uuid)
+        return
+    else:
+        project=random.choice(project_qs)
+        pi.project = project
+        pi.campaign=get_campaign(pi)
+        try:
+            pi.save()
+        except DatabaseError as e:
+            logger.error(f'{e}')
+
+def get_campaign(pi: ProjectInvestment):
+    return Campaign.objects.filter(
+        project=pi.project,
+        start_datetime__lte=pi.datetime,
+        end_datetime__gte=pi.datetime,
+    ).order_by('id').last()
+
+def add_campaign_from_project(uuid):
+    """add the correct Campaign field to a ProjectInvestment object.
+    """
+    try:
+        pi=ProjectInvestment.objects.get(uuid=uuid)
+    except ProjectInvestment.DoesNotExist as e:
+        logger.error(f'ProjectInvestment {uuid} does not exist.\n{e}')
+        return
+    pi.campaign=get_campaign(pi)
+    try:
+        pi.save()
+    except DatabaseError as e:
+        logger.error(f'{e}')

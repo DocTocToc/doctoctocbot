@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 class ProjectAdmin(admin.ModelAdmin):
     list_display = (
         'name',
+        'community',
         'description',
         'provider',
         'product',
@@ -22,6 +23,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class CampaignAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'project',
         'start_datetime',
         'end_datetime',

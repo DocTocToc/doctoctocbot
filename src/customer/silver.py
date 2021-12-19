@@ -52,6 +52,8 @@ def create_customer_and_draft_invoice(instance):
             silver_customer = create_draft_silver_customer(
                 customer_reference = str(instance.user.id)
             )
+        except SilverCustomer.MultipleObjectsReturned as e:
+            logger.error(f'{e}')
         if not silver_customer:
             return
         # add silver_id to draft customer

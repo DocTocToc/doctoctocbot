@@ -34,14 +34,19 @@ def get_socialuser_from_user_id(user_id):
         return SocialUser.objects.get(user_id=user_id)
     except SocialUser.DoesNotExist:
         return
-    
-def get_socialuser_from_screen_name(screen_name):
+
+def get_socialuser_from_screen_name(screen_name: str):
     try:
         return SocialUser.objects.get(
             profile__json__screen_name__iexact=screen_name
         )
     except SocialUser.DoesNotExist:
         return
+    except SocialUser.MultipleObjectsReturned as e:
+        raise ValueError(
+            f"Exception {e} occurred "
+            f"because of an invalid argument: {screen_name=}"
+        )
 
 def get_socialuser(user):
     if isinstance(user, SocialUser):

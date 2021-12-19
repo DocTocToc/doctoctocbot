@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = 'Create SocialUser object from userids or screen names'
-    
+
     def add_arguments(self, parser):
         parser.add_argument('users', nargs='+', type=str)
         parser.add_argument(
@@ -25,8 +25,8 @@ class Command(BaseCommand):
             help="category name"
         )
         parser.add_argument(
-            "-s",
-            "--screen_name",
+            "-m",
+            "--moderator",
             type=str,
             help="moderator screen_name"
         )
@@ -48,9 +48,73 @@ class Command(BaseCommand):
         except:
             return
 
+    def process_user_id(self, user_id):
+        try:
+            su = SocialUser.objects.get(user_id=user_id)
+            self.stdout.write(
+                self.style.WARNING(
+                    f'SocialUser object with user id {user_id} already exists.'
+                )
+            )
+            if self.categorize:
+                self.create_user_category_relationship(su)
+        except SocialUser.DoesNotExist:
+            return
+
+    def process_screen_name(self, screen_name: str):
+        api = get_api()
+        if not api:
+            self.stdout.write(
+                self.style.ERROR(
+                    f'Could not get functional API.'
+                )
+            )
+            return
+        try:
+            tweepy_user = get_api().get_user(screen_name=screen_name)
+        except TweepError as e:
+            raise CommandError('Tweepy error "%s' % e)
+        except AttributeError as e:
+            logger.error(f"AttributeError: {e}")
+            return
+        user_id=tweepy_user.id
+        self.stdout.write(f"user id: {user_id}")
+        su, created = create_twitter_social_user_and_profile(user_id)
+        if created and su:
+            su.refresh_from_db()
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Done creating SocialUser object {su}.'
+                )
+            )
+        elif su:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'SocialUser object {su} already exists. '
+                    'Its profile was updated.'
+                )
+            )
+            current_screen_name = su.screen_name_tag()
+            if not (current_screen_name == screen_name):
+                self.stdout.write(
+                    self.style.WARNING(
+                        f'screen_name of SocialUser {su} has changed!\n'
+                        f'old: "{screen_name}" -> new: "{current_screen_name}"'
+                    )
+                )
+        else:
+            self.stdout.write(
+                self.style.ERROR(
+                    f'Error, no SocialUser was created.'
+                )
+            )
+            return
+        if su and self.categorize:
+            self.create_user_category_relationship(su)
+
     def handle(self, *args, **options):
         users: List =  options['users']
-        screen_name: str =  options['screen_name']
+        mod_screen_name: str =  options['moderator']
         category: str =  options['category']
         community: str =  options['community']
         try:
@@ -63,9 +127,20 @@ class Command(BaseCommand):
             logger.debug(self.community)
         except Community.DoesNotExist:
             self.community=None
-        self.moderator=get_socialuser_from_screen_name(screen_name)
-        logger.debug(self.moderator)
-        categorize: bool = self.category and self.moderator and self.community
+        if mod_screen_name:
+            self.moderator = get_socialuser_from_screen_name(mod_screen_name)
+            if not self.moderator:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f'SocialUser {mod_screen_name=} does not exist.'
+                    )
+                )
+                return
+        self.categorize: bool = (
+            self.category
+            and self.moderator
+            and self.community
+        )
         if not users:
             self.stdout.write(
                 self.style.ERROR(
@@ -74,61 +149,8 @@ class Command(BaseCommand):
             )
             return
         for user in users:
-            user_id = None
-            screen_name = None
             try:
                 user_id=int(user)
-                try:
-                    su = SocialUser.objects.get(user_id=user_id)
-                    self.stdout.write(
-                        self.style.ERROR(
-                            f'SocialUser object with user id {user_id} '
-                            'already exists.'
-                        )
-                    )
-                    if categorize:
-                        self.create_user_category_relationship(su)
-                    continue
-                except SocialUser.DoesNotExist:
-                    pass
+                self.process_user_id(user_id)
             except ValueError:
-                screen_name = user
-            if screen_name:
-                api = get_api()
-                if not api:
-                    self.stdout.write(
-                        self.style.ERROR(
-                            f'Could not get functional API.'
-                        )
-                    )
-                    return
-                try:
-                    tweepy_user = get_api().get_user(screen_name=screen_name)
-                except TweepError as e:
-                    raise CommandError('Tweepy error "%s' % e)
-                except AttributeError as e:
-                    logger.error(f"AttributeError: {e}")
-                    return
-                user_id=tweepy_user.id
-                self.stdout.write(f"user id: {user_id}")
-            su, created = create_twitter_social_user_and_profile(user_id)
-            if created and su:
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'Done creating SocialUser object {su}.'
-                    )
-                )
-            elif su:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f'SocialUser object {su} already exists.'
-                    )
-                )
-            else:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f'Error, no new user was created.'
-                    )
-                )
-            if su:
-                self.create_user_category_relationship(su)
+                self.process_screen_name(user)

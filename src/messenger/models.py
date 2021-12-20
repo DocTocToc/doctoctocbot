@@ -29,6 +29,37 @@ def get_backoff():
     return config.messenger__models__backoff_default
 
 
+class MessengerCrowdfunding(models.Model):
+    """Through model between messenger.Campaign and crowdfunding.Campaign
+    """
+    messenger_campaign = models.ForeignKey(
+        "messenger.Campaign",
+        on_delete=models.PROTECT,
+    )
+    crowdfunding_campaign = models.ForeignKey(
+        "crowdfunding.Campaign",
+        on_delete=models.PROTECT,
+    )
+    toggle = models.BooleanField(
+        null=True,
+        help_text=(
+            "When set to True, message will be sent to users who participated "
+            "to this crowdfunding campaign. When set to False, message will "
+            "not be sent to users who participated to this crowdfunding "
+            "campaign."
+        )
+    )
+
+    def __str__(self):
+        return (
+            f'MessengerCrowdfunding {self.pk}. '
+            f'{self.messenger_campaign.name} - '
+            f'{self.crowdfunding_campaign.project.name} '
+            f'({self.crowdfunding_campaign.start_datetime.date().isoformat()}-'
+            f'{self.crowdfunding_campaign.end_datetime.date().isoformat()})'
+        )
+
+
 class Campaign(models.Model):
     name = models.CharField(
         max_length=255,
@@ -55,6 +86,11 @@ class Campaign(models.Model):
     crowdfunding_campaign = models.ManyToManyField(
         'crowdfunding.Campaign',
         blank=True,
+    )
+    crowdfunding = models.ManyToManyField(
+        'crowdfunding.Campaign',
+        through='MessengerCrowdfunding',
+        related_name="messenger_campaigns",
     )
     retweet_range = IntegerRangeField(
         blank=True,

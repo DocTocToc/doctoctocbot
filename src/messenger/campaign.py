@@ -78,9 +78,8 @@ class CampaignManager:
             qs = self.filter_category(qs)
             logger.debug(f'restrict_by_category: {qs=} count={qs.count()=}')
         logger.debug(f'{self.campaign.restrict_by_crowdfunding=}')
-        if self.campaign.restrict_by_crowdfunding is not None:
-            qs = self.filter_crowdfunding(qs)
-            logger.debug(f'restrict_by_crowdfunding: {qs=} count={qs.count()=}')
+        qs = self.filter_crowdfunding(qs)
+        logger.debug(f'restrict_by_crowdfunding: {qs=} count={qs.count()=}')
         logger.debug(f'{self.campaign.retweet_range=}')
         if self.campaign.retweet_range:
             qs = self.filter_retweet_range(qs)
@@ -101,9 +100,11 @@ class CampaignManager:
             qs = qs.exclude(id__in=ids)
         return qs
 
-    def filter_crowdfunding(self, qs):
+    def process_filter_crowdfunding(self, qs, toggle: bool):
         ids = []
-        for cc in self.campaign.crowdfunding_campaign.all():
+        for cc in self.campaign.crowdfunding.filter(
+            messengercrowdfunding__toggle=toggle
+        ):
             _su = ProjectInvestment.objects.filter(
                 paid=True,
                 datetime__gte=cc.start_datetime,
@@ -115,7 +116,7 @@ class CampaignManager:
             )
         # remove None items
         ids = list(filter(None, ids))
-        if self.campaign.restrict_by_crowdfunding:
+        if toggle:
             logger.debug("filter")
             qs = qs.filter(id__in=ids)
         else:
@@ -123,15 +124,22 @@ class CampaignManager:
             qs = qs.filter(~Q(id__in=ids))
         return qs
 
+    def filter_crowdfunding(self, qs):
+        if not self.campaign.crowdfunding.all():
+            return qs
+        for toggle in [True, False]:
+            qs = self.process_filter_crowdfunding(qs, toggle)
+        return qs
+
     def filter_retweet_range(self, qs):
-        range = self.campaign.retweet_range
+        rt_range = self.campaign.retweet_range
         filtered_su_ids = []
         #su_ids = qs.values_list("id", flat=True)
         bot_su = self.campaign.account
         tweetdj_rt_by_bot_qs = Tweetdj.objects.filter(retweeted_by=bot_su)
         for su in qs:
             count = tweetdj_rt_by_bot_qs.filter(socialuser=su).count()
-            if count in range:
+            if count in rt_range:
                 filtered_su_ids.append(su.id)
         qs = qs.filter(id__in=filtered_su_ids)
         return qs

@@ -4,7 +4,8 @@ from messenger.models import (
     Message,
     Campaign,
     Receipt,
-    CampaignMessage
+    CampaignMessage,
+    MessengerCrowdfunding,
 )
 from constance import config
 from django.db.models import Count
@@ -15,8 +16,16 @@ class CampaignMessageInline(admin.TabularInline):
     extra = 1
 
 
+class MessengerCrowdfundingInline(admin.TabularInline):
+    model = MessengerCrowdfunding
+    extra = 1
+
+
 class CampaignAdmin(admin.ModelAdmin):
-    inlines = (CampaignMessageInline,)
+    inlines = (
+        CampaignMessageInline,
+        MessengerCrowdfundingInline,
+    )
     raw_id_fields = ('account', 'recipients')
     list_display  = (
         'name',

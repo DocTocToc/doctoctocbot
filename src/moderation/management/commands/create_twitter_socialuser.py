@@ -94,12 +94,14 @@ class Command(BaseCommand):
                     'Its profile was updated.'
                 )
             )
-            current_screen_name = su.screen_name_tag()
-            if not (current_screen_name == screen_name):
+            old_s_n = su.screen_name_tag()
+            su.refresh_from_db()
+            current_s_n = su.screen_name_tag()
+            if not (current_s_n == old_s_n):
                 self.stdout.write(
                     self.style.WARNING(
                         f'screen_name of SocialUser {su} has changed!\n'
-                        f'old: "{screen_name}" -> new: "{current_screen_name}"'
+                        f'old: "{old_s_n}" -> new: "{current_s_n}"'
                     )
                 )
         else:

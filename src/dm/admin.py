@@ -11,6 +11,7 @@ from moderation.admin_tags import (
     admin_tag_social_user_img,
     admin_tag_screen_name_link
 )
+from django.utils.safestring import mark_safe
 from constance import config
 
 class ToAccount(admin.SimpleListFilter):
@@ -91,6 +92,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     list_per_page = config.dm__admin__direct_message_list_per_page
     list_display = (
         'id_tag',
+        'dm_link_tag',
         'from_img_tag',
         'from_screen_name_tag',
         'to_img_tag',
@@ -102,6 +104,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     )
     fields = (
         'id',
+        'dm_link_tag',
         'created_timestamp',
         'datetime_str',
         'from_img_tag',
@@ -117,6 +120,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     )
     readonly_fields = (
         'id',
+        'dm_link_tag',
         'from_img_tag',
         'from_screen_name_tag',
         'sender_id',
@@ -204,5 +208,15 @@ class DirectMessageAdmin(admin.ModelAdmin):
         return '\N{ENVELOPE}'
         
     id_tag.short_description = "ID"
+
+    def dm_link_tag(self, obj):
+        text = '\N{BIRD}'
+        href = (
+            f"https://twitter.com/messages/{obj.recipient_id}-{obj.sender_id}"
+        )
+        return mark_safe(
+            f'<a href="{href}">{text}</a>'
+        )
+    dm_link_tag.short_description = "DM"
 
 admin.site.register(DirectMessage, DirectMessageAdmin)

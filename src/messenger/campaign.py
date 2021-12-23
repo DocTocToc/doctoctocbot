@@ -23,8 +23,9 @@ logger = logging.getLogger(__name__)
 
 
 class CampaignManager:
-    def __init__(self, campaign: Campaign):
+    def __init__(self, campaign: Campaign, dry_run: bool = False):
         self.campaign = campaign
+        self.dry_run = dry_run
         self.current_limit = self.set_current_limit()
 
     def set_current_limit(self):
@@ -56,16 +57,19 @@ class CampaignManager:
             relationship="followers",    
         )
         recipient_qs = self.get_recipients()
-        logger.debug(f'{recipient_qs=}')
+        logger.debug(f'{recipient_qs=} count={recipient_qs.count()}')
         ThroughModel = Campaign.recipients.through
         ThroughModel.objects.bulk_create(
             [ThroughModel(socialuser_id=su.id, campaign_id=self.campaign.id) for su in recipient_qs],
             ignore_conflicts=True
         )
         self.campaign.refresh_from_db()
-        logger.debug(f'{self.campaign.recipients.all()=}')
-        
-        self.send()
+        logger.debug(
+            f'{self.campaign.recipients.all()=}'
+            f'{self.campaign.recipients.all().count()=}'    
+        )
+        if not self.dry_run:
+            self.send()
 
     def get_recipients(self):
         bot_su = self.campaign.account
@@ -101,7 +105,6 @@ class CampaignManager:
         return qs
 
     def process_filter_crowdfunding(self, qs, toggle: bool):
-        ids = []
         for cc in self.campaign.crowdfunding.filter(
             messengercrowdfunding__toggle=toggle
         ):
@@ -111,17 +114,15 @@ class CampaignManager:
                 datetime__lte=cc.end_datetime,
                 project=cc.project
             ).values_list("user__socialuser__id", flat=True)
-            ids.extend(
-                list(_su)
-            )
-        # remove None items
-        ids = list(filter(None, ids))
-        if toggle:
-            logger.debug("filter")
-            qs = qs.filter(id__in=ids)
-        else:
-            logger.debug("exclude")
-            qs = qs.filter(~Q(id__in=ids))
+            ids=list(_su)
+            # remove None items
+            ids = list(filter(None, ids))
+            if toggle:
+                logger.debug("filter")
+                qs = qs.filter(id__in=ids)
+            else:
+                logger.debug("exclude")
+                qs = qs.filter(~Q(id__in=ids))
         return qs
 
     def filter_crowdfunding(self, qs):

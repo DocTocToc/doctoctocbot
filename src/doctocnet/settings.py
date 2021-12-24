@@ -291,7 +291,6 @@ WSGI_APPLICATION = 'doctocnet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('DATABASE_NAME', default='postgres'),
         'USER': config('DATABASE_USER', default='postgres'),
         'PASSWORD': config('DATABASE_PASSWORD', default=''),
@@ -520,6 +519,7 @@ STRIPE_WEBHOOK_SECRET = config(
     default="whsec_REDACTED"
 )
 
+EMAIL_BACKEND=config('EMAIL_BACKEND')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
@@ -529,6 +529,7 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', default=30, cast=int)
 SERVER_EMAIL = config('SERVER_EMAIL', default='noreply@example.com')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@example.com')
+
 ADMIN_FIRST_NAME = config('ADMIN_FIRST_NAME', default='admin')
 ADMIN_LAST_NAME = config('ADMIN_LAST_NAME', default='admin')
 ADMIN_NAME = " ".join([ADMIN_FIRST_NAME, ADMIN_LAST_NAME])
@@ -537,7 +538,6 @@ ADMINS=[
 (ADMIN_NAME, ADMIN_EMAIL_ADDRESS),
 ]
 MANAGERS=ADMINS
-EMAIL_BACKEND=config('EMAIL_BACKEND')
 
 # investment: this setting was used before community feature
 #PROJECT_NAME = 'doctoctocbot'

@@ -229,6 +229,7 @@ INSTALLED_APPS = [
     'network',
     'fontawesomefree',
     'silver',
+    'textareacounter',
 ]
 
 if DEBUG:
@@ -832,6 +833,14 @@ CONSTANCE_CONFIG = {
     "moderation__self_categorize__backoff": (
         90,
         "backoff period between 2 self moderation DM in days"
+    ),
+    "messenger_status_max_chars": (
+        240,
+        "maximum number of characters for the variable part of the status"    
+    ),
+    "messenger_status_screen_name_delta_days": (
+        7,
+        "days after which latest recorded screen_name is considered stale"    
     ),
 }
 

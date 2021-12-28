@@ -1,8 +1,97 @@
+import logging
 from django.db import models
 from django.contrib.postgres.fields import IntegerRangeField
 from moderation.models import SocialUser, Category
 from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
 from constance import config
+
+logger = logging.getLogger(__name__)
+
+def validate_status(value):
+    try:
+        max_chars = config.messenger_status_max_chars
+    except:
+        return
+    logger.debug(f'{value=} {type(value)=}')
+    if len(value) > max_chars:
+        raise ValidationError(
+            _(
+                'This text field contains %(current_chars)s characters.'
+                'The maximum number of characters allowed is %(max_chars)s.'
+            ),
+            params={
+                'current_chars': str(len(value)),
+                'max_chars': max_chars,
+            },
+        )
+
+
+class Status(models.Model):
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    content = models.TextField(
+        validators=[validate_status]
+    )
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Status {self.name} ({self.created})"
+
+    
+    class Meta:
+        verbose_name_plural = "Statuses"
+
+
+class StatusLog(models.Model):
+    campaign = models.ForeignKey(
+        'messenger.Campaign',
+        verbose_name    = _('Campaign'),
+        help_text           = _('Campaign linked to this log.'),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    status = models.ForeignKey(
+        'messenger.Status',
+        verbose_name    = _('Status'),
+        help_text           = _('Status linked to this log.'),
+        related_name = "log",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        SocialUser,
+        verbose_name    = _('User'),
+        help_text           = _('Status is a reply to this user'),
+        on_delete=models.CASCADE,
+    )
+    statusid = models.BigIntegerField(
+        verbose_name = _('Status id'),
+        help_text = _('Status id of the reply.'),
+        null=True,
+        blank=True,
+        default=None,
+    )
+    error = models.TextField(
+        verbose_name = _('Error message'),
+        help_text = _('Error message recorded if the status was not created.'), 
+    )
+    created =  models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        verbose_name = _(u"StatusLog")
+        verbose_name_plural = _("StatusLogs")
+
+    def __str__(self):
+        return (
+            f"Log for campaign {self.campaign} and user {self.user} "
+            f"{self.error}"
+        )
+
 
 class Message(models.Model):
     name = models.CharField(
@@ -116,6 +205,32 @@ class Campaign(models.Model):
         default = get_backoff,
         help_text = "period between 2 API message_create events in seconds"
     )
+    active = models.BooleanField(
+        default=True,
+    )
+    start = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    end = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    send_status = models.BooleanField(
+        null=True,
+        blank=True,
+    )
+    status_delay = models.DurationField(
+        null=True,
+        blank=True
+    )
+    status = models.ForeignKey(
+        'messenger.Status',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+
 
     class Meta:
         verbose_name = _("Campaign")

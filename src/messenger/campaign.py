@@ -9,15 +9,17 @@ from tweepy import TweepError
 
 from django.db.models import Q
 from django.utils.formats import date_format
+from django.utils import timezone
 from community.helpers import activate_language
 
 from dm.models import DirectMessage
 from bot.tweepy_api import get_api
 from moderation.social import update_social_ids
-from messenger.models import Campaign, Receipt, Message
+from messenger.models import Campaign, Receipt, Message, StatusLog
 from moderation.models import SocialUser, Follower
 from crowdfunding.models import ProjectInvestment
 from conversation.models import Tweetdj
+from moderation.profile import recent_twitter_screen_name
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ class CampaignManager:
         self.campaign = campaign
         self.dry_run = dry_run
         self.current_limit = self.set_current_limit()
+        self.status_current_limit = self.set_current_limit()
 
     def set_current_limit(self):
         try:
@@ -41,12 +44,38 @@ class CampaignManager:
             backend=True,
         )
 
+    def datetime_ok(self):
+        start = self.campaign.start
+        end = self.campaign.end
+        if not start and not end:
+            return True
+        now = timezone.now()
+        if start and not end:
+            return start <= now
+        elif end and not start:
+            return now <= end
+        else:
+            return (
+                self.campaign.start < now
+                and self.campaign.end > now
+            )
+
     def start(self):
         logger.debug(f'{self.campaign=}')
         bot_su = self.campaign.account
         if not bot_su:
             logger.debug(
                 f"No account set for campaign {self.campaign.name}, aborting."
+            )
+            return
+        if not self.campaign.active:
+            logger.warn(
+                f"{self.campaign.name} is not active."
+            )
+            return
+        if not self.datetime_ok():
+            logger.warn(
+                f"{self.campaign.name} is not current."
             )
             return
         bot_screen_name = bot_su.screen_name_tag()
@@ -70,6 +99,8 @@ class CampaignManager:
         )
         if not self.dry_run:
             self.send()
+            if self.campaign.send_status:
+                self.send_status()
 
     def get_recipients(self):
         bot_su = self.campaign.account
@@ -165,6 +196,26 @@ class CampaignManager:
                     self.current_limit-=1
                 elif result is False:
                     return
+
+    def send_status(self):
+        if not self.campaign.status:
+            return
+        api = self.get_api()
+        if not api:
+            return
+        for recipient in self.campaign.recipients.all():
+            if self.status_current_limit <= 0:
+                return
+            status_manager = StatusManager(
+                campaign=self.campaign,
+                recipient=recipient,
+                api=api
+            )
+            result = status_manager.update()
+            if result is True:
+                self.current_limit-=1
+            elif result is False:
+                return           
 
 
 class MessageManager:
@@ -300,3 +351,107 @@ class MessageManager:
         if not duration:
             return
         time.sleep(duration)
+
+
+class StatusManager:
+    def __init__(
+            self,
+            campaign: Campaign,
+            recipient: SocialUser,
+            api
+    ):
+        self.campaign = campaign
+        self.status = campaign.status
+        self.recipient = recipient
+        self.sender: SocialUser = self.campaign.account
+        self.api = api
+
+    def screen_name(self):
+        delta = datetime.timedelta(
+            days=config.messenger_status_screen_name_delta_days
+        )
+        return recent_twitter_screen_name(
+            self.recipient.user_id,
+            self.sender.user_id,
+            delta
+        )
+
+    def dm_url(self):
+        return (
+            f'https://twitter.com/messages/'
+            f'{self.sender.user_id}-{self.recipient.user_id}'
+        )
+
+    def dm_dl(self):
+        return (
+            'https://twitter.com/messages/compose'
+            f'?recipient_id={self.sender.user_id}'
+        )
+
+    def status_exists(self):
+        return StatusLog.objects.filter(
+            campaign = self.campaign,
+            user = self.recipient,
+            statusid__isnull=False
+        ).exists()
+
+    def dtd_ok(self):
+        qs = Receipt.objects.filter(
+            campaign=self.campaign,
+            user=self.recipient,
+            event_id__isnull=False
+        )
+        if not qs:
+            return False
+        dm_dt: datetime.datetime = qs.latest('created').created
+        now = timezone.now()
+        delta = self.campaign.status_delay
+        return (now - dm_dt) > delta
+
+    def compose(self):
+        screen_name = self.screen_name()
+        if not screen_name:
+            return
+        status_content = self._format()
+        if not status_content:
+            return
+        return f'@{screen_name} {status_content}'
+
+    def _format(self):
+        d = {
+            'dm_url' : self.dm_url(),
+            'dm_dl' : self.dm_dl(),
+        }
+        return self.status.content.format(**d)
+
+    def update(self):
+        if self.status_exists():
+            return
+        if not self.dtd_ok():
+            return
+        status = self.compose()
+        if not status:
+            return
+        try:
+            status_log = StatusLog.objects.create(
+                campaign=self.campaign,
+                user=self.recipient,
+                status=self.campaign.status,   
+            )
+        except Exception as e:
+            logger.error(e)
+            return
+        try:
+            status = self.api.update_status(status)
+            status_log.statusid=status.id
+            status_log.save()
+            return True
+        except TweepError as e:
+            logger.error(f"Tweepy error: {e}")
+            try:
+                error_code =  e.args[0][0]['code']
+            except:
+                error_code = 0
+            status_log.error = error_code
+            status_log.save()
+            return False

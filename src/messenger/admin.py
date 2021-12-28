@@ -6,9 +6,37 @@ from messenger.models import (
     Receipt,
     CampaignMessage,
     MessengerCrowdfunding,
+    Status,
+    StatusLog,
 )
+from bot.models import Account
+from moderation.models import SocialUser
 from constance import config
-from django.db.models import Count
+from django.db.models import Count, DurationField
+from textareacounter.admin import TextAreaCounterAdminMixin
+from durationwidget.widgets import TimeDurationWidget
+from moderation.admin_tags import m2m_field_tag
+
+class AccountListFilter(admin.SimpleListFilter):
+    title = _('account')
+    parameter_name = 'account'
+
+    def lookups(self, request, model_admin):
+        account_id: List[int] = list(
+            Account.objects.values_list('userid', flat=True)
+        )
+        return (
+            [(str(su.user_id), su.screen_name_tag(),)
+            for su in SocialUser.objects.filter(user_id__in=account_id)]
+        )
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(
+            account=SocialUser.objects.get(
+                user_id=int(self.value())
+            )
+        )
 
 
 class CampaignMessageInline(admin.TabularInline):
@@ -22,6 +50,9 @@ class MessengerCrowdfundingInline(admin.TabularInline):
 
 
 class CampaignAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        DurationField: {'widget': TimeDurationWidget},
+    }
     inlines = (
         CampaignMessageInline,
         MessengerCrowdfundingInline,
@@ -37,6 +68,12 @@ class CampaignAdmin(admin.ModelAdmin):
         'created',
         'updated',
         'backoff',
+        'active',
+        'start',
+        'end',
+        'send_status',
+        'status_delay',
+        'status',
     )
     fields = (
         'name',
@@ -47,16 +84,28 @@ class CampaignAdmin(admin.ModelAdmin):
         'crowdfunding_campaign',
         'retweet_range',
         'recipients',
+        'recipients_socialuser_tag',
         'recipients_count_tag',
         'created',
         'updated',
         'backoff',
+        'active',
+        'start',
+        'end',
+        'send_status',
+        'status_delay',
+        'status',
     )
     readonly_fields = (
+        'recipients_socialuser_tag',
         'recipients_count_tag',
         'created',
         'updated',
     )
+    list_filter = [
+        AccountListFilter,
+        'active',
+    ]
 
     def get_queryset(self, request):
         qs = super(CampaignAdmin, self).get_queryset(request)
@@ -67,6 +116,11 @@ class CampaignAdmin(admin.ModelAdmin):
 
     recipients_count_tag.admin_order_field = ('-recipients_count')
     recipients_count_tag.description_field = ('recipients count')
+
+    def recipients_socialuser_tag(self, obj):
+        return m2m_field_tag(obj.recipients)
+
+    recipients_socialuser_tag.short_description = 'Recipients'
 
 
 class EventIdListFilter(admin.SimpleListFilter):
@@ -129,6 +183,29 @@ class ReceiptAdmin(admin.ModelAdmin):
         'updated',
     )
 
+class StatusAdmin(TextAreaCounterAdminMixin, admin.ModelAdmin):
+    list_display = (
+        'name',
+        'content',
+        'created', 
+    )
+
+
+class StatusLogAdmin(admin.ModelAdmin):
+    list_display = (
+        'campaign',
+        'status',
+        'user',
+        'statusid',
+        'error',
+        'created',
+    )  
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+admin.site.register(StatusLog, StatusLogAdmin)
 admin.site.register(Message)
+admin.site.register(Status, StatusAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(Receipt, ReceiptAdmin)

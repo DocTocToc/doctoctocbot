@@ -1,16 +1,18 @@
 import logging
+from typing import Optional
 import datetime
+import pytz
 import json
 from os.path import exists, basename
 import requests
 from urllib.parse import urlparse
 import tweepy
 import random
-
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
 from django.conf import settings
+from django.utils import timezone
 from moderation.models import SocialUser, Profile, SocialMedia
 from conversation.models import Tweetdj
 from bot.bin.user import getuser
@@ -268,3 +270,44 @@ def update_twitter_followers_profiles(community: Community):
     for follower in c.items():
         logger.debug(f"{follower=}")
         twitterprofile(follower._json)
+
+def recent_twitter_screen_name(user_id, bot_user_id, dtdelta):
+    min_dt = datetime.datetime.min.replace(tzinfo=pytz.UTC)
+    cutoff: datetime.datetime = timezone.now() - dtdelta
+    # status
+    tweetdj_qs = Tweetdj.objects.filter(userid=user_id)
+    if tweetdj_qs:
+        status_dt = tweetdj_qs.latest('statusid').created_at or min_dt 
+    else:
+        status_dt = min_dt
+    # profile
+    profile_qs = Profile.objects.filter(json__id=user_id)
+    if profile_qs:
+        profile_dt = profile_qs.latest('id').updated
+    else:
+        profile_dt = min_dt
+    logger.debug(f'{status_dt=} {profile_dt=}')
+    if status_dt > profile_dt and status_dt > cutoff:
+        logger.debug(f'{tweetdj_qs.latest("statusid")=}')
+        return tweetdj_qs.latest('statusid').json["user"]["screen_name"]
+    elif profile_dt > status_dt and profile_dt > cutoff:
+        logger.debug(f'{profile_qs.latest("id")=}')
+        return profile_qs.latest('id').json["screen_name"]
+    else:
+        try:
+            bot_screen_name = Account.objects.get(userid=bot_user_id).username
+        except Account.DoesNotExist as e:
+            logger.error(e)
+            return
+        try:
+            su=SocialUser.objects.get(user_id=user_id)
+        except SocialUser.DoesNotExist as e:
+            logger.error(e)
+            return
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name,
+            cache=False
+        )
+        profile = Profile.objects.get(socialuser=su)
+        return profile.screen_name_tag()

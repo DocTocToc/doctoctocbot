@@ -15,7 +15,8 @@ from constance import config
 from django.db.models import Count, DurationField
 from textareacounter.admin import TextAreaCounterAdminMixin
 from durationwidget.widgets import TimeDurationWidget
-from moderation.admin_tags import m2m_field_tag
+from django.utils.safestring import mark_safe
+
 
 class AccountListFilter(admin.SimpleListFilter):
     title = _('account')
@@ -118,7 +119,11 @@ class CampaignAdmin(admin.ModelAdmin):
     recipients_count_tag.description_field = ('recipients count')
 
     def recipients_socialuser_tag(self, obj):
-        return m2m_field_tag(obj.recipients)
+        return mark_safe(
+            " ".join(
+                [f'@{obj.screen_name_tag()}' for obj in obj.recipients.all()]
+            )
+        )
 
     recipients_socialuser_tag.short_description = 'Recipients'
 
@@ -199,7 +204,7 @@ class StatusLogAdmin(admin.ModelAdmin):
         'statusid',
         'error',
         'created',
-    )  
+    )
     def has_add_permission(self, request, obj=None):
         return False
 

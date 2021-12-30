@@ -298,6 +298,7 @@ class MessageManager:
     def _format(self):
         d = {
             'screen_name' : self.recipient.profile.screen_name_tag(),
+            'bot_screen_name' : self.sender.screen_name_tag(),
             'retweet_count' : self.retweeted_qs.count(),
             'first_retweet_date' : self.first_retweet_date(),
         }

@@ -7,7 +7,7 @@ class ProviderAdmin(admin.ModelAdmin):
         'name',
         'company',    
     )
-    
+
 class CustomerAdmin(admin.ModelAdmin):
     list_display = (
         'id',

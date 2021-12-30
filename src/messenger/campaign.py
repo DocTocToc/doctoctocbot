@@ -20,6 +20,7 @@ from moderation.models import SocialUser, Follower
 from crowdfunding.models import ProjectInvestment
 from conversation.models import Tweetdj
 from moderation.profile import recent_twitter_screen_name
+from community.helpers import site_url
 
 logger = logging.getLogger(__name__)
 
@@ -295,12 +296,17 @@ class MessageManager:
         except Tweetdj.DoesNotExist:
             return
 
+    def site_url(self) -> str:
+        community = self.sender.account.community
+        return site_url(community)
+
     def _format(self):
         d = {
             'screen_name' : self.recipient.profile.screen_name_tag(),
             'bot_screen_name' : self.sender.screen_name_tag(),
             'retweet_count' : self.retweeted_qs.count(),
             'first_retweet_date' : self.first_retweet_date(),
+            'site_url' : self.site_url(),
         }
         return self.message.content.format(**d)
 

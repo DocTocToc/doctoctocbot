@@ -434,6 +434,9 @@ class QueueAdmin(VersionedAdmin):
         'type',
         'community',    
     )
+    search_fields = (
+        'user_id',
+    )
     list_display_show_identity = True
     list_display_show_end_date = True
     list_display_show_start_date = True
@@ -470,6 +473,28 @@ class QueueAdmin(VersionedAdmin):
         return tweetdj_link(self, obj)
     
     status_object.short_description = "Status"
+
+    def get_search_results(self, request, queryset, search_term):
+        # search_term is what you input in admin site
+        orig_queryset = queryset
+        queryset, use_distinct = super(QueueAdmin, self).get_search_results(
+            request, queryset, search_term)
+
+        user_ids = list(
+            Profile.objects.filter(
+                json__screen_name__icontains=search_term
+            ).values_list("json__id", flat=True)
+        )
+        try:
+            user_id = int(search_term)
+            user_ids.append(user_id)
+        except ValueError:
+            pass
+        queryset |= self.model.objects.filter(
+            user_id__in=user_ids
+        )
+        queryset = queryset & orig_queryset
+        return queryset, use_distinct
 
 
 class ProfileAdmin(admin.ModelAdmin):

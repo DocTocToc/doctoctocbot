@@ -785,7 +785,7 @@ var app = (function () {
     			li = element("li");
     			a = element("a");
     			t = text("🔗 HealthCareProvider admin");
-    			attr(a, "href", a_href_value = "" + (getBaseUrl$1() + "/admin/hcp/healthcareprovider/add/?human=" + /*humanId*/ ctx[0]));
+    			attr(a, "href", a_href_value = "" + (getBaseUrl() + "/admin/hcp/healthcareprovider/add/?human=" + /*humanId*/ ctx[0]));
     			attr(a, "target", "_blank");
     		},
     		m(target, anchor) {
@@ -794,7 +794,7 @@ var app = (function () {
     			append(a, t);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*humanId*/ 1 && a_href_value !== (a_href_value = "" + (getBaseUrl$1() + "/admin/hcp/healthcareprovider/add/?human=" + /*humanId*/ ctx[0]))) {
+    			if (dirty & /*humanId*/ 1 && a_href_value !== (a_href_value = "" + (getBaseUrl() + "/admin/hcp/healthcareprovider/add/?human=" + /*humanId*/ ctx[0]))) {
     				attr(a, "href", a_href_value);
     			}
     		},
@@ -870,7 +870,7 @@ var app = (function () {
     			}
 
     			each_1_anchor = empty();
-    			attr(a, "href", a_href_value = "" + (getBaseUrl$1() + "/admin/hcp/healthcareprovider/" + /*hcp*/ ctx[3].id + "/change/"));
+    			attr(a, "href", a_href_value = "" + (getBaseUrl() + "/admin/hcp/healthcareprovider/" + /*hcp*/ ctx[3].id + "/change/"));
     			attr(a, "target", "_blank");
     		},
     		m(target, anchor) {
@@ -967,11 +967,11 @@ var app = (function () {
 
     let devUrl = "https://local.doctoctoc.net";
     let apiPath$1 = "/hcp/api/hcp/";
-    let apiProtocolDomain$1 = "https://local.doctoctoc.net";
+    let apiProtocolDomain = "https://local.doctoctoc.net";
 
-    function getBaseUrl$1() {
+    function getBaseUrl() {
     	if (window.location.hostname == "localhost") {
-    		return apiProtocolDomain$1;
+    		return apiProtocolDomain;
     	} else {
     		return "";
     	}
@@ -1026,26 +1026,26 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
-    	child_ctx[10] = list;
-    	child_ctx[11] = i;
+    	child_ctx[8] = list[i];
+    	child_ctx[9] = list;
+    	child_ctx[10] = i;
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[12] = list[i];
+    	child_ctx[11] = list[i];
     	return child_ctx;
     }
 
-    // (65:24) 
+    // (68:24) 
     function create_if_block_1(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
     	let each_value = /*socialusers*/ ctx[2];
-    	const get_key = ctx => /*socialuser*/ ctx[9].id;
+    	const get_key = ctx => /*socialuser*/ ctx[8].id;
 
     	for (let i = 0; i < each_value.length; i += 1) {
     		let child_ctx = get_each_context(ctx, each_value, i);
@@ -1070,7 +1070,7 @@ var app = (function () {
     			current = true;
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*socialusers, getBaseUrl*/ 4) {
+    			if (dirty & /*socialusers*/ 4) {
     				each_value = /*socialusers*/ ctx[2];
     				group_outros();
     				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
@@ -1103,7 +1103,7 @@ var app = (function () {
     	};
     }
 
-    // (62:2) {#if socialusers && socialusers.length == 0 && screenName}
+    // (65:2) {#if socialusers && socialusers.length == 0 && screenName}
     function create_if_block(ctx) {
     	let p;
     	let t1;
@@ -1165,10 +1165,10 @@ var app = (function () {
     	};
     }
 
-    // (75:22) {#each socialuser.category as cat}
+    // (78:22) {#each socialuser.category as cat}
     function create_each_block_1(ctx) {
     	let li;
-    	let t_value = /*cat*/ ctx[12].label + "";
+    	let t_value = /*cat*/ ctx[11].label + "";
     	let t;
 
     	return {
@@ -1181,7 +1181,7 @@ var app = (function () {
     			append(li, t);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*socialusers*/ 4 && t_value !== (t_value = /*cat*/ ctx[12].label + "")) set_data(t, t_value);
+    			if (dirty & /*socialusers*/ 4 && t_value !== (t_value = /*cat*/ ctx[11].label + "")) set_data(t, t_value);
     		},
     		d(detaching) {
     			if (detaching) detach(li);
@@ -1189,7 +1189,7 @@ var app = (function () {
     	};
     }
 
-    // (66:4) {#each socialusers as socialuser (socialuser.id) }
+    // (69:4) {#each socialusers as socialuser (socialuser.id) }
     function create_each_block(key_1, ctx) {
     	let div;
     	let ul1;
@@ -1199,7 +1199,7 @@ var app = (function () {
     	let t0;
     	let li1;
     	let t1;
-    	let t2_value = /*socialuser*/ ctx[9].id + "";
+    	let t2_value = /*socialuser*/ ctx[8].id + "";
     	let t2;
     	let t3;
     	let li2;
@@ -1209,17 +1209,17 @@ var app = (function () {
     	let t5;
     	let li3;
     	let t6;
-    	let t7_value = /*socialuser*/ ctx[9].user_id + "";
+    	let t7_value = /*socialuser*/ ctx[8].user_id + "";
     	let t7;
     	let t8;
     	let li4;
     	let t9;
-    	let t10_value = /*socialuser*/ ctx[9].profile.json.screen_name + "";
+    	let t10_value = /*socialuser*/ ctx[8].profile.json.screen_name + "";
     	let t10;
     	let t11;
     	let li5;
     	let t12;
-    	let t13_value = /*socialuser*/ ctx[9].profile.json.name + "";
+    	let t13_value = /*socialuser*/ ctx[8].profile.json.name + "";
     	let t13;
     	let t14;
     	let li6;
@@ -1237,7 +1237,7 @@ var app = (function () {
     	let updating_humanId;
     	let t20;
     	let current;
-    	let each_value_1 = /*socialuser*/ ctx[9].category;
+    	let each_value_1 = /*socialuser*/ ctx[8].category;
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
@@ -1245,13 +1245,13 @@ var app = (function () {
     	}
 
     	function healthcareprovider_humanId_binding(value) {
-    		/*healthcareprovider_humanId_binding*/ ctx[6](value, /*socialuser*/ ctx[9]);
+    		/*healthcareprovider_humanId_binding*/ ctx[6](value, /*socialuser*/ ctx[8]);
     	}
 
     	let healthcareprovider_props = {};
 
-    	if (/*socialuser*/ ctx[9].human[0].id !== void 0) {
-    		healthcareprovider_props.humanId = /*socialuser*/ ctx[9].human[0].id;
+    	if (/*socialuser*/ ctx[8].human[0].id !== void 0) {
+    		healthcareprovider_props.humanId = /*socialuser*/ ctx[8].human[0].id;
     	}
 
     	healthcareprovider = new HealthCareProvider({ props: healthcareprovider_props });
@@ -1303,12 +1303,12 @@ var app = (function () {
     			t19 = text("Health Care Provider ");
     			create_component(healthcareprovider.$$.fragment);
     			t20 = space();
-    			if (img.src !== (img_src_value = /*socialuser*/ ctx[9].profile.biggeravatar)) attr(img, "src", img_src_value);
+    			if (img.src !== (img_src_value = /*socialuser*/ ctx[8].profile.biggeravatar)) attr(img, "src", img_src_value);
     			attr(img, "alt", "user avatar");
-    			attr(a0, "href", a0_href_value = "https://twitter.com/intent/user?user_id=" + /*socialuser*/ ctx[9].profile.json.id_str);
+    			attr(a0, "href", a0_href_value = "https://twitter.com/intent/user?user_id=" + /*socialuser*/ ctx[8].profile.json.id_str);
     			attr(a0, "target", "_blank");
     			attr(ul0, "class", "svelte-7jz005");
-    			attr(a1, "href", a1_href_value = "" + (getBaseUrl() + "/admin/moderation/socialuser/" + /*socialuser*/ ctx[9].id + "/change/"));
+    			attr(a1, "href", a1_href_value = "/admin/moderation/socialuser/" + /*socialuser*/ ctx[8].id + "/change/");
     			attr(a1, "target", "_blank");
     			attr(ul1, "class", "svelte-7jz005");
     			attr(div, "class", "parent");
@@ -1362,22 +1362,22 @@ var app = (function () {
     		p(new_ctx, dirty) {
     			ctx = new_ctx;
 
-    			if (!current || dirty & /*socialusers*/ 4 && img.src !== (img_src_value = /*socialuser*/ ctx[9].profile.biggeravatar)) {
+    			if (!current || dirty & /*socialusers*/ 4 && img.src !== (img_src_value = /*socialuser*/ ctx[8].profile.biggeravatar)) {
     				attr(img, "src", img_src_value);
     			}
 
-    			if ((!current || dirty & /*socialusers*/ 4) && t2_value !== (t2_value = /*socialuser*/ ctx[9].id + "")) set_data(t2, t2_value);
+    			if ((!current || dirty & /*socialusers*/ 4) && t2_value !== (t2_value = /*socialuser*/ ctx[8].id + "")) set_data(t2, t2_value);
 
-    			if (!current || dirty & /*socialusers*/ 4 && a0_href_value !== (a0_href_value = "https://twitter.com/intent/user?user_id=" + /*socialuser*/ ctx[9].profile.json.id_str)) {
+    			if (!current || dirty & /*socialusers*/ 4 && a0_href_value !== (a0_href_value = "https://twitter.com/intent/user?user_id=" + /*socialuser*/ ctx[8].profile.json.id_str)) {
     				attr(a0, "href", a0_href_value);
     			}
 
-    			if ((!current || dirty & /*socialusers*/ 4) && t7_value !== (t7_value = /*socialuser*/ ctx[9].user_id + "")) set_data(t7, t7_value);
-    			if ((!current || dirty & /*socialusers*/ 4) && t10_value !== (t10_value = /*socialuser*/ ctx[9].profile.json.screen_name + "")) set_data(t10, t10_value);
-    			if ((!current || dirty & /*socialusers*/ 4) && t13_value !== (t13_value = /*socialuser*/ ctx[9].profile.json.name + "")) set_data(t13, t13_value);
+    			if ((!current || dirty & /*socialusers*/ 4) && t7_value !== (t7_value = /*socialuser*/ ctx[8].user_id + "")) set_data(t7, t7_value);
+    			if ((!current || dirty & /*socialusers*/ 4) && t10_value !== (t10_value = /*socialuser*/ ctx[8].profile.json.screen_name + "")) set_data(t10, t10_value);
+    			if ((!current || dirty & /*socialusers*/ 4) && t13_value !== (t13_value = /*socialuser*/ ctx[8].profile.json.name + "")) set_data(t13, t13_value);
 
     			if (dirty & /*socialusers*/ 4) {
-    				each_value_1 = /*socialuser*/ ctx[9].category;
+    				each_value_1 = /*socialuser*/ ctx[8].category;
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
@@ -1399,7 +1399,7 @@ var app = (function () {
     				each_blocks.length = each_value_1.length;
     			}
 
-    			if (!current || dirty & /*socialusers*/ 4 && a1_href_value !== (a1_href_value = "" + (getBaseUrl() + "/admin/moderation/socialuser/" + /*socialuser*/ ctx[9].id + "/change/"))) {
+    			if (!current || dirty & /*socialusers*/ 4 && a1_href_value !== (a1_href_value = "/admin/moderation/socialuser/" + /*socialuser*/ ctx[8].id + "/change/")) {
     				attr(a1, "href", a1_href_value);
     			}
 
@@ -1407,7 +1407,7 @@ var app = (function () {
 
     			if (!updating_humanId && dirty & /*socialusers*/ 4) {
     				updating_humanId = true;
-    				healthcareprovider_changes.humanId = /*socialuser*/ ctx[9].human[0].id;
+    				healthcareprovider_changes.humanId = /*socialuser*/ ctx[8].human[0].id;
     				add_flush_callback(() => updating_humanId = false);
     			}
 
@@ -1430,7 +1430,7 @@ var app = (function () {
     	};
     }
 
-    // (61:2) {#key socialusers}
+    // (64:2) {#key socialusers}
     function create_key_block(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -1627,25 +1627,15 @@ var app = (function () {
     	};
     }
 
-    let apiProtocolDomain = "https://local.doctoctoc.net";
     let apiPath = "/moderation/api/socialuser/";
-    let screenNameValue = "";
-
-    function getBaseUrl() {
-    	if (window.location.hostname == "localhost") {
-    		return apiProtocolDomain;
-    	} else {
-    		return "";
-    	}
-    }
 
     function instance($$self, $$props, $$invalidate) {
     	let input = "";
     	let screenName = "";
     	let socialusers = null;
 
-    	async function fetchApi() {
-    		let url = getBaseUrl() + apiPath + "?search=" + screenName;
+    	async function fetchApi(sn) {
+    		let url = apiPath + "?search=" + sn;
     		console.log(url);
 
     		await fetch(url).then(r => r.json()).then(data => {
@@ -1665,7 +1655,7 @@ var app = (function () {
     			$$invalidate(1, screenName = input);
     		}
 
-    		$$invalidate(2, socialusers = await fetchApi());
+    		$$invalidate(2, socialusers = await fetchApi(screenName));
     	}
 
     	function input_1_input_handler() {
@@ -1686,8 +1676,14 @@ var app = (function () {
     	}
 
     	{
-    		$$invalidate(0, input = new URL(document.location).searchParams.get("screen_name"));
-    		console.log(screenNameValue);
+    		let param = new URL(document.location).searchParams.get("screen_name");
+
+    		if (param) {
+    			console.log(param);
+    			$$invalidate(2, socialusers = fetchApi(param));
+    			$$invalidate(1, screenName = param);
+    			$$invalidate(0, input = param);
+    		}
     	}
 
     	return [

@@ -1,36 +1,31 @@
 <script>
-   import CreateSocialUser from "./CreateSocialUser.svelte"
-   import HealthCareProvider from "./HealthCareProvider.svelte"
-
+    import { onMount } from 'svelte';
+    import CreateSocialUser from "./CreateSocialUser.svelte"
+    import HealthCareProvider from "./HealthCareProvider.svelte"
     let input = '';
 	let screenName = '';
-	let apiProtocolDomain = "https://local.doctoctoc.net";
 	let apiPath = "/moderation/api/socialuser/";
 	let screenNameValue = '';
-
-	let data;
 	let socialusers=null;
 	let humanId=0;
 
 	$: {
-		input = (new URL(document.location)).searchParams.get('screen_name');
-		console.log(screenNameValue);
+		let param = (new URL(document.location)).searchParams.get('screen_name');
+		if ( param ) {
+			console.log(param);
+			socialusers = fetchApi(param);
+			screenName = param;
+			input = param;
+		}
 	}
 	
 	function getScreenNameValue() {
 		return (new URL(document.location)).searchParams.get('screen_name')
 	}
 	
-	function getBaseUrl() {
-	    if (window.location.hostname == "localhost") {
-	    	return apiProtocolDomain
-	    } else {
-	    	return ""
-	    }
-	}	
 
-    async function fetchApi() {
-    	let url = getBaseUrl() + apiPath + '?search=' + screenName
+    async function fetchApi(sn) {
+    	let url = apiPath + '?search=' + sn
     	console.log(url)
 	    await fetch(url)
 	      .then(r => r.json())
@@ -40,7 +35,7 @@
 	      });
 	    return socialusers;
 	  };
-	  
+
 	async function onClickFetchApi(input) {
 		if (input.startsWith('@')) {
 		    screenName = input.slice(1);	
@@ -49,6 +44,14 @@
 		}
 	    socialusers = await fetchApi(screenName)
 	    }
+
+	/*onMount(async () => {
+		let screenName = getScreenNameValue();
+			if ( screenName ) {
+				socialusers = await fetchApi();
+			}
+		}
+    );*/
 </script>
 
 
@@ -73,7 +76,7 @@
       <li>Twitter screen name: {socialuser.profile.json.screen_name}</li>
       <li>Twitter name: {socialuser.profile.json.name}</li>
       <li>category<ul>{#each socialuser.category as cat}<li>{cat.label}</li>{/each}</ul></li>
-      <li><a href="{getBaseUrl()}/admin/moderation/socialuser/{socialuser.id}/change/" target="_blank">🔗 SocialUser admin</a>
+      <li><a href="/admin/moderation/socialuser/{socialuser.id}/change/" target="_blank">🔗 SocialUser admin</a>
       <li>Health Care Provider <HealthCareProvider bind:humanId={socialuser.human[0].id}/></li>
     </ul>
     </div>

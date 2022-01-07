@@ -138,6 +138,25 @@ services:
     working_dir: /code/src
     ports:
       - "8087:80"
+  django_8:
+    restart: always
+    env_file:
+      - .env
+    image: dtn_prod
+    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings8 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${GUNICORN_LOG}:${GUNICORN_LOG}
+      - ${GNUPGHOME}:${GNUPGHOME}
+    depends_on:
+      - database
+      - redis
+    working_dir: /code/src
+    ports:
+      - "8088:80"
   celery_retweet_worker:
     image: dtn_prod
   celery_tree_worker:
@@ -162,6 +181,9 @@ services:
     image: dtn_prod
     restart: always
   stream_6:
+    image: dtn_prod
+    restart: always
+  stream_7:
     image: dtn_prod
     restart: always
   tree_search:

@@ -125,7 +125,7 @@ def update_bots_followers():
             continue
         update_social_ids(
             su,
-            cached=True,
+            cached=False,
             bot_screen_name=account.username,
             relationship='followers',
         )

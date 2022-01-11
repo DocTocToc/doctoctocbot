@@ -1,5 +1,5 @@
 import logging
-
+from typing import List
 from django.core.paginator import Paginator
 from django.db import connection, Error
 from django.db.utils import IntegrityError, DatabaseError
@@ -71,7 +71,7 @@ def hashtag_m2m(statusid: int):
         logger.info(f"Status {statusid} does not exist in table Tweetdj."
                     f"Error message: {e}")
         return
-    
+
     hashtag_m2m_tweetdj(status_mi) 
 
 def hashtag_m2m_tweetdj(status_mi: Tweetdj):
@@ -97,7 +97,42 @@ def hashtag_m2m_tweetdj(status_mi: Tweetdj):
         except DatabaseError as e:
             logger.error(e)
             continue
-                      
+
+def m2m_objects(pks: List[int], hashtag: Hashtag):
+    return [
+        Tweetdj.hashtag.through(
+            tweetdj_id=pk,
+            hashtag_id=hashtag.id
+        )
+        for pk in pks
+    ]
+
+def bulk_hashtag(hashtag: Hashtag):
+    query=f"""
+    select u.*
+    from conversation_tweetdj u
+    where exists (
+    select * from jsonb_array_elements(
+    u.json -> 'entities' -> 'hashtags'
+    ) as s(j)
+    where jsonb_typeof(u.json -> 'entities' -> 'hashtags') = 'array'
+    and lower(s.j ->> 'text') = '{hashtag.hashtag}');
+    """
+    rows = None
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows=cursor.fetchall()
+    if not rows:
+        return
+    pks = [row[0] for row in rows]
+    not_pks = list(
+        Tweetdj.objects.filter(hashtag=hashtag).values_list("pk", flat=True)
+    )
+    pks = [pk for pk in pks if pk not in not_pks]
+    Tweetdj.hashtag.through.objects.bulk_create(
+        m2m_objects(pks, hashtag)
+    )
+
 def allhashtag():
     for status_mi in Tweetdj.objects.all():
         hashtag_m2m(status_mi.statusid)

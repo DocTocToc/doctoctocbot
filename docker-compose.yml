@@ -220,6 +220,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - redis
       - database

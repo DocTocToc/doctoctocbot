@@ -18,6 +18,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -37,6 +38,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -56,6 +58,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -75,6 +78,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -94,6 +98,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -113,6 +118,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -132,6 +138,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis
@@ -151,6 +158,7 @@ services:
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${GUNICORN_LOG}:${GUNICORN_LOG}
       - ${GNUPGHOME}:${GNUPGHOME}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis

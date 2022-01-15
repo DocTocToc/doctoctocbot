@@ -37,6 +37,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - redis
     working_dir: /code/src
@@ -51,6 +52,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - redis
     links:
@@ -67,6 +69,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - redis
     links:
@@ -83,6 +86,7 @@ services:
       - ${MEDIA_ROOT}:${MEDIA_ROOT}
       - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
       - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     depends_on:
       - database
       - redis

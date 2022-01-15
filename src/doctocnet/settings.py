@@ -15,6 +15,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 CONFIG_DIR = Path(BASE_DIR + "/..")
 config = AutoConfig(search_path = CONFIG_DIR)
+DJANGO_LOG_DIR = config('DJANGO_LOG_DIR', default='')
+LOG_FILE = os.path.join(DJANGO_LOG_DIR, "django.log")
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
@@ -47,7 +49,6 @@ DICT_CONFIG = {
             'formatter': 'default',
             'filters': ['require_debug_true'],
     },
-
         "console_debug_false": {
             "level": LOG_LEVEL,
             "filters": ["require_debug_false"],
@@ -59,19 +60,27 @@ DICT_CONFIG = {
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler"
         },
-        
+        "applogfile": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOG_FILE,
+        },
         "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
-
     },
 
     "loggers": {
         '': {
             'level': LOG_LEVEL,
-            'handlers': ['console', 'console_debug_false'],
-            'propagate': False,
+            'handlers': ['console', 'console_debug_false', 'applogfile',],
+            'propagate': True,
         },
         "django": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": [
+                "console",
+                "console_debug_false",
+                "mail_admins",
+                "applogfile",
+            ],
             "level": LOG_LEVEL,
         },
         "bot.stream": {

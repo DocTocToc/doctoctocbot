@@ -551,12 +551,14 @@ class Queue(Versionable):
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
     SELF = 'self'
+    ONHOLD = "onhold"
     QUEUE_TYPE_CHOICES = [
         (MODERATOR, _('Moderator')),
         (SENIOR, _('Senior')),
         (DEVELOPER, _('Developer')),
         (FOLLOWER, _('Follower')),
         (SELF, _('Self')),
+        (ONHOLD, _('On hold')),
     ]
     user_id = models.BigIntegerField()
     status_id = models.BigIntegerField(
@@ -571,9 +573,9 @@ class Queue(Versionable):
     type = models.CharField(
         max_length=9,
         choices=QUEUE_TYPE_CHOICES,
-        default=MODERATOR,
+        default=ONHOLD,
     )
-    
+
     def __str__(self):
         return (f"Queue {self.user_id} {self.status_id} {self.type}")
 
@@ -938,7 +940,7 @@ class ModerationOptIn(models.Model):
     )
 
     def __str__(self):
-        return "{} {} {}".format(self.type, self.option, self.authorize)    
+        return "{} {} {}".format(self.type, self.option, self.authorize)
 
 
 def addsocialuser(tweetdj_instance):
@@ -993,3 +995,60 @@ class Prospect(models.Model):
     
     class Meta:
         unique_together = ['socialuser', 'community']
+
+
+class Filter(models.Model):
+    active = models.BooleanField(
+        default=True,
+        help_text=(
+            "Is this Filter active?"
+        )
+    )
+    community = models.OneToOneField(
+        'community.Community',
+        on_delete=models.PROTECT,
+        related_name='moderation_filter',
+    )
+    access_protected = models.BooleanField(
+        default=False,
+        help_text=(
+            "Require access to protected account?"
+        )
+    )
+    followers_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum follower count required"
+        )
+    )
+    member_follower_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum member follower count required"
+        )
+    )
+    statuses_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum status count (retweet, reply, tweet) required"
+        )
+    )
+    profile_image = models.BooleanField(
+        default=False,
+        help_text=(
+            "Require non default profile image?"
+        )
+    )
+    account_age = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Required duration since account creation"
+    )
+    profile_update = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Duration after which user profile should be updated"
+    )
+
+    def __str__(self):
+        return "{} {}".format(self.id, self.community)

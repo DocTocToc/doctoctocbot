@@ -201,6 +201,13 @@ class Community(models.Model):
         blank=True,
         related_name="community",
     )
+    members_friends_cache = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = (
+            "Duration of cache for members' friends set"
+        )
+    )
 
     objects = CommunityManager()
 

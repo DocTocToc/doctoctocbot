@@ -30,7 +30,7 @@ def update_request_queue(community: Community):
             qc = q.clone()
             qc.state = Queue.ACCEPT
             qc.save()
-        elif q.uid not in ifs:
+        elif ifs and q.uid not in ifs:
             qc = q.clone()
             qc.state = Queue.CANCEL
             qc.save()

@@ -29,8 +29,8 @@ from moderation.models import (
     SocialMedia,
     CategoryMetadata,
     ModerationOptIn,
-    get_default_socialmedia,
     Prospect,
+    Filter,
 )
 from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag
@@ -41,6 +41,7 @@ from common.list_filter import by_null_filter
 from moderation.admin_tags import m2m_field_tag
 from modeltranslation.admin import TranslationAdmin
 from django.contrib import auth
+from durationwidget.widgets import TimeDurationWidget
 
 logger = logging.getLogger(__name__)
 
@@ -920,6 +921,29 @@ class ProspectAdmin(admin.ModelAdmin):
     search_fields = (
     'socialuser__profile__json',
     )
+    
+    
+@admin.register(Filter)
+class FilterAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'active',
+        'community',
+        'access_protected',
+        'account_age',
+        'followers_count',
+        'member_follower_count',
+        'statuses_count',
+        'profile_image',
+        'profile_update',
+    )
+    list_filter = (
+    'community',
+    'active',
+    )
+    formfield_overrides = {
+        models.DurationField: {'widget': TimeDurationWidget},
+    }
 
 
 admin.site.register(Category, CategoryAdmin)

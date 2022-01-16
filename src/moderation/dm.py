@@ -272,6 +272,8 @@ class DirectMessageProcessor:
   
 def sendmoderationdm(mod_mi):
     logger.debug(f'inside sendmoderationdm({mod_mi=})')
+    if mod_mi.queue.type == Queue.ONHOLD:
+        return
     try:
         su = SocialUser.objects.get(user_id=mod_mi.queue.user_id)
     except SocialUser.DoesNotExist:

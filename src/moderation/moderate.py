@@ -30,7 +30,10 @@ from community.models import Community
 from dm.api import senddm_tweepy
 from optin.models import Option, OptIn
 from constance import config
-from moderation.profile import screen_name
+from moderation.profile import (
+    screen_name,
+    create_twitter_social_user_and_profile,
+)
 from common.twitter import get_url_from_user_id
 from django.utils.translation import gettext as _
 from humanize.time import precisedelta
@@ -85,6 +88,14 @@ def warn_senior_moderator(user_id, status_id, community):
     )
     logger.debug(f"{res=}")
 
+def set_queue_type(user_id, community: Community):
+    try:
+        su = SocialUser.objects.get(user_id=user_id)
+    except SocialUser.DoesNotExist:
+        su, _ = create_twitter_social_user_and_profile(user_id)
+    if not su:
+        return
+
 def addtoqueue(user_id, status_id, community_name):
     try:
         community = Community.objects.get(name=community_name)
@@ -109,6 +120,7 @@ def addtoqueue(user_id, status_id, community_name):
         )
         logger.debug(f'{queue}')
         if created:
+            set_queue_type(user_id, community)
             create_initial_moderation(queue)
     except IntegrityError:
         logger.error(
@@ -171,6 +183,8 @@ def create_initial_moderation(queue):
         mod=follower_mod(queue)
     elif queue.type == Queue.SELF:
         mod=self_mod(queue)
+    elif queue.type == Queue.ONHOLD:
+        return
     logger.debug(f"{mod=}")
     sendmoderationdm(mod)
 
@@ -213,38 +227,39 @@ def moderator_mod(queue):
     return create_moderation_instance(chosen_mod_uid, queue)
 
 def follower_mod(queue):
-    def choose_follower(uid):
-        if not uid:
+    def choose_follower(uids):
+        if not uids:
             return
-        chosen_mod_uid = random.choice(uid)
+        chosen_mod_uid = random.choice(uids)
         try:
-            socialuser = SocialUser.objects.get(user_id=uid)
+            socialuser = SocialUser.objects.get(user_id=chosen_mod_uid)
         except SocialUser.DoesNotExist:
-            return chosen_mod_uid
+            return
         try:
             option = Option.objects.get(name='twitter_dm_moderation_follower')
         except Option.DoesNotExist:
-            return chosen_mod_uid
+            return
         try:
-            optin = OptIn.objects.get(
+            optin = OptIn.objects.current.get(
                 option=option,
                 socialuser=socialuser
             )
         except OptIn.DoesNotExist:
             return chosen_mod_uid
         if not optin.authorize:
-            uid.remove(chosen_mod_uid)
-            return choose_follower(uid)
+            uids.remove(chosen_mod_uid)
+            return choose_follower(uids)
+        else:
+            return chosen_mod_uid
     try:
         su = SocialUser.objects.get(user_id=queue.user_id)
     except SocialUser.DoesNotExist:
         return
-    uid = verified_follower(su, queue.community)
-    logger.debug(f"{uid}")
-    if not uid:
+    uids = verified_follower(su, queue.community)
+    if not uids:
         senior_mod(queue)
     else:
-        chosen_mod_uid = choose_follower(uid)
+        chosen_mod_uid = choose_follower(uids)
         if not chosen_mod_uid:
             senior_mod(queue)
             return

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 from reversion.admin import VersionAdmin
+from durationwidget.widgets import TimeDurationWidget
+from django.db import models
 
 from community.models import (
     Community,
@@ -90,10 +92,14 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_request_dm_text',
         'twitter_self_moderation_dm',
         'blog',
+        'members_friends_cache',
     )
     readonly_fields = (
         'created',
     )
+    formfield_overrides = {
+        models.DurationField: {'widget': TimeDurationWidget},
+    }
 
 
 class RetweetAdmin(admin.ModelAdmin):

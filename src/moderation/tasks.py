@@ -40,6 +40,7 @@ from community.helpers import get_community_bot_socialuser
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from moderation.moderate import self_mod
+from moderation.filter import process_onhold_queues
 
 logger = get_task_logger(__name__)
 
@@ -428,3 +429,11 @@ def handle_self_moderation(community: str, count: Optional[int] = None):
         return
     for su in su_candidates:
         self_categorize(su, community)
+
+@shared_task
+def handle_onhold_queues():
+    for c in Community.objects.filter(
+        active=True,
+        moderation_filter__isnull=False
+    ):
+        process_onhold_queues(c)

@@ -16,6 +16,7 @@ from request.tasks import (
 )
 from request.utils import request_dm
 from moderation.moderate import create_initial_moderation
+from moderation.filter import QueueFilter
 
 logger = logging.getLogger(__name__) 
 
@@ -79,12 +80,17 @@ def create_moderation_queue(sender, instance, created, **kwargs):
         and (instance.state == RequestQueue.PENDING)
         and (instance.id == instance.identity)
     ):
+        qf = QueueFilter(instance.community, instance.socialuser)
+        if qf.start_moderation():
+            type = ModerationQueue.FOLLOWER
+        else:
+            type = ModerationQueue.ONHOLD
         try:
             queue = ModerationQueue.objects.create(
                 user_id= instance.uid,
                 status_id=None,
                 community=instance.community,
-                type=ModerationQueue.FOLLOWER,
+                type=type,
             )
         except DatabaseError:
             logger.error(f"Creation of moderation queue for {instance} failed")
@@ -128,7 +134,7 @@ def accept_decline_autotweet(sender, instance, created, **kwargs):
         )
 
 @receiver(post_save, sender=RequestQueue)
-def request_dm(sender, instance, created, **kwargs):
+def request_dm_receiver(sender, instance, created, **kwargs):
     if (
         instance.community.twitter_request_dm
         and created

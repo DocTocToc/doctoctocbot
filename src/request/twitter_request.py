@@ -13,7 +13,7 @@ def get_incoming_friendship(community):
     try:
         screen_name=community.account.username
     except:
-        return []
+        return
     api = twitter_api(username=screen_name)
     if api:
         return api.IncomingFriendship()

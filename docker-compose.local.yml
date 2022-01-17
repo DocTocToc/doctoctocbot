@@ -45,7 +45,6 @@ services:
       - database
       - redis
     working_dir: /code/src
-    profiles: ["full"]
   django_3:
     restart: always
     env_file:

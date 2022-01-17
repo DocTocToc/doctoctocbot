@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-06 13:13+0100\n"
-"PO-Revision-Date: 2021-10-23 03:45+0300\n"
+"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"PO-Revision-Date: 2022-01-17 19:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: moderation/admin.py:359
+#: moderation/admin.py:362
 msgid "Specialty"
 msgstr "Spécialité"
 
-#: moderation/admin.py:711
+#: moderation/admin.py:740
 msgid "Count"
-msgstr ""
+msgstr "Compte"
 
-#: moderation/dm.py:289
+#: moderation/dm.py:305
 #, python-brace-format
 msgid ""
 "\n"
@@ -35,7 +35,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/dm.py:315
+#: moderation/dm.py:333
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -51,7 +51,7 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/dm.py:331
+#: moderation/dm.py:349
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
@@ -83,83 +83,87 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:555
+#: moderation/models.py:556
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:556
+#: moderation/models.py:557
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:557
+#: moderation/models.py:558
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:558
+#: moderation/models.py:559
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:559
+#: moderation/models.py:560
 msgid "Self"
 msgstr ""
 
-#: moderation/models.py:901
+#: moderation/models.py:561
+msgid "On hold"
+msgstr "En attente"
+
+#: moderation/models.py:903
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:902
+#: moderation/models.py:904
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:903
+#: moderation/models.py:905
 msgid "Ban"
 msgstr "Exclure"
 
-#: moderation/moderate.py:60
+#: moderation/moderate.py:64
 #, python-brace-format
 msgid "Current moderations for user {user_id} with {community} exist."
 msgstr ""
 
-#: moderation/moderate.py:64
+#: moderation/moderate.py:68
 #, python-brace-format
 msgid ""
 "\n"
 "User added a status update: {status_url}"
 msgstr ""
 
-#: moderation/moderate.py:72
+#: moderation/moderate.py:76
 #, python-brace-format
 msgid "User {user_tag} is waiting for moderation\n"
 msgstr ""
 
-#: moderation/social.py:230
+#: moderation/social.py:235
 msgid "Followers"
 msgstr "Abonnés"
 
-#: moderation/social.py:247
+#: moderation/social.py:252
 msgid "Verified"
 msgstr "Vérifiés"
 
-#: moderation/social.py:247
+#: moderation/social.py:252
 msgid "Others"
 msgstr "Autres"
 
-#: moderation/social.py:324
+#: moderation/social.py:329
 #, python-brace-format
 msgid "Categories of verified {title}"
 msgstr "Catégories des {title} vérifiés"
 
-#: moderation/social.py:327
+#: moderation/social.py:332
 #, python-brace-format
 msgid "Share of verified {title}"
 msgstr "Part des {title} vérifiés"
 
-#: moderation/social.py:331
+#: moderation/social.py:336
 #, python-brace-format
 msgid "{title} of {screen_name}: {total}"
 msgstr "{title} de {screen_name}: {total}"
 
-#: moderation/social.py:418
+#: moderation/social.py:423
 #, python-brace-format
 msgid "Social graph of user @{screen_name}.{txt}"
 msgstr "Graphe social du compte @{screen_name}.{txt}"
@@ -168,13 +172,26 @@ msgstr "Graphe social du compte @{screen_name}.{txt}"
 msgid "Join us!"
 msgstr "Rejoignez-nous!"
 
+#: moderation/templates/moderation/twitter_card.html:7
+#, python-format
+msgid "%(bot)s moderation team"
+msgstr "Équipe de modération de %(bot)s "
+
+#: moderation/templates/moderation/twitter_card.html:10
+#, python-format
+msgid "These amazing people filter and moderate %(hashtags)s questions."
+msgstr "Ces personnes géniales filtrent et modèrent les questions %(hashtags)s"
+
 #: moderation/templates/moderation/user.html:23
 msgid "User"
 msgstr "Utilisateur"
 
-#: moderation/views.py:40
-msgid "Moderators"
-msgstr "Modérateurs"
+#: moderation/views.py:44
+msgid "Moderation team"
+msgstr "Équipe de modération"
+
+#~ msgid "Moderators"
+#~ msgstr "Modérateurs"
 
 #~ msgid "state"
 #~ msgstr "état"

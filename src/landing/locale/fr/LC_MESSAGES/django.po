@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-06 13:13+0100\n"
-"PO-Revision-Date: 2021-08-10 14:09+0300\n"
+"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"PO-Revision-Date: 2022-01-17 03:23+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
+
+#: landing/templates/landing/about/index.html:6
+#: landing/templates/landing/about/index.html:15
+#, fuzzy
+#| msgid "About"
+msgid "About us"
+msgstr "A propos"
+
+#: landing/templates/landing/about/index.html:7
+msgid ""
+"Learn more about the people serving this community and those building its "
+"tools."
+msgstr ""
+"En savoir plus sur les personnes qui servent cette communauté et celles qui "
+"construisent ses outils."
 
 #: landing/templates/landing/antiracism/index.html:18
 msgid "Against racism and discriminations"
@@ -93,7 +108,7 @@ msgstr ""
 msgid "Community guidelines"
 msgstr "Charte de la communauté"
 
-#: landing/templates/landing/hashtag_lst_and.html:7
+#: landing/templates/landing/hashtag_lst_and.html:6
 msgid "and"
 msgstr "et"
 

@@ -33,11 +33,15 @@ from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
+if settings.DEBUG:
+    TIMEOUT = 1
+else:
+    TIMEOUT = 60 * 60
 
 
-@method_decorator(cache_page(60 * 60), name='dispatch')
+@method_decorator(cache_page(TIMEOUT), name='dispatch')
 class ModeratorPublicList(TemplateView):
-    title = _("Moderators")
+    title = _("Moderation team")
     template_name = "moderation/moderators.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -82,6 +86,11 @@ class ModeratorPublicList(TemplateView):
         moderators = list(divide_chunks(moderators, n))    
         context["moderators"] = moderators
         context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url(community)}"
+        try:
+            twitter_creator = f"@{community.twitter_creator.screen_name_tag()}"
+        except:
+            twitter_creator = None
+        context["twitter_creator"] = twitter_creator 
         return context
 
 

@@ -9,22 +9,24 @@
 <h2>{{view.title}}</h2>
 <a href="{% url "landing:moderation" %}">{% trans "Join us!" %}</a>
 
-
+<div class="card-deck">
 {% for chunk in moderators %}
-<div class="row">
+<!--  div class="row"-->
 {% for moderator in chunk %}
-<div class="column">
-  <div class="card" style="width: 14rem;">
+<!--  div class="column"-->
+  <div class="card" style="max-width: 18rem;">
 
     <img class="card-img-top" src="{{moderator.avatar}}" alt="@{{moderator.screen_name}} Twitter avatar">
-    <div class="card-header">{{moderator.name}}</div>
-    <div class="card-footer">
+    <div class="card-header">
       <a href="https://twitter.com/{{moderator.screen_name}}" class="card-link">@{{moderator.screen_name}}</a>
     </div>
+    <div class="card-footer">
+      {{moderator.name}}
+    </div>
   </div>
-</div>
+<!--/div-->
+{% endfor %}
+<!--/div-->
 {% endfor %}
 </div>
-{% endfor %}
-
 {% endblock %}

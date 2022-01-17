@@ -61,6 +61,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_request_dm',
         'blog',
     )
+    raw_id_fields = ('twitter_creator',)
     fields = (
         'name',
         'active',
@@ -93,6 +94,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_self_moderation_dm',
         'blog',
         'members_friends_cache',
+        'twitter_creator',
     )
     readonly_fields = (
         'created',

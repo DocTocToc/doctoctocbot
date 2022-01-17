@@ -1,6 +1,6 @@
 import logging
 import datetime
-
+from typing import Iterable, Any, Tuple
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.formats import date_format
@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
 from community.models import Community
 from django.conf import settings
-
+from django.utils.translation import gettext as _
 
 from community.helpers import get_community, activate_language
 from community.models import Retweet
@@ -18,6 +18,32 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
+
+def signal_last(it:Iterable[Any]) -> Iterable[Tuple[bool, Any]]:
+    iterable = iter(it)
+    ret_var = next(iterable)
+    for val in iterable:
+        yield False, ret_var
+        ret_var = val
+    yield True, ret_var
+
+def concatenate(lst: list[str], final: str):
+    if not lst:
+        return
+    if len(lst)==1:
+        return f'#{lst[0]}'
+    tag = ""
+    final = _(final)
+    for is_last_element, var in signal_last(lst):
+        if is_last_element:
+            tag = tag[:-2]
+            tag += f" {final} #"
+            tag += var
+        else:
+            tag += "#"
+            tag += var
+            tag += ", "
+    return tag
 
 @register.simple_tag(takes_context=True)
 def site_text(context):
@@ -39,20 +65,21 @@ def get_hashtag_lst(context):
         return list(
             Retweet.objects.filter(
                 community=community,
-                retweet=True).values_list('hashtag__hashtag', flat=True).distinct().order_by()
+                retweet=True
+            ).values_list('hashtag__hashtag', flat=True).distinct().order_by()
         )
     except DatabaseError:
         return
 
-@register.inclusion_tag('landing/hashtag_lst_and.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def hashtag_lst_and(context):
-    hashtag_lst = get_hashtag_lst(context)
-    return {'hashtag_lst': hashtag_lst}
+    lst = get_hashtag_lst(context)
+    return concatenate(lst, "and")
 
-@register.inclusion_tag('landing/hashtag_lst_or.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def hashtag_lst_or(context):
-    hashtag_lst = get_hashtag_lst(context)
-    return {'hashtag_lst': hashtag_lst}
+    lst = get_hashtag_lst(context)
+    return concatenate(lst, "or")
 
 @register.simple_tag(takes_context=True)
 def hashtag(context):

@@ -208,6 +208,12 @@ class Community(models.Model):
             "Duration of cache for members' friends set"
         )
     )
+    twitter_creator = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
 
     objects = CommunityManager()
 

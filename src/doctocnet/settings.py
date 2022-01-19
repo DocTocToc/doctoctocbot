@@ -16,6 +16,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 CONFIG_DIR = Path(BASE_DIR + "/..")
 config = AutoConfig(search_path = CONFIG_DIR)
+DJANGO_LOG_DIR = config('DJANGO_LOG_DIR', default='')
+LOG_FILE = os.path.join(DJANGO_LOG_DIR, "django.log")
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
@@ -48,7 +50,6 @@ DICT_CONFIG = {
             'formatter': 'default',
             'filters': ['require_debug_true'],
     },
-
         "console_debug_false": {
             "level": LOG_LEVEL,
             "filters": ["require_debug_false"],
@@ -60,19 +61,27 @@ DICT_CONFIG = {
             "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler"
         },
-        
+        "applogfile": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": LOG_FILE,
+        },
         "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
-
     },
 
     "loggers": {
         '': {
             'level': LOG_LEVEL,
-            'handlers': ['console', 'console_debug_false'],
-            'propagate': False,
+            'handlers': ['console', 'console_debug_false', 'applogfile',],
+            'propagate': True,
         },
         "django": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": [
+                "console",
+                "console_debug_false",
+                "mail_admins",
+                "applogfile",
+            ],
             "level": LOG_LEVEL,
         },
         "bot.stream": {
@@ -140,8 +149,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = ['*']
 
-if not DEBUG or DEBUG_HTTPS:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
@@ -160,6 +168,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'constance',
     'rest_framework',
+    'django_filters',
     'doctocnet',
     'landing',
     'social_django',
@@ -193,7 +202,6 @@ INSTALLED_APPS = [
     'bootstrap_modal_forms',
     'dal',
     'dal_select2',
-    'silver',
     'rest_framework.authtoken',
     'request',
     'invite',
@@ -208,6 +216,20 @@ INSTALLED_APPS = [
     'taggit_serializer',
     'filter',
     'user_visit',
+    'mama_cas',
+    'matrix',
+    'django_dumpdata_one',
+    'hive',
+    'durationwidget',
+    'widget_tweaks',
+    'django.contrib.gis',
+    'leaflet',
+    'choice',
+    'webpush',
+    'network',
+    'fontawesomefree',
+    'silver',
+    'textareacounter',
 ]
 
 if DEBUG:
@@ -235,7 +257,7 @@ if DEBUG:
         'corsheaders.middleware.CorsMiddleware',
     ]
 
-ROOT_URLCONF = 'doctocnet.urls'
+ROOT_URLCONF = config('ROOT_URLCONF', default='doctocnet.urls')
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
@@ -245,7 +267,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
-            'templates',     
+            os.path.join(config('STATIC_ROOT') + '/choice/framework7/src/'),
+            'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -268,7 +291,7 @@ WSGI_APPLICATION = 'doctocnet.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DATABASE_NAME', default='postgres'),
         'USER': config('DATABASE_USER', default='postgres'),
         'PASSWORD': config('DATABASE_PASSWORD', default=''),
@@ -353,7 +376,6 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/settings/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/user/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
-
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.twitter.TwitterOAuth',
     #'social_core.backends.github.GithubOAuth2',
@@ -364,14 +386,16 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
-    'moderation.profile.socialuser',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
-    'moderation.profile.user',
-    'moderation.profile.profile',
-    'doctocnet.twitterinfo.show_profile',  # <--- set the path to the function
+    'moderation.twitter.social_auth_twitter_pipeline.socialuser',
+    'moderation.twitter.social_auth_twitter_pipeline.user',
+    'moderation.twitter.social_auth_twitter_pipeline.profile',
+    'moderation.twitter.social_auth_twitter_pipeline.network',
+    #'doctocnet.twitterinfo.show_profile',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
@@ -404,6 +428,8 @@ CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
 CELERY_TASK_ROUTES = {
     'bot.tasks.handle_on_status': {'queue': 'retweet'},
+    'moderation.tasks.handle_twitter_followers': {'queue': 'retweet'},
+    'moderation.tasks.handle_twitter_friends': {'queue': 'retweet'},
     'autotweet.tasks.handle_get_all_replies': {'queue': 'tree'},
 }
 
@@ -436,7 +462,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'PAGE_SIZE': 50,
 }
 
 #Default time delta in hours for all functions related to scraping web tweets
@@ -444,9 +472,6 @@ SCRAPING_HOUR_DELTA = config('SCRAPING_HOUR_DELTA', cast=int)
 
 # crispy_forms options
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# django-registration
-ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
 MIGRATION_MODULES = {
     'sites': 'doctocnet.data_migrations.sites_migrations',
@@ -496,7 +521,12 @@ META_USE_TWITTER_PROPERTIES = True
 STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
 STRIPE_LIVE_MODE = False
+STRIPE_WEBHOOK_SECRET = config(
+    "STRIPE_WEBHOOK_SECRET",
+    default="whsec_REDACTED"
+)
 
+EMAIL_BACKEND=config('EMAIL_BACKEND')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
@@ -506,6 +536,7 @@ EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', default=30, cast=int)
 SERVER_EMAIL = config('SERVER_EMAIL', default='noreply@example.com')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@example.com')
+
 ADMIN_FIRST_NAME = config('ADMIN_FIRST_NAME', default='admin')
 ADMIN_LAST_NAME = config('ADMIN_LAST_NAME', default='admin')
 ADMIN_NAME = " ".join([ADMIN_FIRST_NAME, ADMIN_LAST_NAME])
@@ -514,7 +545,6 @@ ADMINS=[
 (ADMIN_NAME, ADMIN_EMAIL_ADDRESS),
 ]
 MANAGERS=ADMINS
-EMAIL_BACKEND=config('EMAIL_BACKEND')
 
 # investment: this setting was used before community feature
 #PROJECT_NAME = 'doctoctocbot'
@@ -543,6 +573,7 @@ TWITTER_APP_CONSUMER_KEY = config('TWITTER_APP_CONSUMER_KEY')
 TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
+SOCIAL_AUTH_TWITTER_SCREEN_NAME = config('BOT_SCREEN_NAME')
 SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = config('TWITTER_CONSUMER_SECRET')
 
@@ -585,6 +616,7 @@ if DEBUG:
     
 
 # Copper (name of Silver billing app inside our project)
+SILVER_REST = False
 SILVER_EXTRA = config('SILVER_EXTRA', default="") # "Tax exempt due to XXX"
 SILVER_SALES_TAX_PERCENT = config('SILVER_SALES_TAX_PERCENT', cast=int, default=0) # 24
 SILVER_SALES_TAX_NAME = config('SILVER_SALES_TAX_NAME', default="") # "VAT"
@@ -673,6 +705,14 @@ CONSTANCE_CONFIG = {
         3600,
         "normalize Celery task time limit in seconds"
     ),
+    "timeline_soft_time_limit": (
+        3600,
+        "community_members_timeline Celery task soft time limit in seconds"
+    ),
+    "timeline_time_limit": (
+        3600,
+        "community_members_timeline Celery task time limit in seconds"
+    ),
     "messenger__tasks__handle_campaign__time_limit": (
         3600,
         "handle_campaign celery task (hard) time limit"
@@ -753,6 +793,89 @@ CONSTANCE_CONFIG = {
         25,
         "Default number of DirectMessage instances to show on admin display list"
     ),
+    "landing__templatetags__opengraph_tags__twitter_creator": (
+        "@MedecineLibre",
+        "Opengraph (Twitter card) default twitter_creator value"
+    ),
+    "matrix__cas__callbacks__attribute_key": (
+        "matrix",
+        "Key of attribute sent by CAS to Synapse (attribute_requirements)"
+    ),
+    "matrix__cas__callbacks__attribute_value": (
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "Value of attribute sent by CAS to Synapse (attribute_requirements)"
+    ),
+    # ISO8601 duration (default is 1 day)
+    "hive__models__tweetsubscription__age": (
+        "P1DT0H0M0S",
+        "Default age limit of a tweet for notification"
+    ),
+    "hive__utils__tweetsubscription_retweet_ratio": (
+        0.01,
+        "retweet ratio threshold to notify a status"
+    ),
+    "hive__models__tweetsubscription__retweet_count_min_value": (
+        2,
+        "minimal value for the retweet count of a subscription"
+    ),
+    "choice_matrix_bot_user_id": (
+        "@bot:medica.im",
+        "Matrix User ID of the Matrix bot used for Choice app"
+    ),
+    "choice_cas_url": (
+        "https://doctoctoc.net/cas/login"\
+        "?service=https://matrix.medica.im/_matrix/client/r0/login/cas/ticket"\
+        "?redirectUrl=",
+        "Choice app: base url to CAS server redirecting to Matrix room"
+    ),
+    "choice_matrix_homeserver_url": (
+        "medica.im",
+        "url of Matrix homeserver"    
+    ),
+    "choice_matrix_room_url": (
+        "https://element.medica.im/#/room/#",
+        "Base url for a Matrix room, without the alias"
+    ),
+    "moderation__self_categorize__backoff": (
+        90,
+        "backoff period between 2 self moderation DM in days"
+    ),
+    "messenger_status_max_chars": (
+        240,
+        "maximum number of characters for the variable part of the status"    
+    ),
+    "messenger_status_screen_name_delta_days": (
+        7,
+        "days after which latest recorded screen_name is considered stale"    
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15
+
+# CAS Central Authentication Service
+MAMA_CAS_SERVICES = [
+    {
+        "SERVICE" : config(
+                'CAS_1_SERVICE',
+                default="^http:\/\/127\.0\.0\.1.*"
+            ),
+        "CALLBACKS" : [
+            config(
+                'CAS_1_CALLBACK',
+                default='mama_cas.callbacks.user_name_attributes'
+            ),
+        ]
+    },
+]
+MAMA_CAS_LOGIN_TEMPLATE = "cas/login.html"
+
+#MATRIX                                                                         
+MATRIX_BOT_PASSWORD=config('MATRIX_BOT_PASSWORD', default='')               
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY', default=''),
+    "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY', default=''),
+    "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL', default='')
+}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

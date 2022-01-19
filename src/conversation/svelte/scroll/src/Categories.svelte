@@ -100,10 +100,7 @@ ul {
 	}
 </style>
 
-<div class="container">
- <div class="row">
-  <div class="col-md-auto">
-  <h2>{title}</h2>
+  <h3>{title}</h3>
    <ul>
    {#if id=="cat"}
    <li>
@@ -121,8 +118,6 @@ ul {
      </div>
    </li>
    {/each}
-  </div>
- </div>
-</div>
+   </ul>
 <!--p>Selected categories: {selected_categories}</p-->
 <!--p>Query:{query}</p-->

@@ -1,15 +1,18 @@
 {% extends "doctocnet/base.html" %}
-
+{% load i18n %}
+{% load opengraph_tags %}
 {% block head_meta %}
-{% with twitter_site="@DocTocTocBot" twitter_creator="@MedecineLibre" og_url="" og_title="" og_description="" og_image="" %}
 {{ block.super }}
-{% include "doctocnet/twitter_opengraph.html" %}
+{% trans "About us" as the_title %}
+{% trans "Learn more about the people serving this community and those building its tools." as the_description %}
+{% with og_title=the_title og_description=the_description %}
+{% opengraph %}
 {% endwith %}
 {% endblock head_meta %}
 
 {% block content %}
 
-<h1>{% block title %} Qui sommes-nous? {% endblock title %}</h1>
+<h1>{% block title %} {% trans "About us" %} {% endblock title %}</h1>
 
 {% include "landing/about/content.html" %}
 

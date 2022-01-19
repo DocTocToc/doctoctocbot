@@ -1,17 +1,23 @@
 import logging
 import requests
 import re
-from requests.exceptions import HTTPError
 import json
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from urllib.parse import urlparse
+from requests.exceptions import HTTPError
 
+from django.db.models.signals import post_save
+from django.db import DatabaseError
+from django.dispatch import receiver
+from django.test import Client
+
+from silver.models.billing_entities.customer import Customer as SilverCustomer
+from silver.models.billing_entities.provider import Provider as SilverProvider
 from customer.tasks import handle_create_customer_and_draft_invoice
-from crowdfunding.models import ProjectInvestment
 from customer.models import Customer, Provider, Product
-
 from customer.silver import get_headers, get_api_endpoint
+from customer.silver import create_customer_and_draft_invoice
+from crowdfunding.models import ProjectInvestment
+from silver.models import ProductCode
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +25,11 @@ logger = logging.getLogger(__name__)
 def create_customer_and_draft_invoice_receiver(sender, instance, created, **kwargs):
     # start invoicing only if instance is paid
     # start invoicing only if instance doesn't already have invoice
-    handle_create_customer_and_draft_invoice.apply_async(
-        args=(instance.uuid,),
-        ignore_result=True
-    )
+    if instance.paid and not instance.invoice:
+        logger.debug(
+            f"create_customer_and_draft_invoice() for {instance=}"
+        )
+        create_customer_and_draft_invoice(instance)
 
 @receiver(post_save, sender=Customer)
 def on_customer_update(sender, instance, created, **kwargs):
@@ -50,6 +57,36 @@ def customer_instance_is_complete(instance):
     return is_complete
 
 def create_silver_customer(instance):
+    try:
+        sc= SilverCustomer.create(
+            first_name = instance.first_name,
+            last_name = instance.last_name,
+            #payment_due_days =
+            consolidated_billing = False,
+            customer_reference = str(instance.user.id),
+            #sales_tax_number =
+            sales_tax_percent = 0,
+            #sales_tax_name =
+            #currency =
+            company = instance.company,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            #phone = models.CharField(max_length=32, blank=True, null=True)
+            email = instance.email,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            #extra = 
+        )
+        logger.debug(f'Silver Customer: {sc} creation was successful!')
+    except:
+        pass
+    else:
+        Customer.objects.filter(id=instance.id).update(silver_id=sc.id)
+
+"""
+def create_silver_customer_old(instance):
     data = json.dumps(silver_customer_json(instance))
     logger.debug(get_api_endpoint("customers"))
     logger.debug(get_headers())
@@ -72,8 +109,38 @@ def create_silver_customer(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Customer {instance.last_name} creation was successful!')
+"""
 
 def update_silver_customer(instance):
+    try:
+        SilverCustomer.objects.filter(pk=instance.id).update(
+            first_name = instance.first_name,
+            last_name = instance.last_name,
+            #payment_due_days =
+            #consolidated_billing = False,
+            #customer_reference = str(instance.user.id),
+            #sales_tax_number =
+            #sales_tax_percent = 0,
+            #sales_tax_name =
+            #currency =
+            company = instance.company,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            #phone = models.CharField(max_length=32, blank=True, null=True)
+            email = instance.email,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            #extra = 
+        )
+        sc = SilverCustomer.objects.get(id=instance.id)
+        logger.debug(f'Silver Customer: {sc} update was successful!')
+    except:
+        pass
+
+"""
+def update_silver_customer_old(instance):
     silver_customer_id = instance.silver_id
     if not silver_customer_id:
         logger.warn(
@@ -97,6 +164,7 @@ def update_silver_customer(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f"Customer {json.loads(response.text)['id']} update was successful!")
+"""
 
 def silver_customer_json(instance):
     """Create a dictionary containing all the values of the Customer instance"""
@@ -155,6 +223,58 @@ def silver_provider_json(instance):
     return data
 
 def create_silver_provider(instance):
+    try:
+        sp = SilverProvider.objects.create(
+            name = instance.name,
+            flow = instance.flow,
+            company = instance.company,
+            email = instance.email,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            extra = instance.extra,
+            invoice_series = instance.invoice_series,
+            invoice_starting_number = instance.invoice_starting_number,
+            proforma_series = instance.proformar_series,
+            proforma_starting_number = instance.proforma_starting_number,
+            default_document_state = instance.default_document_state,
+            meta = instance.meta,
+        )
+    except:
+        pass
+    else:
+        Provider.objects.filter(id=instance.id).update(silver_id=sp.id)
+
+def update_silver_provider(instance):
+    logger.debug('*****')
+    try:
+        SilverProvider.objects.filter(id=instance.silver_id).update(
+            name = instance.name,
+            flow = instance.flow,
+            company = instance.company,
+            email = instance.email,
+            address_1 = instance.address_1,
+            address_2 = instance.address_2,
+            country = instance.country,
+            city = instance.city,
+            state = instance.state,
+            zip_code = str(instance.zip_code),
+            extra = instance.extra,
+            invoice_series = instance.invoice_series,
+            invoice_starting_number = instance.invoice_starting_number,
+            proforma_series = instance.proforma_series,
+            proforma_starting_number = instance.proforma_starting_number,
+            default_document_state = instance.default_document_state,
+            meta = instance.meta,
+        )
+    except DatabaseError as e:
+        logger.error(e)
+
+"""
+def create_silver_provider_old(instance):
     data = json.dumps(silver_provider_json(instance))
     try:
         response = requests.post(
@@ -174,8 +294,10 @@ def create_silver_provider(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Provider {instance.company} creation was successful!')
+"""
 
-def update_silver_provider(instance):
+"""
+def update_silver_provider_old(instance):
     silver_id = instance.silver_id
     if not silver_id:
         logger.warn(
@@ -184,10 +306,11 @@ def update_silver_provider(instance):
         )
         return        
     data = json.dumps(silver_provider_json(instance))
-
+    url = get_api_endpoint("providers", _id=silver_id)
+    logger.debug(f'{url=}')
     try:
         response = requests.put(
-            url=get_api_endpoint("providers", silver_id),
+            url=url,
             data=data,
             headers=get_headers()
         )
@@ -199,6 +322,7 @@ def update_silver_provider(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'Provider {instance.company} was successfully updated!')
+"""
 
 @receiver(post_save, sender=Provider)
 def create_update_silver_provider(sender, instance, created, **kwargs):
@@ -215,7 +339,6 @@ def create_update_silver_provider(sender, instance, created, **kwargs):
         create_silver_provider(instance)
     else:
         update_silver_provider(instance)
-
 
 def provider_instance_is_complete(instance):
     is_complete = (
@@ -234,7 +357,26 @@ def provider_instance_is_complete(instance):
     return is_complete
 
 def create_silver_product_code(instance):
-    data = json.dumps({"value": instance.product_code})
+    try:
+        pc = ProductCode.objects.create(
+            value = instance.product_code
+        )
+    except:
+        pass
+    else:
+        Product.objects.filter(pk=instance.pk).update(silver_id=pc.id)
+
+def update_silver_product_code(instance):
+    try:
+        ProductCode.objects.filter(
+            id = instance.silver_id
+        ).update(value=instance.product_code)
+    except:
+        pass
+
+"""
+def create_silver_product_code_old(instance):
+    data=instance.product_code
     try:
         response = requests.post(
             url=get_api_endpoint("product-codes"),
@@ -261,7 +403,7 @@ def create_silver_product_code(instance):
     else:
         logger.info(f'Product {instance.product_code} creation was successful!')
 
-def update_silver_product_code(instance):
+def update_silver_product_code_old(instance):
     silver_id = instance.silver_id
     if not silver_id:
         logger.warn(
@@ -284,6 +426,7 @@ def update_silver_product_code(instance):
         logger.error(f'Other error occurred: {err}')
     else:
         logger.info(f'product_code {instance.product_code} was successfully updated!')
+"""
 
 @receiver(post_save, sender=Product)
 def create_update_silver_product_code(sender, instance, created, **kwargs):

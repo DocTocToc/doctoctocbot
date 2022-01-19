@@ -1,0 +1,1 @@
+[{"model": "choice.discipline", "pk": 1, "fields": {"name": "Discipline chirurgicale", "slug": null, "label": "Chirurgie"}}, {"model": "choice.discipline", "pk": 2, "fields": {"name": "Discipline m\u00e9dicale", "slug": null, "label": "M\u00e9decine"}}, {"model": "choice.discipline", "pk": 3, "fields": {"name": "Discipline biologique", "slug": null, "label": "Biologie"}}]

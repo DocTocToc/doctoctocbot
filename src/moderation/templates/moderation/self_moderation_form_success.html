@@ -22,10 +22,18 @@
 
 
 {% block content %}
-<p>Merci. Nous allons vérifier votre inscription.</p>
+<p>Merci. Nous allons traiter votre inscription.</p>
 <p>Vous aurez bientôt accès au forum et à tous nos services.</p>
-<p>Nous vous prions de suivre le compte Twitter @{{ view.kwargs.screen_name }} pour
+<p>
+Si ce n'est pas déjà fait, nous vous prions de suivre le compte Twitter @{{ view.kwargs.screen_name }} pour
 recevoir notre DM (message privé) de confirmation.
-Si votre compte est protégé, merci d'accepter la demande d'abonnement de @{{ view.kwargs.screen_name }}.
+</p>
+<p>
+Si votre compte Twitter est protégé ("verrouillé"), merci d'accepter la demande d'abonnement de @{{ view.kwargs.screen_name }}.
+Le compte @{{ view.kwargs.screen_name }} doit pouvoir lire vos tweets pour que nos modérateurs puissent passer en revue votre demande d'abonnement. 
+</p>
+<p>
+Vous pouvez nous contacter via notre <a href="{% url 'gpgcontact:contact-form' %}">formulaire sécurisé</a>.
+</p>
 {% endblock %}
 

@@ -26,7 +26,11 @@ def get_datetime_tz(json) -> datetime:
     return get_datetime_tz_from_twitter_str(datetime_string)
 
 def get_datetime_tz_from_twitter_str(created_at: str) -> datetime:
-    datetime_with_tz = datetime.strptime(created_at, "%a %b %d %H:%M:%S %z %Y")
+    # "Tue Nov 02 12:21:12 +0000 2021"
+    datetime_with_tz = datetime.strptime(
+        created_at,
+        "%a %b %d %H:%M:%S +0000 %Y"
+    )
     datetime_in_utc = datetime_with_tz.astimezone(pytz.utc)
     return datetime_in_utc
 

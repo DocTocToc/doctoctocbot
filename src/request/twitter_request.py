@@ -13,7 +13,7 @@ def get_incoming_friendship(community):
     try:
         screen_name=community.account.username
     except:
-        return []
+        return
     api = twitter_api(username=screen_name)
     if api:
         return api.IncomingFriendship()
@@ -55,7 +55,7 @@ def get_helper_message(community, requestor_screen_name, bot_username):
     db_message = community.helper_message
     if not db_message:
         return
-    url = f"{site_url(community)}{reverse('moderation:self')}"
+    url = f"{site_url(community)}/oauth/login/twitter/?next={reverse('moderation:self')}"
     context = {
         'requestor': requestor_screen_name,
         'bot': bot_username,

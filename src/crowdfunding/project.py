@@ -3,19 +3,29 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
-from crowdfunding.models import Project, ProjectInvestment
+from django.utils import timezone
+from crowdfunding.models import Project, ProjectInvestment, Campaign
 from community.helpers import get_community
 
 logger = logging.getLogger(__name__)
 
 
 def get_project(request):
+    community = get_community(request)
+    if community:
+        return community.crowdfunding
+
+def get_campaign(request):
+    project = get_project(request)
+    now = timezone.now()
     try:
-        return Project.objects.get(name=settings.PROJECT_NAME)
-    except (AttributeError, ImproperlyConfigured, Project.DoesNotExist):
-        community = get_community(request)
-        if community:
-            return community.crowdfunding
+        return Campaign.objects.get(
+            project=project,
+            start_datetime__lte=now,
+            end_datetime__gte=now,
+        )
+    except Campaign.DoesNotExist:
+        return
 
 def get_year_investor_count(context):
     project = get_project(context)

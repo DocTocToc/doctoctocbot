@@ -1,11 +1,13 @@
+import logging
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
+from django.db import ProgrammingError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from discourse.models import AccessControl
 
+logger = logging.getLogger(__name__)
 
 class SelfModerationForm(forms.Form):
     
@@ -17,13 +19,16 @@ class SelfModerationForm(forms.Form):
         self.helper.form_action = 'moderation:self'
         self.helper.add_input(Submit('submit', _('Submit')))
         self.helper.form_method = 'post'
-
-    CATEGORY_CHOICES = list(
-        AccessControl.objects.filter(authorize=True).values_list(
-            'category__name',
-            'category__label'
-        )
+        
+    qs = AccessControl.objects.filter(authorize=True).values_list(
+        'category__name',
+        'category__label'
     )
+    try:
+        CATEGORY_CHOICES = list(qs)
+    except (ProgrammingError, TypeError) as e:
+        logger.error(e)
+        CATEGORY_CHOICES = []
     CATEGORY_CHOICES.insert(0, ('', _('None of those categories')))
     category = forms.ChoiceField(
         label=_('Please choose a category'),
@@ -43,6 +48,3 @@ class SelfModerationForm(forms.Form):
         ),
         required=False,
     )
-    #def create_email(self):
-        # send email using the self.cleaned_data dictionary
-    #    pass

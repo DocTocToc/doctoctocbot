@@ -1,8 +1,20 @@
+{% load i18n %}
+{% load users %}
 <div class="card">
-<img src="{{ profile.pp_url }}" class="card-img-top" alt="Profile Picture">
+  <img src="{{ profile.pp_url }}" class="card-img-top" alt="Profile Picture">
   <div class="card-body">
-    <h5 class="card-title">{{ profile.screen_name }}</h5>
+    <h5 class="card-title">@{{ profile.screen_name }}</h5>
     <h6 class="card-subtitle mb-2 text-muted">{{ profile.name }}</h6>
-    <!--p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p-->
+  </div>
+  <div class="card">
+    <div class="card-header">
+      {% trans "Category" %}
+    </div>
+    <ul class="list-group list-group-flush">
+      {% category as category_lst %}
+      {% for category in category_lst %}
+      <li class="list-group-item">{{ category }}</li>
+      {% endfor %}
+    </ul>
   </div>
 </div>

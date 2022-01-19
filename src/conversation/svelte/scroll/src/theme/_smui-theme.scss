@@ -1,0 +1,11 @@
+@use '@material/theme/index' as theme with (
+  $primary: #BB86FC,
+  $secondary: #03DAC6,
+  $on-primary: #000000,
+  $on-secondary: #000000,
+  $surface: #121212,
+  $background: #121212,
+  $on-surface: #FFFFFF,
+  $error: #CF6679,
+  $on-error: #000000,
+);

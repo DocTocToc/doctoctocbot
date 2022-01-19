@@ -8,6 +8,15 @@ def get_url_for_screen_name(screen_name: str) -> str:
         raise ValueError('screen_name is an empty string.')
     return f'https://twitter.com/{screen_name}'
 
+def get_url_from_user_id(user_id: int) -> str:
+    if not user_id:
+        raise ValueError('user_id is empty.')
+        return
+    if not isinstance(user_id, int):
+        raise TypeError('user_id is not an integer.')
+        return
+    return f"https://twitter.com/intent/user?user_id={user_id}"
+
 def status_url_from_id(id: int) -> str:
     """ 
         Get tweet url given its status id.

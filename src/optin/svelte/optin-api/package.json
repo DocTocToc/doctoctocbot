@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "js-cookie": "^2.2.1",
-    "rollup": "^1.26.4",
+    "rollup": "^1.32.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-copy": "^3.1.0",
     "rollup-plugin-livereload": "^1.0.4",
@@ -13,6 +13,7 @@
     "svelte": "^3.13.0"
   },
   "dependencies": {
+    "sirv": "^1.0.18",
     "sirv-cli": "^0.4.5"
   },
   "scripts": {

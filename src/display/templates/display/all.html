@@ -27,7 +27,7 @@
 
       <ul class="nav nav-pills bg-light d-xl-none">
         <li class="nav-item">
-          <a class="nav-link" href="#last">{% blocktrans %}Last {{ hashtag_lst }} tweets{% endblocktrans %}</a>
+          <a class="nav-link" href="#last">{% blocktrans %}Last {{ hashtag_lst_or }} tweets{% endblocktrans %}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#covid19">{% trans "Last #covid19 tweets" %}</a>
@@ -45,9 +45,9 @@
      <!-- TTL: {{ display_cache }} -->
       <div id="last" class="col">
         {% with display.last as tweet_lst %}
-        <span class="badge badge-secondary">{% blocktrans %}Latest {{ hashtag_lst }} tweets{% endblocktrans %}</span>
+        <span class="badge badge-secondary">{% blocktrans %}Latest {{ hashtag_lst_or }} tweets{% endblocktrans %}</span>
         {% include "display/tweet.html" %}
-        <a href="{% url "display:last" %}" class="btn btn-outline-primary btn-sm">{% blocktrans %}See more {{ hashtag_lst }} tweets{% endblocktrans %}</a>
+        <a href="{% url "display:last" %}" class="btn btn-outline-primary btn-sm">{% blocktrans %}See more {{ hashtag_lst_or }} tweets{% endblocktrans %}</a>
         {% endwith %}
       </div>
       <div id="covid19" class="col">

@@ -20,32 +20,62 @@ def getAuth(username=None, backend=False):
         except Account.DoesNotExist:
             return getSocialDjangoAuth(username)
         if backend:
-            auth = tweepy.OAuthHandler(
-                account.backend_twitter_consumer_key,
-                account.backend_twitter_consumer_secret
-            )
-            auth.set_access_token(
-                account.backend_twitter_access_token,
-                account.backend_twitter_access_token_secret
-            )
+            auth = oauth_backend(account)
         else:
-            auth = tweepy.OAuthHandler(
-                account.twitter_consumer_key,
-                account.twitter_consumer_secret
-            )
-            auth.set_access_token(
-                account.twitter_access_token,
-                account.twitter_access_token_secret
-            )
+            auth = oauth(account)
     else:
+        auth = getRandomAuth(backend=backend)
+    return auth
+
+def getRandomAuth(backend=False):
+    """Get a status through the account of another community
+    Try to get a status through another account if the bot of a community was
+    blocked by the author of the status.
+    """
+    for account in Account.objects.all():
+        if backend:
+            auth = oauth_backend(account)
+        else:
+            auth = oauth(account)
+        if auth:
+            return auth
+
+def oauth(account):
+    try:
         auth = tweepy.OAuthHandler(
-            settings.TWITTER_CONSUMER_KEY,
-            settings.TWITTER_CONSUMER_SECRET
+            account.twitter_consumer_key,
+            account.twitter_consumer_secret
         )
+    except tweepy.TweepError as e:
+        logger.error(e)
+        return
+    try:
         auth.set_access_token(
-            settings.TWITTER_ACCESS_TOKEN,
-            settings.TWITTER_ACCESS_TOKEN_SECRET
+            account.twitter_access_token,
+            account.twitter_access_token_secret
         )
+    except tweepy.TweepError as e:
+        logger.error(e)
+        return
+    return auth
+
+def oauth_backend(account):
+    try:
+        auth = tweepy.OAuthHandler(
+            account.backend_twitter_consumer_key,
+            account.backend_twitter_consumer_secret
+        )
+    except tweepy.TweepError as e:
+        logger.error(e)
+        return
+    try:
+        auth.set_access_token(
+            account.backend_twitter_access_token,
+            account.backend_twitter_access_token_secret
+        )
+    except tweepy.TweepError as e:
+        logger.error(e)
+        return
     return auth
 
 def getSocialDjangoAuth(username):
@@ -74,10 +104,17 @@ def getSocialDjangoAuth(username):
     return auth
 
 def get_api(username=None, backend=False):
-    try:
-        return tweepy.API(getAuth(username, backend), wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-    except:
+    auth = getAuth(username, backend)
+    if not auth:
         return
+    try:
+        return tweepy.API(
+            auth,
+            wait_on_rate_limit=True,
+            wait_on_rate_limit_notify=True
+        )
+    except tweepy.TweepError as e:
+        logger.error(e)
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.

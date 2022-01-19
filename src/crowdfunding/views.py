@@ -4,7 +4,7 @@ import pytz
 from django.core import signing
 from django.conf import settings
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -15,31 +15,123 @@ from django.core.exceptions import SuspiciousOperation
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
 from django.db import DatabaseError
 from dateutil.relativedelta import relativedelta
 import datetime
 
 import stripe
-#from paypal.standard.forms import PayPalPaymentsForm
-#from paypal.standard.forms import PayPalEncryptedPaymentsForm
-#from paypal.standard.forms import PayPalSharedSecretEncryptedPaymentsForm
-#from django_registration.views import RegistrationView
+from django.http import JsonResponse
 from django_registration.views import RegistrationView as BaseRegistrationView
 from django_registration import signals
-
-from .constants import ITEM_NAME, HOURLY_RATE_EUR
+from django.contrib.sites.shortcuts import get_current_site
+from .constants import ITEM_NAME
 from .forms import CrowdfundingHomeAuthenticatedForm, CrowdfundingHomeDjangoUserForm
-from .models import ProjectInvestment, Tier
+from .models import ProjectInvestment, PaymentProcessorWebhook
 from .tasks import handle_tweet_investment
-from crowdfunding.project import get_project
-
+from crowdfunding.project import get_project, get_campaign
+from customer.models import Customer
 import logging
 logger = logging.getLogger(__name__)
+
+from django.http import HttpResponse
 
 REGISTRATION_SALT = getattr(settings, 'REGISTRATION_SALT', 'registration')
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def get_endpoint_secret(request):
+    site = get_current_site(request)
+    if not site:
+        return
+    try:
+        return PaymentProcessorWebhook.objects.get(site=site).secret
+    except PaymentProcessorWebhook.DoesNotExist as e:
+        logger.error(
+            f"PaymentProcessorWebhook object for {site=} does not exist."
+        )
+        return    
+    
+def confirm_order(
+        pi_uuid_str,
+        payment_intent=None,
+        amount_total=None
+    ):
+    try:
+        order = ProjectInvestment.objects.get(uuid=pi_uuid_str)
+    except ProjectInvestment.DoesNotExist:
+        return
+    if int(float(order.pledged * 100)) == amount_total:
+        # mark the order as paid
+        order.paid = True
+        order.payment_intent = payment_intent
+        order.save()
+        return order
+
+def tweet_project_investment(pi: ProjectInvestment):
+    try:
+        project_id = pi.project.id
+    except AttributeError:
+        project_id = None
+    try:
+        campaign_id = pi.campaign.id
+    except AttributeError:
+        campaign_id = None
+
+    handle_tweet_investment.apply_async(
+        args=[
+            pi.user.id,
+            pi.public,
+        ],
+        kwargs={
+            'project_id': project_id,
+            'campaign_id': campaign_id
+        }
+    )
+
+def fulfill_order(session):
+    # TODO: fill me in
+    logger.debug("Fulfilling order")
+    pi_uuid_str = session['client_reference_id']
+    payment_intent = session['payment_intent']
+    amount_total = session['amount_total']
+    logger.debug(f"{pi_uuid_str=}")
+    logger.debug(f"{payment_intent=}")
+    logger.debug(f"{amount_total=}")
+    pi = confirm_order(
+        pi_uuid_str,
+        payment_intent=payment_intent,
+        amount_total=amount_total
+    )
+    if pi:
+        tweet_project_investment(pi)
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    # For now, you only need to print out the webhook payload so you can see
+    # the structure.
+    logger.debug(payload)
+    try:
+        event = stripe.Webhook.construct_event(
+            payload,
+            sig_header,
+            get_endpoint_secret(request)
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Fulfill the purchase...
+        fulfill_order(session)
+    # Passed signature verification
+    return HttpResponse(status=200)
 
 def get_amount(form): 
     custom_amount = form.cleaned_data.get('custom_amount')
@@ -53,7 +145,7 @@ class InvestViewDjango(BaseRegistrationView):
     
     def get_success_url(self, _):
         return reverse_lazy(
-            'crowdfunding:stripe-checkout',
+            'crowdfunding:stripe-checkout2',
             current_app='crowdfunding')
 
     def _form_valid(self, form):
@@ -91,6 +183,7 @@ class InvestViewDjango(BaseRegistrationView):
         except DatabaseError:
             return
         self.request.session['custom'] = str(pi.uuid)
+        self.request.session['currency'] = pi.project.currency
         return
     
     def get_form_class(self):
@@ -171,11 +264,10 @@ class InvestViewDjango(BaseRegistrationView):
         user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 
-
 class InvestViewAuthenticated(FormView):  
     def get_success_url(self):
         return reverse_lazy(
-            'crowdfunding:stripe-checkout',
+            'crowdfunding:stripe-checkout2',
             current_app='crowdfunding')
         
     def form_valid(self, form):
@@ -205,11 +297,13 @@ class InvestViewAuthenticated(FormView):
         pi.public = public
         pi.user = self.request.user
         pi.project = get_project(self.request)
+        pi.campaign = get_campaign(self.request)
         try:
             pi.save()
         except DatabaseError:
             return
         self.request.session['custom'] = str(pi.uuid)
+        self.request.session['currency'] = pi.project.currency
         return super().form_valid(form)
 
     def get_initial(self, *args, **kwargs):
@@ -277,30 +371,73 @@ class InvestViewBase(View):
         else:
             return InvestViewDjango().get_template_names(self)
 
-"""
-def process_payment(request):
-    host = request.get_host()
-    amount = request.session.get('amount', 0)
-    amount_dec = Decimal(request.session.get('amount')).quantize(Decimal('.01'))
-    paypal_dict = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,
-        'amount': '%.2f' % amount_dec,
-        'item_name': ITEM_NAME,
-        'custom': request.session.get('custom'),
-        'currency_code': 'EUR',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse_lazy('crowdfunding:paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse_lazy('crowdfunding:payment_done')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse_lazy('crowdfunding:payment_cancelled')),
-    }
-    
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    #form = PayPalSharedSecretEncryptedPaymentsForm(initial=paypal_dict)
-    #form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
-    return render(request, 'crowdfunding/pay.html', {'form': form, 'amount': amount})
-"""
+
+def get_customer_email(request):
+    if request.user.is_authenticated:
+        user = request.user
+        customer_email = None
+        user_email = user.email
+        try:
+            customer = user.customer
+        except Customer.DoesNotExist:
+            customer = None
+        if customer:
+            customer_email = customer.email
+        return customer_email or user_email
+
+def create_checkout_session(request):
+    amount_int = request.session.get('amount')
+    amount_cents = amount_int * 100
+    project = get_project(request)
+    product = project.product.description
+    currency = project.currency
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': currency.lower(),
+                'product_data': {
+                    'name': product,
+                },
+                'unit_amount': amount_cents,
+                },
+            'quantity': 1,
+        }],
+        mode = 'payment',
+        customer_email = get_customer_email(request),
+        success_url = get_success_url(request),
+        cancel_url = get_cancel_url(request),
+        # session['custom'] is a string representing the uuid of the
+        # ProjectInvestment object
+        client_reference_id = request.session['custom'],
+    )
+    return JsonResponse({'id': session.id})
+
+def get_success_url(request):
+    url = request.build_absolute_uri(
+        reverse(
+            'crowdfunding:success',
+            current_app = 'crowdfunding'
+        )
+    )
+    if settings.DEBUG:
+        logger.debug(url)
+        return "https://example.com"
+    else:
+        return url
+
+def get_cancel_url(request):
+    url = request.build_absolute_uri(
+        reverse(
+            'crowdfunding:cancel',
+            current_app = 'crowdfunding'
+        )
+    )
+    if settings.DEBUG:
+        logger.debug(url)
+        return "https://example.com"
+    else:
+        return url
 
 def stripe_checkout(request):
     if request.session.test_cookie_worked():
@@ -325,6 +462,31 @@ def stripe_checkout(request):
             'crowdfunding/stripe_cookies_failure.html',
         )
 
+def stripe_checkout2(request):
+    if request.session.test_cookie_worked():
+        request.session.delete_test_cookie()
+        amount_int = request.session.get('amount')
+        currency = request.session.get('currency')
+        amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
+        amount_str = "{:.2f}".format(amount_dec)
+        amount_cents = amount_int * 100
+        button_label = _("Pay with card")
+        public_key = settings.STRIPE_PUBLIC_KEY
+        return render(
+            request,
+            'crowdfunding/stripe_checkout2.html',
+            {'amount_str': amount_str,
+             'public_key': public_key,
+             'amount_cents': amount_cents,
+             'button_label': button_label,
+             'currency': currency,
+            }
+        )
+    else:
+        return render(
+            request,
+            'crowdfunding/stripe_cookies_failure.html',
+        )
 
 def charge(request):
     def render_error(request, frontend_error_msg):
@@ -518,37 +680,6 @@ class ProjectInvestmentView(ListView):
         ).years
         year_range = reversed(range(difference_in_years+1))
         context["year_range"] = year_range
-        """
-        tier_lst = []
-        if Tier.objects.filter(project=project).count():
-            for t in Tier.objects.filter(project=project):
-                tier = {}
-                tier['title']= t.title
-                tier['emoji']= t.emoji
-                tier['description']= t.description
-                tier['funder_lst'] = list(ProjectInvestment.objects.
-                                          filter(paid=True).
-                                          filter(public=True).
-                                          filter(project=project).
-                                          filter(pledged__gte=t.min, pledged__lte=t.max))
-                tier_lst.append(tier)
-        else:
-            context['funder_lst'] = list(ProjectInvestment.objects.
-                                          filter(paid=True).
-                                          filter(public=True).
-                                          filter(project=project).
-                                          order_by('name').
-                                          distinct('name'))
-        context['tier_lst'] = tier_lst        
-        # Replaced by custom templatetag
-        #context['investor_count'] = (ProjectInvestment
-        #                             .objects
-        #                             .filter(paid=True)
-        #                             .filter(project=project)
-        #                             .distinct('user')
-        #  
-        #                           .count())
-        """   
         return context
 
 

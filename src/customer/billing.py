@@ -15,6 +15,7 @@ from customer.tasks import generate_pdf
 from crowdfunding.models import ProjectInvestment, Project
 from customer.models import Customer, Provider, Product
 from customer.silver import get_api_endpoint, get_headers
+from django.db import IntegrityError, DatabaseError, transaction
 
 logger = logging.getLogger(__name__)
 
@@ -111,42 +112,51 @@ def create_silver_invoice(uuid):
             logger.info(f'Invoice {invoice_id} creation was successful!')
 """
  
-def create_silver_invoice(uuid):
+def create_silver_invoice(_uuid):
     #Create an invoice for corresponding ProjectInvestment
     try:
-        pi = ProjectInvestment.objects.get(pk=uuid)
+        pi = ProjectInvestment.objects.get(uuid=_uuid)
     except ProjectInvestment.DoesNotExist:
         return
     customer_instance = Customer.objects.filter(user=pi.user).first()
+    logger.debug(f"{customer_instance=}")
     if not customer_instance:
         return
     try:
         provider_instance = pi.project.provider
+        logger.debug(f"{provider_instance=}")
     except:
         return
     # check if invoice already exists
-    try:
-        invoice = Invoice.objects.get(id=pi.invoice)
-    except Invoice.DoesNotExist:
-        return
-    due_date = pi.datetime.strftime("%Y-%m-%d")
-    customer = SilverCustomer.objects.get(id=customer_instance.silver_id)
-    provider = SilverProvider.objects.get(id=provider_instance.silver_id)
-    product_instance = pi.project.product
-    logger.debug(f"product_code:{product_instance.product_code}")
-    quantity = get_quantity(pledged=pi.pledged, unit_price=product_instance.unit_price)
-    invoice.currency='EUR'
-    invoice.transaction_currency='EUR'
-    invoice.due_date = due_date
-    invoice.issue_date = due_date
-    invoice.customer = customer
-    invoice.provide = provider
-    invoice.sales_tax_percent = product_instance.sales_tax_percent
-    invoice.sales_tax_name = product_instance.sales_tax_name
-    invoice.currency = product_instance.currency
-    invoice.state = 'draft'
-    invoice.save()
-        
+    invoice_qs = Invoice.objects.select_for_update().filter(id=pi.invoice)
+    with transaction.atomic():
+        try:
+            invoice = invoice_qs[0]
+            logger.debug(f"{invoice=}")
+        except IndexError:
+            logger.error(f"No Invoice object with id {pi.invoice}")
+            return
+        # if the Invoice already has an entry, return to avoid duplicate entries
+        if invoice.entries:
+            return {"silver_invoice_id": invoice.id}
+        due_date = pi.datetime.strftime("%Y-%m-%d")
+        customer = SilverCustomer.objects.get(id=customer_instance.silver_id)
+        provider = SilverProvider.objects.get(id=provider_instance.silver_id)
+        product_instance = pi.project.product
+        logger.debug(f"product_code:{product_instance.product_code}")
+        quantity = get_quantity(pledged=pi.pledged, unit_price=product_instance.unit_price)
+        invoice.currency='EUR'
+        invoice.transaction_currency='EUR'
+        invoice.due_date = due_date
+        invoice.issue_date = due_date
+        invoice.customer = customer
+        invoice.provide = provider
+        invoice.sales_tax_percent = product_instance.sales_tax_percent
+        invoice.sales_tax_name = product_instance.sales_tax_name
+        invoice.currency = product_instance.currency
+        invoice.state = 'draft'
+        invoice.save()
+
     if create_invoice_entry(
         pk=invoice.id,
         description=product_instance.description,

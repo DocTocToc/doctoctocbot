@@ -1,16 +1,18 @@
 import logging
+from typing import Optional
 import datetime
+import pytz
 import json
 from os.path import exists, basename
 import requests
 from urllib.parse import urlparse
 import tweepy
 import random
-
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.db.utils import DatabaseError
 from django.conf import settings
+from django.utils import timezone
 from moderation.models import SocialUser, Profile, SocialMedia
 from conversation.models import Tweetdj
 from bot.bin.user import getuser
@@ -23,60 +25,37 @@ FORMAT = "[%(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
 
-def socialuser(backend, user, response, *args, **kwargs):
-    from .models import SocialUser, SocialMedia
-    if backend.name == 'twitter':
-        sm_mi, created1 = SocialMedia.objects.get_or_create(name=backend.name)
-        logger.debug(f'socialmedia: {sm_mi}, created: {created1}')
-        tuid_int = kwargs['uid']
-        su_mi, created2 = SocialUser.objects.get_or_create(user_id=tuid_int, social_media=sm_mi)
-        logger.debug(f'socialuser: {su_mi}, created: {created2}')
-        return {'socialuser': su_mi}
-
 def create_twitter_social_user(userid):
     try:
         twitter = SocialMedia.objects.get(name='twitter')
     except SocialMedia.DoesNotExist:
         logger.error('Twitter SocialMedia object does not exist.')
-        return
-    su, created = SocialUser.objects.get_or_create(user_id=userid, social_media=twitter)
-    return su, created
+        return None, None
+    try:
+        return SocialUser.objects.get_or_create(
+            user_id=userid,
+            social_media=twitter
+        )
+    except IntegrityError as e:
+        logger.error(e)
+        return None, None
 
-def create_twitter_social_user_and_profile(userid):
+def create_twitter_social_user_and_profile(userid, cache=False):
     try:
         su, created = create_twitter_social_user(userid)
     except TypeError:
         return
-    bot_screen_names = Account.objects \
-        .filter(active=True) \
-        .values_list("username", flat=True)
-    bot_screen_name = random.choice(bot_screen_names)
-    create_update_profile_twitter(su, bot_screen_name=bot_screen_name)
+    if su:
+        bot_screen_names = Account.objects \
+            .filter(active=True) \
+            .values_list("username", flat=True)
+        bot_screen_name = random.choice(bot_screen_names)
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name,
+            cache=cache
+        )
     return su, created
-    
-def user(backend, user, response, *args, **kwargs):
-    from users.models import User
-    if backend.name == 'twitter':
-        logger.debug(f"user.socialuser {user.socialuser} {type(user.socialuser)}")
-        if user.socialuser is None:
-            user.socialuser = kwargs['socialuser']
-            user.save()
-        logger.debug(f'socialmedia: {user}')
-        
-def profile(backend, user, response, *args, **kwargs):
-    if backend.name == 'twitter':
-        logger.debug(f"user.socialuser {user.socialuser} type:{type(user.socialuser)}")
-        try:
-            p = user.socialuser.profile
-            logger.debug(f"user.socialuser.profile {p} type:{type(p)}")
-            p.json = response
-            p.save()
-            logger.debug(f"user.socialuser.profile {user.socialuser.profile} type:{type(user.socialuser.profile)}")
-        except Profile.DoesNotExist:
-            p = Profile.objects.create(json=response, socialuser=user.socialuser) 
-            logger.debug(f"user.socialuser.profile {user.socialuser.profile} type:{type(user.socialuser.profile)}")
-        
-        avatar(p, response)
 
 def twitterprofile(jsn):
     if not jsn or not isinstance(jsn, dict):
@@ -109,7 +88,6 @@ def twitterprofile(jsn):
         except IntegrityError as e:
             logger.debug(e)
             return
-    
     avatar(p, jsn)
             
 def avatar(profile, response):
@@ -209,14 +187,41 @@ def update_profile_pictures(socialuser):
         if img_url:
             save_profile_pictures(img_url, profile)
 
+def create_update_profile(userid, bot_screen_name):
+    try:
+        su: SocialUser = SocialUser.objects.get(user_id=userid)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        sm: SocialMedia = su.social_media
+    except AttributeError:
+        return
+    if sm.name == 'twitter':
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name
+        )
+    elif sm.name == settings.THIS_SOCIAL_MEDIA:
+        create_update_profile_local(su)
+
 def create_update_profile_twitter(
         su: SocialUser,
         bot_screen_name=None,
         cache=False
     ):
+    try:
+        su.profile
+        has_profile = True
+    except SocialUser.profile.RelatedObjectDoesNotExist:
+        has_profile = False
+    if cache and has_profile:
+        return
     userid = su.user_id
     try:
-        tweetdj_mi = Tweetdj.objects.filter(userid = userid).latest()
+        tweetdj_mi = Tweetdj.objects.filter(
+            userid = userid,
+            json__isnull=False
+        ).latest()
     except Tweetdj.DoesNotExist:
         tweetdj_mi = None
     if not tweetdj_mi or not tweetdj_mi.json.get("user") or not cache:
@@ -265,3 +270,44 @@ def update_twitter_followers_profiles(community: Community):
     for follower in c.items():
         logger.debug(f"{follower=}")
         twitterprofile(follower._json)
+
+def recent_twitter_screen_name(user_id, bot_user_id, dtdelta):
+    min_dt = datetime.datetime.min.replace(tzinfo=pytz.UTC)
+    cutoff: datetime.datetime = timezone.now() - dtdelta
+    # status
+    tweetdj_qs = Tweetdj.objects.filter(userid=user_id)
+    if tweetdj_qs:
+        status_dt = tweetdj_qs.latest('statusid').created_at or min_dt 
+    else:
+        status_dt = min_dt
+    # profile
+    profile_qs = Profile.objects.filter(json__id=user_id)
+    if profile_qs:
+        profile_dt = profile_qs.latest('id').updated
+    else:
+        profile_dt = min_dt
+    logger.debug(f'{status_dt=} {profile_dt=}')
+    if status_dt > profile_dt and status_dt > cutoff:
+        logger.debug(f'{tweetdj_qs.latest("statusid")=}')
+        return tweetdj_qs.latest('statusid').json["user"]["screen_name"]
+    elif profile_dt > status_dt and profile_dt > cutoff:
+        logger.debug(f'{profile_qs.latest("id")=}')
+        return profile_qs.latest('id').json["screen_name"]
+    else:
+        try:
+            bot_screen_name = Account.objects.get(userid=bot_user_id).username
+        except Account.DoesNotExist as e:
+            logger.error(e)
+            return
+        try:
+            su=SocialUser.objects.get(user_id=user_id)
+        except SocialUser.DoesNotExist as e:
+            logger.error(e)
+            return
+        create_update_profile_twitter(
+            su,
+            bot_screen_name=bot_screen_name,
+            cache=False
+        )
+        profile = Profile.objects.get(socialuser=su)
+        return profile.screen_name_tag()

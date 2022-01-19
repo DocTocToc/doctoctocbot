@@ -19,10 +19,12 @@ from django.db.utils import DatabaseError
 from community.models import Community
 from django.conf import settings
 from django.utils.translation import gettext as _
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.contrib.staticfiles.storage import staticfiles_storage
 from community.helpers import get_community, activate_language
 from community.models import Retweet
+
+from constance import config
 
 logger = logging.getLogger(__name__)
 
@@ -32,13 +34,24 @@ register = template.Library()
 
 @register.inclusion_tag('landing/twitter_opengraph.html', takes_context=True)
 def opengraph(context):
-    community = get_community(context)
+    community = get_community(context['request'])
+
     activate_language(community)
-    twitter_site = f"@{community.account.username}"
-    twitter_creator = "@MedecineLibre"
+    try:
+        twitter_site = f"@{community.account.username}"
+    except AttributeError:
+        twitter_site = ""
+    twitter_creator = (
+        context.get("twitter_creator")
+        or config.landing__templatetags__opengraph_tags__twitter_creator
+    )
+    try:
+        site_name = community.site.name
+    except AttributeError:
+        site_name = ""
     og_title = (
         context.get("og_title")
-        or community.site.name
+        or site_name
     )
     og_description = (
         context.get("og_description")

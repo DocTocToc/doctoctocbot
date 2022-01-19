@@ -1,0 +1,34 @@
+{% extends "doctocnet/base.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block head_meta %}
+
+{% static "landing/images/antiracism.jpg" as og_image_static %}
+{% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
+{% with request.build_absolute_uri as og_url %}
+{% bot_screen_name as bot %}
+{% trans "Against racism and discriminations" as og_title %}
+{% trans "Charter against racism and discriminations" as og_description %}
+{{ block.super }}
+{% opengraph %}
+{% endwith %}
+{% endwith %}
+
+{% endblock head_meta %}
+
+{% block content %}
+
+<h1>{% block title %} {% trans "Charter against racism and discriminations" %} {% endblock title %}</h1>
+
+{% community_text "antiracism" %}
+
+{% endblock content %}
+

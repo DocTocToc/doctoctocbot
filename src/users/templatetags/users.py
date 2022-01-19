@@ -23,7 +23,9 @@ register = template.Library()
 def category(context):
     unknown = pgettext("category", "Unknown")
     try:
-        category_lst = context.request.user.socialuser.category.all()
+        category_lst = (
+            context.request.user.socialuser.category.filter(public=True)
+        )
     except:
         return [unknown]
     if not category_lst:

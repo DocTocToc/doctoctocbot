@@ -1,4 +1,6 @@
 import pytz
+import time
+from typing import Optional
 from moderation.models import SocialUser, Follower, Friend, Category
 from bot.tweepy_api import get_api
 from bot.models import Account
@@ -18,6 +20,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone, translation
 from tweepy import TweepError
+import tweepy
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image
 from django.core.files import File
@@ -31,12 +34,19 @@ def get_socialuser_from_user_id(user_id):
         return SocialUser.objects.get(user_id=user_id)
     except SocialUser.DoesNotExist:
         return
-    
-def get_socialuser_from_screen_name(screen_name):
+
+def get_socialuser_from_screen_name(screen_name: str):
     try:
-        return SocialUser.objects.get(profile__json__screen_name=screen_name)
+        return SocialUser.objects.get(
+            profile__json__screen_name__iexact=screen_name
+        )
     except SocialUser.DoesNotExist:
         return
+    except SocialUser.MultipleObjectsReturned as e:
+        raise ValueError(
+            f"Exception {e} occurred "
+            f"because of an invalid argument: {screen_name=}"
+        )
 
 def get_socialuser(user):
     if isinstance(user, SocialUser):
@@ -51,7 +61,14 @@ def get_socialuser(user):
 
 
 # TODO: fix type to accept string for username
-def update_social_ids(user, cached=False, bot_screen_name=None, relationship=None):
+def update_social_ids(
+        user,
+        cached = False,
+        bot_screen_name = None,
+        relationship = None,
+        delta: Optional[timedelta] = None,
+        api = None
+    ):
     if relationship is None:
         return
     if not relationship in ['friends', 'followers']:
@@ -68,18 +85,20 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
     logger.debug(f"SocialUser: {su}")
     if not su:
         return
-    if followers:
-        hourdelta = settings.FOLLOWER_TIMEDELTA_HOUR
+    cache_delta = timedelta()
+    if delta:
+        cache_delta = delta
     else:
-        hourdelta = settings.FRIEND_TIMEDELTA_HOUR
-    datetime_limit = datetime.now(pytz.utc) - timedelta(hours=hourdelta)
+        if followers:
+            cache_delta = timedelta(hours=settings.FOLLOWER_TIMEDELTA_HOUR)
+        else:
+            cache_delta = timedelta(hours=settings.FRIEND_TIMEDELTA_HOUR)
+    datetime_limit = datetime.now(pytz.utc) - cache_delta
     logger.debug(f"{datetime_limit}")
 
     if followers:
         try:
             si = Follower.objects.filter(user=su).last()
-            if si:
-                logger.debug(f"Followers id_list: {si.id_list}")
         except Follower.DoesNotExist:
             si = None
             logger.debug(f"Follower instance does not exist for user {su.user_id}")
@@ -95,10 +114,9 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
             return si.id_list
         else:
             return []
-    bot_cat, _ = Category.objects.get_or_create(name='bot')
     ok = False
     try:
-        ok = si.created > datetime_limit and not (bot_cat in su.category.all())
+        ok = si.created > datetime_limit and cached
     except AttributeError:
         pass
 
@@ -106,9 +124,17 @@ def update_social_ids(user, cached=False, bot_screen_name=None, relationship=Non
         return si.id_list
 
     if followers:
-        usersids = _followersids(su.user_id, bot_screen_name)
+        usersids = _followersids(
+            su.user_id,
+            bot_screen_name=bot_screen_name,
+            api=api
+        )
     else:
-        usersids = _friendsids(su.user_id, bot_screen_name)
+        usersids = _friendsids(
+            su.user_id,
+            bot_screen_name=bot_screen_name,
+            api=api
+        )
 
     if usersids is None:
         return
@@ -138,19 +164,41 @@ def record_friendsids(su, usersids):
     except DatabaseError as e:
         logger.error(f"Database error while saving Friends of user.user_id: {e}")
 
-def _followersids(user_id, bot_screen_name):
-    api = get_api(bot_screen_name)
+def _followersids(user_id, bot_screen_name=None, api=None):
+    if not api:
+        api = get_api(bot_screen_name)
+    followers_ids = []
     try:
-        return api.followers_ids(user_id)
+        for page in tweepy.Cursor(
+            api.followers_ids,
+            user_id=user_id
+            ).pages():
+            logger.debug(f'{len(page)}')
+            logger.debug(f'{page[:10]}')
+            followers_ids.extend(page)
+            #if len(page) == 5000:
+            #    time.sleep(60)
+        return followers_ids
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
     except AttributeError as e:
         logger.error(f"Attribute Error ({api =}): {e}")
 
-def _friendsids(user_id, bot_screen_name):
-    api = get_api(bot_screen_name)
+def _friendsids(user_id, bot_screen_name=None, api=None):
+    if not api:
+        api = get_api(bot_screen_name)
+    friends_ids = []
     try:
-        return api.friends_ids(user_id)
+        for page in tweepy.Cursor(
+            api.friends_ids,
+            user_id=user_id
+            ).pages():
+            logger.debug(f'{len(page)}')
+            logger.debug(f'{page[:10]}')
+            friends_ids.extend(page)
+            #if len(page) == 5000:
+            #    time.sleep(60)
+        return friends_ids
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
     except AttributeError as e:

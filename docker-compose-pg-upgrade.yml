@@ -1,0 +1,24 @@
+# docker exec -it doctoctocbot_postgis10_1 bash
+# /usr/bin/pg_dumpall -U postgres > /tmp/dump/dumpfile
+# docker exec -it doctoctocbot_postgis14_1 /bin/bash -c "psql -U postgres < /tmp/dump/dumpfile"
+version: '3.8'
+
+services:
+          
+  postgis10:
+    restart: always                                                                       
+    image: postgis/postgis:10-3.1
+    volumes:                                                                    
+      - "${DATABASE_DATA_DIR}:/var/lib/postgresql/data"
+      - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"
+      - "${DATABASE_DUMP_DIR}:/tmp/dump"
+          
+  postgis14:
+    restart: always                                                                       
+    image: postgis/postgis:14-3.1
+    volumes:                                                                    
+      - "${DATABASE_DATA_DIR_NEW}:/var/lib/postgresql/data"
+      - "${DATABASE_CONF_FILE}:/etc/postgresql.conf"
+      - "${DATABASE_DUMP_DIR}:/tmp/dump"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"

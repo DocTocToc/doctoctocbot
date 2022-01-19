@@ -1,6 +1,6 @@
 import logging
 import time
-
+import json
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
@@ -11,7 +11,7 @@ from django.conf import settings
 from conversation.tree.tweet_server import get_tweet
 from conversation.utils import userhashtagcount
 from moderation.models import Profile
-from customer.forms import CustomerForm, CustomerReadOnlyForm
+from customer.forms import CustomerModelForm, CustomerReadOnlyForm
 from customer.models import Customer
 from bootstrap_modal_forms.generic import BSModalUpdateView
 
@@ -47,20 +47,22 @@ class UserInfo(LoginRequiredMixin, TemplateView):
             uid = 0
         
         if self.request.user.socialuser is not None:
-            json = self.request.user.socialuser.profile.json
+            _json = self.request.user.socialuser.profile.json
+            if isinstance(_json, str):
+                _json = json.loads(_json.replace("\'", "\""))
             userid= self.request.user.socialuser.user_id
-            context['name'] = json.get("name", None)
-            context['screen_name'] = json.get("screen_name", None)
-            context['location'] = json.get("location", None)
+            context['name'] = _json.get("name", None)
+            context['screen_name'] = _json.get("screen_name", None)
+            context['location'] = _json.get("location", None)
             context['hashtag'] = userhashtagcount(userid, self.request)    
             try:
-                expanded_url = json["entities"]["url"]["urls"][0]["expanded_url"]
+                expanded_url = _json["entities"]["url"]["urls"][0]["expanded_url"]
             except KeyError:
                 expanded_url = None
             context['expanded_url'] = expanded_url
         
             try:
-                display_url = json["entities"]["url"]["urls"][0]["display_url"]
+                display_url = _json["entities"]["url"]["urls"][0]["display_url"]
             except KeyError:
                 display_url = None        
             context['display_url'] = display_url
@@ -89,12 +91,14 @@ class UserProfile(LoginRequiredMixin, TemplateView):
                 return context
             try:
                 expanded_url = json["entities"]["url"]["urls"][0]["expanded_url"]
-            except KeyError:
+            except (KeyError, TypeError) as e:
+                logger.error(e)
                 expanded_url = None
             context['expanded_url'] = expanded_url
             try:
                 display_url = json["entities"]["url"]["urls"][0]["display_url"]
-            except KeyError:
+            except (KeyError, TypeError) as e:
+                logger.error(e)
                 display_url = None        
             context['display_url'] = display_url
         return context
@@ -103,7 +107,7 @@ class UserProfile(LoginRequiredMixin, TemplateView):
 class CustomerUpdateView(BSModalUpdateView):
     model = Customer
     template_name = 'customer/update_customer.html'
-    form_class = CustomerForm
+    form_class = CustomerModelForm
     success_message = 'Success: billing data was updated.'
     success_url = reverse_lazy('landing:user-billing')
 

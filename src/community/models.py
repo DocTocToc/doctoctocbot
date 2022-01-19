@@ -1,16 +1,26 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.sites.models import Site
 import logging
 from django.conf import settings
 import reversion
+from django.core.exceptions import ValidationError
 
 from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
 
+class CommunityManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 class Community(models.Model):
-    name = models.CharField(max_length=101, unique=True)
+    name = models.CharField(
+        max_length=101,
+        unique=True
+    )
     active = models.BooleanField(default=False)
     account = models.OneToOneField(
         'bot.Account',
@@ -24,7 +34,7 @@ class Community(models.Model):
         blank=True,
     )
     created =  models.DateTimeField(auto_now_add=True)
-    site = models.ForeignKey(
+    site = models.OneToOneField(
         Site,
         on_delete=models.CASCADE,
         null=True,
@@ -53,7 +63,7 @@ class Community(models.Model):
         related_name='community',
         blank=True,
     )
-    crowdfunding = models.ForeignKey(
+    crowdfunding = models.OneToOneField(
         'crowdfunding.Project',
         on_delete=models.CASCADE,
         null=True,
@@ -68,7 +78,7 @@ class Community(models.Model):
         related_name="helper_community",
     )
     helper_message = models.TextField(
-        max_length=200,
+        max_length=257,
         blank=True,
         null=True,
     )
@@ -80,9 +90,24 @@ class Community(models.Model):
         blank=True,
         help_text="ISO language code",
     )
-    pending_moderation_period = models.PositiveIntegerField(
-        default = 0,
-        help_text = "Pending moderation period (hour)"
+    pending_moderation_period = models.DurationField(
+        null = True,
+        blank = True,
+        default = timedelta,
+        help_text = "Duration before moderation sent to other moderator " \
+                    "Format: [DD] [HH:[MM:]]ss[.uuuuuu]"
+    )
+    pending_self_moderation_period = models.DurationField(
+        null = True,
+        blank = True,
+        default = timedelta,
+        help_text = "Duration before self moderation sent again " \
+                    "Format: [DD] [HH:[MM:]]ss[.uuuuuu]"
+    )
+    moderator_moderation_period = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Interval before same moderation sent again to moderator"
     )
     viral_moderation = models.BooleanField(
         default=False,
@@ -124,10 +149,11 @@ class Community(models.Model):
         blank=True,
         help_text='Categories authorized to follow the account if protected'
     )
-    follow_request_backoff = models.PositiveIntegerField(
-        default = 1,
+    follow_request_backoff = models.DurationField(
+        null=True,
+        blank=True,
         help_text = (
-            "Period in hour during which a follow request will be "
+            "Period during which a follow request will be "
             "automatically declined if the previous one was declined."
         )
     )
@@ -164,6 +190,10 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    twitter_self_moderation_dm = models.TextField(
+        blank=True,
+        null=True,
+    )
     blog = models.ForeignKey(
         'community.Blog',
         on_delete=models.PROTECT,
@@ -171,12 +201,31 @@ class Community(models.Model):
         blank=True,
         related_name="community",
     )
+    members_friends_cache = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = (
+            "Duration of cache for members' friends set"
+        )
+    )
+    twitter_creator = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+
+    objects = CommunityManager()
 
     def __str__(self):
         return self.name
     
     class Meta:
         verbose_name_plural = "communities"
+
+
+    def natural_key(self):
+        return (self.name,)
 
 
 def get_default_community():
@@ -193,6 +242,7 @@ class Retweet(models.Model):
         blank=True,
     )
     retweet = models.BooleanField(default=False)
+    favorite = models.BooleanField(default=False)
     moderation = models.BooleanField(default=True)
     require_question = models.BooleanField(default=True)
     allow_retweet = models.BooleanField(default=False)
@@ -207,7 +257,21 @@ class Retweet(models.Model):
     class Meta:
         unique_together = ("community", "hashtag", "category")
 
-    
+
+class TrustManager(models.Manager):
+    def get_by_natural_key(
+            self,
+            from_community_name,
+            to_community_name,
+            category_name,
+        ):
+        return self.get(
+            from_community__name=from_community_name,
+            to_community__name=to_community_name,
+            category__name=category_name
+        )
+
+
 class Trust(models.Model):
     '''
     The Trust through model contains information about which community trusts which
@@ -233,6 +297,8 @@ class Trust(models.Model):
     created =  models.DateTimeField(auto_now_add=True)
     authorized = models.BooleanField(default=False)
 
+    objects = TrustManager()
+
     def __str__(self):
         return "{_from} trusts {to} about {category} : {authorized}".format(
             _from=self.from_community,
@@ -244,7 +310,27 @@ class Trust(models.Model):
     class Meta:
         unique_together = ("from_community", "to_community", "category")
 
-    
+
+    def natural_key(self):
+        return (
+            self.from_community.natural_key()
+            + self.to_community.natural_key()
+            + self.category.natural_key()
+        )
+
+
+class CooperationManager(models.Manager):
+    def get_by_natural_key(
+            self,
+            from_community_name,
+            to_community_name,
+        ):
+        return self.get(
+            from_community__name=from_community_name,
+            to_community__name=to_community_name,
+        )
+
+
 class Cooperation(models.Model):
     from_community = models.ForeignKey(
         'Community',
@@ -257,8 +343,10 @@ class Cooperation(models.Model):
         related_name='cooperation_to',
     )
     created =  models.DateTimeField(auto_now_add=True)
-    authorized = models.BooleanField(default=False)  
-    
+    authorized = models.BooleanField(default=False)
+
+    objects = CooperationManager()
+
     def __str__(self):
         return "{_from} trusts {to}: {authorized}".format(
             _from=self.from_community,
@@ -268,6 +356,21 @@ class Cooperation(models.Model):
         
     class Meta:
         unique_together = ("from_community", "to_community")
+
+
+    def natural_key(self):
+        return (
+            self.from_community.natural_key()
+            + self.to_community.natural_key()
+        )
+
+
+class CommunityCategoryRelationshipManager(models.Manager):
+    def get_by_natural_key(self, community_name, category_name):
+        return self.get(
+            community__name=community_name,
+            category__name=category_name,
+        )
 
 
 class CommunityCategoryRelationship(models.Model):
@@ -285,21 +388,35 @@ class CommunityCategoryRelationship(models.Model):
         default=False,
         help_text="Include in DM quickreply?"
     )
+    quickreply_self = models.BooleanField(
+        default=False,
+        help_text="Include in self moderation?"
+    )  
     socialgraph = models.BooleanField(
         default=False,
         help_text="Include in moderation social graph?"
-    )    
+    )
+    do_not_follow = models.BooleanField(
+        default=False,
+        help_text="Bot should not follow SocialUsers from this category"
+    )
     color = models.CharField(
         max_length=20,
         null=True,
         blank=True
     )
 
+    objects = CommunityCategoryRelationshipManager()
+
     def __str__(self):
         return f"community: {self.community.name} - category: {self.category.name}"
     
     class Meta:
         unique_together = ("community", "category")
+
+
+    def natural_key(self):
+        return (self.community.natural_key() + self.category.natural_key())
 
 
 class TextDescription(models.Model):
@@ -319,11 +436,14 @@ class TextDescription(models.Model):
         return f"{self.label}"
 
 
+
+
 @reversion.register(fields='content')
 class Text(models.Model):
-    community = models.ForeignKey(
+    community = models.ManyToManyField(
         'Community',
-        on_delete=models.CASCADE,
+        through='TextCommunity',
+        through_fields=('text', 'community'),
         related_name='text',
     )
     type = models.ForeignKey(
@@ -337,12 +457,36 @@ class Text(models.Model):
     )
 
     def __str__(self):
-        return f"Text: community = {self.community} type = {self.type}"
+        communities = ", ".join(str(community) for community in self.community.all())
+        return f"Text: community = {communities} type = {self.type}"
 
 
     class Meta:
-        unique_together = ("community", "type")
-        
+        pass
+
+
+class TextCommunity(models.Model):
+    text = models.ForeignKey(Text, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+
+    def validate_unique(self, *args, **kwargs):
+        super(TextCommunity, self).validate_unique(*args, **kwargs)
+        qs = Text.objects.filter(community=self.community)
+        if qs.filter(type=self.text.type).exclude(pk=self.text.pk).exists():
+            raise ValidationError(
+                {
+                    'community':[
+                        'Type and Community must be unique together per Text '
+                        f'({qs.filter(type=self.text.type)})',
+                    ]
+                }
+            )
+
+
+class AccessLevelManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 
 class AccessLevel(models.Model):
     """API access level categories.
@@ -359,8 +503,21 @@ class AccessLevel(models.Model):
         blank=True
     )
     
+    objects = AccessLevelManager()
+
     def __str__(self):
         return f"{self.label}"
+    
+    def natural_key(self):
+        return (self.name,)
+
+
+class ApiAccessManager(models.Manager):
+    def get_by_natural_key(self, community_name, level_name):
+        return self.get(
+            community__name=community_name,
+            level__name=level_name,
+        )
 
 
 class ApiAccess(models.Model):
@@ -439,7 +596,14 @@ class ApiAccess(models.Model):
         default=False,
         verbose_name=_('Reply count'),
         help_text=_("Access status reply count."),
-    )   
+    )
+    filter_author_self = models.BooleanField(
+        default=False,
+        verbose_name=_('Filter author self'),
+        help_text=_("Filter status by authenticated author."),
+    )
+
+    objects = ApiAccessManager()
 
     def __str__(self):
         return f"API Access: community = {self.community} ; level = {self.level}"
@@ -448,17 +612,31 @@ class ApiAccess(models.Model):
     class Meta:
         unique_together = ("community", "level")
 
+    def natural_key(self):
+        return (self.community.natural_key() + self.level.natural_key())
+
+
+class BlogManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 
 class Blog(models.Model):
     name = models.CharField(
         max_length=254,
         help_text=_("Name of the blog."),
+        unique=True,
     )
     link = models.CharField(
         max_length=254,
         help_text=_("Link text."),
     )
     url = models.URLField()
+    
+    objects = BlogManager()
 
     def __str__(self):
         return f"{self.name} <{self.url}>"
+
+    def natural_key(self):
+        return (self.name,)

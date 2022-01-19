@@ -1,3 +1,4 @@
+{% load i18n %}
 Bonjour {{ user.username }}!
 
 Vous venez de vous inscrire sur le site {{ site.domain }}.
@@ -6,7 +7,7 @@ Merci de bien vouloir ouvrir ce lien sécurisé pour activer votre compte:
 
 https://{{ site.domain }}/accounts/activate/{{ activation_key }}
 
-Ce lien restera valable pendant {{ activation_days }} jour{{ activation_days|pluralize }}.
+Ce lien restera valable pendant {{ expiration_days }} jour{{ expiration_days|pluralize }}.
 
 Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer et effacer ce message. Nous vous prions de nous excuser pour la gène occasionée. Votre adresse mail a probablement été entrée par erreur.
 

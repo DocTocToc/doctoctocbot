@@ -20,7 +20,7 @@ register = template.Library()
 
 @register.inclusion_tag('tagging/categories.html', takes_context=True)
 def categories(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     try:
         category_dct_lst= Category.objects.filter(
                     community=community,

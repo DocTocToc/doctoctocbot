@@ -9,7 +9,11 @@ import logging
 from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, DatabaseError, transaction
 from django.conf import settings
-from bot.tasks import handle_image
+from conversation.tasks import (
+    handle_image,
+    handle_retweeted_by,
+    handle_quoted_by
+)
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
 from conversation.models import Tweetdj
@@ -27,67 +31,91 @@ __status__ = "Production"
 
 logger = logging.getLogger(__name__)
 
-def isrt(status):
-    "is this status a RT?"
-    return "retweeted_status" in status.keys()
+
 
 class Addstatus:
     def __init__(self, json):
         self.json = json
         self.statusid = json["id"]
 
-    def addtweetdj(self):
+    def addtweetdj(self, update=False):
         """
         Add status to Django database (table tweetdj).
         MPTT tree node is added to treedj inside the overridden save method of
         Tweetdj class, in the Django model.
         """
-        try:
-            status = Tweetdj.objects.get(pk=self.statusid)
-        except Tweetdj.DoesNotExist:
-            try:
-                with transaction.atomic():
-                    status = Tweetdj.objects.create(
-                        statusid = self.statusid,
-                        userid = self.userid(),
-                        socialuser = addsocialuser_from_userid(self.userid()),
-                        json = self.json,
-                        created_at = get_datetime_tz(self.json),
-                        #reply = self.reply(),
-                        like = self.like(),
-                        retweet = self.retweet(),
-                        parentid = self.parentid(),
-                        quotedstatus = self.json['is_quote_status'],
-                        retweetedstatus = isrt(self.json),
-                        deleted = None
-                    )
-                logger.debug(f"function addtweetdj added status {status}")
-            except IntegrityError:
-                logger.warn(
-                    f"Status {self.statusid} already exists in database."
-                )
-                return False
-            try:
-                hashtag_m2m_tweetdj(status)
-            except DatabaseError as e:
-                logger.error("database error %s", e)
-                return False
-            logger.debug("added m2m hashtag relationship to %s", status)
-            return True
+        if Tweetdj.objects.filter(statusid=self.statusid).exists() and update:
+            return self.update()
+        else:
+            return self.create()
 
-    def updatetweetdj(self):
+    def create(self):
+        try:
+            with transaction.atomic():
+                tweetdj = Tweetdj.objects.create(
+                    statusid = self.statusid,
+                    userid = self.userid(),
+                    socialuser = addsocialuser_from_userid(self.userid()),
+                    json = self.json,
+                    created_at = get_datetime_tz(self.json),
+                    #reply = self.reply(),
+                    like = self.like(),
+                    retweet = self.retweet(),
+                    parentid = self.parentid(),
+                    quotedstatus = self.has_quoted_status(),
+                    retweetedstatus = self.has_retweeted_status(),
+                    deleted = None
+                )
+            logger.debug(f"function addtweetdj added status {tweetdj}")
+        except IntegrityError:
+            logger.warn(
+                f"Status {self.statusid} already exists in database."
+            )
+            try:
+                return Tweetdj.objects.get(statusid=self.statusid), False
+            except Tweetdj.DoesNotExist:
+                return None, False
+        except DatabaseError:
+            return None, False
+        hashtag_m2m_tweetdj(tweetdj)
+        if tweetdj.retweetedstatus:
+            handle_retweeted_by.apply_async(
+                kwargs={
+                    'rt_statusid': tweetdj.json["retweeted_status"]["id"],
+                    'rt_userid': tweetdj.json["retweeted_status"]["user"]["id"],
+                    'by_socialuserid': tweetdj.socialuser.id
+                }
+            )
+        elif tweetdj.quotedstatus:
+            handle_quoted_by.apply_async(
+                kwargs={
+                    'quoted_statusid': tweetdj.json["quoted_status"]["id"],
+                    'quoted_userid': tweetdj.json["quoted_status"]["user"]["id"],
+                    'by_socialuserid': tweetdj.socialuser.id
+                }
+            )
+        return tweetdj, True
+
+    def update(self):
         """
         Update some fields of an existing Tweetdj object.
         """
-        try:
-            status = Tweetdj.objects.get(pk=self.statusid)
-        except Tweetdj.DoesNotExist:
-            return
         with transaction.atomic():
-            status.like = self.like(),
-            status.retweet = self.retweet(),
-            status.save()
-        logger.debug(f"updated tweetdj {status}")
+            try:
+                tweetdj = Tweetdj.objects.get(pk=self.statusid)
+            except Tweetdj.DoesNotExist:
+                return None, False
+            tweetdj.json = self.json
+            tweetdj.socialuser = addsocialuser_from_userid(self.userid())
+            tweetdj.created_at = get_datetime_tz(self.json)
+            tweetdj.like = self.like()
+            tweetdj.retweet = self.retweet()
+            tweetdj.parentid = self.parentid()
+            tweetdj.quotedstatus = self.has_quoted_status()
+            tweetdj.retweetedstatus = self.has_retweeted_status()
+            tweetdj.save()
+        logger.debug(f"updated tweetdj {tweetdj}")
+        return tweetdj, False
 
     def userid(self):
         return self.json["user"]["id"]
@@ -122,3 +150,13 @@ class Addstatus:
 
     def parentid(self):
         return self.json["in_reply_to_status_id"]
+
+    def has_retweeted_status(self):
+        """is this status a RT?
+        """
+        return "retweeted_status" in self.json.keys()
+
+    def has_quoted_status(self):
+        """is this status a Quote?
+        """
+        return "quoted_status" in self.json.keys()

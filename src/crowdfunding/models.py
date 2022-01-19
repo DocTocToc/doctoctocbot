@@ -4,9 +4,20 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from common.international import currencies
+from django.contrib.sites.models import Site
+from silver.models import Invoice
+
+
+class ProjectManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
 
 class Project(models.Model):
-    name = models.CharField(max_length=191)
+    name = models.CharField(
+        max_length=191,
+        unique=True,
+    )
     description = models.TextField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -31,15 +42,27 @@ class Project(models.Model):
         choices=currencies, max_length=4, default='EUR',
         help_text='The currency used for billing.'
     )
+    
+    objects = ProjectManager()
 
     def __str__(self):
         return "{}:{}".format(self.id, self.name)
+    
+    def natural_key(self):
+        return (self.name,)
+
 
 class ProjectInvestment(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         'Project',
         on_delete=models.CASCADE
+    )
+    campaign = models.ForeignKey(
+        'Campaign',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -57,12 +80,28 @@ class ProjectInvestment(models.Model):
         null=True,
         default=None,
         unique=True,
-        help_text="Id of the invoice in the billing app."
+        help_text="Id of the invoice in the billing app.",
+        verbose_name="Invoice ID"
+    )
+    silver_invoice = models.ForeignKey(
+        Invoice,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text="ForeignKey to Invoice model of Silver billing app.",
     )
     invoice_pdf = models.BooleanField(default=False)
+    payment_intent=models.CharField(max_length=27, blank=True)
     
     def __str__(self):
-        return "{}:{} user:{} pledged:{} paid:{}".format(self.uuid, self.project, self.user, self.pledged, self.paid)
+        return "{}:{} user:{} pledged:{} paid:{} payment_intent:{}".format(
+            self.uuid,
+            self.project,
+            self.user,
+            self.pledged,
+            self.paid,
+            self.payment_intent
+        )
 
     @staticmethod
     def has_read_permission(self):
@@ -90,6 +129,20 @@ class ProjectInvestment(models.Model):
 
     def has_object_update_permission(self, request):
         return False
+
+    def get_rank(self):
+        current_campaign = Campaign.objects.filter(
+            project=self.project,
+            start_datetime__gte=self.datetime,
+            end_datetime__lte=self.datetime
+        ).first()
+        qs = ProjectInvestment.objects \
+            .filter(paid=True) \
+            .filter(project=self.project) \
+            .filter(datetime__lte=self.datetime)
+        if current_campaign:
+            qs.filter(datetime__gte=current_campaign.start_datetime)
+        return qs.count()
 
 
 class Tier(models.Model):
@@ -131,10 +184,26 @@ class Campaign(models.Model):
         ordering = ['start_datetime']
     
     def __str__(self):
-        return "Campaign {}:{} / {} start: {} end: {}".format(
+        return "Campaign {}:{} ({} - {})".format(
             self.id,
             self.project.name,
-            self.project.description[:140],
             self.start_datetime.date(),
             self.end_datetime.date(),
+        )
+
+
+class PaymentProcessorWebhook(models.Model):
+    site = models.OneToOneField(
+        Site,
+        on_delete=models.CASCADE,
+    )
+    secret = models.CharField(
+        max_length=255
+    )
+    
+    def __str__(self):
+        return "{}:{}:{}".format(
+            self.id,
+            self.site,
+            "*" * len(self.secret),
         )

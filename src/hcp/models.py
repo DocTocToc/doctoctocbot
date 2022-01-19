@@ -30,7 +30,7 @@ class Taxonomy(models.Model):
         
 
 class HealthCareProvider(models.Model):
-    human = models.ForeignKey(
+    human = models.OneToOneField(
        'moderation.Human',
        on_delete=models.CASCADE,
     )
@@ -47,7 +47,7 @@ class HealthCareProvider(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.human} : {self.taxonomy.all()}"
+        return f"{self.human}"
 
 
 class HealthCareProviderTaxonomy(models.Model):
@@ -77,3 +77,39 @@ class HealthCareProviderTaxonomy(models.Model):
             f"create: {self.created} ,"
             f"update: {self.updated}."
         )
+
+
+class TaxonomyCategory(models.Model):
+    code = models.CharField(
+        max_length=10,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    grouping = models.CharField(
+        max_length=255,
+        unique=False,
+        blank=True,
+    )
+    classification = models.CharField(
+        max_length=255,
+        unique=False,
+        blank=True,
+    )
+    specialization = models.CharField(
+        max_length=255,
+        unique=False,
+        blank=True,
+    )
+    category = models.ForeignKey(
+        'moderation.Category',
+        on_delete=models.PROTECT,
+    )
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.PROTECT,
+    )
+
+    def __str__(self):
+        return f"{self.code} {self.grouping} {self.classification} " \
+               f"{self.specialization} | {self.category}"

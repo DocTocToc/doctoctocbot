@@ -12,7 +12,7 @@ class User(AbstractUser):
                                    on_delete=models.CASCADE,)
     
     def __str__(self):
-        return self.username
+        return f'{self.id} - {self.username}'
 
     def is_categorized(self) -> bool:
         """Does this Django user belong to a category?

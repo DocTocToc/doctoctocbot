@@ -3,17 +3,18 @@ from datetime import date
 from os.path import stat
 from sys import getprofile
 from typing import List
-
+import json
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import JSONField
+from django.contrib.gis.db import models
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import models, connection
+from django.db import connection
 from django.db.utils import DatabaseError
 from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.templatetags.static import static
 
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
@@ -22,6 +23,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from conversation.models import Tweetdj
+from optin.models import Option
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,9 @@ def get_default_community():
     return None
 
 class AuthorizedManager(models.Manager):
+    def get_by_natural_key(self, user_id):
+        return self.get(user_id=user_id)
+
     def category_users(self, category: str):
         """
         Return list of users bigint user_id from a category name
@@ -152,12 +157,11 @@ class Human(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
-        pk = self.pk
-        su = "-".join( [str(su) for su in self.socialuser.all()] )
-        user = "-".join( [str(user) for user in self.djangouser.all()] )
-        return f"{pk} / {su} / {user}"
+        su = self.socialuser.all().first()
+        user = self.djangouser.all().first()
+        return f"{self.pk} || {su} || {user}"
 
 
 class SocialUser(models.Model):
@@ -191,8 +195,11 @@ class SocialUser(models.Model):
             "deactivated or deleted."
         )
     )
+    created =  models.DateTimeField(auto_now_add=True, null=True)
+    updated =  models.DateTimeField(auto_now=True, null=True)
+
     objects = AuthorizedManager()
-    
+
     def __str__(self):
         try:
             return f'{self.pk} | {self.screen_name_tag()} | {self.user_id}'
@@ -211,11 +218,15 @@ class SocialUser(models.Model):
 
     def screen_name_tag(self):
         try:
-            return self.profile.json.get("screen_name", None)
-        except Profile.DoesNotExist:
+            _json = self.profile.json
+        except (Profile.DoesNotExist, AttributeError) as e:
             return
-        except AttributeError:
+        if not _json:
             return
+        if isinstance(_json, str):
+            logger.debug("_json is string")
+            _json = json.loads(_json)
+        return _json.get("screen_name", None)
     
     screen_name_tag.short_description = 'Screen name'
     
@@ -229,13 +240,12 @@ class SocialUser(models.Model):
     
     name_tag.short_description = 'Name'
 
-    def self_moderate(self, category_name: str):
+    def self_moderate(self, category_name: str, community: Community):
+        if not category_name or not community:
+            return
         try:
             category: Category = Category.objects.get(name=category_name)
         except Category.DoesNotExist:
-            return
-        community: Community =  category.community.first()
-        if not community:
             return
         try:
             with transaction.atomic():
@@ -248,29 +258,6 @@ class SocialUser(models.Model):
                 logger.info(f'Created {ucr}')
         except DatabaseError:
             return
-        
-    def follow_twitter(self, category_name: str):
-        try:
-            category: Category = Category.objects.get(name=category_name)
-        except Category.DoesNotExist:
-            return 
-        community: Community =  category.community.first()
-        if not community:
-            return
-        bot_screen_name = community.account.username
-        try:
-            api = get_api(username=bot_screen_name, backend=False)
-        except TweepError as e:
-            logger.error(e.response.text)
-            return
-        try:
-            api.create_friendship(user_id=self.user_id)
-        except TweepError as e:
-            logger.error(f"Tweepy Error: {e}")
-            return
-        except AttributeError as e:
-            logger.error(f"Attribute Error: {e}")
-            return
 
     def community(self) -> List:
         community_lst = []
@@ -279,8 +266,22 @@ class SocialUser(models.Model):
                 community_lst.append(community)
         return community_lst
 
+    def twitter_followers_count(self):
+        try:
+            return len(self.follower_set.latest().id_list)
+        except Follower.DoesNotExist as e:
+            logger.error(f'{e}')
+        except Exception as e:
+            logger.error(f'{e}')
+
+
     class Meta:
         ordering = ('user_id',)
+        get_latest_by = "user_id"
+
+
+    def natural_key(self):
+        return (self.user_id,)
 
 
 class CategoryBase(models.Model):
@@ -301,6 +302,11 @@ class CategoryBase(models.Model):
 
     class Meta:
         abstract = True
+
+
+class CategoryManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
 
 
 class Category(CategoryBase):
@@ -331,6 +337,8 @@ class Category(CategoryBase):
         )
     )
     
+    objects = CategoryManager()
+
     def __str__(self):
         return self.name
     
@@ -339,11 +347,22 @@ class Category(CategoryBase):
         if not communities:
             return
         return communities[0].account.username
-
     
+    def twitter_id_list(self):
+        """ Return list of Twitter user ids for this category
+        """
+        return list(
+            self.relationships.values_list("social_user__user_id", flat=True)
+        )
+
+
     class Meta:
         ordering = ('name',)
         verbose_name_plural = "categories"
+
+
+    def natural_key(self):
+        return (self.name,)
 
 
 class CategoryMetadata(CategoryBase):
@@ -352,6 +371,10 @@ class CategoryMetadata(CategoryBase):
     dm = models.BooleanField(
         default=False,
         help_text="Add to DM Quick Reply list?"
+    )
+    self_dm = models.BooleanField(
+        default=False,
+        help_text="Add to self Moderation DM Quick Reply list?"
     )
 
 
@@ -405,7 +428,17 @@ class UserCategoryRelationship(models.Model):
         unique_together = ("social_user", "moderator", "category", "community")
         get_latest_by = "created"
 
-    
+
+def get_sentinel_social_media():
+    return SocialMedia.objects.get_or_create(
+        name="deleted",
+        emoji="␡",
+    )[0]
+
+def get_sentinel_social_media_id():
+    return get_sentinel_social_media().id
+
+
 class SocialMedia(models.Model):
     name = models.CharField(
         max_length=255,
@@ -433,33 +466,44 @@ def get_default_socialmedia():
     except SocialMedia.DoesNotExist as e:
         logger.debug("Create at least one SocialMedia object.", e)
 
-     
+
 class Profile(models.Model):
-    socialuser = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
-    json = JSONField(default=dict)
+    socialuser = models.OneToOneField(
+        SocialUser,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+    json = models.JSONField(default=dict)
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    normalavatar = models.ImageField(upload_to='twitter/profile/images/normal',
-                                     default='twitter/profile/images/normal/default_profile_normal.png')
-    biggeravatar = models.ImageField(upload_to='twitter/profile/images/bigger',
-                                     default='twitter/profile/images/bigger/default_profile_bigger.png')
-    miniavatar = models.ImageField(upload_to='twitter/profile/images/mini',
-                                   default='twitter/profile/images/mini/default_profile_mini.png')
+    normalavatar = models.ImageField(
+        upload_to='twitter/profile/images/normal',
+        default='twitter/profile/images/normal/default_profile_normal.png'
+    )
+    biggeravatar = models.ImageField(
+        upload_to='twitter/profile/images/bigger',
+        default='twitter/profile/images/bigger/default_profile_bigger.png'
+    )
+    miniavatar = models.ImageField(
+        upload_to='twitter/profile/images/mini',
+        default='twitter/profile/images/mini/default_profile_mini.png'
+    )
 
     def mini_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.miniavatar.url))
     
     def get_normalavatar_url(self, obj):
         return obj.normalavatar.url
-    
+
     mini_image_tag.short_description = 'Image'   
 
     def screen_name_tag(self):
-        if self.json is not None:
-            screen_name = self.json.get("screen_name", None)
-            return screen_name
-        else:
+        _json = self.json
+        if not _json:
             return None
+        if isinstance(_json, str):
+            _json = json.loads(_json.replace("\'", "\""))
+        return _json.get("screen_name", None)
     
     screen_name_tag.short_description = 'Screen name'
     
@@ -493,6 +537,12 @@ class Profile(models.Model):
         )
         return description
 
+    def natural_key(self):
+        try:
+            return (self.json["id"],)
+        except (TypeError, KeyError) as e:
+            logger.error(e)
+            return
 
 
 class Queue(Versionable):
@@ -500,11 +550,15 @@ class Queue(Versionable):
     SENIOR = 'senior'
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
+    SELF = 'self'
+    ONHOLD = "onhold"
     QUEUE_TYPE_CHOICES = [
         (MODERATOR, _('Moderator')),
         (SENIOR, _('Senior')),
         (DEVELOPER, _('Developer')),
         (FOLLOWER, _('Follower')),
+        (SELF, _('Self')),
+        (ONHOLD, _('On hold')),
     ]
     user_id = models.BigIntegerField()
     status_id = models.BigIntegerField(
@@ -519,12 +573,16 @@ class Queue(Versionable):
     type = models.CharField(
         max_length=9,
         choices=QUEUE_TYPE_CHOICES,
-        default=MODERATOR,
+        default=ONHOLD,
     )
-    
+
     def __str__(self):
         return (f"Queue {self.user_id} {self.status_id} {self.type}")
-    
+
+    class Meta:
+        ordering = ['-version_start_date']
+
+
     def profile(self):
         try:
             su = SocialUser.objects.get(user_id=self.user_id)
@@ -537,7 +595,6 @@ class Queue(Versionable):
             return None
     
     def mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         if self.profile() is not None:
             p = self.profile()
             url = p.miniavatar.url
@@ -592,7 +649,7 @@ class Moderation(Versionable):
         null=True,
         blank=True,
     )
-    
+
 
     class Meta:
         ordering = ['-version_start_date']
@@ -618,7 +675,6 @@ class Moderation(Versionable):
         return p
 
     def moderator_mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         p = getattr(self.moderator, 'profile', None)
         #logging.debug(f"profile: {p}")
         if p is not None:
@@ -630,7 +686,6 @@ class Moderation(Versionable):
     moderator_mini_image_tag.short_description = 'Moderator image'
 
     def moderated_mini_image_tag(self):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         userid = self.queue.user_id
         su = SocialUser.objects.get(user_id=userid)
         p = getattr(su, 'profile', None)
@@ -679,7 +734,7 @@ class TwitterList(models.Model):
     uid = models.CharField(max_length=25, blank=True, null=True)
     label = models.CharField(max_length=50, blank=True, null=True)
     local_description = models.TextField(blank=True, null=True)
-    json = JSONField(blank=True, null=True)
+    json = models.JSONField(blank=True, null=True)
     community = models.ForeignKey(
         'community.Community',
         on_delete=models.CASCADE,
@@ -717,6 +772,7 @@ class Follower(models.Model):
         
         name = screen_name or str(self.user.user_id)
         return "followers of %s " % name
+
 
 class Friend(models.Model):
     user = models.ForeignKey(
@@ -768,10 +824,11 @@ class Moderator(models.Model):
         default=False,
         help_text="Is this moderator a seasoned moderator?",
     )
-
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated =  models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
-        pass
+        unique_together = ['socialuser', 'community']
 
 
     def __str__(self):
@@ -797,7 +854,7 @@ class Moderator(models.Model):
         try:
             return (
                 request.user.socialuser == self.socialuser and
-                self.community in get_current_site(request).community.all()
+                self.community == get_current_site(request).community
             )
         except:
             return False
@@ -810,7 +867,7 @@ class Moderator(models.Model):
         try:
             return (
                 request.user.socialuser == self.socialuser and
-                self.community in get_current_site(request).community.all()
+                self.community == get_current_site(request).community
             )
         except:
             return False
@@ -866,6 +923,26 @@ class DoNotRetweet(models.Model):
         return "{} {}".format(self.socialuser, self.current)
 
 
+class ModerationOptIn(models.Model):
+    """Algorithm followed to create or update moderation related OptIns
+    """
+    type = models.CharField(
+        max_length=9,
+        choices=Queue.QUEUE_TYPE_CHOICES
+    ) 
+    option = models.ForeignKey(
+        Option,
+        verbose_name='OptIn option',
+        on_delete=models.PROTECT,
+    )
+    authorize = models.BooleanField(
+        default=None
+    )
+
+    def __str__(self):
+        return "{} {} {}".format(self.type, self.option, self.authorize)
+
+
 def addsocialuser(tweetdj_instance):
     su = addsocialuser_from_userid(tweetdj_instance.userid)
     if not su:
@@ -891,3 +968,87 @@ def addsocialuser_from_userid(userid: int):
             logger.error(e)
             return
     return su
+
+
+class Prospect(models.Model):
+    socialuser = models.ForeignKey(
+        'moderation.SocialUser',
+        on_delete=models.PROTECT,
+    )
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text=(
+            "Is this Prospect active?"
+        )
+    )
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "{} {} {}".format(self.socialuser, self.community, self.active)
+    
+    class Meta:
+        unique_together = ['socialuser', 'community']
+
+
+class Filter(models.Model):
+    active = models.BooleanField(
+        default=True,
+        help_text=(
+            "Is this Filter active?"
+        )
+    )
+    community = models.OneToOneField(
+        'community.Community',
+        on_delete=models.PROTECT,
+        related_name='moderation_filter',
+    )
+    access_protected = models.BooleanField(
+        default=False,
+        help_text=(
+            "Require access to protected account?"
+        )
+    )
+    followers_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum follower count required"
+        )
+    )
+    member_follower_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum member follower count required"
+        )
+    )
+    statuses_count = models.PositiveSmallIntegerField(
+        default=0,
+        help_text=(
+            "Minimum status count (retweet, reply, tweet) required"
+        )
+    )
+    profile_image = models.BooleanField(
+        default=False,
+        help_text=(
+            "Require non default profile image?"
+        )
+    )
+    account_age = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Required duration since account creation"
+    )
+    profile_update = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = "Duration after which user profile should be updated"
+    )
+
+    def __str__(self):
+        return "{} {}".format(self.id, self.community)

@@ -12,31 +12,18 @@
 
 {% block head_javascript %}
 {{ block.super }}
-<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
 {% endblock head_javascript %}
 
-
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col col-lg-2">
-      {% profile %}
-    </div>
-    <div class="col-md-auto">
-      {% include "landing/usernav.html" %}
-      <div class="tab-pane" id="invite">
-        {% if success_message %}
-          <p>{{ success_message }}</p>
-          <p>Merci de conseiller à la personne que vous venez d'inviter de vérifier le contenu du dossier 'courrier indésirable' ou 'spam' de sa boîte mail. Le mail d'invitation en provenance de l'adresse <i>noreply@doctoctoc.net</i> pourrait s'y trouver.</p>   
-        {% elif allowed %}
-          <p>Vous pouvez inviter un professionnel de santé à rejoindre notre communauté.</p>
-          {% load crispy_forms_tags %}
-          {% crispy form %}
-        {% else %}
-          Vous n'êtes pas autorisé à envoyer une invitation.
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>  
+{% include "landing/usernav.html" %}
+{% if success_message %}
+  <p>{{ success_message }}</p>
+  <p>Merci de conseiller à la personne que vous venez d'inviter de vérifier le contenu du dossier 'courrier indésirable' ou 'spam' de sa boîte mail. Le mail d'invitation en provenance de l'adresse <i>noreply@doctoctoc.net</i> pourrait s'y trouver.</p>   
+{% elif allowed %}
+  <p>Vous pouvez inviter un professionnel de santé à rejoindre notre communauté.</p>
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+{% else %}
+  Vous n'êtes pas autorisé à envoyer une invitation.
+{% endif %} 
 {% endblock %}

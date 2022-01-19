@@ -4,7 +4,6 @@ from . import views
 
 app_name = 'invite'
 
-
 urlpatterns = [
     path(
         'send-invite/',

@@ -60,54 +60,56 @@ window.chartColors = {
           type: 'scatter',
           data: {
         	  labels: data.labels,
-              datasets: [{
-                  label: 'Twitter users verified by @doctoctocbot (physician, pharmacist, midwife)',
-                  backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-                  borderColor: window.chartColors.red,
-                  data: data.data,
-                  /*backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)',
-                      'rgba(255, 206, 86, 0.2)',
-                      'rgba(75, 192, 192, 0.2)',
-                      'rgba(153, 102, 255, 0.2)',
-                      'rgba(255, 159, 64, 0.2)'
-                  ],
-                  borderColor: [
-                      'rgba(255,99,132,1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
-                      'rgba(153, 102, 255, 1)',
-                      'rgba(255, 159, 64, 1)'
-                  ],
-                  borderWidth: 1*/
-              }]
+              datasets: [
+            	  {
+                      label: 'Twitter users verified by @doctoctocbot (physician, pharmacist, midwife)',
+                      backgroundColor: color(window.chartColors.grey).alpha(0.6).rgbString(),
+                      borderColor: window.chartColors.grey,
+                      data: data.data,
+                  },
+                  {
+                      label: 'bot',
+                      backgroundColor: 'blue',
+                      borderColor: window.chartColors.blue,
+      			      pointRadius: 6,
+                      data: data.data_bot
+                  },
+                  {
+                      label: 'You',
+                      backgroundColor: 'red',
+                      borderColor: window.chartColors.red,
+          			  pointRadius: 6,
+                      data: data.data_user
+                  }
+              ]
           },
           options: {
                changeScale: true,
                //maxRankDifference: 3,
-        	  tooltips: {
-        	         callbacks: {
-        	            label: function(tooltipItem, data) {
-        	               var label = data.labels[tooltipItem.index];
-        	               return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-        	            }
-        	         }
-        	      },
+               plugins: {
+        	       tooltip: {
+        	             callbacks: {
+        	                 label: function(context) {
+        	                     //var label = context.dataset.label;
+        	                     return context.raw.screen_name + " | " + context.raw.x + " | " + context.parsed.y;
+        	                 }
+        	             }
+        	      }
+               },
               reponsive: true,
               scales: {
-            	  yAxes: [{
-            		  id: 'y-axis-0',
+            	  y: {
             		  type: 'logarithmic',
-                      scaleLabel: {
+                      title: {
                           display: true,
-                          labelString: 'followers (logarithmic scale)'
+                          text: 'followers (logarithmic scale)'
                       },
                       ticks: {
-                          min: 0,
-                          max: 40000,
                           callback: function (value, index, values) {
+                              if (value === 300000) return "300K";
+                              if (value === 200000) return "200K";
+                              if (value === 100000) return "100K";
+                              if (value === 50000) return "50K";
                               if (value === 40000) return "40K";
                               if (value === 30000) return "30K";
                               if (value === 20000) return "20K";
@@ -118,32 +120,37 @@ window.chartColors = {
                               if (value === 2000) return "2K";
                               if (value === 1000) return "1K";
                               if (value === 500) return "500";
+                              if (value === 250) return "250";
                               if (value === 100) return "100";
                               if (value === 50) return "50";
                               if (value === 10) return "10";
+                              if (value === 5) return "5";
                               if (value === 0) return "0";
                               return null;
                           }
                       }
-                  }],
-                  xAxes: [{
+                  },
+                  x: {
                       type: 'time',
-                      time:{
-                          min: twitter0,
-                          max: today,
-                      },
+                      min: twitter0,
+                      max: today,
                       position: 'bottom',
+                      title: {
+                          display: true,
+                          text: 'Creation date'
+                      },
                       ticks: {
                           major: {
                               enabled: true,
                               fontStyle: 'bold'
                           },
-                          source: 'auto',//'data'
+                          source: 'auto',
                           autoSkip: true,
                           autoSkipPadding: 75,
                           maxRotation: 0,
                           sampleSize: 100,
-                      }}],
+                      }
+                  },
               }
           }
       });

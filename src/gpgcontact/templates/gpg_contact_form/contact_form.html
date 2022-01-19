@@ -4,7 +4,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block header_javascript %}
+{% block head_javascript %}
 {{ block.super }}
 <script src='{% static "/gpgcontact/script/private/keys.js" %}'></script>
 <script src='{% static "/gpgcontact/script/openpgp.min.js" %}'></script>
@@ -13,7 +13,7 @@ var openpgp = window.openpgp;
 openpgp.initWorker({ path:'{% static "/gpgcontact/script/openpgp.worker.min.js" %}' }); // set the relative web worker path
 </script>
 <script src='{% static "/gpgcontact/script/encrypt.js" %}'></script>
-{% endblock header_javascript %}
+{% endblock head_javascript %}
 
 {% block title %}{% trans 'Contact' %}{% endblock %}
 

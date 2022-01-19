@@ -1,6 +1,8 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 from reversion.admin import VersionAdmin
+from durationwidget.widgets import TimeDurationWidget
+from django.db import models
 
 from community.models import (
     Community,
@@ -49,6 +51,8 @@ class CommunityAdmin(admin.ModelAdmin):
         'allow_unknown',
         'language',
         'pending_moderation_period',
+        'pending_self_moderation_period',
+        'moderator_moderation_period',
         'viral_moderation',
         'tree_search',
         'no_root_backoff',
@@ -57,6 +61,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_request_dm',
         'blog',
     )
+    raw_id_fields = ('twitter_creator',)
     fields = (
         'name',
         'active',
@@ -72,6 +77,8 @@ class CommunityAdmin(admin.ModelAdmin):
         'allow_unknown',
         'language',
         'pending_moderation_period',
+        'pending_self_moderation_period',
+        'moderator_moderation_period',
         'viral_moderation',
         'viral_moderation_category',
         'viral_moderation_message',
@@ -84,19 +91,31 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_follow_member',
         'twitter_request_dm',
         'twitter_request_dm_text',
+        'twitter_self_moderation_dm',
         'blog',
+        'members_friends_cache',
+        'twitter_creator',
     )
     readonly_fields = (
         'created',
     )
-    
+    formfield_overrides = {
+        models.DurationField: {'widget': TimeDurationWidget},
+    }
+
 
 class RetweetAdmin(admin.ModelAdmin):
     list_display = (
         'community',
         'hashtag',
         'category',
-        'retweet',  
+        'retweet',
+        'favorite',  
+    )
+    list_filter = (
+        'community',
+        'hashtag',
+        'category',
     )
 
 
@@ -104,9 +123,19 @@ class TextDescriptionAdmin(TranslationAdmin):
     pass
 
 
+class TextCommunityInline(admin.TabularInline):
+    model = Text.community.through
+
+
 @admin.register(Text)
 class TextAdmin(VersionAdmin):
-    pass
+    inlines = [
+        TextCommunityInline,    
+    ]
+    fields = (
+        'type',
+        'content',
+    )
 
 
 class AccessLevelAdmin(TranslationAdmin):
@@ -133,6 +162,7 @@ class ApiAccessAdmin(admin.ModelAdmin):
         'status_protected',
         'status_media',
         'reply_count',
+        'filter_author_self',
     )
     list_filter = (
     'community',

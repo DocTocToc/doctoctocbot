@@ -79,7 +79,6 @@
 
 .screen_name {
     font-weight: normal;
-    color: grey;
 }
 
 .profile-pic {
@@ -127,17 +126,17 @@
         <span class="mx-1">
         {#if status.reply_count > 1}
           <div class="badge badge-dark mx-1">
-          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.plural")}
+          <span class="badge badge-light mx-1">{status.reply_count}</span>{$_("reply.plural")}
           <span class="sr-only">reply count</span>
           </div>
         {:else if status.reply_count > 0}
           <div class="badge badge-warning mx-1">
-          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
+          <span class="badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
           <span class="sr-only">reply count</span>
           </div>
         {:else if status.reply_count == 0}
           <div class="badge badge-danger mx-1">
-          <span class="badge badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
+          <span class="badge badge-light mx-1">{status.reply_count}</span>{$_("reply.singular")}
           <span class="sr-only">reply count</span>
           </div>
         {/if}

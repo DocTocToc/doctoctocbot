@@ -47,7 +47,7 @@ class Queue(Versionable):
         return (f"{self.uid} {self.community}")
     
     class Meta:
-        unique_together: ('uid', 'socialmedia', 'community')
+        unique_together: ('identity', 'uid', 'socialmedia', 'community')
         ordering = ['version_start_date']
 
 

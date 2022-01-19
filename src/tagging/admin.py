@@ -2,8 +2,7 @@ import logging
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from django.contrib.staticfiles.templatetags.staticfiles import static
-
+from django.templatetags.static import static
 from versions.admin import VersionedAdmin
 
 from tagging.models import Queue, Process, Category, TagKeyword

@@ -30,6 +30,7 @@ class CustomUserAdmin(UserAdmin):
         'date_joined',
         'last_login',
         'has_social_auth',
+        'social_auth_link_tag',
     )
     readonly_fields = (
         'date_joined',
@@ -66,8 +67,14 @@ class CustomUserAdmin(UserAdmin):
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email','password',)}
+            'fields': (
+                'username',
+                'email',
+                'password1',
+                'password2',
+                'socialuser',
+            )
+            }
          ),
     )
     autocomplete_fields = ['socialuser']
@@ -93,15 +100,20 @@ class CustomUserAdmin(UserAdmin):
             return
         links = []
         for sa in obj.social_auth.all():
+            try:
+                screen_name = sa.extra_data["access_token"]["screen_name"]
+            except:
+                screen_name = None
             url = reverse(
                 "admin:social_django_usersocialauth_change",
                 args=[sa.id]
             )
-            links.append(f'<a href="{url}">{sa.provider}</a>')
+            text = ' '.join(filter(None, (sa.provider, screen_name)))
+            links.append(f'<a href="{url}">{text}</a>')
         return mark_safe(
             "</br>".join(links)
         )
     social_auth_link_tag.short_description = "Social auth"
-            
+
 
 admin.site.register(User, CustomUserAdmin)

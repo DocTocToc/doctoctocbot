@@ -169,7 +169,7 @@ def investor_progress_bar(context):
             "percentage": 0,
         }
     year = context.get("year")
-    community = get_community(context)
+    community = get_community(context['request'])
     logger.info(f"community: {community}")
     investor_count: int = get_year_investor_count(context)
     end_dt =get_project_year_end(project, year)

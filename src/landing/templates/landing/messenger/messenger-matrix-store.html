@@ -1,0 +1,174 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+  <div class="hero hero--left bg-smoke">
+    <div class="hero__wrap hero__wrap--center-everything">
+      <h1 class="hero__h1-just-copy">Element App Store</h1>
+      <p class="hero__p-just-copy">Improve team productivity with our bridges, bots and widgets.<br></p>
+    </div>
+  </div>
+  <div class="hero__wrap">
+    <div class="flex flex__app-store">
+      <div class="flex__item--align-center flex__item--app-store-menu">
+        <div class="apps--integrations-menu">
+          <a href="#bridges" class="apps--integration-menu-link w-inline-block">
+            <p class="simple__p integration-menu_p">Bridges</p>
+          </a>
+          <a href="#bots" class="apps--integration-menu-link w-inline-block">
+            <p class="simple__p integration-menu_p">Bots</p>
+          </a>
+          <a href="#widgets" class="apps--integration-menu-link w-inline-block">
+            <p class="simple__p integration-menu_p">Widgets</p>
+          </a>
+          <a href="#request" class="apps--integration-menu-link w-inline-block">
+            <p class="simple__p integration-menu_p">Request</p>
+          </a>
+        </div>
+      </div>
+      <div class="flex__item--align-center flex__item__app-store--list">
+        <div id="bridges" class="app-store__apps-list--section">
+          <h3 class="app-store__apps-list-section-h">Bridges</h3>
+          <p class="app-store__apps-list-section-p">Bridges mean that you can remain in your Element while talking to people stuck in proprietary walled gardens, or on a different network.</p>
+          <div class="app-store__section--apps-group">
+            <div class="card card--integration">
+              <div class="app-store-app-icon"><img src="images/logo-slack.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Slack</strong>. </span>Connect Slack channels and Matrix rooms for native interoperability.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/MS-Teams.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>MS Teams</strong>. </span>For native interoperability between MS Teams and Matrix.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-gitter.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Gitter</strong>. </span>For native interoperability between Gitter and Matrix.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-irc.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span class="bold-text">IRC. </span>Dynamically bridge IRC channels and synchronise user-lists.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-discord.svg" width="48" alt="Discord app icon" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Discord</strong>. </span>Connect text-based Discord channels and Matrix rooms.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-telegram.svg" width="48" alt="Telegram App icon" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Telegram</strong>. </span>For interoperability between Telegram and Matrix.<br></p>
+            </div>
+          </div>
+          <p class="app-store__apps-list-section-p">
+            <a href="/cdn-cgi/l/email-protection#b6d5d9d8c2d7d5c29bc5d7dad3c5f6d3dad3dbd3d8c298dfd989c5c3d4dcd3d5c28bf4c4dfd2d1d3938486d3d8c7c3dfc4cf">Contact us</a> to find out about additional bridges which may be available soon, or as an add-on for your Element Matrix Services (EMS) server.
+          </p>
+          <div class="divider"></div>
+        </div>
+        <div id="bots" class="app-store__apps-list--section">
+          <h3 class="app-store__apps-list-section-h">Bots</h3>
+          <p class="app-store__apps-list-section-p">Bots interact with third-party applications directly from Element. They sit in your rooms to listen and respond to your command. Use them to boost team productivity or add to the fun.</p>
+          <div class="app-store__section--apps-group integrations-group">
+            <div class="card card--integration">
+              <div><img src="images/icon-google.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span class="bold-text">Google image search. </span>Search for any image online, from within Element.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/giphy-icon.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span class="bold-text">Giphy. </span>Invoke Giphy to produce the most appropriate GIF in your chat.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-guggy2x.jpg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Guggy</strong>. Turn your text into personalised GIFs.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/github.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>GitHub</strong>. Puppet your GitHub account straight from your chat room.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-rss-bot.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>RSS Bot.</strong> Get your RSS feeds straight into your chat room.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-imgur.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Imgur Image Search.</strong> Search Imgur for relevant images without leaving Element.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-traviscl.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Travis CI</strong>. Receive all your build results straight into the discussion, to boost team productivity.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-wikipedia.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Wikipedia</strong>. Search Wikipedia without leaving Element.</span><br></p>
+            </div>
+          </div>
+          <p class="app-store__apps-list-section-p">
+            <a href="/cdn-cgi/l/email-protection#a0c3cfced4c1c3d48dd3c1ccc5d3e0c5ccc5cdc5ced48ec9cf9fd3d5c2cac5c3d49de2d2c9c4c7c5859290c5ced1d5c9d2d9">Contact us</a> to find out about additional bots which may be available, or request an add-on.
+          </p>
+        </div>
+        <div id="widgets" class="simple__info">
+          <h3 class="simple__h4 integrations__h4">Widgets</h3>
+          <p class="simple__p non-sticky integration-intro">Widgets embed full-blown interactive apps into your rooms. Everyone in a room can access them - helping you share or collaborate around the same material.</p>
+          <div class="app-store__section--apps-group integrations-group">
+            <div class="card card--integration">
+              <div><img src="images/icon-etherpad.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Etherpad</strong>. For shared note taking.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-grafana.svg" width="48" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Grafana</strong>. The must-have for any devops; your dashboard straight in Element.</span> <br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-g-cal.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Google calendar</strong>. </span>Share your calendar within Element.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-jitsi.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Jitsi</strong>. </span>Free unlimited voice and video conferences, alongside your chat.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-spotify.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><strong>Spotify</strong>. Control your music straight from Element.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-stickerpack2x.png" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Stickerpack</strong>. Make your chat more fun with stickers.</span><br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-youtube.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>YouTube</strong>. </span>Watch videos together, without leaving your chat.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/ethercalc.svg" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>Ethercalc</strong>. </span>Embed editable spreadsheets.<br></p>
+            </div>
+            <div class="card card--integration">
+              <div><img src="images/icon-trading-view2x.jpg" width="32" alt="" class="integration-icon"></div>
+              <p class="card--app-store--app-info"><span><strong>TradingView</strong>. Keep an eye on your exchange rates while working from Element.</span><br></p>
+            </div>
+          </div>
+          <p class="simple__p non-sticky integration-intro">
+            <a href="/contact">Contact us</a> to find out about additional widgets which may be available soon, or request an add-on.
+          </p>
+        </div>
+        <div id="request" class="simple__info">
+          <h3 class="simple__h4 integrations__h4">Request an integration</h3>
+          <p class="simple__p non-sticky integration-intro">If you’re looking for something we’ve not got (yet) -<a href="/contact"> let us know.</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/messenger.js" type="text/javascript"></script>
+  <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
+
+
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

@@ -1,5 +1,5 @@
+import path from "path";
 import svelte from 'rollup-plugin-svelte';
-
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
@@ -7,8 +7,30 @@ import { terser } from 'rollup-plugin-terser';
 import copy from 'rollup-plugin-copy';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import json from '@rollup/plugin-json';
-import sveltePreprocess from 'svelte-preprocess'
+import sveltePreprocess from 'svelte-preprocess';
+import postcss from "rollup-plugin-postcss";
+
 const production = !process.env.ROLLUP_WATCH;
+
+const postcssOptions = () => ({
+	  extensions: [".scss", ".sass"],
+	  extract: false,
+	  minimize: true,
+	  use: [
+	    [
+	      "sass",
+	      {
+	        includePaths: [
+	          "./src/theme",
+	          "./node_modules",
+	          // This is only needed because we're using a local module. :-/
+	          // Normally, you would not need this line.
+	          path.resolve(__dirname, "..", "node_modules")
+	        ]
+	      }
+	    ]
+	  ]
+	});
 
 function serve() {
 	let server;
@@ -65,7 +87,11 @@ export default {
             { 
                 src: 'node_modules/flatpickr/dist/flatpickr.css', 
                 dest: 'public/vendor/flatpickr/' 
-            }
+            },
+            { 
+                src: 'node_modules/svelte-material-ui/bare.css', 
+                dest: 'public/vendor/svelte-material-ui/' 
+            },
 		      ]
 		    }),
 		// If you have external dependencies installed from
@@ -78,7 +104,7 @@ export default {
 			dedupe: ['svelte']
 		}),
 		commonjs(),
-
+	    //postcss(postcssOptions()),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
 		!production && serve(),

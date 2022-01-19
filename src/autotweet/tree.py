@@ -3,15 +3,12 @@ import logging
 from typing import List, Optional
 import http.client
 import time
-import sys
 
 import numpy as np
 from selenium.webdriver.common.action_chains import ActionChains 
-from selenium.webdriver.common import action_chains, keys
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from bot.lib.statusdb import Addstatus
 from autotweet.utils import sleep
-from autotweet.driver import getChromeRemoteDriver
 from community.models import Community
 from conversation.models import Tweetdj, Treedj
 from community.helpers import (
@@ -169,8 +166,8 @@ def record_replies(statusids, community, rc):
         statuses.sort(key=lambda x: x.id)
         for status in statuses:
             db = Addstatus(status._json)
-            _new_tweetdj = db.addtweetdj()
-            if _new_tweetdj:
+            _, created = db.addtweetdj()
+            if created:
                 logger.info(f"Status {status.id} was added to DB")
             in_reply_to_status_id = status._json["in_reply_to_status_id"]
             if in_reply_to_status_id:

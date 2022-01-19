@@ -53,3 +53,39 @@ def admin_tag_screen_name_link(user_id):
         )
     except SocialUser.DoesNotExist:
         return
+    
+def screen_name_link_su_pk(su_pk):
+    """ Return SocialUser screen name html link tag from Twitter user_id
+    """
+    try:
+        su = SocialUser.objects.get(id=su_pk)
+        return mark_safe(
+            '<a href="{link}">{tag}</a>'.format(
+                link = reverse("admin:moderation_socialuser_change", args=(su_pk,)),
+                tag = su.screen_name_tag()
+            )
+        )
+    except SocialUser.DoesNotExist:
+        return
+
+def socialmedia_account(su: SocialUser):
+    try:
+        emoji = su.social_media.emoji
+    except:
+        emoji = None
+    if not emoji:
+        emoji = su.social_media.name
+    if su.social_media.name == "twitter":
+        href = f"https://twitter.com/intent/user?user_id={su.user_id}"
+        return mark_safe(
+            f'<a href="{href}">{emoji}@{su.screen_name_tag()}</a>'
+        )
+    else:
+        return emoji
+
+def m2m_field_tag(m2m_field):
+    return mark_safe(
+        "<br />".join(
+            [str(obj) for obj in m2m_field.all()]
+        )
+    )

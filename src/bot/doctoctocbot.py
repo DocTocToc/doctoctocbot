@@ -288,6 +288,8 @@ def community_retweet(
             _allow_quote=F('allow_quote'),
             _allow_unknown=F('community__allow_unknown'),
             _require_follower=F('require_follower'),
+            _favorite=F('favorite'),
+            _retweet=F('retweet'),
         ).order_by('community').distinct('community')
     logger.debug(f"process_unknown_lst: {process_unknown_lst}")
     #process unknown user
@@ -317,7 +319,9 @@ def community_retweet(
             f'allow_retweet: {dct["_allow_retweet"]},\n'
             f'allow_quote: {dct["_allow_quote"]},\n'
             f'allow_unknown: {dct["_allow_unknown"]},\n'
-            f'require_follower: {dct["_require_follower"]}'
+            f'require_follower: {dct["_require_follower"]},\n'
+            f'{dct["_favorite"]=},\n'
+            f'{dct["_retweet"]=},\n'
         )
         try:
             community = Community.objects.get(pk=dct['_community'])
@@ -379,21 +383,36 @@ def rt(statusid, dct, community):
     username = dct["_bot_screen_name"]
     api = get_api(username=username, backend=True)
     if community.active:
-        try:
-            retweet = api.retweet(statusid)
-            logger.info(
-                f"I just retweeted status {statusid}\n"
-                f"Response: {retweet}"
-            )
-        except TweepError as e:
-            logger.error(f"Error during retweet of status {statusid}:\n{e}")
-            return
-        set_retweeted_by(statusid, community)
-        create_update_retweeted(statusid, community, retweet._json)
+        if dct["_retweet"]:
+            try:
+                res = api.retweet(statusid)
+                logger.info(
+                    f"I just retweeted status {statusid}\n"
+                    f"Response: {res}"
+                )
+            except TweepError as e:
+                logger.error(
+                    f"Error during retweet of status {statusid}:\n{e}"
+                )
+                res = None
+            if res:
+                set_retweeted_by(statusid, community)
+                create_update_retweeted(statusid, community, res._json)
+        if dct["_favorite"]:
+            try:
+                res = api.create_favorite(statusid)
+                logger.info(
+                    f"I just favorited status {statusid}\n"
+                    f"Response: {res}"
+                )
+            except TweepError as e:
+                logger.error(
+                    f"Error during favorite of status {statusid}:\n{e}"
+                )
     else:
         logger.info(
-            f"I did not retweet status {statusid} because {community} "
-            f" is not active\n"
+            f"I did not retweet and/or favorite status {statusid} because "
+            f"{community} is not active\n"
         )
     keyword_tag(statusid, community)
 

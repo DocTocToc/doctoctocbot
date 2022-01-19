@@ -1,0 +1,11 @@
+{% extends "doctocnet/base.html" %}
+
+{% block content %}
+<h2>La transaction a été annulée!</h2>
+
+<p>{{ frontend_error_msg }}</p>
+
+<a href="{% url "crowdfunding:start" %}">Essayer à nouveau.</a>
+<a href="{% url "gpgcontact:contact-form" %}">Nous contacter.</a>
+
+{% endblock %}

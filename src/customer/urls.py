@@ -9,6 +9,7 @@ app_name = 'customer'
 router = routers.DefaultRouter()
 router.register(r'customer', CustomerViewSet)
 
+
 urlpatterns = [
     path('customer/api/invoice/', create_invoice, name='invoice'),
     path('customer/api/', include(router.urls)),

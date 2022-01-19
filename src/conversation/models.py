@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.utils import DatabaseError
@@ -11,6 +10,7 @@ from taggit.managers import TaggableManager
 from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
 from django.utils.translation import ugettext_lazy as _
 from versions.models import Versionable
+from fuzzycount import FuzzyCountManager
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +19,19 @@ class GenericBigIntTaggedItem(CommonGenericTaggedItemBase, TaggedItemBase):
     object_id = models.BigIntegerField(verbose_name=_('Object id'), db_index=True)
 
 
+class HashtagManager(models.Manager):
+    def get_by_natural_key(self, hashtag):
+        return self.get(hashtag=hashtag)
+
+
 class Hashtag(models.Model):
     hashtag = models.CharField(max_length=101, unique=True)
     
+    objects = HashtagManager()
+
+    def natural_key(self):
+        return (self.hashtag,)
+
     def __str__(self):
         return self.hashtag
 
@@ -47,26 +57,31 @@ class Tweetdj(models.Model):
         on_delete=models.SET_NULL,
         related_name="tweets"
     )
-    json = JSONField()
-    created_at = models.DateTimeField()
+    json = models.JSONField(
+        null=True
+    )
+    created_at = models.DateTimeField(null=True)
     reply = models.PositiveIntegerField(null=True)
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
     parentid = models.BigIntegerField(null=True)
-    quotedstatus = models.NullBooleanField(
-        default=None,
-        help_text="Is quoted_status",
-        verbose_name="Quote",
-    )
-    retweetedstatus = models.NullBooleanField(
+    retweetedstatus = models.BooleanField(
         default=None,
         help_text="Has retweeted_status",
         verbose_name="RT",
+        null=True,
     )
-    deleted = models.NullBooleanField(
+    quotedstatus = models.BooleanField(
+        default=None,
+        help_text="Has quoted_status",
+        verbose_name="QT",
+        null=True,
+    )
+    deleted = models.BooleanField(
         default=None,
         help_text="Has this tweet been deleted?",
         verbose_name="Del",
+        null=True,
     )
     hashtag = models.ManyToManyField(
         Hashtag,
@@ -75,13 +90,23 @@ class Tweetdj(models.Model):
     tags = TaggableManager(through=GenericBigIntTaggedItem)
     retweeted_by = models.ManyToManyField(
         "moderation.SocialUser",
+        related_name = "retweets",
         blank=True,
     )
-    
-    
+    quoted_by = models.ManyToManyField(
+        "moderation.SocialUser",
+        related_name = "quotes",
+        blank=True,
+    )
+
+    objects = FuzzyCountManager()
+
     class Meta:
         get_latest_by = "statusid"
         ordering = ('-statusid',)
+        indexes = [
+            models.Index(fields=['userid'], name='userid_idx'),
+        ]
 
     def __str__(self):
         return str(self.statusid)
@@ -155,6 +180,7 @@ class Tweetdj(models.Model):
             return status.get("text") or ""
         else:
             return ""
+
 
 class Treedj(MPTTModel):
     statusid = models.BigIntegerField(unique=True)
@@ -245,3 +271,19 @@ class TwitterUserTimeline(models.Model):
         blank=True,
         help_text = "Status id of the most recent status retrieved"
     )
+
+class TwitterLanguageIdentifier(models.Model):
+    tag = models.CharField(
+        max_length=35,
+        unique=True
+    )
+    language = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    class MPTTMeta:
+        unique_together = [['tag', 'language']]
+
+    def __str__(self):
+        return '%s %s' % (self.language, self.tag)

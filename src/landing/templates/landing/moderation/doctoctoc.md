@@ -3,7 +3,7 @@
 {% load moderator %}
 
 ## Pourquoi modérer?
-La communauté {% hashtag_lst %} est composée de professionnels de santé qui souhaitent s'entraider en se posant des questions. Parmi ces professionnels, une immense majorité ne souhaite pas répondre aux demandes de conseils médicaux en provenance de non professionnels de santé et ne souhaite pas lire de tweets promotionnels ou publicitaires utilisant le hashtag #DocTocToc ou répondant à 1 thread initié par une question #DocTocToc.
+La communauté {% hashtag %} est composée de professionnels de santé qui souhaitent s'entraider en se posant des questions. Parmi ces professionnels, une immense majorité ne souhaite pas répondre aux demandes de conseils médicaux en provenance de non professionnels de santé et ne souhaite pas lire de tweets promotionnels ou publicitaires utilisant le hashtag #DocTocToc ou répondant à 1 thread initié par une question #DocTocToc.
 Un des objectifs du projet @DocTocTocBot est de filtrer ces messages hors-sujet ou indésirables.
 
 ## Qu'est-ce qui fait l'objet d'une modération?

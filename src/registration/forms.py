@@ -15,7 +15,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_registration import validators
 from django_registration.forms import RegistrationForm
-from registration.validators import CaseInsensitiveReservedSocialUsername
+from registration.validators import (
+    CaseInsensitiveReservedSocialUsername,
+    no_at_sign,
+)
 from crispy_forms.helper import FormHelper
 
 User = get_user_model()
@@ -181,9 +184,13 @@ class RegistrationFormPasswordlessCaseInsensitiveSocial(RegistrationFormPassword
     def __init__(self, *args, **kwargs):
         super(RegistrationFormPasswordlessCaseInsensitiveSocial, self).__init__(*args, **kwargs)
         self.fields[User.USERNAME_FIELD].validators.extend(
-            [validators.CaseInsensitiveUnique(
-                User, User.USERNAME_FIELD,
+            [
+                validators.CaseInsensitiveUnique(
+                User,
+                User.USERNAME_FIELD,
                 validators.DUPLICATE_USERNAME
                 ),
-            CaseInsensitiveReservedSocialUsername]
+                CaseInsensitiveReservedSocialUsername,
+                no_at_sign,
+            ]
         )

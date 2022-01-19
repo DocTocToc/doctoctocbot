@@ -26,7 +26,7 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def community_question_count(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     if not community:
         return
     cache_ttl = (
@@ -50,7 +50,7 @@ def community_question_count(context):
 
 @register.simple_tag(takes_context=True)
 def community_first_question_date(context):
-    community = get_community(context)
+    community = get_community(context['request'])
     if not community:
         return
     cache_ttl = (
@@ -85,7 +85,7 @@ def community_first_question_date(context):
 def api_access_status_limit(context):
     """Return the maximum number of statuses an anonymous user can access
     """
-    community = get_community(context)
+    community = get_community(context['request'])
     if not community:
         return
     try:

@@ -8,54 +8,40 @@ from django.urls import reverse_lazy
 from django.contrib.sites.models import Site
 from rest_framework import viewsets
 from .models import Moderator
-from .serializers import ModeratorSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from dry_rest_permissions.generics import DRYPermissions
-from dry_rest_permissions.generics import DRYPermissionFiltersBase
+
 from django.views.generic import TemplateView
 from django.utils.translation import gettext as _
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import F
 from django.db.utils import DatabaseError
 from django.conf import settings
-from django.core.paginator import Paginator
-from community.helpers import get_community
+from community.helpers import (
+    get_community,
+    get_community_bot_screen_name,
+)
 from moderation.thumbnail import get_thumbnail_url
 from django.contrib.sites.shortcuts import get_current_site
 import logging
 from moderation.forms import SelfModerationForm
 from social_django.models import UserSocialAuth
-from community.models import Community
 from moderation.models import UserCategoryRelationship
 from django.core.mail import send_mail
+from bot.tasks import handle_create_friendship
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
-class ModeratorFilterBackend(DRYPermissionFiltersBase):
-    action_routing = True
-
-    def filter_list_queryset(self, request, queryset, view):
-        """
-        Limits all list requests to only be seen by the moderator.
-        """
-        return queryset.filter(
-            socialuser=request.user.socialuser,
-            community__in=get_current_site(request).community.all(),
-        )
-
-class ModeratorViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows moderators objects to be viewed or edited.
-    """
-    permission_classes = (IsAuthenticated, DRYPermissions,)
-    #permission_classes = (AllowAny, DRYPermissions,)
-    queryset = Moderator.objects.all()
-    serializer_class = ModeratorSerializer
-    filter_backends = (ModeratorFilterBackend,)
+if settings.DEBUG:
+    TIMEOUT = 1
+else:
+    TIMEOUT = 60 * 60
 
 
+@method_decorator(cache_page(TIMEOUT), name='dispatch')
 class ModeratorPublicList(TemplateView):
-    title = _("Moderators")
+    title = _("Moderation team")
     template_name = "moderation/moderators.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -65,9 +51,11 @@ class ModeratorPublicList(TemplateView):
             # looping till length l 
             for i in range(0, len(l), n):  
                 yield l[i:i + n] 
-        
+
         context = super(ModeratorPublicList, self).get_context_data(*args, **kwargs)
-        community = get_community(context)
+        community = get_community(self.request)
+        if not community:
+            return context
         moderators_qs = (
             Moderator.objects
             .filter(
@@ -97,8 +85,12 @@ class ModeratorPublicList(TemplateView):
         n = 3
         moderators = list(divide_chunks(moderators, n))    
         context["moderators"] = moderators
-        context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url()}"
-        logger.debug(context)
+        context["thumbnail"] = f"{self.request.scheme}://{self.request.get_host()}{get_thumbnail_url(community)}"
+        try:
+            twitter_creator = f"@{community.twitter_creator.screen_name_tag()}"
+        except:
+            twitter_creator = None
+        context["twitter_creator"] = twitter_creator 
         return context
 
 
@@ -112,7 +104,7 @@ def moderator_id_view(request):
 
         moderator = Moderator.objects.filter(
             socialuser=socialuser,
-            community__in=get_current_site(request).community.all()
+            community=get_current_site(request).community
             ).first()
         return Response({"id": moderator.id})
 
@@ -137,18 +129,31 @@ class SelfModerationView(LoginRequiredMixin, FormView):
         # It should return an HttpResponse.
         # create moderation task here
         user = self.request.user
-        logger.debug(UserSocialAuth.objects.filter(
-                provider='twitter',
-                user=user,
-            ).exists())
+        logger.debug(f"{user}")
+        usa = UserSocialAuth.objects.filter(
+            provider='twitter',
+            user=user,
+        )
+        logger.debug(f"UserSocialAuth: {usa}")
         if UserSocialAuth.objects.filter(
                 provider='twitter',
                 user=user,
             ).exists():
             category_name = form.cleaned_data['category']
-            logger.debug(category_name)
-            user.socialuser.self_moderate(category_name=category_name)
-            user.socialuser.follow_twitter(category_name=category_name)
+            logger.debug(f"{category_name}")
+            community = get_community(self.request)
+            user.socialuser.self_moderate(
+                category_name=category_name,
+                community=community 
+            )
+            #apply_async(args=(status.id,), ignore_result=True)
+            handle_create_friendship.apply_async(
+                args = (
+                    user.socialuser.user_id,
+                    community.id,
+                ),
+                ignore_result=True,
+            )
             #email
             scheme = self.request.is_secure() and "https" or "http"
             su_admin_link = (
@@ -181,9 +186,8 @@ class SelfModerationView(LoginRequiredMixin, FormView):
             logger.debug(ucr)
         except UserCategoryRelationship.DoesNotExist:
             return '/oauth/login/twitter/?next=/moderation/self/'
-        category: Category = ucr.category
-        bot_screen_name = category.twitter_screen_name()
-        logger.debug(bot_screen_name)
+        community = get_community(self.request)
+        bot_screen_name = get_community_bot_screen_name(community)
         return reverse_lazy(
             'moderation:self-success',
             kwargs = {'screen_name': bot_screen_name}

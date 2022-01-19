@@ -68,7 +68,7 @@ def follower_level(user, community, category):
             return access_level_object("follower")
 
 def get_api_level(user, community):
-    if not user.is_authenticated:
+    if not user.is_authenticated or not community:
         return access_level_object("anonymous")
     category: List[Category] = get_all_categories(user, community)
     member = member_level(community, category)

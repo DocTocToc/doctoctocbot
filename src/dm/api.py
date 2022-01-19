@@ -1,9 +1,13 @@
 import json
-from .pythontwitter import twitter
+from dm.pythontwitter import twitter
 from bot.models import Account
 import logging
 import typing
 from bot.tweepy_api import get_api as get_tweepy_api
+from dm.models import DirectMessage
+
+from django.db.models import Q
+import tweepy
 
 from django.conf import settings
 
@@ -21,57 +25,64 @@ def get_api_dict(__screen_name: typing.Optional[str]=None):
     except Account.DoesNotExist as e:
         logger.error(f"account with username {__screen_name} does not exist. \n {e}")
         return
-
     if (not consumer_key
         or not consumer_secret
         or not access_token
         or not access_token_secret):
         return
-
     api_dict = {'sleep_on_rate_limit': True}                                                      
     api_dict['consumer_key'] = consumer_key
     api_dict['consumer_secret'] = consumer_secret
     api_dict['access_token_key'] = access_token
     api_dict['access_token_secret'] = access_token_secret
-    
     return api_dict
-    
+
 def getapi(__screen_name: typing.Optional[str]=None):
     api_dict = get_api_dict(__screen_name)
     if api_dict:    
         return twitter.Api(**api_dict)
 
-def getdm(bot_screen_name):
+def getdm(bot_screen_name, bot_user_id: int):
     count=50
     api = get_tweepy_api(username=bot_screen_name, backend=True)
-    if api:
-        return api.list_direct_messages(count=count)
-
-"""
-def _getdm(dmid, screen_name):
-    dm_lst = []
-    count = 49
-    cursor = -1
-    api_ = getapi(screen_name)
-    if not api_:
+    if not api:
         return
-    while True:
-        logger.debug('client cursor:{}'.format(cursor))
-        dms = api_.GetAllDirectMessages(count=count, cursor=cursor)
-        dm_lst.extend(dms["events"])
-        lcall= len(dms["events"])
-        logger.debug(f'number of DMs returned during this call: {lcall}')
-        logger.debug(f'total number of DMs returned so far: {len(dm_lst)}')
-        cursor = dms.get("next_cursor", 0)
-        logger.debug('client cursor:{}'.format(cursor))
-        #list all ids in this api call result, stop if id is among them
-        ids = []
-        for dm in dms["events"]:
-            ids.append(int(dm["id"]))
-        if cursor == 0 or dmid in ids:
-            break
+    dm_id_lst = list(
+        DirectMessage.objects.filter(
+            Q(sender_id=bot_user_id) | Q(recipient_id=bot_user_id)    
+        ).values_list("id", flat=True)
+    )
+    dm_lst = []
+    for dm in tweepy.Cursor(api.list_direct_messages, count=count).items():
+        if int(dm.id) in dm_id_lst:
+            return dm_lst
+        dm_lst.append(dm)
     return dm_lst
-"""
+
+def senddm_tweepy(
+        text,
+        recipient_id,
+        quick_reply_type=None,
+        attachment_type=None,
+        attachment_media_id=None,
+        screen_name=None
+    ):
+    api = get_tweepy_api(screen_name)
+    if not api:
+        return
+    try:
+        response = api.send_direct_message(
+            recipient_id,
+            text,
+            quick_reply_type=quick_reply_type,
+            attachment_type=attachment_type,
+            attachment_media_id=attachment_media_id,
+        )
+        logger.debug(f"{response=} {type(response)=}")
+        return response
+    except twitter.error.TwitterError as e:
+        logger.error("message_create event (DM) error: %s", e)
+        return e
 
 def senddm(text,
            user_id=None,

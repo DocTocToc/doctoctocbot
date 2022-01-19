@@ -20,7 +20,7 @@ from conversation.utils import top_statusid_lst, help_statusid_lst
 from conversation.models import Treedj, Tweetdj
 from moderation.tasks import handle_create_update_profile
 from moderation.profile import is_profile_uptodate
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.utils.translation import get_language_from_request
 from django.utils.text import slugify
 from django.template import Context, Template
@@ -30,7 +30,7 @@ from display.models import WebTweet, create_or_update_webtweet
 from community.helpers import get_community
 from display.tasks import  handle_scrape_status
 
-from landing.templatetags.landing_tags import hashtag_lst
+from landing.templatetags.landing_tags import hashtag_lst_or
 
 from conversation.utils import screen_name, name, full_text, created_at
 from bot.lib.datetime import get_datetime_tz_from_twitter_str
@@ -207,9 +207,9 @@ class All(TemplateView):
         context['display'] = tweet_lst_dic
         # get hashtag list into template variable hashtag_lst
         template = get_template('landing/hashtag_lst.html')
-        cntxt = hashtag_lst(context)
+        cntxt = hashtag_lst_or(context)
         logger.debug(f"context: {cntxt}")
-        context['hashtag_lst'] = template.render(cntxt)
+        context['hashtag_lst_or'] = template.render(cntxt)
         return context
 
 def notfound(sid):

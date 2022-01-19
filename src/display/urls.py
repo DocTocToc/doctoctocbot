@@ -23,9 +23,4 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('status/<int:statusid>/', views.Status.as_view()),
-    path('status/last/', views.Last.as_view(), name='last'),
-    path('status/top/', views.Top.as_view(), name='top'),
-    path('status/help/', views.Help.as_view(), name='help'),
-    path('status/all/', views.All.as_view(), name= 'all'),
-    path('status/covid19/', views.Covid19.as_view(), name= 'covid19'),
 ]

@@ -1,4 +1,10 @@
-from .models import Project, Campaign, ProjectInvestment, Tier
+from .models import (
+    Project,
+    Campaign,
+    ProjectInvestment,
+    Tier,
+    PaymentProcessorWebhook
+)
 
 from django.urls import reverse
 from django.contrib import admin
@@ -7,6 +13,7 @@ from django.utils.safestring import mark_safe
 class ProjectAdmin(admin.ModelAdmin):
     list_display = (
         'name',
+        'community',
         'description',
         'provider',
         'product',
@@ -16,6 +23,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 class CampaignAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'project',
         'start_datetime',
         'end_datetime',
@@ -28,6 +36,7 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
     list_display = (
         'uuid',
         'project',
+        'campaign',
         'user_tag',
         'socialuser_tag',
         'name',
@@ -37,7 +46,13 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'datetime',
         'public',
         'invoice',
+        'silver_invoice',
+        'silver_invoice_number_tag',
         'invoice_pdf',
+    )
+    readonly_fields = (
+        'payment_intent',
+        'datetime',
     )
     search_fields = [
         'user__last_name',
@@ -54,10 +69,19 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'datetime',
         'public',
         'project',
+        'campaign',
         'invoice_pdf',
     ]
     ordering = ['-datetime',]
     date_hierarchy = 'datetime'
+
+    def silver_invoice_number_tag(self, obj):
+        try:
+            return obj.silver_invoice.number
+        except:
+            return
+
+    silver_invoice_number_tag.short_description = "Invoice N°"
     
     def socialuser_tag(self, obj):
         su = obj.user.socialuser
@@ -86,7 +110,24 @@ class TierAdmin(admin.ModelAdmin):
     list_display = ('id', 'project', 'title', 'description', 'emoji', 'min', 'max',)
     prepopulated_fields = {"slug": ("title",)}
 
+
+class PaymentProcessorWebhookAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'site',
+        'secret_tag'
+    )
+
+    def secret_tag(self, obj):
+        secret = obj.secret
+        if not secret:
+            return
+        return "*" * len(secret)
+
+    secret_tag.short_description = "Secret"
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(ProjectInvestment, ProjectInvestmentAdmin)
 admin.site.register(Tier, TierAdmin)
+admin.site.register(PaymentProcessorWebhook, PaymentProcessorWebhookAdmin)

@@ -9,6 +9,7 @@
 
 {% block head_css %}
 {{ block.super }}
+<link rel='stylesheet' href='{% static "conversation/scroll/build/smui.css" %}'>
 <link rel='stylesheet' href='{% static "conversation/scroll/build/bundle.css" %}'>
 <link rel='stylesheet' href='{% static "conversation/scroll/global.css" %}'>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -18,7 +19,6 @@
 }
 .panel-title::after {
   content: "\f107";
-  color: #333;
   top: -2px;
   right: 0px;
   position: absolute;
@@ -60,13 +60,13 @@
 
 {% block content %}
 
-  <div class="container my-1">
+  <!-- div class="container my-1"-->
   {% include "landing/funding.html" %}
   {% if not user.is_authenticated %}
     {% include "landing/sign_in.html" %}
   {% endif %}
-    <div class="container">
-    <div class="row">
+    <!--  div class="container"-->
+    <!--  div class="row"-->
      {% get_current_language as LANGUAGE_CODE %}
      <!-- outside display cache {% now "jS F Y H:i:s" %} -->
      <!-- LANGUAGE_CODE: {{ LANGUAGE_CODE }} -->
@@ -74,7 +74,6 @@
      <!-- TTL: {{ display_cache }} -->
      <main></main>
      <script type="text/javascript" src="{% static "conversation/scroll/build/bundle.js" %}"></script>
-    </div>
-    </div>
-  </div>
+
+  <!--/div-->
 {% endblock content %}

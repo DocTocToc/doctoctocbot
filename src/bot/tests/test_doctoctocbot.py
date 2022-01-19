@@ -91,7 +91,7 @@ class IsFollowerTestCase(TestCase):
         community2 = account2.community
         logger.debug(
             f'type of {bot1} profile json field: {type(bot1.profile.json)})'
-            f'type of {bot1} profile json field (json.loads): {type(json.loads(bot1.profile.json))})'
+            #f'type of {bot1} profile json field (json.loads): {type(json.loads(bot1.profile.json))})'
             f'value of {bot1} profile json field: {bot1.profile.json})'    
         )
         """
@@ -114,11 +114,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             False
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             False
         )
         """
@@ -140,13 +140,12 @@ class IsFollowerTestCase(TestCase):
             user = bot2,
             id_list = [],
         )
-        logger.debug(f'{su.user_id} ; {json.loads(bot1.profile.json)["screen_name"]}')
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             False
         )
         """
@@ -169,11 +168,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [su.user_id],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             True
         )
         """
@@ -197,11 +196,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             False
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             False
         )
         """
@@ -224,13 +223,12 @@ class IsFollowerTestCase(TestCase):
             user = bot2,
             id_list = [],
         )
-        logger.debug(f'{su.user_id} ; {json.loads(bot1.profile.json)["screen_name"]}')
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             True
         )
         """
@@ -253,13 +251,12 @@ class IsFollowerTestCase(TestCase):
             user = bot2,
             id_list = [],
         )
-        logger.debug(f'{su.user_id} ; {json.loads(bot1.profile.json)["screen_name"]}')
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             False
         )
         """
@@ -284,11 +281,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             False
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             False
         )
         """
@@ -312,13 +309,12 @@ class IsFollowerTestCase(TestCase):
             user = bot2,
             id_list = [],
         )
-        logger.debug(f'{su.user_id} ; {json.loads(bot1.profile.json)["screen_name"]}')
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             True
         )
         """
@@ -344,11 +340,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [su.user_id],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             True
         )
         """
@@ -371,11 +367,11 @@ class IsFollowerTestCase(TestCase):
             id_list = [su.user_id],
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot1.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot1.profile.json["screen_name"]),
             True
         )
         self.assertEqual(
-            is_follower(su.user_id, json.loads(bot2.profile.json)["screen_name"]),
+            is_follower(su.user_id, bot2.profile.json["screen_name"]),
             True
         )
         

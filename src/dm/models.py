@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.contrib.admin.utils import help_text_for_field
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
@@ -45,7 +44,7 @@ class DirectMessage(models.Model):
     recipient_id = models.BigIntegerField()
     source_app_id = models.BigIntegerField(null=True)
     text = models.TextField()
-    jsn = JSONField()
+    jsn = models.JSONField()
     
     objects = DirectMessageManager()
 

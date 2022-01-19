@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
-"PO-Revision-Date: 2020-06-10 04:13+0300\n"
+"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"PO-Revision-Date: 2021-06-19 01:11+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -123,15 +123,45 @@ msgstr "Somme récoltée"
 msgid "Progress"
 msgstr "Progression"
 
-#: crowdfunding/views.py:312
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:5
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:16
+msgid "Payment"
+msgstr "Règlement"
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:17
+#, python-format
+msgid ""
+"%(username)s, please proceed to pay %(amount_str)s %(currency)s with a bank "
+"card."
+msgstr ""
+"%(username)s, merci de régler %(amount_str)s %(currency)s avec une carte "
+"bancaire."
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:18
+msgid ""
+"The transaction will be processed by our trusted & secure payment processor "
+"partner Stripe on its checkout page https://checkout.stripe.com"
+msgstr ""
+"La transaction sera prise en charge par notre intermédiaire de paiement "
+"sécurisé Stripe sur sa page https://checkout.stripe.com"
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:21
+msgid "Checkout"
+msgstr "Régler"
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:24
+msgid "Thank you for investing in your independent professional tools"
+msgstr "Merci d'investir dans vos outils professionnels indépendants"
+
+#: crowdfunding/views.py:449 crowdfunding/views.py:473
 msgid "Pay with card"
 msgstr "Payez par carte"
 
-#: crowdfunding/views.py:346
+#: crowdfunding/views.py:508
 msgid "UUID verification error."
-msgstr ""
+msgstr "Erreur de vérification de l'UUID."
 
-#: crowdfunding/views.py:383
+#: crowdfunding/views.py:545
 msgid ""
 "You payment card was not authorized.Pleace try again with this card or "
 "another. {}"
@@ -139,24 +169,24 @@ msgstr ""
 "Votre carte de paiement n'a pas été autorisée. Merci de recommencer avec "
 "cette carte ou une autre. {}"
 
-#: crowdfunding/views.py:392
+#: crowdfunding/views.py:554
 msgid "Too many requests made to the API too quickly"
 msgstr ""
 
-#: crowdfunding/views.py:400
+#: crowdfunding/views.py:562
 msgid "Invalid parameters were supplied to Stripe's API"
 msgstr ""
 
-#: crowdfunding/views.py:409
+#: crowdfunding/views.py:571
 msgid ""
 "Authentication with Stripe's API failed(maybe you changed API keys recently)"
 msgstr ""
 
-#: crowdfunding/views.py:419
+#: crowdfunding/views.py:581
 msgid "Network communication with Stripe failed"
 msgstr ""
 
-#: crowdfunding/views.py:428
+#: crowdfunding/views.py:590
 msgid ""
 "An error occured during the processing of your payment.We will look into the "
 "matter and contact you as soon as possible."
@@ -164,13 +194,16 @@ msgstr ""
 "Une erreur est survenue pendant le traitement de la transaction. Votre carte "
 "de sera pas débitée. Merci d'essayer à nouveau."
 
-#: crowdfunding/views.py:440
+#: crowdfunding/views.py:602
 msgid ""
 "Ann error occurred during the processing of your payment.You will not be "
 "charged. Please try again."
 msgstr ""
 "Une erreur est survenue pendant le traitement de la transaction. Votre carte "
 "de sera pas débitée. Merci d'essayer à nouveau."
+
+#~ msgid "Paiement"
+#~ msgstr "Payment"
 
 #~ msgid "Please authorize cookies and try again."
 #~ msgstr "Merci d'autoriser les cookies et de réessayer."

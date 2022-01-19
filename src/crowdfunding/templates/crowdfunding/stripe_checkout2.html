@@ -1,0 +1,77 @@
+{% extends "doctocnet/base.html" %}
+{% load l10n %}
+{% load i18n %}
+{% block title %}
+{% trans "Payment" %}
+{% endblock title %}
+
+{% block head_javascript %}
+{{ block.super }}
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock head_javascript %}
+
+{% block content %}
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">{% trans "Payment" %}</h5>
+    <p class="card-text">{% blocktrans with username=request.session.username %}{{ username }}, please proceed to pay {{ amount_str }} {{ currency }} with a bank card.{% endblocktrans %}</p>
+    <p class="card-text">{% trans "The transaction will be processed by our trusted & secure payment processor partner Stripe on its checkout page https://checkout.stripe.com" %}</p>
+  </div>
+   <div class="card-body">
+       <button id="checkout-button">{% trans "Checkout" %}</button>
+   </div>
+  <div class="card-footer text-muted">
+    {% trans "Thank you for investing in your independent professional tools" %} {% include "landing/link/bot.html" %} & {% include "landing/link/net.html" %}</div>
+</div>
+
+<script type="text/javascript">
+      // Create an instance of the Stripe object with your publishable API key
+      var stripe = Stripe('{{ public_key }}');
+      var checkoutButton = document.getElementById('checkout-button');
+
+      checkoutButton.addEventListener('click', function() {
+        // Create a new Checkout Session using the server-side endpoint you
+        fetch('{% url "crowdfunding:create-checkout-session" %}', {
+          method: 'POST',
+          credentials: "same-origin",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Accept": "application/json",
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(session) {
+          return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function(result) {
+          // If `redirectToCheckout` fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using `error.message`.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function(error) {
+          console.error('Error:', error);
+        });
+      }); 
+      function getCookie(name) {
+    	    var cookieValue = null;
+    	    if (document.cookie && document.cookie !== '') {
+    	        var cookies = document.cookie.split(';');
+    	        for (var i = 0; i < cookies.length; i++) {
+    	            var cookie = jQuery.trim(cookies[i]);
+    	            // Does this cookie string begin with the name we want?
+    	            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+    	                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+    	                break;
+    	            }
+    	        }
+    	    }
+    	    return cookieValue;
+    	}
+    </script>
+{% endblock content %}

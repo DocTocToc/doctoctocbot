@@ -1,0 +1,120 @@
+{% load leaflet_tags %}
+
+  <div class="row">
+      {% leaflet_map "main" callback="main_map_init" %}
+  </div>
+  <div class="row">
+      {% leaflet_map "guadeloupe" callback="map_init_2" %}
+      {% leaflet_map "reunion" callback="map_init_3" %}
+  </div>
+
+    <script type="text/javascript">
+        function main_map_init (map, options) {
+            var dataurl = '{% url "choice:school-geojson" %}';
+            // Download GeoJSON via Ajax
+            $.getJSON(dataurl, function (data) {
+                // Add GeoJSON layer
+                L.geoJson(data, {
+                  onEachFeature: function (feature, layer) {
+                    layer.bindPopup(feature.properties.popup);
+                    layer.bindTooltip(feature.properties.tooltip, {
+                        permanent: true,
+                        className: "my-label",
+                        offset: [0, 0],
+                        opacity: 1,
+                        direction: tooltipDirection[feature.id],
+                        offset: tooltipOffset[feature.id],
+                    });
+                    layer.on("click", function (event) {
+                        myapp.set_sSchool(event.target.feature.id);
+                        myapp.set_sSchoolLabel(event.target.feature.properties.tooltip);
+                        myapp.set_sSchoolSlug(event.target.feature.properties.slug);
+                       
+                    });
+                   }
+                }).addTo(map);
+            });
+        }
+        window.addEventListener("map:init", function (e) {
+            var detail = e.detail;
+            detail.map.setView([47.0,1.9], 6);
+            
+        }, false);
+        
+        
+        function map_init(map, lat, lon, zoom) {
+            main_map_init(map);
+            // zoom to point & add it to map
+            if (lat && lon && zoom) {
+                map.setView([lat, lon], zoom);
+            }
+        }
+	    function map_init_2(map) {
+	      map_init(map, "16.22345856351926", "-61.52940457148963", 9)
+	    }
+	
+	    function map_init_3(map) {
+	      map_init(map, "-21.34275260405316", "55.49455549736145", 9)
+	    }
+
+        let tooltipDirection = {
+            1: "auto",
+            2: "top",
+            3: "right",
+            4: "auto",
+            5: "bottom",
+            6: "left",
+            7: "top",
+            8: "auto",
+            9: "right",
+            10: "auto",
+            11: "bottom",
+            14: "left",
+            17: "bottom",
+            18: "top",
+            19: "top",
+            20: "left",
+            21: "auto",       
+            29: "left",
+            30: "top",
+            31: "left",
+            32: "auto",
+            33: "left",
+            34: "bottom",
+            37: "auto",
+            38: "right",   
+            39: "left",   
+            40: "right",   
+            41: "right",
+        };
+        let tooltipOffset = {
+            1: [0, 0],
+            2: [-10, 0],
+            3: [0, 0],
+            4: [0, 0],
+            5: [-15, 20],
+            6: [-20, 0],
+            7: [-15, 0],
+            8: [0, 0],
+            9: [0, 0],
+            10: [0, 0],
+            11: [-10, 20],
+            14: [-20, 0],
+            17: [-20, 20],
+            18: [-10, 0],
+            19: [0, 0],
+            20: [-20, 0],
+            21: [0, 0],   
+            29: [-20, 0],
+            30: [0, 0],
+            31: [-15, 20],
+            32: [0, 0],
+            33: [-20, 25],
+            34: [-20, 20],
+            37: [0, 0],
+            38: [0, 0],  
+            39: [-15, 0],  
+            40: [0, 0],  
+            41: [0, 0],  
+        };
+    </script>

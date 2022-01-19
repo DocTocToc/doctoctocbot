@@ -5,7 +5,7 @@ import json
 import logging
 import requests
 
-from .forms import CustomerForm
+from .forms import CustomerModelForm
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def get_customer(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = CustomerForm(request.POST)
+        form = CustomerModelForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -38,6 +38,6 @@ def get_customer(request):
             'last_name': request.user.last_name,
             'email': request.user.email
         }
-        form = CustomerForm(initial=data)
+        form = CustomerModelForm(initial=data)
 
     return render(request, 'customer/customer.html', {'form': form})

@@ -6,16 +6,18 @@ from silver.models.billing_entities.provider import Provider as SilverProvider
 from silver.models.documents.invoice import Invoice as SilverInvoice
 from crowdfunding.models import ProjectInvestment
 from customer.models import Customer
-from django.db.utils import DatabaseError
+from django.db import DatabaseError, IntegrityError
+
+import psycopg2
 
 logger = logging.getLogger(__name__)
 
 def get_protocol():
-    if settings.DEBUG or settings.SILVER_IS_LOCAL:
+    if settings.SILVER_IS_LOCAL:
         return "http://"
     else:
         return "https://"
-    
+
 def get_headers():
     assert settings.SILVER_TOKEN, "To use Silver, you must set SILVER_TOKEN in your .env file."
     authorization = f"Token {settings.SILVER_TOKEN}"
@@ -29,7 +31,9 @@ def get_api_endpoint(endpoint: str, _id=None):
         _id = ""
     else:
         _id = f"{_id}/"
-    return f"{get_protocol()}{settings.SILVER_URL}/{endpoint}/{_id}"
+    url = f"{get_protocol()}{settings.SILVER_URL}/{endpoint}/{_id}"
+    logger.debug(url)
+    return url
 
 def create_customer_and_draft_invoice(instance):
     if instance.paid is True and instance.invoice is None:
@@ -48,6 +52,8 @@ def create_customer_and_draft_invoice(instance):
             silver_customer = create_draft_silver_customer(
                 customer_reference = str(instance.user.id)
             )
+        except SilverCustomer.MultipleObjectsReturned as e:
+            logger.error(f'{e}')
         if not silver_customer:
             return
         # add silver_id to draft customer
@@ -59,43 +65,55 @@ def create_customer_and_draft_invoice(instance):
         doctocnet_customer.save()
         project = instance.project
         if not project:
-            logger.warn(
+            logger.error(
                 f"ProjectInvestment {instance} is not linked to any Project"
             )
             return
         provider = project.provider
         if not provider:
-            logger.warn(f"Project {instance.project} is not linked to any Pro")
+            logger.error(
+                f"Project {instance.project} is not linked to any Provider"
+            )
             return
         try:
             silver_provider = SilverProvider.objects.get(id=provider.silver_id)
         except SilverProvider.DoesNotExist:
             return
         #calculate ProjectInvestment cardinality
-        cardinality = project_investment_cardinality(instance)
-        silver_invoice = create_draft_silver_invoice(
-            silver_customer = silver_customer,
-            silver_provider = silver_provider,
-            cardinality = cardinality,
-        )
+        paid_count = ProjectInvestment.objects.filter(paid=True).count()
+        logger.debug(f"{paid_count=}")
+        cardinality = paid_count + 1
+        while(True):
+            logger.debug(f"{cardinality=}")
+            try:
+                silver_invoice = SilverInvoice.objects.create(
+                    customer=silver_customer,
+                    provider=silver_provider,
+                    number=cardinality,
+                )
+                break
+            except IntegrityError as e:
+                logger.error(
+                    f"SilverInvoice with {silver_customer=} {silver_provider=} "
+                    f"{cardinality=}:\n{e}"
+                )
+                try:
+                    silver_invoice= SilverInvoice.objects.get(
+                        customer=silver_customer,
+                        provider=silver_provider,
+                        number=cardinality,
+                    )
+                    break
+                    logger.warn(
+                        f"{e} \n Silver invoice with {silver_customer=} "
+                        f"{silver_provider=} {cardinality=}  already existed: "
+                        f"{silver_invoice=}"
+                    )
+                except SilverInvoice.DoesNotExist:
+                    cardinality+=1
         instance.invoice = silver_invoice.id
+        instance.silver_invoice = silver_invoice
         instance.save()
-        
-def create_draft_silver_invoice(
-        silver_customer: SilverCustomer,
-        silver_provider: SilverProvider,
-        cardinality: int):
-    silver_invoice, _ = SilverInvoice.objects.get_or_create(
-        customer=silver_customer,
-        provider=silver_provider,
-        number=cardinality,
-        )
-    return silver_invoice
-
-def project_investment_cardinality(project_investment: ProjectInvestment):
-    return ProjectInvestment.objects.filter(
-        paid=True,
-        datetime__lte=project_investment.datetime).count()
 
 def create_draft_silver_customer(customer_reference: str):
     try:

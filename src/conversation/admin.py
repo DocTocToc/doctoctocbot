@@ -12,8 +12,11 @@ from common.utils import localized_tuple_list_sort
 from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
+from django.db.models.aggregates import Sum, Count
+from moderation.admin_tags import screen_name_link_su_pk
 
 from versions.admin import VersionedAdmin
+
 from constance import config
 
 logger = logging.getLogger(__name__)
@@ -24,42 +27,28 @@ from .models import (
     Hashtag,
     Retweeted,
     TwitterUserTimeline,
+    TwitterLanguageIdentifier,
 )
 
 
 def screen_name_link(self, obj):
-    if hasattr(obj, "json"):
-        status = obj.json
-        userid = obj.userid
-    else:
-        try:
-            tweetdj = Tweetdj.objects.get(statusid=obj.statusid)
-            status = tweetdj.json
-            userid = tweetdj.userid
-        except:
-            return
-
-    if not isinstance(status, dict):
+    try:
+        screen_name = obj.json["user"]["screen_name"]
+    except (AttributeError, KeyError, TypeError) as _e:
         return
-
-    screen_name = ""
-    if "user" in status:  
-        if "screen_name" in status["user"]:
-            screen_name = status["user"]["screen_name"]
-
-    if screen_name:
-        try:
-            su = SocialUser.objects.get(user_id=userid)
-            return mark_safe(
-                '<a href="{link}">{name}</a>'
-                .format(
-                    link=reverse("admin:moderation_socialuser_change", args=(su.pk,)),
-                    name=screen_name
-                )
+    try:
+        return mark_safe(
+            '<a href="{link}">{name}</a>'
+            .format(
+                link=reverse(
+                    "admin:moderation_socialuser_change",
+                    args=(obj.socialuser.pk,)
+                ),
+                name=screen_name
             )
-        except:
-            return screen_name
-
+        )
+    except AttributeError:
+        return screen_name
 
 class CategoryListFilter(admin.SimpleListFilter):
 
@@ -83,6 +72,26 @@ class CategoryListFilter(admin.SimpleListFilter):
                 values_list('user_id', flat=True)
             )
             return queryset.filter(userid__in=userids)
+        else:
+            return queryset
+
+class LanguageListFilter(admin.SimpleListFilter):
+
+    title = _('Language')
+
+    parameter_name = 'language'
+
+    def lookups(self, request, model_admin):
+        lst = list(TwitterLanguageIdentifier.objects.all().values_list('tag', 'language'))
+        if hasattr(settings, "SORTING_LOCALE"):
+            pool = Pool()
+            return pool.apply(localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE])
+        else:
+            return localized_tuple_list_sort(lst, 1)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(json__lang=self.value())
         else:
             return queryset
 
@@ -111,7 +120,6 @@ class TweetdjAdmin(admin.ModelAdmin):
     list_display = (
         'statusid',
         'userid',
-        'socialuser',
         'screen_name',
         'status_text_tag',
         'status_link',
@@ -120,9 +128,12 @@ class TweetdjAdmin(admin.ModelAdmin):
         'retweetedstatus',
         'deleted',
         'tag_list',
+        'rt_by_count',
         'retweeted_by_screen_name',
+        'qt_by_count',
+        'quoted_by_screen_name',
     )
-    search_fields = ['statusid', 'userid', 'json',]
+    search_fields = ['json__text',]
     fields = (
         'statusid',
         'userid',
@@ -137,7 +148,10 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'parentid',
         'tags',
-        'retweeted_by',
+        'retweeted_by_screen_name',
+        'rt_by_count',
+        'quoted_by_screen_name',
+        'qt_by_count',
     )
     readonly_fields = (
         'statusid',
@@ -150,7 +164,12 @@ class TweetdjAdmin(admin.ModelAdmin):
         'created_at',
         'quotedstatus',
         'retweetedstatus',
+        'hashtag',
         'parentid',
+        'retweeted_by_screen_name',
+        'rt_by_count',
+        'quoted_by_screen_name',
+        'qt_by_count',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -161,8 +180,29 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'tags',
         RetweetedByListFilter,
+        LanguageListFilter,
     )
     filter_horizontal = ('retweeted_by',)
+
+    def get_queryset(self, request):
+        return Tweetdj.objects.annotate(
+            rt_by_cnt=Count('retweeted_by'),
+            qt_by_cnt=Count('quoted_by')
+        )
+
+    def rt_by_count(self, obj):
+        return obj.retweeted_by.all().count()
+    
+    rt_by_count.short_description = "RT by count"
+    
+    rt_by_count.admin_order_field = 'rt_by_cnt'
+    
+    def qt_by_count(self, obj):
+        return obj.quoted_by.all().count()
+    
+    qt_by_count.short_description = "QT by count"
+    
+    qt_by_count.admin_order_field = 'qt_by_cnt'
     
     def screen_name(self, obj):
         return screen_name_link(self,obj)
@@ -174,8 +214,8 @@ class TweetdjAdmin(admin.ModelAdmin):
 
     status_link.short_description = 'tweet'
 
-    def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related('tags')
+    #def get_queryset(self, request):
+    #    return super().get_queryset(request).prefetch_related('tags')
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())
@@ -185,13 +225,26 @@ class TweetdjAdmin(admin.ModelAdmin):
     def retweeted_by_screen_name(self, obj):
         rtby_lst = []
         for rtby in obj.retweeted_by.all():
-            snt = rtby.screen_name_tag()
+            snt = screen_name_link_su_pk(rtby.pk)
             if snt:
                 rtby_lst.append(snt)
-        return "\n".join(rtby_lst)
-            
+        return mark_safe(
+            " | ".join(rtby_lst)
+        )
 
     retweeted_by_screen_name.short_description = "RT by"
+
+    def quoted_by_screen_name(self, obj):
+        qtby_lst = []
+        for qtby in obj.quoted_by.all():
+            snt = screen_name_link_su_pk(qtby.pk)
+            if snt:
+                qtby_lst.append(snt)
+        return mark_safe(
+            " | ".join(qtby_lst)
+        )
+
+    quoted_by_screen_name.short_description = "QT by"
 
 admin.site.register(Tweetdj, TweetdjAdmin)
 
@@ -272,7 +325,25 @@ class TwitterUserTimelineAdmin(admin.ModelAdmin):
 
     screen_name_tag.short_description = 'Screen name'
 
+class TwitterLanguageIdentifierAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'language',
+        'tag',    
+    )
+    readonly_fields = (
+        'id',
+        'tag',
+        'language',
+    )
+    search_fields = [
+        'language',
+        'tag',    
+    ]
+
+
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)
 admin.site.register(Retweeted, RetweetedAdmin)
 admin.site.register(TwitterUserTimeline, TwitterUserTimelineAdmin)
+admin.site.register(TwitterLanguageIdentifier, TwitterLanguageIdentifierAdmin)

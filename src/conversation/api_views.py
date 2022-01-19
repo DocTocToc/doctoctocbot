@@ -26,7 +26,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = models.Tweetdj.objects.all().order_by('-created_at')
+    queryset = models.Tweetdj.objects.all().order_by('-statusid')
     serializer_class = TweetdjSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = (AllowAny,)
@@ -47,16 +47,22 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
         logger.debug(f"{req_to_datetime=}")
         if req_to_datetime and len(req_to_datetime) == 1:
             qs = self.filter_by_to_datetime(qs, req_to_datetime[0])
-        
+
         req_tags = self.request.query_params.getlist('tag')
-        logger.debug(f"params type: {type(req_tags)}\n params: {req_tags}")
+        logger.debug(f"params type: {type(req_tags)}\n params: {req_tags=}")
+        
+        req_author = self.request.query_params.getlist('author')
+        logger.debug(f"params type: {type(req_author)}\n params: {req_author=}")
+        if req_author and req_author[0] == 'self':
+            qs = self.filter_by_author_is_self(qs)
+
         if req_tags:
             logger.debug(f"{req_tags=}")
             # convert to int
             req_tags = [int(tag) for tag in req_tags]
             logger.debug(f"{req_tags=}")
             # categories
-            community = get_current_site(self.request).community.first()
+            community = get_current_site(self.request).community
             cat_ids = list(
                 Category.objects.filter(
                     is_category=True,
@@ -93,6 +99,15 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs[:api_access.status_limit]
         return qs
 
+    def filter_by_author_is_self(self, queryset):
+        user = self.request.user
+        if not user.is_authenticated:
+            return queryset
+        uids = [sa.uid for sa in user.social_auth.filter(provider='twitter')]
+        logger.debug(f'{uids=}')
+        if not uids:
+            return queryset
+        return queryset.filter(userid__in=uids)
 
     def filter_by_protected(self, queryset):
         """ Filter out statuses authored by protected accounts
@@ -101,12 +116,8 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
 
     def filter_by_site(self, queryset):
         try:
-            userid = get_current_site(self.request).community.first().account.userid
+            su = get_current_site(self.request).community.account.socialuser
         except:
-            return queryset
-        try:
-            su = SocialUser.objects.get(user_id=userid)
-        except SocialUser.DoesNotExist:
             return queryset
         return queryset.filter(retweeted_by=su)
     

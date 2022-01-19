@@ -1,0 +1,19 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+
+
+
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

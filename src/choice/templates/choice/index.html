@@ -1,0 +1,78 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load leaflet_tags %}
+
+{% block head_css %}
+  {{ block.super }}
+  <!--link rel='stylesheet' href="{% static 'choice/selector/public/build/bundle.css' %}"-->
+  <link rel='stylesheet' href="{% static 'choice/selector/global.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  {% leaflet_css %}
+{% endblock head_css %}
+
+{% block head_javascript %}
+    {{ block.super }}
+    {% leaflet_js %}
+{% endblock head_javascript %}
+
+{% block style %}
+    {{ block.super }}
+    .leaflet-container {  /* all maps */
+        width:  640px;
+        height: 600px;
+    }
+    #reunion.leaflet-container {
+        width:  320px;
+        height: 300px;
+    }
+    #guadeloupe.leaflet-container {
+        width:  320px;
+        height: 200px;
+    }
+    #paris.leaflet-container {
+        width:  640px;
+        height: 200px;
+    }
+{% endblock style %}
+
+{% block title %} Choix ECN {% endblock title %}
+
+{% block content %}
+  {% if "twitter" in backends.not_associated %}
+  <div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">Authentification</h4>
+    <p>Vous devez vous connecter via votre compte Twitter pour accéder aux salons.</p>
+    <hr>
+    <a class="mb-0" href="{% url 'social:begin' 'twitter' %}?next={{ request.get_full_path|urlencode }}" class="card-link btn btn-outline-primary">
+      <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+    </a>
+  </div>
+  {% endif %}
+  {% if user.is_authenticated %}
+  <div class="alert alert-warning" role="alert">
+    <h4 class="alert-heading">{medica} messenger</h4>
+    <p>Avant de rejoindre le salon de votre choix, vous devez démarrer le messenger.</p>
+    <ol>
+    <li>
+    Démarrer le messenger en cliquant ici
+    <a href="https://element.medica.im/#/login" target="_blank" class="my-1 btn btn-outline-primary" role="button" aria-pressed="true">Démarrer {medica} messenger!</a>
+    </li>
+    <li>
+    Un nouvel onglet s'ouvre sur la page de connexion. Cliquer sur <button type="button" class="my-1 btn btn-outline-success btn-sm disabled" disabled>Se connecter avec l’authentification unique</button></p>
+    </li>  
+  </div>
+  {% endif %}
+  <div id="app-container"></div>
+
+  <script type="text/javascript" src="{% static 'choice/selector/build/bundle.js' %}"></script>
+
+  <script>
+  var myapp= new app({
+    "target": document.getElementById("app-container"),
+  })
+  </script>
+
+{% include "choice/schools.html" %}
+
+{% endblock content %}

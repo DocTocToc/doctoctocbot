@@ -4,6 +4,8 @@ from tweepy import TweepError
 from tweepy.models import User as TweepyUser
 from community.models import Community
 import logging
+from community.helpers import get_community_twitter_tweepy_api
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -43,22 +45,32 @@ class TwitterUser:
     
     def friend(self, community):
         if not isinstance(community, Community):
-            raise ValueError(
+            logger.error(
                 f"Given parameter {community} is not a Community object"
             )
-        try:
-            bot_screen_name = community.account.username
-        except AttributeError:
             return
-        
-        if bot_screen_name:
-            api = get_tweepy_api(username = bot_screen_name, backend=True)
-            try:
-                tweepy_user = api.create_friendship(user_id=self.id)
-                logger.debug(tweepy_user)
-                if isinstance(tweepy_user, TweepyUser):
-                    return True
-            except TweepError:
-                return False
+        api = get_community_twitter_tweepy_api(
+            community = community,
+            backend=True
+        )
+        try:
+            tweepy_user = api.create_friendship(user_id=self.id)
+            logger.debug(tweepy_user)
+            if isinstance(tweepy_user, TweepyUser):
+                return True
+        except TweepError:
+            return False
+
+    def decline_follow_request(self, community):
+        api = get_community_twitter_tweepy_api(
+            community = community,
+            backend=True
+        )
+        resp = api.create_block(user_id=self.id)
+        logger.debug(resp)
+        time.sleep(5)
+        resp = api.destroy_block(user_id=self.id)
+        logger.debug(resp)
+
         
     

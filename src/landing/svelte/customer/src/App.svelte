@@ -32,12 +32,14 @@
                 body: JSON.stringify({'uuid': event.target.value})
         }
         const res = await fetch(`/customer/api/invoice/`, config);
+        if (!res.ok) {
+        	const message = `An error has occured: ${res.status}`;
+        	throw new Error(message);
+        }
         const res_jsn = await res.json();
         if (res.ok) {
             console.log(JSON.stringify(res_jsn));
             return res_jsn;
-        } else {
-            throw new Error(text);
         }
     }
     
@@ -112,7 +114,11 @@
     	if (confirm("Avez-vous vérifié l'exactitude de vos informations de facturation?")) {
         	console.log("confirmed");
             console.log(event.target.value);
-            postInvoice(event);
+            const res = postInvoice(event);
+            console.log(JSON.stringify(res));
+            if (res.silver_invoice_id) {
+            	promise_transaction = getTransaction();
+            }
             var delayInMilliseconds = 3000; //1 second
             setTimeout(function() {
             	promise_transaction = getTransaction();

@@ -10,7 +10,7 @@ from moderation.admin_tags import (
     admin_tag_category,
     admin_tag_screen_name_link
 )
-
+from django.templatetags.static import static
 from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 
@@ -91,7 +91,6 @@ class QueueAdmin(VersionedAdmin):
     screen_name_link.short_description = 'Screen name'
 
     def mini_image_tag(self, obj):
-        from django.contrib.staticfiles.templatetags.staticfiles import static
         p = obj.socialuser.profile
         if p:
             url = p.miniavatar.url

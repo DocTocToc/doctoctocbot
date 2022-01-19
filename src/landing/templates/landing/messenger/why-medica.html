@@ -1,0 +1,49 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-8">
+<h2>Qu'est-ce que {medica} messenger?</h2>
+<p>{medica} est une messagerie sécurisée. Son protocole de communication Matrix est ouvert. Le serveur, Synapse, est libre et open source.</p>
+<p>Les messages (texte, audio, vidéo) peuvent être envoyés et reçus via ces applications libres et open source:
+  <ul class="list-group"> 
+  <li  class="list-group-item">depuis un smartphone avec Element iOS et Element Android</li>
+  <li  class="list-group-item">depuis un navigateur web avec Element web.</li>
+  <li  class="list-group-item">depuis un logiciel de bureau: Element Desktop (Windows, Mac, Linux)</li>
+  </ul>
+</p>
+<p>En résumé: <a href="{% url 'landing:messenger-get-started' %}">{medica}</a> = <a href="https://element.io">element</a> + <a href="https://matrix.org/">matrix</a></p>
+<p>Vous pouvez être connecté simultanément sur votre téléphone et sur n'importe quel PC via un navigateur: pratique pour échanger des documents.</p>
+<p>{medica} peut se connecter à d'autres applications de messagerie comme Discord, IRC, Slack, Telegram. Il intègre la voix et la vidéo pair-à-pair et les discussions de groupe via WebRTC.</p>
+<p>{medica} supporte le chiffrement de bout en bout des conversations un-à-un et des salons, ainsi que des appels un-à-un.</p>
+          <div class="btn__wrapper">
+            <a href="{% url 'landing:messenger-get-started' %}" class="cta__btn--primary cta__btn--primary--left w-button">Essayer {medica}</a>
+          </div>
+<h2>Pourquoi utiliser {medica}?</h2>
+<h3>Sécurité et respect du secret professionnel</h3>
+<p>Vos conversations sont chiffrées de bout en bout: personne ne peut lire vos échanges, pas même les administrateurs du serveur. Le secret professionnel est ainsi préservé. {medica} est particulièrement adapté aux professionnels de santé et aux structures médico-sociales.</p>
+<h3>Discrétion et pseudonymat</h3>
+<p>{medica} s'utilise indépendamment de votre numéro de téléphone. Vous pouvez conserver votre pseudonymat.</p>
+<h3>Réseau professionnel</h3>
+<p>{medica} est accessible en quelques clics aux plus de 5000 professionnels de santé et étudiants en santé du réseau SantéTocToc. Vous ne vous sentirez jamais seul!</p>
+<h3>Ecosystème ouvert</h3>
+<p>{medica} est basé à 100% sur des technologies ouvertes. Vous pourrez vous connecter à notre serveur depuis l'application compatible de votre choix. Vous pourrez nous quitter pour rejoindre un autre fournisseur d'accès au réseau Matrix sans changer vos habitudes.
+{medica} est interconnecté avec le réseau Matrix et vous permet donc de communiquer avec plus de 28 millions d'utilisateurs répartis sur plus de 60000 serveurs.</p>
+          <div class="btn__wrapper">
+            <a href="{% url 'landing:messenger-get-started' %}" class="cta__btn--primary cta__btn--primary--left w-button">Essayer {medica}</a>
+          </div>
+</div>
+</div>
+</div>
+{% endblock content %}

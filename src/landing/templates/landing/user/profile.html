@@ -1,4 +1,5 @@
 {% extends "doctocnet/base.html" %}
+
 {% load i18n %}
 {% load auth_extras %}
 {% load static %}
@@ -8,8 +9,12 @@
 
 {% block head_css %}
 {{ block.super }}
-<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
-<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
+<style>
+.card-img-top {
+    width: 200px;
+    height: 200px;
+}
+</style>
 {% endblock head_css %}
 
 {% block head_javascript %}
@@ -17,67 +22,34 @@
 <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
 {% endblock head_javascript %}
 
-
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col col-lg-2">
+  {% include "landing/usernav.html" %}
+    <div class="row">
+      <div class="col">
       {% profile %}
-    </div>
-    <div class="col-md-auto">
-      {% include "landing/usernav.html" %}
-      <div class="tab-pane active" id="profile">
-                    <h5 class="mb-3">{% trans "User Profile" %}</h5>
-                    <div class="row">
-                        <div class="col">
-                            <h6><b>{% trans "Twitter screen name:" %}</b></h6>
-                            <p>{% screen_name %}</p>
-                            <h6><b>{% trans "Category" %}:</b></h6>
-                            <ul class="list-group">
-                            {% category as category_lst %}
-                            {% for category in category_lst %}
-                            <li class="list-group">{{ category }}</li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col">
-                            <h6>{% trans "Recent badges" %}</h6>
-                            <a href="#" class="badge badge-dark badge-pill">user</a>
-                            <hr>
-                            {% trans "Question(s)" %}
-                            <ul class="list-group">
-                            {% for label, count in hashtag.items %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                            #{{ label }}<span class="badge badge-pill badge-secondary">{{ count }}</span>
-                            </li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-md-12">
-                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span>{% trans "Recent Activity" %}</h5>
-                            <table class="table table-sm table-hover table-striped">
-                                <tbody>                                    
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            ...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!--/row-->
-                </div>
-    </div>
-</div>
+      </div>
+      <div class="col">
+        <h6>{% trans "Recent badges" %}</h6>
+        <a href="#" class="badge badge-dark badge-pill">user</a>
+        <hr>
+        {% trans "Question(s)" %}
+        <ul class="list-group">
+        {% for label, count in hashtag.items %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            #{{ label }}<span class="badge badge-pill badge-secondary">{{ count }}</span>
+          </li>
+        {% endfor %}
+        </ul>
+      </div>
+      <div class="col">
+        <h5 class="mt-2">{% trans "Recent Activity" %}</h5>
+        <table class="table table-sm table-hover table-striped">
+          <tbody>                                    
+            <tr>
+              <td>...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
 {% endblock %}

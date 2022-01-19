@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
-"PO-Revision-Date: 2020-07-02 23:51+0300\n"
+"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"PO-Revision-Date: 2022-01-17 19:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,108 +16,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
-#: moderation/admin.py:447
-msgid "state"
-msgstr "état"
+#: moderation/admin.py:362
+msgid "Specialty"
+msgstr "Spécialité"
 
-#: moderation/admin.py:457
-msgid "Pending"
-msgstr "En attente"
+#: moderation/admin.py:740
+msgid "Count"
+msgstr "Compte"
 
-#: moderation/admin.py:472
-msgid "community"
-msgstr "communauté"
-
-#: moderation/forms.py:18
-msgid "Submit"
-msgstr "Envoyer"
-
-#: moderation/forms.py:27
-msgid "None of those categories"
-msgstr "Aucune de ces catégories"
-
-#: moderation/forms.py:29
-msgid "Please choose a category"
-msgstr "Merci de choisir une catégorie"
-
-#: moderation/forms.py:34
-msgid "I hereby certify that I do belong to this category."
-msgstr "Je certifie que j'appartiens bien à cette catégorie."
-
-#: moderation/forms.py:39
-msgid ""
-"This community is mostly comprised of people belonging to the listed "
-"categories. If you don't belong to any of them but you still want to join, "
-"please tell us why and we will review your application."
-msgstr ""
-"Cette communauté est principalement composée de personnes qui appartiennent "
-"aux catégories listées. Si vous n'appartenez à aucune d'entre elles mais que "
-"vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
-"pourquoi et nous examinerons votre demande."
-
-#: moderation/models.py:504
-msgid "Moderator"
-msgstr "Modérateur"
-
-#: moderation/models.py:505
-msgid "Senior"
-msgstr "Senior"
-
-#: moderation/models.py:506
-msgid "Developer"
-msgstr "Développeur"
-
-#: moderation/models.py:507
-msgid "Follower"
-msgstr "Abonné"
-
-#: moderation/models.py:846
-msgid "Warn"
-msgstr "Avertir"
-
-#: moderation/models.py:847
-msgid "Moderate"
-msgstr "Modérer"
-
-#: moderation/models.py:848
-msgid "Ban"
-msgstr "Exclure"
-
-#: moderation/social.py:187
-msgid "Followers"
-msgstr "Abonnés"
-
-#: moderation/social.py:204
-msgid "Verified"
-msgstr "Vérifiés"
-
-#: moderation/social.py:204
-msgid "Others"
-msgstr "Autres"
-
-#: moderation/social.py:281
-#, python-brace-format
-msgid "Categories of verified {title}"
-msgstr "Catégories des {title} vérifiés"
-
-#: moderation/social.py:284
-#, python-brace-format
-msgid "Share of verified {title}"
-msgstr "Part des {title} vérifiés"
-
-#: moderation/social.py:288
-#, python-brace-format
-msgid "{title} of {screen_name}: {total}"
-msgstr "{title} de {screen_name}: {total}"
-
-#: moderation/social.py:375
-#, python-brace-format
-msgid "Social graph of user @{screen_name}.{txt}"
-msgstr "Graphe social du compte @{screen_name}.{txt}"
-
-#: moderation/tasks.py:147
+#: moderation/dm.py:305
 #, python-brace-format
 msgid ""
 "\n"
@@ -126,7 +35,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/tasks.py:164
+#: moderation/dm.py:333
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -142,14 +51,156 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/tasks.py:179
+#: moderation/dm.py:349
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/views.py:58
-msgid "Moderators"
-msgstr "Modérateurs"
+#: moderation/forms.py:20
+msgid "Submit"
+msgstr "Envoyer"
+
+#: moderation/forms.py:32
+msgid "None of those categories"
+msgstr "Aucune de ces catégories"
+
+#: moderation/forms.py:34
+msgid "Please choose a category"
+msgstr "Merci de choisir une catégorie"
+
+#: moderation/forms.py:39
+msgid "I hereby certify that I do belong to this category."
+msgstr "Je certifie que j'appartiens bien à cette catégorie."
+
+#: moderation/forms.py:44
+msgid ""
+"This community is mostly comprised of people belonging to the listed "
+"categories. If you don't belong to any of them but you still want to join, "
+"please tell us why and we will review your application."
+msgstr ""
+"Cette communauté est principalement composée de personnes qui appartiennent "
+"aux catégories listées. Si vous n'appartenez à aucune d'entre elles mais que "
+"vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
+"pourquoi et nous examinerons votre demande."
+
+#: moderation/models.py:556
+msgid "Moderator"
+msgstr "Modérateur"
+
+#: moderation/models.py:557
+msgid "Senior"
+msgstr "Senior"
+
+#: moderation/models.py:558
+msgid "Developer"
+msgstr "Développeur"
+
+#: moderation/models.py:559
+msgid "Follower"
+msgstr "Abonné"
+
+#: moderation/models.py:560
+msgid "Self"
+msgstr ""
+
+#: moderation/models.py:561
+msgid "On hold"
+msgstr "En attente"
+
+#: moderation/models.py:903
+msgid "Warn"
+msgstr "Avertir"
+
+#: moderation/models.py:904
+msgid "Moderate"
+msgstr "Modérer"
+
+#: moderation/models.py:905
+msgid "Ban"
+msgstr "Exclure"
+
+#: moderation/moderate.py:64
+#, python-brace-format
+msgid "Current moderations for user {user_id} with {community} exist."
+msgstr ""
+
+#: moderation/moderate.py:68
+#, python-brace-format
+msgid ""
+"\n"
+"User added a status update: {status_url}"
+msgstr ""
+
+#: moderation/moderate.py:76
+#, python-brace-format
+msgid "User {user_tag} is waiting for moderation\n"
+msgstr ""
+
+#: moderation/social.py:235
+msgid "Followers"
+msgstr "Abonnés"
+
+#: moderation/social.py:252
+msgid "Verified"
+msgstr "Vérifiés"
+
+#: moderation/social.py:252
+msgid "Others"
+msgstr "Autres"
+
+#: moderation/social.py:329
+#, python-brace-format
+msgid "Categories of verified {title}"
+msgstr "Catégories des {title} vérifiés"
+
+#: moderation/social.py:332
+#, python-brace-format
+msgid "Share of verified {title}"
+msgstr "Part des {title} vérifiés"
+
+#: moderation/social.py:336
+#, python-brace-format
+msgid "{title} of {screen_name}: {total}"
+msgstr "{title} de {screen_name}: {total}"
+
+#: moderation/social.py:423
+#, python-brace-format
+msgid "Social graph of user @{screen_name}.{txt}"
+msgstr "Graphe social du compte @{screen_name}.{txt}"
+
+#: moderation/templates/moderation/moderators.html:10
+msgid "Join us!"
+msgstr "Rejoignez-nous!"
+
+#: moderation/templates/moderation/twitter_card.html:7
+#, python-format
+msgid "%(bot)s moderation team"
+msgstr "Équipe de modération de %(bot)s "
+
+#: moderation/templates/moderation/twitter_card.html:10
+#, python-format
+msgid "These amazing people filter and moderate %(hashtags)s questions."
+msgstr "Ces personnes géniales filtrent et modèrent les questions %(hashtags)s"
+
+#: moderation/templates/moderation/user.html:23
+msgid "User"
+msgstr "Utilisateur"
+
+#: moderation/views.py:44
+msgid "Moderation team"
+msgstr "Équipe de modération"
+
+#~ msgid "Moderators"
+#~ msgstr "Modérateurs"
+
+#~ msgid "state"
+#~ msgstr "état"
+
+#~ msgid "Pending"
+#~ msgstr "En attente"
+
+#~ msgid "community"
+#~ msgstr "communauté"
 
 #~ msgid "Please help us verify this user: @{screen_name} {status_str}"
 #~ msgstr ""

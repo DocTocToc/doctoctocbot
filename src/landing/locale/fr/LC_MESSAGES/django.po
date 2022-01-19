@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-28 21:17+0200\n"
-"PO-Revision-Date: 2021-03-28 22:18+0300\n"
+"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"PO-Revision-Date: 2022-01-17 03:23+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
+
+#: landing/templates/landing/about/index.html:6
+#: landing/templates/landing/about/index.html:15
+#, fuzzy
+#| msgid "About"
+msgid "About us"
+msgstr "A propos"
+
+#: landing/templates/landing/about/index.html:7
+msgid ""
+"Learn more about the people serving this community and those building its "
+"tools."
+msgstr ""
+"En savoir plus sur les personnes qui servent cette communauté et celles qui "
+"construisent ses outils."
+
+#: landing/templates/landing/antiracism/index.html:18
+msgid "Against racism and discriminations"
+msgstr "Contre le racisme et les discriminations"
+
+#: landing/templates/landing/antiracism/index.html:19
+#: landing/templates/landing/antiracism/index.html:29
+msgid "Charter against racism and discriminations"
+msgstr "Charte contre le racisme et les discriminations"
 
 #: landing/templates/landing/categories/index.html:9
 #: landing/templates/landing/categories/index.html:25
@@ -84,13 +108,335 @@ msgstr ""
 msgid "Community guidelines"
 msgstr "Charte de la communauté"
 
+#: landing/templates/landing/hashtag_lst_and.html:6
+msgid "and"
+msgstr "et"
+
+#: landing/templates/landing/hashtag_lst_or.html:7
+msgid "or"
+msgstr "ou"
+
 #: landing/templates/landing/index.html:6
 msgid "Home"
 msgstr "Accueil"
 
+#: landing/templates/landing/messenger/app-login.html:6
+#: landing/templates/landing/messenger/app-login.html:17
+#: landing/templates/landing/messenger/app-login.html:28
+#: landing/templates/landing/messenger/app-login.html:44
+#: landing/templates/landing/messenger/app-login.html:59
+#: landing/templates/landing/messenger/app-login.html:74
+msgid "web login step"
+msgstr "connexion web étape"
+
+#: landing/templates/landing/messenger/app-login.html:9
+msgid "Start"
+msgstr "Démarrer"
+
+#: landing/templates/landing/messenger/app-login.html:11
+msgid "Click on <mark>Start</mark> button"
+msgstr "Cliquer sur le bouton <mark>Démarrer</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:20
+msgid "Other"
+msgstr "Autre"
+
+#: landing/templates/landing/messenger/app-login.html:22
+msgid "Click on <mark>Other Custom & advanced settings</mark> button"
+msgstr ""
+"Cliquer sur le bouton <mark>Autres Paramètres personnalisés et avancés</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:31
+msgid "Connect to a custom server"
+msgstr "Se connecter à un serveur personnalisé"
+
+#: landing/templates/landing/messenger/app-login.html:33
+msgid "Fill in the address of our custom server:"
+msgstr "Ajouter l'adresse de notre serveur personnalisé:"
+
+#: landing/templates/landing/messenger/app-login.html:36
+msgid "Click on the <mark>Address</mark> field"
+msgstr "Cliquer sur le champ <mark>Adresse</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:37
+msgid "Enter <mark>matrix.medica.im</mark>"
+msgstr "Entrer <mark>matrix.medica.im</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:38
+msgid "Click on the <mark>Continue</mark> button"
+msgstr "Cliquer sur le bouton <mark>Poursuivre</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:47
+msgid "Continue with single sing-on"
+msgstr "Poursuivre avec authentification unique"
+
+#: landing/templates/landing/messenger/app-login.html:49
+msgid "Click on <mark>Continue with single sing-on</mark> button"
+msgstr ""
+"Cliquer sur le bouton <mark>Poursuivre avec authentification unique</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:52
+msgid ""
+"Your default mobile browser should open and navigate to our Central "
+"Authentication Service:"
+msgstr ""
+"Votre navigateur mobile par défaut devrait s'ouvrir et naviguer vers notre "
+"Service d'Authentification Centralisée:"
+
+#: landing/templates/landing/messenger/app-login.html:62
+#: landing/templates/landing/messenger/web-login.html:31
+#: landing/templates/landing/sign_in.html:21
+msgid "Sign in with Twitter"
+msgstr "Se connecter avec Twitter"
+
+#: landing/templates/landing/messenger/app-login.html:64
+#: landing/templates/landing/messenger/web-login.html:33
+msgid "Click on <mark>Sign in with Twitter</mark> button"
+msgstr "Cliquer sur le bouton <mark>Sign in with Twitter</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:67
+msgid "Your browser should be redirected to Twitter at"
+msgstr "Votre navigateur devrait être redirigé vers Twitter à l'adresse"
+
+#: landing/templates/landing/messenger/app-login.html:77
+#: landing/templates/landing/messenger/web-login.html:42
+msgid "Authorize DocTocTocBot to use your account"
+msgstr "Autoriser DocTocTocBot à accéder à votre compte"
+
+#: landing/templates/landing/messenger/app-login.html:79
+#: landing/templates/landing/messenger/web-login.html:44
+msgid "Authorize DocTocTocBot to use your account."
+msgstr "Autoriser DocTocTocBot à accéder à votre compte."
+
+#: landing/templates/landing/messenger/app-login.html:81
+#: landing/templates/landing/messenger/web-login.html:46
+msgid "Enter your Twitter <mark>username</mark>."
+msgstr "Entrer votre <mark>nom d'utilisateur</mark> Twitter."
+
+#: landing/templates/landing/messenger/app-login.html:82
+#: landing/templates/landing/messenger/web-login.html:47
+msgid "Enter your Twitter <mark>password</mark>."
+msgstr "Entrer votre <mark>mot de passe</mark> Twitter."
+
+#: landing/templates/landing/messenger/app-login.html:83
+#: landing/templates/landing/messenger/web-login.html:48
+msgid "Click on the <mark>Sign in</mark> button"
+msgstr "Cliquer sur le bouton <mark>Connexion</mark>"
+
+#: landing/templates/landing/messenger/app-login.html:88
+#: landing/templates/landing/messenger/web-login.html:53
+msgid "Twitter Help Center"
+msgstr "Centre d'assistance Twitter"
+
+#: landing/templates/landing/messenger/app-login.html:91
+#: landing/templates/landing/messenger/web-login.html:56
+msgid ""
+"OAuth is a secure connection method and doesn’t require you to give your "
+"Twitter username and password to the third party."
+msgstr ""
+"OAuth est une méthode de connexion sécurisée. Elle ne nécessite aucune "
+"communication de nom d'utilisateur ou de mot de passe Twitter à un tiers."
+
+#: landing/templates/landing/messenger/collaboration-federation.html:11
+#: landing/templates/landing/messenger/communities.html:11
+#: landing/templates/landing/messenger/features.html:11
+#: landing/templates/landing/messenger/get-started.html:10
+#: landing/templates/landing/messenger/index.html:11
+#: landing/templates/landing/messenger/linux.html:11
+#: landing/templates/landing/messenger/messenger-matrix-store.html:11
+#: landing/templates/landing/messenger/open-source.html:11
+#: landing/templates/landing/messenger/personal.html:11
+#: landing/templates/landing/messenger/pricing.html:12
+#: landing/templates/landing/messenger/pro.html:11
+#: landing/templates/landing/messenger/skeleton.html:11
+#: landing/templates/landing/messenger/why-medica.html:11
+#, python-brace-format
+msgid "{medica} messenger - Get Started"
+msgstr "{medica} messenger - Premiers pas"
+
+#: landing/templates/landing/messenger/get-started.html:17
+#, python-brace-format
+msgid "Get {medica} messenger"
+msgstr "Obtenir {medica} messenger"
+
+#: landing/templates/landing/messenger/get-started.html:18
+msgid "Open in your browser"
+msgstr "Ouvrir dans votre navigateur"
+
+#: landing/templates/landing/messenger/get-started.html:19
+msgid "Or download on your devices of choice"
+msgstr "Ou télécharger sur l'appareil de votre choix"
+
+#: landing/templates/landing/messenger/get-started.html:34
+#: landing/templates/landing/messenger/get-started.html:56
+msgid "Also available on"
+msgstr "Également disponible sur"
+
+#: landing/templates/landing/messenger/get-started.html:66
+msgid "First sign in - Mobile"
+msgstr "Première connexion - Mobile"
+
+#: landing/templates/landing/messenger/get-started.html:70
+msgid "First sign in - Web & Desktop"
+msgstr "Première connexion - Web & Desktop"
+
+#: landing/templates/landing/messenger/linux.html:16
+#, python-brace-format
+msgid "Get {medica} messenger on Linux"
+msgstr "Obtenir {medica} messenger sur Linux"
+
+#: landing/templates/landing/messenger/messenger.html:17
+#, python-brace-format
+msgid "{medica} messenger"
+msgstr "{medica} messenger"
+
+#: landing/templates/landing/messenger/messenger.html:18
+#, python-brace-format
+msgid "{medica} messenger = element + medica.im + [matrix] = secure messaging"
+msgstr ""
+"{medica} messenger = element + medica.im + [matrix] = messagerie sécurisée"
+
+#: landing/templates/landing/messenger/messenger.html:25
+#: landing/templates/landing/messenger/messenger.html:26
+#, python-brace-format
+msgid ""
+"Download {medica} messenger with secure end-to-end encryption messaging and "
+"video chat. Available on Web, Android, iOS, macOS, Windows &amp; Linux."
+msgstr ""
+"Télécharger {medica}: messagerie &amp; appel audio / vidéo chiffrés de bout "
+"à bout. Disponible sur le web, Android, iOS, macOS, Windows &amp; Linux."
+
+#: landing/templates/landing/messenger/nav.html:13
+msgid "Services"
+msgstr "Services"
+
+#: landing/templates/landing/messenger/nav.html:22
+msgid "Messaging apps for iOS, Android, web &amp; desktop."
+msgstr "Apps de messagerie pour  iOS, Android, web &amp; desktop."
+
+#: landing/templates/landing/messenger/nav.html:45
+msgid "Why"
+msgstr "Pourquoi"
+
+#: landing/templates/landing/messenger/nav.html:54
+#, python-brace-format
+msgid "What makes {medica} different?"
+msgstr "Qu'est-ce qui est différent avec {medica}?"
+
+#: landing/templates/landing/messenger/nav.html:60
+msgid "Personal"
+msgstr "Personnel"
+
+#: landing/templates/landing/messenger/nav.html:61
+msgid "for everyone"
+msgstr "pour tout le monde"
+
+#: landing/templates/landing/messenger/nav.html:67
+msgid "Communities"
+msgstr "Communautés"
+
+#: landing/templates/landing/messenger/nav.html:68
+msgid "By a community, for communities"
+msgstr "Par une communauté, pour des communautés"
+
+#: landing/templates/landing/messenger/nav.html:74
+msgid "Business"
+msgstr "Pro"
+
+#: landing/templates/landing/messenger/nav.html:75
+msgid "Universal secure collaboration"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:81
+msgid "Public sector"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:82
+msgid "Secure collaboration for public bodies"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:91
+msgid "Terms"
+msgstr "Conditions"
+
+#: landing/templates/landing/messenger/nav.html:103
+msgid "Free & Open source"
+msgstr "Libre & open source"
+
+#: landing/templates/landing/messenger/nav.html:104
+msgid "is committed to free & open source software"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:110
+msgid "Help"
+msgstr "Aide"
+
+#: landing/templates/landing/messenger/nav.html:111
+msgid "Find the answers"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:117
+msgid "About"
+msgstr "A propos"
+
+#: landing/templates/landing/messenger/nav.html:118
+#, python-brace-format
+msgid "More context about why {medica} came to be"
+msgstr ""
+
+#: landing/templates/landing/messenger/nav.html:125
+msgid "Get in touch"
+msgstr ""
+
+#: landing/templates/landing/messenger/web-login.html:6
+msgid "web login step 0"
+msgstr "connexion web étape 0"
+
+#: landing/templates/landing/messenger/web-login.html:9
+msgid "Sign in"
+msgstr "Se connecter"
+
+#: landing/templates/landing/messenger/web-login.html:11
+msgid "Click on <mark>Sign in</mark> button"
+msgstr "Cliquer sur le bouton <mark>Se connecter</mark>"
+
+#: landing/templates/landing/messenger/web-login.html:17
+msgid "web login step 1"
+msgstr "connexion web étape 1"
+
+#: landing/templates/landing/messenger/web-login.html:20
+msgid "Sign in with single sign-on"
+msgstr "Se connecter avec l'authentification unique"
+
+#: landing/templates/landing/messenger/web-login.html:22
+msgid "Click on <mark>Sign in with single sign-on</mark> button"
+msgstr ""
+"Cliquer sur le bouton <mark>Se connecter avec l'authentification unique</"
+"mark>"
+
+#: landing/templates/landing/messenger/web-login.html:28
+msgid "web login step 2"
+msgstr "connexion web étape 2"
+
+#: landing/templates/landing/messenger/web-login.html:39
+msgid "web login step 3"
+msgstr "connexion web étape 3"
+
 #: landing/templates/landing/network_navbar.html:5
 msgid "Network"
 msgstr "Réseau"
+
+#: landing/templates/landing/rules/index.html:18
+msgid "Rules of"
+msgstr "Lois de"
+
+#: landing/templates/landing/rules/index.html:20
+msgid "These are the rules followed by the bot."
+msgstr "Lois suivies par le robot."
+
+#: landing/templates/landing/rules/index.html:31
+msgid "Laws of robotics"
+msgstr "Lois de la robotique"
 
 #: landing/templates/landing/sign_in.html:11
 msgid "Sign in with Twitter to access members-only content and features!"
@@ -98,12 +444,8 @@ msgstr ""
 "Connectez-vous avec Twitter pour accéder au contenu et services réservés aux "
 "membres!"
 
-#: landing/templates/landing/sign_in.html:21
-msgid "Sign in with Twitter"
-msgstr "Se connecter avec Twitter"
-
 #: landing/templates/landing/user.html:33
-#: landing/templates/landing/usernav.html:15 landing/views.py:73
+#: landing/templates/landing/usernav.html:16 landing/views.py:75
 msgid "Profile"
 msgstr "Profil"
 
@@ -120,28 +462,28 @@ msgid "Receipt"
 msgstr "Facture"
 
 #: landing/templates/landing/user.html:45
-#: landing/templates/landing/usernav.html:27
+#: landing/templates/landing/usernav.html:28
 msgid "Options"
 msgstr "Options"
 
 #: landing/templates/landing/user.html:49
-#: landing/templates/landing/usernav.html:32
+#: landing/templates/landing/usernav.html:33
 msgid "Moderation"
 msgstr "Modération"
 
-#: landing/templates/landing/user/account.html:29
+#: landing/templates/landing/user/account.html:19
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user/billing.html:45
-msgid "Edit"
-msgstr "Éditer"
+#: landing/templates/landing/user/billing.html:29
+msgid "Edit the form"
+msgstr ""
 
-#: landing/templates/landing/user/moderation.html:29
+#: landing/templates/landing/user/moderation.html:21
 msgid "Collective moderation"
 msgstr "Modération collective"
 
-#: landing/templates/landing/user/moderation.html:31
+#: landing/templates/landing/user/moderation.html:23
 msgid ""
 "You can suspend or resume your participation to collective moderation "
 "through the on/off switch."
@@ -149,7 +491,7 @@ msgstr ""
 "Vous pouvez suspendre ou reprendre votre participation à la modération "
 "collective via l'interrupteur on/off."
 
-#: landing/templates/landing/user/moderation.html:32
+#: landing/templates/landing/user/moderation.html:24
 msgid ""
 "Set if you want to appear on the public list of moderators with the public/"
 "private switch."
@@ -157,51 +499,39 @@ msgstr ""
 "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
 "modérateurs via l'interrupteur public / private."
 
-#: landing/templates/landing/user/profile.html:30
-msgid "User Profile"
-msgstr "Profil utilisateur"
-
-#: landing/templates/landing/user/profile.html:33
-msgid "Twitter screen name:"
-msgstr "Nom d'utilisateur Twitter:"
-
-#: landing/templates/landing/user/profile.html:35
-msgid "Category"
-msgstr "Catégorie"
-
-#: landing/templates/landing/user/profile.html:44
+#: landing/templates/landing/user/profile.html:32
 msgid "Recent badges"
 msgstr "Badges récents"
 
-#: landing/templates/landing/user/profile.html:47
+#: landing/templates/landing/user/profile.html:35
 msgid "Question(s)"
 msgstr "Question(s)"
 
-#: landing/templates/landing/user/profile.html:57
+#: landing/templates/landing/user/profile.html:45
 msgid "Recent Activity"
 msgstr "Activité récente"
 
-#: landing/templates/landing/user/social.html:30
+#: landing/templates/landing/user/social.html:20
 msgid "Connection settings"
 msgstr "Paramètres de connexion"
 
-#: landing/templates/landing/usernav.html:18
+#: landing/templates/landing/usernav.html:19
 msgid "Social"
 msgstr "Social"
 
-#: landing/templates/landing/usernav.html:22
+#: landing/templates/landing/usernav.html:23
 msgid "Billing"
 msgstr "Facturation"
 
-#: landing/templates/landing/usernav.html:37
+#: landing/templates/landing/usernav.html:38
 msgid "Account"
 msgstr "Compte"
 
-#: landing/templates/landing/usernav.html:42
+#: landing/templates/landing/usernav.html:43
 msgid "Invitation"
 msgstr "Invitation"
 
-#: landing/templatetags/opengraph_tags.py:45
+#: landing/templatetags/opengraph_tags.py:58
 #, python-format
 msgid "Welcome to %(twitter_site)s companion website."
 msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
@@ -209,6 +539,46 @@ msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid "Edit"
+#~ msgstr "Éditer"
+
+#~ msgid "User Profile"
+#~ msgstr "Profil utilisateur"
+
+#~ msgid "Twitter screen name:"
+#~ msgstr "Nom d'utilisateur Twitter:"
+
+#~ msgid "Category"
+#~ msgstr "Catégorie"
+
+#~ msgid "Authorize this page to open Element"
+#~ msgstr "Autoriser cette pages à ouvrir Element"
+
+#~ msgid "Click on <mark>OK</mark>"
+#~ msgstr "Cliquer sur <mark>OK</mark>"
+
+#~ msgid "web login step 4"
+#~ msgstr "connexion web étape 4"
+
+#~ msgid "web login step 5"
+#~ msgstr "connexion web étape 5"
+
+#~ msgid "web login step 6"
+#~ msgstr "connexion web étape 6"
+
+#~ msgid "web login step 7"
+#~ msgstr "connexion web étape 7"
+
+#~ msgid "Click on <mark>Connect to a custom server</mark> field"
+#~ msgstr ""
+#~ "Cliquer sur le bouton <mark>Se connecter à un serveur personnalisé</mark>"
+
+#~ msgid "Antiracism"
+#~ msgstr "Antiracisme"
+
+#~ msgid "Community Charter against racism & discriminations"
+#~ msgstr "Charte de la communauté contre le racisme et les discriminations"
 
 #~ msgid ""
 #~ "Je fonctionne sans pub ni sponsor et j'ai donc besoin de votre soutien "
@@ -231,9 +601,6 @@ msgstr "Utilisateur"
 
 #~ msgid "Investors"
 #~ msgstr "Investisseurs"
-
-#~ msgid "Other info"
-#~ msgstr "Autres infos"
 
 #~ msgid "Profession:"
 #~ msgstr "Profession:"

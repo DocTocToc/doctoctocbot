@@ -2,13 +2,19 @@ import logging
 import ast
 import random
 import os
+from datetime import datetime, timedelta
+import pytz
 from typing import List
-from django.db.utils import IntegrityError, DatabaseError
+from django.utils import timezone
+from django.db import (
+    IntegrityError,
+    DatabaseError,
+)
 from django.db.models import F
 from django.conf import settings
 from django.utils.translation import activate
 from community.models import Trust
-
+from common.twitter import status_url_from_id
 from moderation.models import (
     Queue,
     Moderation,
@@ -18,12 +24,19 @@ from moderation.models import (
     SocialUser,
 )
 from moderation.social import update_social_ids
+from moderation.dm import sendmoderationdm
 from community.models import Retweet
-from conversation.models import Hashtag
 from community.models import Community
-from community.models import CommunityCategoryRelationship
-from community.helpers import activate_language
-from dm.api import senddm
+from dm.api import senddm_tweepy
+from optin.models import Option, OptIn
+from constance import config
+from moderation.profile import (
+    screen_name,
+    create_twitter_social_user_and_profile,
+)
+from common.twitter import get_url_from_user_id
+from django.utils.translation import gettext as _
+from humanize.time import precisedelta
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +52,49 @@ def process_unknown_user(user_id, status_id, hrh):
                                 .order_by('community').distinct('community')
     logger.debug(f"dct_lst: {dct_lst}")
     for dct in dct_lst:
-        logger.debug(dct)
+        logger.debug(f'{dct=}')
         addtoqueue(
             user_id,
             status_id,
             dct['community_name']
         )
+
+def warn_senior_moderator(user_id, status_id, community):
+    info=_(
+        "Current moderations for user {user_id} with {community} exist."
+    ).format(user_id=user_id, community=community)
+    if status_id:
+        info+=_(
+            "\nUser added a status update: {status_url}"
+        ).format(status_url=status_url_from_id(status_id))
+    logger.info(info)
+    sn = screen_name(user_id)
+    if sn:
+        user_tag =f"@{sn}"
+    else:
+        user_tag = get_url_from_user_id(user_id)
+    dm_txt = _("User {user_tag} is waiting for moderation\n") \
+        .format(user_tag=user_tag)
+    dm_txt+=info
+    senior_moderator = Moderator.objects \
+        .filter(community=community, senior=True, active=True).first()
+    logger.debug(f"{senior_moderator=}")
+    if not senior_moderator:
+        return
+    res = senddm_tweepy(
+        dm_txt,
+        senior_moderator.socialuser.user_id,
+        screen_name=community.account.username
+    )
+    logger.debug(f"{res=}")
+
+def set_queue_type(user_id, community: Community):
+    try:
+        su = SocialUser.objects.get(user_id=user_id)
+    except SocialUser.DoesNotExist:
+        su, _ = create_twitter_social_user_and_profile(user_id)
+    if not su:
+        return
 
 def addtoqueue(user_id, status_id, community_name):
     try:
@@ -52,95 +102,40 @@ def addtoqueue(user_id, status_id, community_name):
     except Community.DoesNotExist as e:
         logger.error(e)
         return
-    # Is there already a queue for this user and this community?
-    if Queue.objects.current.filter(
-        user_id = user_id,
-        community = community,
-    ).exists():
-        logger.info(
-            f"Current queue for user {user_id} with {community} exists."
-        )
+    # Is there already a Moderation for this user and this community?
+    mod_qs = Moderation.objects.current.filter(
+        queue__user_id = user_id,
+        queue__community = community,
+    )
+    logger.debug(f'{mod_qs=}')
+    if mod_qs.exists():
+        logger.debug(f"Moderation already exists: {mod_qs=}")
+        warn_senior_moderator(user_id, status_id, community)
         return
     try:
-        Queue.objects.create(
+        queue, created = Queue.objects.get_or_create(
             user_id = user_id,
             status_id = status_id,
             community = community
         )
-    except DatabaseError as e:
-        logger.error(e)
+        logger.debug(f'{queue}')
+        if created:
+            set_queue_type(user_id, community)
+            create_initial_moderation(queue)
+    except IntegrityError:
+        logger.error(
+            "Integrity error while attempting to get_or_create Queue with "
+            f"{user_id=} {status_id=} {community=}"
+        )
+    except Queue.MultipleObjectsReturned:
+        logger.error(
+            "MultipleObjectsReturned error while attempting to"
+            "get_or_create Queue with "
+            f"{user_id=} {status_id=} {community=}"
+        )
+    except Exception as e:
+        raise e
 
-def quickreply(moderation_instance_id):
-    qr = {
-           "type": "options",
-           "options": []
-          }
-    options = []
-    option = {
-                "label": "?",
-                "description": "?",
-                "metadata": "?"
-             }
-    
-    try:
-        moderation_instance=Moderation.objects.get(id=moderation_instance_id)
-    except Moderation.DoesNotExist:
-        return
-    try:
-        community=moderation_instance.queue.community
-    except:
-        community=None
-    if community:
-        activate_language(community)
-
-    for ccr in CommunityCategoryRelationship.objects.filter(
-        quickreply=True,
-        community=community
-        ):
-        logger.debug(f"Category name: {ccr.category.name}")
-        opt = dict(option)
-        opt["label"] = ccr.category.label
-        opt["metadata"] = f"moderation{moderation_instance_id}{ccr.category.name}"
-        opt["description"] = ccr.category.description or ccr.category.label
-        options.append(opt)
-    
-    for cm in CategoryMetadata.objects.filter(dm=True):
-        opt = dict(option)
-        opt["label"] = cm.label
-        opt["metadata"] = f"moderation{moderation_instance_id}{cm.name}"
-        opt["description"] = cm.description
-        options.append(opt)
-    qr["options"] = options
-    logger.debug(f"qr: {qr}")
-    return qr
-
-def handle_twitter_dm_response(res, moderator_su_id, community_id):
-    """ treat DM errors
-    if error is one ot those
-    {"errors": [{"code": 326, "message": "You are sending a Direct Message to users that do not follow you."}]}
-    {"errors": [{"code": 349, "message": "You cannot send messages to this user."}]}
-    {"errors": [{"code": 150, "message": "You cannot send messages to users who are not following you."}]}
-    """
-    if not res:
-        return
-    if not isinstance(res, dict):
-        res = ast.literal_eval(res)
-    if not "errors" in res.keys():
-        return
-    for error in res["errors"]:
-        if error.get("code") in [150, 326, 349]:
-            moderator_mi = (
-                Moderator.objects
-                .filter(
-                    socialuser__id = moderator_su_id,
-                    community__id = community_id
-                ).first()
-            )
-            if moderator_mi:
-                moderator_mi.active = False
-                moderator_mi.public = False
-                moderator_mi.save()
-                
 def remove_done_moderations(community_name):
     try:
         community = Community.objects.get(name=community_name)
@@ -164,81 +159,34 @@ def remove_done_moderations(community_name):
                 counter += 1
                 break
     return counter
-            
-def viral_moderation(socialuser_id, cached=True):
-    """ Once categorized, a social user belonging to an approved category
-    becomes a moderator.
-    """
-    ucr_qs = UserCategoryRelationship.objects.filter(
-        social_user__id = socialuser_id ,
-        community__in = Community.objects.filter(viral_moderation=True)
-    )
-    logger.debug(ucr_qs)
-    for ucr in ucr_qs:
-        if ucr.category in ucr.community.viral_moderation_category.all():
-            if not Moderator.objects.filter(
-                socialuser=ucr.social_user,
-                community=ucr.community,
-            ).exists():
-                followers = update_social_ids(
-                    ucr.community.account.userid,
-                    cached=cached,
-                    bot_screen_name=ucr.community.account.username,
-                    relationship='followers',
-                )
-                if not followers:
-                    return
-                if ucr.social_user.user_id in followers:
-                    try:
-                        Moderator.objects.create(
-                            socialuser = ucr.social_user,
-                            active = True,
-                            public = False,
-                            community = ucr.community,
-                        )
-                        logger.debug(
-                            f"{ucr.social_user} added to Moderator"
-                        )
-                    except DatabaseError:
-                        continue
-                    msg = ucr.community.viral_moderation_message
-                    if msg:
-                        res = senddm(
-                            msg,
-                            user_id=ucr.social_user.user_id,
-                            screen_name=ucr.community.account.username,
-                        )
-                        handle_twitter_dm_response(
-                            res,
-                            socialuser_id,
-                            ucr.community.id,
-                        )
-                    return True
-                else:
-                    logger.debug(
-                        f"{ucr.social_user} is not following "
-                        f"@{ucr.community.account.username}"
-                    )
-                    
-def create_moderation(queue):
+
+
+
+def create_initial_moderation(queue):
     """
     MODERATOR = 'moderator'
     SENIOR = 'senior'
     DEVELOPER = 'developer'
     FOLLOWER = 'follower'
+    SELF = 'self'
     """
     random.seed(os.urandom(128))
     if settings.MODERATION["dev"]:
-        developer_mod(queue)
-        return
-    if queue.type == Queue.MODERATOR:
-        moderator_mod(queue)
+        mod=developer_mod(queue)
+    elif queue.type == Queue.MODERATOR:
+        mod=moderator_mod(queue)
     elif queue.type == Queue.SENIOR:
-        senior_mod(queue)
+        mod=senior_mod(queue)
     elif queue.type == Queue.DEVELOPER:
-        developer_mod(queue)
+        mod=developer_mod(queue)
     elif queue.type == Queue.FOLLOWER:
-        follower_mod(queue)
+        mod=follower_mod(queue)
+    elif queue.type == Queue.SELF:
+        mod=self_mod(queue)
+    elif queue.type == Queue.ONHOLD:
+        return
+    logger.debug(f"{mod=}")
+    sendmoderationdm(mod)
 
 def developer_mod(queue):
     uid: List = SocialUser.objects.devs()
@@ -247,7 +195,7 @@ def developer_mod(queue):
         return senior_mod(queue)
     else:
         chosen_mod_uid = random.choice(uid)
-        create_moderation_instance(chosen_mod_uid, queue)
+        return create_moderation_instance(chosen_mod_uid, queue)
 
 def senior_mod(queue):
     uid: List = SocialUser.objects.active_moderators(
@@ -262,41 +210,115 @@ def senior_mod(queue):
         return moderator_mod(queue)
     else:
         chosen_mod_uid = random.choice(uid)
-        create_moderation_instance(chosen_mod_uid, queue)
+        return create_moderation_instance(chosen_mod_uid, queue)
 
 def moderator_mod(queue):
     uid: List = SocialUser.objects.active_moderators(
         queue.community,
     )
     logger.debug(
-        f"SocialUser.objects.active_moderators(queue.community, senior=False): "
+        f"SocialUser.objects.active_moderators(queue.community, senior=False):"
         f"{uid}"
     )
     if not uid:
         return
     chosen_mod_uid = random.choice(uid)
-    create_moderation_instance(chosen_mod_uid, queue)
+    logger.debug(f"{chosen_mod_uid=}")
+    return create_moderation_instance(chosen_mod_uid, queue)
 
 def follower_mod(queue):
+    def choose_follower(uids):
+        if not uids:
+            return
+        chosen_mod_uid = random.choice(uids)
+        try:
+            socialuser = SocialUser.objects.get(user_id=chosen_mod_uid)
+        except SocialUser.DoesNotExist:
+            return
+        try:
+            option = Option.objects.get(name='twitter_dm_moderation_follower')
+        except Option.DoesNotExist:
+            return
+        try:
+            optin = OptIn.objects.current.get(
+                option=option,
+                socialuser=socialuser
+            )
+        except OptIn.DoesNotExist:
+            return chosen_mod_uid
+        if not optin.authorize:
+            uids.remove(chosen_mod_uid)
+            return choose_follower(uids)
+        else:
+            return chosen_mod_uid
     try:
         su = SocialUser.objects.get(user_id=queue.user_id)
     except SocialUser.DoesNotExist:
         return
-    uid = verified_follower(su, queue.community)
-    logger.debug(f"{uid}")
-    if not uid:
+    uids = verified_follower(su, queue.community)
+    if not uids:
         senior_mod(queue)
     else:
-        chosen_mod_uid = random.choice(uid)
-        create_moderation_instance(chosen_mod_uid, queue)
+        chosen_mod_uid = choose_follower(uids)
+        if not chosen_mod_uid:
+            senior_mod(queue)
+            return
+        return create_moderation_instance(chosen_mod_uid, queue)
+
+def self_mod(queue):
+    ok = False
+    try:
+        su = SocialUser.objects.get(user_id = queue.user_id)
+    except SocialUser.DoesNotExist:
+        return
+    try:
+        option = Option.objects.get(name='twitter_dm_moderation_self')
+    except Option.DoesNotExist:
+        return
+    try:
+        optin = OptIn.objects.as_of().get(
+            option=option,
+            socialuser=su
+        )
+        ok=optin.authorize
+    except OptIn.DoesNotExist:
+        ok=True
+    logger.debug(f'{ok=}')
+    if ok:
+        return create_moderation_instance(queue.user_id, queue)
 
 def create_moderation_instance(userid: int, queue: Queue):
     try:
-        moderator_mi = SocialUser.objects.get(user_id = userid)
+        moderator_mi = SocialUser.objects.get(user_id=userid)
     except SocialUser.DoesNotExist:
         return
-    Moderation.objects.create(moderator = moderator_mi, queue = queue)
-    
+    community = queue.community
+    if queue.type == Queue.SELF:
+        interval = community.pending_self_moderation_period
+    else:
+        interval = community.moderator_moderation_period
+    try:
+        moderation = Moderation.objects.filter(
+            moderator=moderator_mi,
+            queue=queue
+        ).latest('version_start_date')
+    except Moderation.DoesNotExist:
+        moderation = None
+    if moderation and interval:
+        if (timezone.now() - moderation.version_start_date) < interval:
+            logger.warn(
+                f'Moderation for same queue / moderator created less than '
+                f'{precisedelta(interval)} ago.'
+            )
+            return
+    try:
+        return Moderation.objects.create(
+            moderator=moderator_mi,
+            queue=queue
+        )
+    except DatabaseError as e:
+        logger.error(f"Error during creation of initial moderation:\n{e}")
+
 def verified_follower(su: SocialUser, community) -> List[int]:
     try:
         bot_screen_name = community.account.username
@@ -327,3 +349,31 @@ def verified_follower(su: SocialUser, community) -> List[int]:
         user_id__in=followers,
         id__in=ucr_qs.values_list('social_user', flat=True)
     ).values_list('user_id', flat=True)
+    
+def self_categorize(socialuser: SocialUser, community: Community):
+    def is_backoff(start: datetime, backoff_delta: timedelta):
+        if not backoff_delta:
+            return False
+        return (datetime.now(pytz.utc) - start) < backoff_delta
+    # days
+    backoff = config.moderation__self_categorize__backoff
+    backoff_delta = timedelta(days=backoff)
+    try:
+        queue = Queue.objects.filter(
+            user_id=socialuser.user_id,
+            community=community,
+            type=Queue.SELF
+        ).latest('version_start_date')
+    except Queue.DoesNotExist:
+        queue =None
+    if not queue or not is_backoff(queue.version_start_date, backoff_delta):
+        try:
+            queue = Queue.objects.create(
+                user_id=socialuser.user_id,
+                community=community,
+                type=Queue.SELF
+            )
+        except DatabaseError as e:
+            logger.error(e)
+            return
+        create_initial_moderation(queue)

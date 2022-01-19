@@ -6,26 +6,53 @@
 
 {% block content %}
 
-<div class="container">
-
-{% if form.errors %}
-  <p>{% trans "Your username and password didn't match. Please try again." %}</p>
-{% endif %}
+<div class="card-deck">
 
 {% if next %}
   {% if user.is_authenticated %}
     <p>{% trans "Your account doesn't have access to this page. To proceed, please login with an account that has access." %}</p>
-  {% else %}
-    <p>{% trans "Please login" %}</p>
   {% endif %}
 {% endif %}
 
 {% if "twitter" in backends.not_associated %}
-<a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}">
-<img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
-</a>
+<div class="card">
+  <div class="card-header">
+    {% trans 'Twitter' %}
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in with Twitter' %}</h5>
+      <p class="card-text">
+{% blocktranslate trimmed %}
+'Sign in with Twitter' is simple and secure.
+After you click the button, you will land on a twitter.com page.
+There, you will be asked to enter your Twitter credentials.
+Then, you will be redirected here.
+We CANNOT know your Twitter password.
+Do you think @jack would let us have it?
+{% endblocktranslate %}
+      </p>
+    <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}">
+    <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+    </a>
+  </div>
+</div>
 {% endif %}
 
+<div class="card">
+  <div class="card-header">
+    {{ request.get_host }}
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{% trans 'Sign in with your username and password' %}</h5>
+    <p class="card-text">
+    {% blocktranslate trimmed %}
+    Don't hesitate to reset your password if your forgot it
+    (all you need to remember is the email you used to create your account).
+    {% endblocktranslate %}
+    </p>
+{% if form.errors %}
+  <p>{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
 <div class="form-group">
@@ -36,14 +63,14 @@
   <td>{{ form.password|as_crispy_field }}</td>
 </div>
 <div class="form-group">
-  <button type="submit" class="btn btn-success">login</button>
+  <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
   <input type="hidden" name="next" value="{{ next }}" />
 </div>
 </form>
-
-{# Assumes you setup the password_reset view in your URLconf #}
+  </div>
+  <div class="card-footer">
 <p><a href="{% url 'password_reset' %}">{% trans 'Reset your password' %}</a></p>
-
+  </div>
 </div>
-
+</div>
 {% endblock %}

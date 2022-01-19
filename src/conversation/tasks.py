@@ -1,18 +1,22 @@
 import logging
 import tweepy
+import requests
+from random import shuffle
 from datetime import timedelta
 from django.utils import timezone
+from django.conf import settings
 from celery import shared_task
 from constance import config
+from pathlib import Path
 
 from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
 from bot.tweepy_api import get_api
 from moderation.models import SocialUser
 from conversation.utils import update_trees
-from moderation.models import addsocialuser
+from moderation.models import addsocialuser, Category
 from community.models import Community
-from conversation.timeline import community_timeline
+from conversation.timeline import community_timeline, user_id_list_timeline
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +43,6 @@ def handle_update_trees(hourdelta):
 def handle_addsocialuser():
     for instance in Tweetdj.objects.all():
         addsocialuser(instance)
-
-@shared_task
-def handle_get_physician_timeline():
-    from bot.bin.timeline import record_user_timeline
-    for user_id in SocialUser.objects.physician_users():
-        record_user_timeline(user_id)
 
 @shared_task
 def update_retweet(days):
@@ -112,7 +110,10 @@ def update_retweet(days):
                 tweetdj.deleted=True
                 tweetdj.save()
 
-@shared_task
+@shared_task(
+    soft_time_limit=config.timeline_soft_time_limit,
+    time_limit=config.timeline_time_limit
+)
 def handle_community_members_timeline(community_name: str):
     try:
         community = Community.objects.get(name=community_name)
@@ -120,3 +121,55 @@ def handle_community_members_timeline(community_name: str):
         logger.error(f"'{community_name}' does not exist.")
         return
     community_timeline(community)
+    
+@shared_task
+def handle_category_timeline(category_name: str):
+    try:
+        category = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        return
+    user_id_list = category.twitter_id_list()
+    shuffle(user_id_list)
+    user_id_list_timeline(user_id_list)
+
+@shared_task
+def handle_retweeted_by(rt_statusid: int, rt_userid: int, by_socialuserid: int):
+    """
+    Get or create the retweeted status, then add the given socialuser
+    to retweeted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=rt_statusid,
+        userid=rt_userid
+    )
+    status.save()
+    status.retweeted_by.add(by_socialuserid)
+
+@shared_task
+def handle_quoted_by(quoted_statusid: int, quoted_userid: int, by_socialuserid: int):
+    """
+    Get or create the quoted status, then add the given socialuser
+    to quoted_by m2m
+    """
+    status, _ = Tweetdj.objects.get_or_create(
+        statusid=quoted_statusid,
+        userid=quoted_userid
+    )
+    status.quoted_by.add(by_socialuserid)
+    
+@shared_task
+def handle_image(url, filename):
+    for name in ["thumb", "large"]:
+        if name == "thumb":
+            filepath = settings.BOT_IMAGES_THUMBNAILS_PATH + "/" + filename
+        elif name == "large":
+            filepath = settings.BOT_IMAGES_PATH + "/" + filename
+        full_url = url + f"?name={name}"
+        r = requests.get(full_url, allow_redirects=True)
+        with open(filepath, 'wb') as f:
+            f.write(r.content)
+        file = Path(filepath)
+        if file.is_file():
+            logger.debug(f"{name} image %s written on disk." % filepath)
+        else:
+            logger.error(f"{name} image %s not found on disk." % filepath)

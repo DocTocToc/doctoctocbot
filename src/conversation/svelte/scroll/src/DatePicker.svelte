@@ -29,6 +29,8 @@ function getLocale() {
     return shortLocale
 }
 
+//'Le format de la valeur «\xa02021-11-01T09:00:00.000Z    \xa0» n’est pas valide.
+//Le format correct est AAAA-MM-JJ HH:MM[:ss[.uuuuuu]][FH].'
 const flatpickrOptionsRange = {
   mode: "range",
   locale: getLocale(),
@@ -81,7 +83,7 @@ function reset() {
 <Flatpickr
 options={flatpickrOptionsRange}
 element="#my-picker"
-class="form-control datepicker bg-white"
+class="form-control datepicker"
 defaultDate={dates.range}
 placeholder={dates.range}
 >

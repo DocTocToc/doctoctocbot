@@ -1,0 +1,38 @@
+{% extends "landing/messenger/messenger.html" %}
+
+{% load static %}
+{% load opengraph_tags %}
+{% load i18n %}
+{% load landing_links %}
+{% load landing_tags %}
+{% load community_text %}
+{% load opengraph_tags %}
+
+{% block title %}{% trans "{medica} messenger - Get Started" %}{% endblock title %}
+
+{% block content %}
+{% include "landing/messenger/nav.html" %}
+        <div class="modal--contents--header">
+          <h3 class="modal--contents--header-h">{% trans 'Get {medica} messenger on Linux' %}</h3>
+          <div id="modal--close--light" data-w-id="4d62fc49-a518-6c10-a8fb-6c4a3a5d766b" class="modal--close--light"><img src="{% static '/landing/images/icon-close-01-white.svg' %}" alt="" class="iocn--close--img"></div>
+        </div>
+        <div class="flex flex__stretch flex__stretch--why modal__content--overflow">
+          <div class="flex__item--align-center flex__item--text-only">
+            <div class="unstyled">
+              <p class="text-only--p">Element recently <a href="https://element.io/blog/welcome-to-element/">changed name from Riot.im</a>. While we’re still transitioning some of our services, the latest versions of Element are being hosted at packages.riot.im.<br></p>
+              <div class="divider"></div>
+              <h4 class="modal--contents--copy-h">Debian / Ubuntu (64-bit)</h4>
+              <div class="modal--overflow">
+                <div class="div-block-18">
+                  <p class="text-only--p text-only--p--linux">sudo apt install -y wget apt-transport-https<br></p>
+                  <p class="text-only--p text-only--p--linux">sudo wget -O /usr/share/keyrings/riot-im-archive-keyring.gpg https://packages.riot.im/debian/riot-im-archive-keyring.gpg<br></p>
+                  <p class="text-only--p text-only--p--linux">echo &quot;deb [signed-by=/usr/share/keyrings/riot-im-archive-keyring.gpg] https://packages.riot.im/debian/ default main&quot; | sudo tee /etc/apt/sources.list.d/riot-im.list<br></p>
+                  <p class="text-only--p text-only--p--linux">sudo apt update<br></p>
+                  <p class="text-only--p text-only--p--linux">sudo apt install element-desktop<br></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{% include "landing/messenger/footer.html" %}
+{% endblock content %}

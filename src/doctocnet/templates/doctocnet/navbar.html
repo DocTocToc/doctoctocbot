@@ -4,7 +4,7 @@
 {% load auth_discourse %}
 {% load landing_links %}
 {% load landing_tags %}
-
+{% load community_text %}
 <nav id="navbar-main" class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
   <a class="navbar-brand" href="/">{{ site.name }}</a>
@@ -41,6 +41,10 @@
           <a class="dropdown-item" href="{% url 'landing:about' %}">{% trans "About us" %}</a>
           <a class="dropdown-item" href="{% url 'landing:guidelines' %}">{% trans "Guidelines" %}</a>
           <a class="dropdown-item" href="{% url 'landing:rules' %}">{% trans "Bot rules" %}</a>
+          {% community_text "antiracism" as antiracism %}
+          {% if antiracism %}
+          <a class="dropdown-item" href="{% url 'landing:antiracism' %}">{% trans "Antiracism" %}</a>
+          {% endif %}
           <a class="dropdown-item" href="{% url 'landing:values' %}">{% trans "Values" %}</a>
           <a class="dropdown-item" href="{% url 'landing:privacy' %}">{% trans "Privacy" %}</a>
           <a class="dropdown-item" href="{% url 'landing:moderation' %}">{% trans "Moderation" %}</a>
@@ -97,17 +101,31 @@
         {% if user|is_allowed_discussion %}
         <li class="nav-item">
           <a href="https://discussion.doctoctoc.net" title="{% trans 'Discussion' %}" id="discussion" class="nav-link">
-         🙊Discussion
+         Forum
           </a>
         </li>
         {% endif %}
-        {% if site.community.get.blog %}
+        {% if site.community.blog %}
         <li class="nav-item">
-          <a href="{{ site.community.get.blog.url }}" title="{{ site.community.get.blog.name }}" id="blog" class="nav-link">
-         {{ site.community.get.blog.link }}
+          <a href="{{ site.community.blog.url }}" title="{{ site.community.blog.name }}" id="blog" class="nav-link">
+         {{ site.community.blog.link }}
           </a>
         </li>
         {% endif %}
+        {% if site.community.matrix.authorize %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMessenger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% trans "Messenger" %}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuMessenger">
+            <a class="dropdown-item" href="{% url 'landing:messenger-get-started' %}">{% trans "Get" %} {medica}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-why-medica' %}">{% trans "Why" %} {medica}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-help' %}">{% trans "Help" %}</a>
+            <a class="dropdown-item" href="{% url 'landing:messenger-pricing' %}">{% trans "Terms" %}</a>
+          </div>
+        </li>
+        {% endif %}
+       
       </ul>
         <!-- network_navbar custom tag creates et dropdown menu listing all sites belonging to the network -->
         {% network_navbar %}

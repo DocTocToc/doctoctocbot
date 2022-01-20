@@ -396,7 +396,6 @@ class CategoryAdmin(TranslationAdmin):
     show_relationships_count.admin_order_field = '-relationships_count'    
     show_relationships_count.short_description = 'Count'
     readonly_fields = (
-        'name',
         'show_relationships_count',
     )
     

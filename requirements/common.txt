@@ -1,6 +1,6 @@
-pip
+pip>=21.3.1,<21.4
 Django>=3.2,<4.0
-pytz==2018.7                                                                    
+pytz                                                                  
 kombu==5.2.0
 vine==5.0.0
 billiard==3.6.4.0

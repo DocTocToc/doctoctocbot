@@ -19,6 +19,7 @@ from django.conf import settings
 from community.helpers import (
     get_community,
     get_community_bot_screen_name,
+    activate_language,
 )
 from moderation.thumbnail import get_thumbnail_url
 from django.contrib.sites.shortcuts import get_current_site
@@ -123,6 +124,11 @@ def follower_view(request):
 class SelfModerationView(LoginRequiredMixin, FormView):
     template_name = 'moderation/self_moderation_form.html'
     form_class = SelfModerationForm
+
+    def dispatch(self, *args, **kwargs):
+        community = get_community(self.request)
+        activate_language(community)
+        return super(SelfModerationView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.

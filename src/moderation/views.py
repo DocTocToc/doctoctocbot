@@ -31,6 +31,7 @@ from django.core.mail import send_mail
 from bot.tasks import handle_create_friendship
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from django.utils.translation import get_language
 
 logger = logging.getLogger(__name__)
 
@@ -125,28 +126,21 @@ class SelfModerationView(LoginRequiredMixin, FormView):
     template_name = 'moderation/self_moderation_form.html'
     form_class = SelfModerationForm
 
-    def dispatch(self, *args, **kwargs):
-        community = get_community(self.request)
-        activate_language(community)
-        return super(SelfModerationView, self).dispatch(*args, **kwargs)
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(SelfModerationView, self).get_form_kwargs(*args, **kwargs)
+        kwargs.update({'request': self.request})
+        return kwargs
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         # create moderation task here
         user = self.request.user
-        logger.debug(f"{user}")
-        usa = UserSocialAuth.objects.filter(
-            provider='twitter',
-            user=user,
-        )
-        logger.debug(f"UserSocialAuth: {usa}")
         if UserSocialAuth.objects.filter(
                 provider='twitter',
                 user=user,
             ).exists():
             category_name = form.cleaned_data['category']
-            logger.debug(f"{category_name}")
             community = get_community(self.request)
             user.socialuser.self_moderate(
                 category_name=category_name,
@@ -189,7 +183,6 @@ class SelfModerationView(LoginRequiredMixin, FormView):
                 moderator=user.socialuser,
                 social_user=user.socialuser
                 ).latest()
-            logger.debug(ucr)
         except UserCategoryRelationship.DoesNotExist:
             return '/oauth/login/twitter/?next=/moderation/self/'
         community = get_community(self.request)

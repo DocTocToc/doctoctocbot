@@ -88,8 +88,6 @@ def get_user_timeline(userid, api, force=False):
                 first = False
         if status.id > high_statusid:
             high_statusid = status.id
-        logger.debug(f"{high_statusid=}")
-        logger.debug(f"{status._json=}")
         db = Addstatus(status._json)
         db.addtweetdj()
     # set TwitterUserTimeline statusid to the highest retrieved statusid

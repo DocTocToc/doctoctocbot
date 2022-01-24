@@ -9,7 +9,6 @@ from community.models import get_default_community
 from moderation.models import get_default_socialmedia
 
 
-
 class Queue(Versionable):
     ACCEPT = 'accept'
     DECLINE = 'decline'

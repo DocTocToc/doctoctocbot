@@ -13,6 +13,8 @@ from moderation.admin_tags import (
 from django.templatetags.static import static
 from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
+from common.list_filter import by_socialuser_category_filter
+
 
 class isSelfVerified(admin.SimpleListFilter):
     title = 'Self verified'
@@ -58,7 +60,7 @@ class QueueAdmin(VersionedAdmin):
         'community',
         'socialmedia',
         isSelfVerified,
-        'socialuser__category__name',
+        by_socialuser_category_filter('socialuser__category', 'Category'),
     )
     readonly_fields = (
         'mini_image_tag',

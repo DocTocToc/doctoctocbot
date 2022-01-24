@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from moderation.models import Category
 # with default filter labels (`not Null`, `is Null`)
 # list_filter = (by_null_filter('processed', 'Processed'), )
 
@@ -48,3 +49,25 @@ def by_null_filter(attr, name, null_label='is Null', non_null_label='not Null', 
                 return queryset.filter(**is_null_true)
 
     return ByNullFilter
+
+
+def by_socialuser_category_filter(
+        attr,
+        name,
+    ):
+
+    class BySocialUserCategoryFilter(admin.SimpleListFilter):
+        """List display filter to show entries according to Category of
+        SocialUser. Model must have a 'socialuser' field."""
+        parameter_name = attr
+        title = name
+
+        def lookups(self, request, model_admin):
+            return list(Category.objects.values_list('pk', 'name'))
+
+        def queryset(self, request, queryset):
+            if not self.value():
+                return queryset
+            return queryset.filter(socialuser__category=int(self.value()))
+
+    return BySocialUserCategoryFilter

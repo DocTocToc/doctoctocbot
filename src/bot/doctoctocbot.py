@@ -38,6 +38,7 @@ from tagging.tasks import keyword_tag
 from bot.models import Account
 from conversation.models import create_tree
 from filter.process import filter_status
+from conversation.utils import donotretweet
 
 logger = logging.getLogger(__name__)
 
@@ -378,6 +379,12 @@ def rt(statusid, dct, community):
         logger.warn(
             f"Status {statusid} triggered the '{flag.filter}' filter. "
             "Retweet canceled."
+        )
+        return
+    if donotretweet(statusid, community):
+        logger.warn(
+            f"Status {statusid} for {community} has an active "
+            "DoNotRetweetStatus record: retweet canceled."
         )
         return
     username = dct["_bot_screen_name"]

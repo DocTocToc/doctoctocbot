@@ -11,6 +11,8 @@ from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
 from django.utils.translation import ugettext_lazy as _
 from versions.models import Versionable
 from fuzzycount import FuzzyCountManager
+from versions.models import Versionable
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -272,6 +274,7 @@ class TwitterUserTimeline(models.Model):
         help_text = "Status id of the most recent status retrieved"
     )
 
+
 class TwitterLanguageIdentifier(models.Model):
     tag = models.CharField(
         max_length=35,
@@ -287,3 +290,43 @@ class TwitterLanguageIdentifier(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.language, self.tag)
+
+
+class DoNotRetweetStatus(Versionable):
+    status = models.ForeignKey(
+        Tweetdj,
+        on_delete=models.PROTECT,
+        related_name='donotretweetstatus'
+    )
+    comment = models.TextField(blank=True, null=True)
+    moderator = models.ForeignKey(
+        'moderation.SocialUser',
+        verbose_name='Moderator',
+        on_delete=models.PROTECT,
+        related_name='donotretweetstatus_moderations',
+    )
+    community = models.ForeignKey(
+        'community.Community',
+        on_delete=models.PROTECT
+    )
+    active = models.BooleanField(
+        default=True,
+        help_text="Is this do not retweet status record active?",
+    )
+
+    def __str__(self):
+        return "{} {} {}".format(self.status, self.moderator, self.community)
+
+    class Meta:
+        verbose_name_plural = "DoNotRetweetStatus"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['id', 'identity'],
+                name='versions_id_identity'
+            ),
+            models.UniqueConstraint(
+                fields=['status', 'community'],
+                condition=Q(version_end_date__isnull=True),
+                name='current_status_community'
+            ),
+        ] 

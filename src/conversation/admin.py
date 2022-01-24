@@ -28,6 +28,7 @@ from .models import (
     Retweeted,
     TwitterUserTimeline,
     TwitterLanguageIdentifier,
+    DoNotRetweetStatus,
 )
 
 
@@ -341,6 +342,21 @@ class TwitterLanguageIdentifierAdmin(admin.ModelAdmin):
         'tag',    
     ]
 
+
+@admin.register(DoNotRetweetStatus)
+class DoNotRetweetStatusAdmin(VersionedAdmin):
+    list_display = (
+        'id',
+        'status',
+        'active',
+        'moderator',
+        'community',
+    )
+    raw_id_fields=('status', 'moderator',)
+    list_filter=('community',)
+    search_fields = [
+        'status__statusid',   
+    ]
 
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)

@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db import connection, Error
 from django.db.utils import IntegrityError, DatabaseError
 from django.conf import settings
-from conversation.models import Tweetdj, Hashtag, Treedj
+from conversation.models import Tweetdj, Hashtag, Treedj, DoNotRetweetStatus
 from common.twitter import status_url_from_id
 from common.utils import dictextract
 from timeline.models import last_retweeted_statusid_lst
@@ -400,3 +400,10 @@ def created_at(statusid):
         created_at= row[0]
         logger.debug(created_at)
         return created_at
+    
+def donotretweet(statusid, community):
+    return DoNotRetweetStatus.objects.current.filter(
+        status__pk=statusid,
+        community=community,
+        active=True
+        ).exists()

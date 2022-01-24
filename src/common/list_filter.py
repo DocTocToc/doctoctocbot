@@ -68,6 +68,8 @@ def by_socialuser_category_filter(
         def queryset(self, request, queryset):
             if not self.value():
                 return queryset
-            return queryset.filter(socialuser__category=int(self.value()))
+            return queryset.filter(
+                socialuser__category=int(self.value())
+            ).distinct()
 
     return BySocialUserCategoryFilter

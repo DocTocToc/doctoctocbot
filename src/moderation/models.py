@@ -4,6 +4,7 @@ from os.path import stat
 from sys import getprofile
 from typing import List
 import json
+from decimal import *
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
@@ -15,7 +16,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.templatetags.static import static
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 from versions.fields import VersionedForeignKey
 from versions.models import Versionable
 from community.models import Community
@@ -165,7 +166,7 @@ class Human(models.Model):
 
 
 class SocialUser(models.Model):
-    user_id = models.BigIntegerField(unique=True)
+    user_id = models.PositiveBigIntegerField(unique=True)
     social_media = models.ForeignKey(
         'SocialMedia',
         related_name='users',
@@ -1025,6 +1026,15 @@ class Filter(models.Model):
         default=0,
         help_text=(
             "Minimum member follower count required"
+        )
+    )
+    member_follower_ratio = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=Decimal(0),
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+        help_text=(
+            "Minimum member followers / total followers ratio required"
         )
     )
     statuses_count = models.PositiveSmallIntegerField(

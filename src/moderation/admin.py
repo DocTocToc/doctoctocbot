@@ -932,6 +932,7 @@ class FilterAdmin(admin.ModelAdmin):
         'account_age',
         'followers_count',
         'member_follower_count',
+        'member_follower_ratio',
         'statuses_count',
         'profile_image',
         'profile_update',

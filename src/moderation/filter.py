@@ -4,6 +4,7 @@ from bot.lib.datetime import get_datetime_tz_from_twitter_str
 from django.utils import timezone
 from community.helpers import get_community_member_friend
 from moderation.moderate import create_initial_moderation
+from decimal import Decimal
 
 class User:
     def __init__(self, socialuser: SocialUser):
@@ -31,6 +32,14 @@ class User:
     def member_follower_count(self, community: Community):
         cnt = get_community_member_friend(community)
         return cnt[self.socialuser.user_id]
+
+    def member_follower_ratio(self, community: Community):
+        member_follower_count = self.member_follower_count(community)
+        total_follower_count = self.followers_count()
+        try:
+            return Decimal(member_follower_count/total_follower_count)
+        except ZeroDivisionError:
+            return
 
     def statuses_count(self):
         try:
@@ -86,6 +95,17 @@ class QueueFilter:
                 self.filter.member_follower_count
             )
 
+    def member_follower_ratio(self):
+        if not self.filter.member_follower_ratio:
+            return True
+        try:
+            return (
+                self.user.member_follower_ratio(self.filter.community)
+                >= self.filter.member_follower_ratio
+            )
+        except TypeError:
+            return False
+
     def statuses_count(self):
         if not self.filter.statuses_count:
             return True
@@ -115,6 +135,7 @@ class QueueFilter:
             and self.profile_image()
             and self.account_age()
             and self.member_follower_count()
+            and self.member_follower_ratio()
         )
 
 

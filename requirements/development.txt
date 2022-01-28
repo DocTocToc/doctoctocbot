@@ -9,3 +9,4 @@ coverage
 mock
 responses
 factory_boy
+model_bakery

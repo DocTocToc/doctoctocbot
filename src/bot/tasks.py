@@ -5,6 +5,7 @@ from django.conf import settings
 from celery import shared_task
 
 from bot.bin.friendship import create_friendship
+from bot.lib.status import status_json_log
 from bot.models import Account
 from community.models import Community
 from moderation.models import Follower, Friend, SocialUser
@@ -35,7 +36,7 @@ def handle_question(statusid: int):
 @shared_task
 def handle_on_status(json: dict, community: str):
     from bot.onstatus import triage
-    logger.info(f"handling status {json} for community {community}")
+    logger.info(f"handling status {status_json_log(json)} for community {community}")
     triage(json=json, community=community)
 
 @shared_task

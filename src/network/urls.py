@@ -9,7 +9,14 @@ from django.views.generic.base import RedirectView
 from django.contrib.sites.models import Site
 
 app_name = 'network'
-current_site = Site.objects.get_current()
+
+# current_site_domain is a folder name under the static favicon folder.
+# It is used to get the url path to favicon.ico static objects.
+
+try:
+    current_site_domain = Site.objects.get_current().domain
+except Site.DoesNotExist:
+    current_site_domain = 'default'
 
 router = routers.DefaultRouter()
 router.register(r'network', api_views.NetworkViewSet)
@@ -28,7 +35,7 @@ urlpatterns = [
         "favicon.ico",
         RedirectView.as_view(
             url=staticfiles_storage.url(
-                f'favicon/{current_site.domain}/favicon.ico'
+                f'favicon/{current_site_domain}/favicon.ico'
             )
         )
     ),

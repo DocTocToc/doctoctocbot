@@ -15,7 +15,12 @@ def record_timeline():
     """Record bot timeline of active communities
     """
     for community in Community.objects.filter(active=True):
-        su = community.account.socialuser
+        account = community.account
+        if not account:
+            continue
+        if not account.active:
+            continue
+        su = account.socialuser
         if not su:
             continue
         api = get_community_twitter_tweepy_api(community)
@@ -26,7 +31,7 @@ def record_timeline():
             api=api,
             force=False
         )
-            
+
 def get_timeline_id_lst(n=None) -> List:
     """
     Return n last tweet from timeline as a list of statusid, excluding replies

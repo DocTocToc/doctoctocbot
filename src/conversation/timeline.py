@@ -1,5 +1,6 @@
 from typing import List
 import tweepy
+from tweepy import TweepError
 import logging
 from bot.tweepy_api import get_api
 from datetime import datetime, timezone
@@ -52,44 +53,48 @@ def get_user_timeline(userid, api, force=False):
         except AttributeError:
             since_id = None
     logger.debug(f"{since_id=}")
-    for status in tweepy.Cursor(api.user_timeline, 
-                        user_id=userid, 
-                        count=200,
-                        since_id=since_id,
-                        max_id=None,
-                        trim_user=False,
-                        exclude_replies=False,
-                        include_rts=True,
-                        tweet_mode="extended"
-                        ).items():
-        if first:
-            with transaction.atomic():
-                try:
-                    tut = TwitterUserTimeline.objects.get(userid=userid)
-                except TwitterUserTimeline.DoesNotExist:
+    try:
+        for status in tweepy.Cursor(api.user_timeline,
+                            user_id=userid,
+                            count=200,
+                            since_id=since_id,
+                            max_id=None,
+                            trim_user=False,
+                            exclude_replies=False,
+                            include_rts=True,
+                            tweet_mode="extended"
+                            ).items():
+            if first:
+                with transaction.atomic():
                     try:
-                        tut = TwitterUserTimeline.objects.create(userid=userid)
-                    except DatabaseError:
-                        return
-                except TwitterUserTimeline.MultipleObjectsReturned:
-                    # TwitterUserTimeline objects should be unique for each userid
-                    # Table got corrupted. This code tries to fix it.
-                    tuts = TwitterUserTimeline.objects.filter(userid=userid)
-                    tut_first = tuts.first()
-                    tut_last = tuts.last()
-                    created_at = tut_first.created_at
-                    tut_last.created_at = created_at
-                    tut_last.save()
-                    for tut in tuts:
-                        if tut.id == tut_last.id:
-                            # keep the last object that we just updated
-                            continue
-                        tut.delete()
-                first = False
-        if status.id > high_statusid:
-            high_statusid = status.id
-        db = Addstatus(status._json)
-        db.addtweetdj()
+                        tut = TwitterUserTimeline.objects.get(userid=userid)
+                    except TwitterUserTimeline.DoesNotExist:
+                        try:
+                            tut = TwitterUserTimeline.objects.create(userid=userid)
+                        except DatabaseError:
+                            return
+                    except TwitterUserTimeline.MultipleObjectsReturned:
+                        # TwitterUserTimeline objects should be unique for each userid
+                        # Table got corrupted. This code tries to fix it.
+                        tuts = TwitterUserTimeline.objects.filter(userid=userid)
+                        tut_first = tuts.first()
+                        tut_last = tuts.last()
+                        created_at = tut_first.created_at
+                        tut_last.created_at = created_at
+                        tut_last.save()
+                        for tut in tuts:
+                            if tut.id == tut_last.id:
+                                # keep the last object that we just updated
+                                continue
+                            tut.delete()
+                    first = False
+            if status.id > high_statusid:
+                high_statusid = status.id
+            db = Addstatus(status._json)
+            db.addtweetdj()
+    except TweepError as e:
+        logger.error(e)
+        return
     # set TwitterUserTimeline statusid to the highest retrieved statusid
     logger.debug(f"{high_statusid=}")
     with transaction.atomic():

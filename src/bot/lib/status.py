@@ -6,14 +6,20 @@ from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
 
-def status_json_log(json):
+def status_json_log(_json):
+    try:
+        hashtags = [ h['text'] for h in _json['entities']['hashtags'] ]
+    except Exception as e:
+        logger.error(e)
+        return
     return (
-        f"Id: {json['id']}; "
-        f"Created_at: {json['created_at']}; "
-        f"Screen_name: {json['user']['screen_name']}; "
-        f"Text: {json['text']} \n"
+        f"id: {_json['id']}\n"
+        f"created_at: {_json['created_at']}\n"
+        f"screen_name: {_json['user']['screen_name']}\n"
+        f"text: {_json['text']}\n"
+        f"retweeted_status: {'retweeted_status' in _json}"
+        f"hashtags: {hashtags}"
     )
-
 
 def api_switch_get_status(
         statusid: int,

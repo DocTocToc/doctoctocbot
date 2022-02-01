@@ -5,7 +5,7 @@ from django.utils.html import format_html
 
 from versions.admin import VersionedAdmin
 from moderation.models import SocialUser, UserCategoryRelationship
-from request.models import Queue
+from request.models import Queue, RequestStatus
 from moderation.admin_tags import (
     admin_tag_category,
     admin_tag_screen_name_link
@@ -120,6 +120,15 @@ class QueueAdmin(VersionedAdmin):
 
     def get_ordering(self, request):
         return ['-version_start_date']
+
+
+@admin.register(RequestStatus)
+class RequestStatusAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'queue',
+        'status',
+    )
 
 
 admin.site.register(Queue, QueueAdmin)

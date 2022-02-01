@@ -77,6 +77,26 @@ class RequestDm(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
 
+
+class RequestStatus(models.Model):
+    queue =  VersionedForeignKey(
+        'request.Queue',
+        on_delete=models.PROTECT,
+        unique=True
+    )
+    status = models.OneToOneField(
+        'conversation.Tweetdj',
+        on_delete=models.PROTECT,
+    )
+
+    def __str__(self):
+        return (f"{self.queue} {self.status}")
+
+
+    class Meta:
+        verbose_name_plural = "Request statuses"
+
+
 """
 class Process(Versionable):
     queue = VersionedForeignKey(Queue, on_delete=models.CASCADE)

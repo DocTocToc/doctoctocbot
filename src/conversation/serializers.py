@@ -171,23 +171,13 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.status_media:
             try:
-                status_id = obj.json['id']
-            except TypeError as e:
-                logger.debug(e)
-                return
-            try:
-                tweetdj = Tweetdj.objects.get(statusid=status_id)
-            except Tweetdj.DoesNotExist:
-                return
-            try:
-                return tweetdj.json["extended_entities"]["media"]
+                return obj.json["extended_entities"]["media"]
             except KeyError:
                 try:
-                    return tweetdj.json["entities"]["media"]
-                except KeyError as e:
-                    logger.debug(e)
+                    return obj.json["entities"]["media"]
+                except KeyError:
                     return
-                
+
     def get_reply_count(self, obj):
         api_access = get_api_access(self.context['request'])
         if api_access and api_access.reply_count:

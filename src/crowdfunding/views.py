@@ -12,7 +12,6 @@ from django.views.generic.edit import FormView
 from django.views.generic import ListView
 from django.contrib.auth import get_user_model
 from django.core.exceptions import SuspiciousOperation
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404, redirect
 from django.db import DatabaseError
@@ -142,11 +141,12 @@ def get_amount(form):
 class InvestViewDjango(BaseRegistrationView):
     email_body_template = 'django_registration/activation_email_body.txt'
     email_subject_template = 'django_registration/activation_email_subject.txt'
-    
+
     def get_success_url(self, _):
         return reverse_lazy(
             'crowdfunding:stripe-checkout2',
-            current_app='crowdfunding')
+            current_app='crowdfunding'
+        )
 
     def _form_valid(self, form):
         pi = ProjectInvestment()
@@ -175,7 +175,9 @@ class InvestViewDjango(BaseRegistrationView):
         try: 
             pi.user = User.objects.get(username=username)
         except User.DoesNotExist:
-            raise SuspiciousOperation("Invalid request; see documentation for correct paramaters")
+            raise SuspiciousOperation(
+                "Invalid request; see documentation for correct parameters"
+            )
 
         pi.project = get_project(self.request)        
         try:
@@ -264,7 +266,7 @@ class InvestViewDjango(BaseRegistrationView):
         user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 
-class InvestViewAuthenticated(FormView):  
+class InvestViewAuthenticated(FormView):
     def get_success_url(self):
         return reverse_lazy(
             'crowdfunding:stripe-checkout2',
@@ -284,9 +286,6 @@ class InvestViewAuthenticated(FormView):
         username = form.cleaned_data.get('username')
         pi.name = username
         self.request.session['username'] = username
-        
-        #invoice = form.cleaned_data.get('invoice')
-        #self.request.session['invoice'] = invoice
         
         email = form.cleaned_data.get('email')
         self.request.session['email'] = email
@@ -327,13 +326,7 @@ class InvestViewAuthenticated(FormView):
         return 'crowdfunding/home_authenticated.html'
 
 
-
 class InvestViewBase(View):
-    def is_twitter_auth(self):
-        if not self.request.user.is_authenticated:
-            return False
-        return bool(self.request.user.social_auth.filter(provider='twitter'))
-    
     def get(self, *args, **kwargs):
         self.request.session.set_test_cookie()
         
@@ -341,11 +334,6 @@ class InvestViewBase(View):
             return InvestViewAuthenticated.as_view()(self.request)
         else:
             return InvestViewDjango.as_view()(self.request)
-    
-    def get_success_url(self):
-        return reverse_lazy(
-            'crowdfunding:stripe-checkout',
-            current_app='crowdfunding')
 
     def form_valid(self, form):
         if self.request.user.is_authenticated:
@@ -358,13 +346,13 @@ class InvestViewBase(View):
             return InvestViewAuthenticated.as_view()(self.request)
         else:
             return InvestViewDjango.as_view()(self.request)
-    
+
     def get_form_class(self):
         if self.request.user.is_authenticated:
             return InvestViewAuthenticated().get_form_class(self)
         else:
             return InvestViewDjango().get_form_class(self)
-        
+
     def get_template_names(self):
         if self.request.user.is_authenticated:
             return InvestViewAuthenticated().get_template_names(self)
@@ -438,29 +426,6 @@ def get_cancel_url(request):
         return "https://example.com"
     else:
         return url
-
-def stripe_checkout(request):
-    if request.session.test_cookie_worked():
-        request.session.delete_test_cookie()
-        amount_int = request.session.get('amount')
-        amount_dec = Decimal(amount_int).quantize(Decimal('.01'))
-        amount_str = "{:.2f}".format(amount_dec)
-        amount_cents = amount_int * 100
-        button_label = _("Pay with card")
-        public_key = settings.STRIPE_PUBLIC_KEY
-        return render(
-            request,
-            'crowdfunding/stripe_checkout.html',
-            {'amount_str': amount_str,
-             'public_key': public_key,
-             'amount_cents': amount_cents,
-             'button_label': button_label}
-        )
-    else:
-        return render(
-            request,
-            'crowdfunding/stripe_cookies_failure.html',
-        )
 
 def stripe_checkout2(request):
     if request.session.test_cookie_worked():
@@ -647,18 +612,7 @@ def charge(request):
                 )
     else:
         return redirect('/financement/')
-        
-"""
-@csrf_exempt
-def payment_done(request):
-    return render(request, 'crowdfunding/payment_done.html')
-""" 
 
-""" 
-@csrf_exempt
-def payment_canceled(request):
-    return render(request, 'crowdfunding/payment_canceled.html')
-"""
 
 class ProjectInvestmentView(ListView):
 

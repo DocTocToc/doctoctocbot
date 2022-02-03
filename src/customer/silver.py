@@ -31,7 +31,7 @@ def get_api_endpoint(endpoint: str, _id=None):
         _id = ""
     else:
         _id = f"{_id}/"
-    url = f"{get_protocol()}{settings.SILVER_URL}/{endpoint}/{_id}"
+    url = f"/{endpoint}/{_id}"
     logger.debug(url)
     return url
 

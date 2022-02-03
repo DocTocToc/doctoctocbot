@@ -15,7 +15,7 @@ django-mptt
 social-auth-app-django
 git+https://github.com/DocTocToc/cleanerversion.git@django32 #update
 pillow
-Celery==5.1.2
+Celery==5.2.2
 python-decouple
 dj-database-url
 lxml

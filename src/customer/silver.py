@@ -12,29 +12,6 @@ import psycopg2
 
 logger = logging.getLogger(__name__)
 
-def get_protocol():
-    if settings.SILVER_IS_LOCAL:
-        return "http://"
-    else:
-        return "https://"
-
-def get_headers():
-    assert settings.SILVER_TOKEN, "To use Silver, you must set SILVER_TOKEN in your .env file."
-    authorization = f"Token {settings.SILVER_TOKEN}"
-    return {
-        'content-type': 'application/json',
-        'Authorization': authorization,    
-    }
-
-def get_api_endpoint(endpoint: str, _id=None):
-    if _id is None:
-        _id = ""
-    else:
-        _id = f"{_id}/"
-    url = f"/{endpoint}/{_id}"
-    logger.debug(url)
-    return url
-
 def create_customer_and_draft_invoice(instance):
     if instance.paid is True and instance.invoice is None:
         logger.debug("paid is True, invoice is None: create customer, silver customer (temp), silver invoice (draft)")

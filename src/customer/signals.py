@@ -14,7 +14,6 @@ from silver.models.billing_entities.customer import Customer as SilverCustomer
 from silver.models.billing_entities.provider import Provider as SilverProvider
 from customer.tasks import handle_create_customer_and_draft_invoice
 from customer.models import Customer, Provider, Product
-from customer.silver import get_headers, get_api_endpoint
 from customer.silver import create_customer_and_draft_invoice
 from crowdfunding.models import ProjectInvestment
 from silver.models import ProductCode
@@ -85,32 +84,6 @@ def create_silver_customer(instance):
     else:
         Customer.objects.filter(id=instance.id).update(silver_id=sc.id)
 
-"""
-def create_silver_customer_old(instance):
-    data = json.dumps(silver_customer_json(instance))
-    logger.debug(get_api_endpoint("customers"))
-    logger.debug(get_headers())
-    logger.debug(data)
-    try:
-        response = requests.post(
-            url=get_api_endpoint("customers"),
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-        logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
-        if response.ok:
-            silver_customer_id=int(json.loads(response.text)['id'])
-            Customer.objects.filter(pk=instance.pk).update(silver_id=silver_customer_id)
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f'Customer {instance.last_name} creation was successful!')
-"""
-
 def update_silver_customer(instance):
     try:
         SilverCustomer.objects.filter(pk=instance.id).update(
@@ -138,33 +111,6 @@ def update_silver_customer(instance):
         logger.debug(f'Silver Customer: {sc} update was successful!')
     except:
         pass
-
-"""
-def update_silver_customer_old(instance):
-    silver_customer_id = instance.silver_id
-    if not silver_customer_id:
-        logger.warn(
-            "This instance does not have a Copper customer id."
-            "It cannot be updated on Copper."    
-        )
-        return
-    data = json.dumps(silver_customer_json(instance))
-    try:
-        response = requests.put(
-            url=get_api_endpoint("customers", silver_customer_id),
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-        logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f"Customer {json.loads(response.text)['id']} update was successful!")
-"""
 
 def silver_customer_json(instance):
     """Create a dictionary containing all the values of the Customer instance"""
@@ -273,57 +219,6 @@ def update_silver_provider(instance):
     except DatabaseError as e:
         logger.error(e)
 
-"""
-def create_silver_provider_old(instance):
-    data = json.dumps(silver_provider_json(instance))
-    try:
-        response = requests.post(
-            url=get_api_endpoint("providers"),
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-        logger.debug(f"{response} \n {response.text} \n id:{json.loads(response.text)['id']}")
-        if response.ok:
-            silver_id=int(json.loads(response.text)['id'])
-            Provider.objects.filter(pk=instance.pk).update(silver_id=silver_id)
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f'Provider {instance.company} creation was successful!')
-"""
-
-"""
-def update_silver_provider_old(instance):
-    silver_id = instance.silver_id
-    if not silver_id:
-        logger.warn(
-            "This instance does not have a Copper provider id."
-            "It cannot be updated on Copper."    
-        )
-        return        
-    data = json.dumps(silver_provider_json(instance))
-    url = get_api_endpoint("providers", _id=silver_id)
-    logger.debug(f'{url=}')
-    try:
-        response = requests.put(
-            url=url,
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f'Provider {instance.company} was successfully updated!')
-"""
-
 @receiver(post_save, sender=Provider)
 def create_update_silver_provider(sender, instance, created, **kwargs):
     """ Create or update provider in Silver billing app.
@@ -373,60 +268,6 @@ def update_silver_product_code(instance):
         ).update(value=instance.product_code)
     except:
         pass
-
-"""
-def create_silver_product_code_old(instance):
-    data=instance.product_code
-    try:
-        response = requests.post(
-            url=get_api_endpoint("product-codes"),
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-        logger.debug(f"{response}\n {response.text}\n {json.loads(response.text)}\n")
-        if response.ok:
-            url = json.loads(response.text)['url']
-            url_parsed = urlparse(url)
-            path = url_parsed.path
-            lst = re.findall('\d+', path)
-            if not lst:
-                return
-            silver_id = int(lst[0])
-            logger.debug(f"silver_id:{silver_id}")
-            Product.objects.filter(pk=instance.pk).update(silver_id=silver_id)
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f'Product {instance.product_code} creation was successful!')
-
-def update_silver_product_code_old(instance):
-    silver_id = instance.silver_id
-    if not silver_id:
-        logger.warn(
-            "This instance does not have a Copper provider id."
-            "It cannot be updated on Copper."    
-        )
-        return        
-    data = json.dumps({"value": instance.product_code})
-    try:
-        response = requests.put(
-            url=get_api_endpoint("product-codes", silver_id),
-            data=data,
-            headers=get_headers()
-        )
-        # If the response was successful, no Exception will be raised
-        response.raise_for_status()
-    except HTTPError as http_err:
-        logger.error(f'HTTP error occurred: {http_err}')
-    except Exception as err:
-        logger.error(f'Other error occurred: {err}')
-    else:
-        logger.info(f'product_code {instance.product_code} was successfully updated!')
-"""
 
 @receiver(post_save, sender=Product)
 def create_update_silver_product_code(sender, instance, created, **kwargs):

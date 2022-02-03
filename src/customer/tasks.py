@@ -8,8 +8,11 @@ from django.conf import settings
 from crowdfunding.models import ProjectInvestment
 from customer.silver import create_customer_and_draft_invoice
 
-PDF_GENERATION_TIME_LIMIT = getattr(settings, 'PDF_GENERATION_TIME_LIMIT',
-                                    60)  # default 60s
+PDF_GENERATION_TIME_LIMIT = getattr(
+    settings,
+    'PDF_GENERATION_TIME_LIMIT',
+    60
+)  # default 60s
 
 @shared_task(base=QueueOnce, once={'graceful': True},
              time_limit=PDF_GENERATION_TIME_LIMIT)

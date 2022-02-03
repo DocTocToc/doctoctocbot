@@ -1,8 +1,9 @@
-{% load staticfiles %}
+{% load static %}
 {% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>{% if document.state == 'canceled' %} {% trans "Canceled" %} {% elif document.state == 'paid' %} FACTURE ACQUITTÉE {% endif %} {{ document.kind }} {{ document.series }}-{{ document.number }} {% if document.is_storno %}, {% trans "storno of" %} {{ document.related_document.series }}-{{ document.related_document.number }}{% endif %}</title>
 <style type="text/css">
 @page {

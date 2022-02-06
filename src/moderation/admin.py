@@ -68,7 +68,7 @@ def tweetdj_link(self, obj):
 
 class CategoryRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
-    extra = 10
+    extra = 3
     fk_name = 'category'
     raw_id_fields = ("social_user", "moderator",)
     

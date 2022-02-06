@@ -100,7 +100,7 @@ class CategoryRelationshipInline(admin.TabularInline):
 
 class UserRelationshipInline(admin.TabularInline):
     model = UserCategoryRelationship
-    extra = 10
+    extra = 3
     fk_name = 'social_user'
     readonly_fields = ['created', 'updated']
 

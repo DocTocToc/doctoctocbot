@@ -75,6 +75,8 @@ def create_friendship_members(community: Community, users=400):
         bot_screen_name=bot_screen_name,
         relationship="friends"
     )
+    if not friend_id:
+        return
     update_follow_request(friend_id, requestor=bot_social_user)
     to_add_id: List[int] = list(set(member_id)-set(friend_id))
     api = get_api(username=bot_screen_name, backend=True)

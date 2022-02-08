@@ -209,39 +209,33 @@ strong {
       </tr>
     </table>
     <table id="entries">
-      <thead>
         <tr>
-          <th width="3%"><i>#</i></th>
-          <th width="27%" class="description">{% trans "Service" %}</th>
-          <th width="10%">{% trans "Start date" %}</th>
-          <th width="10%">{% trans "End date" %}</th>
-          <th class="unit" width="15%">{% trans "Unit" %}</th>
-          <th class="count" width="5%">{% trans "Qty" %}.</th>
-          <th class="unit_price" width="15%">{% trans "Unit price" %}</th>
-          <th class="price" width="15%">{% trans "Total Amount" %}</th>
+          <th><i>#</i></th>
+          <th>{% trans "Service" %}</th>
+          <th>{% trans "Start date" %}</th>
+          <th>{% trans "End date" %}</th>
+          <th>{% trans "Unit" %}</th>
+          <th>{% trans "Qty" %}</th>
+          <th>{% trans "Unit price" %}</th>
+          <th>{% trans "Total Amount" %}</th>
         </tr>
-      </thead>
       <hr color="#86ba49" size="0.5mm">
-      <tbody>
         {% for entry in entries %}
         <tr>
-          <td class="index">{{ forloop.counter }}</td>
-          <td class="description">{{ entry.description }}</td>
-          <td>{{ entry.start_date|date:"d/m/Y" }}</td>
-          <td>{{ entry.end_date|date:"d/m/Y" }}</td>
-          <td class="unit">{{ entry.unit }}</td>
-          <td class="count">{{ entry.quantity|floatformat:-2 }}</td>
-          <td class="unit_price">{{ entry.unit_price|floatformat:2 }} {{ document.currency }}</td>
-          <td class="price">{{ entry.total|floatformat:2 }} {{ document.currency }}</td>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ entry.description }}</td>
+          <td>{% if entry.start_date %}{{ entry.start_date|date:"d/m/Y" }}{% else %}&nbsp;{% endif %}</td>
+          <td>{% if entry.end_date %}{{ entry.end_date|date:"d/m/Y" }}{% else %}&nbsp;{% endif %}</td>
+          <td>{% if entry.unit %}{{ entry.unit }}{% else %}&nbsp;{% endif %}</td>
+          <td>{{ entry.quantity|floatformat:-2 }}</td>
+          <td>{{ entry.unit_price|floatformat:2 }} {{ document.currency }}</td>
+          <td>{{ entry.total|floatformat:2 }} {{ document.currency }}</td>
         </tr>
         {% endfor %}
-      </tbody>
-      <tfoot>
         <tr>
           <td colspan="7" class="total">{% trans "Total" %}</td>
           <td class="total_amount">{{ document.total|floatformat:2 }} {{ document.currency }}</td>
         </tr>
-      </tfoot>
     </table>
   <hr color="#86ba49" size="0.5mm">
   </div>
@@ -251,10 +245,10 @@ strong {
         <td width="48mm"><strong>{% trans "Date of payment" %}:</strong></td>
         <td>{{ document.paid_date|date:"j F Y" }}</td>
       </tr>
-      <tr>
+      <!--tr>
         <td width="48mm"><strong>{% trans "Payment method" %}:</strong></td>
         <td>{% trans "Debit card" %}</td>
-      </tr>
+      </tr-->
     </table>
   </div>
 </body>

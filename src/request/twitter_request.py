@@ -15,8 +15,12 @@ def get_incoming_friendship(community):
     except:
         return
     api = twitter_api(username=screen_name)
-    if api:
+    try:
         return api.IncomingFriendship()
+    except TweepError as e:
+        logger.error(f'{e}')
+    except Exception as e:
+        logger.error(f'{e}')
 
 def message_requestor(queue):
     try:

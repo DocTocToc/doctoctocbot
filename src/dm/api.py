@@ -8,7 +8,7 @@ from dm.models import DirectMessage
 
 from django.db.models import Q
 import tweepy
-
+from tweepy import TweepError
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -53,10 +53,13 @@ def getdm(bot_screen_name, bot_user_id: int):
         ).values_list("id", flat=True)
     )
     dm_lst = []
-    for dm in tweepy.Cursor(api.list_direct_messages, count=count).items():
-        if int(dm.id) in dm_id_lst:
-            return dm_lst
-        dm_lst.append(dm)
+    try:
+        for dm in tweepy.Cursor(api.list_direct_messages, count=count).items():
+            if int(dm.id) in dm_id_lst:
+                return dm_lst
+            dm_lst.append(dm)
+    except TweepError as e:
+        logger.error(f'{e}')
     return dm_lst
 
 def senddm_tweepy(

@@ -83,16 +83,18 @@ def senddm_tweepy(
         )
         logger.debug(f"{response=} {type(response)=}")
         return response
-    except twitter.error.TwitterError as e:
+    except TweepError as e:
         logger.error("message_create event (DM) error: %s", e)
         return e
 
-def senddm(text,
-           user_id=None,
-           return_json=True,
-           quick_reply=None,
-           attachment=None,
-           screen_name=None):
+def senddm(
+        text,
+        user_id=None,
+        return_json=True,
+        quick_reply=None,
+        attachment=None,
+        screen_name=None,
+    ):
     api_ = getapi(screen_name)
     if not api_:
         return
@@ -106,7 +108,7 @@ def senddm(text,
         )
     except twitter.error.TwitterError as e:
         logger.error("message_create event (DM) error: %s", e)
-    
+        return
     try:
         response["event"]["created_timestamp"]
     except KeyError:
@@ -117,7 +119,6 @@ def senddm(text,
             error_msg = json.dumps(response)
         except:
             error_msg = "Unknown message_create event (DM) error"
-        
         logger.error(error_msg)
         return error_msg
 

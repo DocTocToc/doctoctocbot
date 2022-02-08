@@ -62,12 +62,15 @@ class CommunityProcessor:
     def process(self):
         for dm in self.dm:
             dmp = DirectMessageProcessor(dm)
-            if dmp.moderation_uuid in self.current_mod_uuid:
-                mp = ModerationProcessor(dmp)
-                if dmp.category:
-                    mp.add_category()
-                elif dmp.meta_category:
-                    mp.process_meta_category()
+            try:
+                if dmp.moderation_uuid in self.current_mod_uuid:
+                    mp = ModerationProcessor(dmp)
+                    if dmp.category:
+                        mp.add_category()
+                    elif dmp.meta_category:
+                        mp.process_meta_category()
+            except AttributeError as e:
+                logger.error(f'{e}')
 
 class ModerationProcessor:
     def __init__(self, dmp):
@@ -223,9 +226,15 @@ class DirectMessageProcessor:
     def __init__(self, dm: DirectMessage):
         self.dm: DirectMessage = dm
         self.metadata: str = self.get_metadata()
+        if not self.metadata:
+            return
         self.moderation_uuid: uuid.UUID = self.get_moderation_uuid()
+        if not self.moderation_uuid:
+            return
         self.category: Optional[Category] = self.get_category()
         self.meta_category: Optional[CategoryMetadata] = self.get_meta_category()
+        if not self.category or not self.meta_category:
+            return
 
     def get_metadata(self):
         try:
@@ -237,16 +246,16 @@ class DirectMessageProcessor:
                 logger.error(f"no metadata could be retrieved from DM {self.dm}")
 
     def get_moderation_uuid(self):
-            uuid_str = self.metadata[10:46]
-            if not uuid_str:
-                logger.error(f"no uuid string could be retrieved from DM {self.dm}")
-                return
-            try:
-                moderation_uuid = uuid.UUID(uuid_str)
-            except ValueError as e:
-                logger.error(f"no valid uuid could be retrieved from DM {self.dm}: {e}")
-                return
-            return moderation_uuid
+        uuid_str = self.metadata[10:46]
+        if not uuid_str:
+            logger.error(f"no uuid string could be retrieved from DM {self.dm}")
+            return
+        try:
+            moderation_uuid = uuid.UUID(uuid_str)
+        except ValueError as e:
+            logger.error(f"no valid uuid could be retrieved from DM {self.dm}: {e}")
+            return
+        return moderation_uuid
 
     def get_category(self):
         try:

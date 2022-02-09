@@ -228,6 +228,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'active',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'human_tag',
         'created',
         'updated',
     )
@@ -243,6 +244,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'block_tag',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'human_tag',
         'created',
         'updated',
     )
@@ -360,6 +362,33 @@ class SocialUserAdmin(admin.ModelAdmin):
         return taxonomy_tag(obj)
 
     hcp_taxonomy_tag.short_description = _("Specialty")
+
+    def human_tag(self, obj):
+        return mark_safe(
+            "\n".join(
+                [
+                    '<a href="{link}">{tag}</a>'.format(
+                        link=reverse(
+                            "admin:moderation_human_change", args=(human.id,)
+                        ),
+                        tag=(
+                            "human: {id} {sn}".format(
+                                id=human.id,
+                                sn=" ".join(
+                                    [
+                                        f'@{su.screen_name_tag()}'
+                                        for su in human.socialuser.all()
+                                    ]
+                                )
+                            )
+                        )
+                    )
+                    for human in obj.human_set.all()
+                ]
+            )
+        )
+
+    human_tag.short_description = "human"
 
 
 class CategoryAdmin(TranslationAdmin):

@@ -14,24 +14,9 @@ from moderation.admin_tags import socialmedia_account
 
 logger = logging.getLogger(__name__)
 
-"""
 class HealthCareProviderTaxonomyInline(admin.TabularInline):
     model = HealthCareProviderTaxonomy
-    extra = 10
-    fk_name = 'taxonomy'
-    raw_id_fields = ("healthcareprovider", "creator",)
-    readonly_fields = (
-        'healthcareprovider',
-        'creator',
-        'created',
-        'updated',
-    )
-"""
-
-
-class HealthCareProviderTaxonomyInline(admin.TabularInline):
-    model = HealthCareProviderTaxonomy
-    extra = 5
+    extra = 1
     fk_name = 'healthcareprovider'
     readonly_fields = ['healthcareprovider', 'created', 'updated',]
     autocomplete_fields = ['healthcareprovider', 'taxonomy',]

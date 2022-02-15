@@ -1,0 +1,6 @@
+{
+    "public_private_label": "Do you wish to appear on the public list of moderators?",
+    "on_off_label": "Suspend ('Off') or resume ('On') your participation to collective moderation?",
+    "public": "Public",
+    "private": "Private"
+}

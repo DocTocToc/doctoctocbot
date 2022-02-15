@@ -4,7 +4,7 @@
     let toggledOnOff;
     let toggledPublicPrivate;
     let jsn;
-    import Cookies from "js.cookie";
+    import Cookies from "js-cookie";
     const csrftoken = Cookies.get("csrftoken");
     import en from "../public/lang/en.json";
     import fr from "../public/lang/fr.json";

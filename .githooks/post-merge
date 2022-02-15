@@ -1,0 +1,17 @@
+#!/bin/bash
+
+sveltepaths[0]="src/moderation/svelte/moderator-api"
+sveltepaths[1]="src/moderation/svelte/categorize"
+sveltepaths[2]="src/landing/svelte/customer"
+sveltepaths[3]="src/optin/svelte/optin-api"
+sveltepaths[4]="src/conversation/svelte/scroll"
+sveltepaths[5]="src/choice/svelte/selector"
+
+for i in "${!sveltepaths[@]}"; do
+    printf "%s\t%s\n" "$i" "${sveltepaths[$i]}"
+    npm update --prefix s ${sveltepaths[$i]}
+    npm audit fix --prefix ${sveltepaths[$i]}
+    npm install --prefix  ${sveltepaths[$i]}
+    npm run build --prefix ${sveltepaths[$i]}
+done
+ 

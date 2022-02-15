@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   import { addMessages, init, _, getLocaleFromNavigator } from "svelte-i18n";
   import en from "../public/lang/en.json";
   import fr from "../public/lang/fr.json";

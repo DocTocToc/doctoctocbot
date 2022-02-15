@@ -4,10 +4,10 @@
     let toggledOnOff;
     let toggledPublicPrivate;
     let jsn;
-    import Cookies from "../../node_modules/js-cookie/dist/js.cookie.mjs";
+    import Cookies from "../node_modules/js-cookie/dist/js.cookie.mjs";
     const csrftoken = Cookies.get("csrftoken");
-    import en from "../../public/lang/en.json";
-    import fr from "../../public/lang/fr.json";
+    import en from "../public/lang/en.json";
+    import fr from "../public/lang/fr.json";
 
     addMessages("en", en);
     addMessages("fr", fr);

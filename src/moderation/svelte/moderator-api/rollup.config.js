@@ -110,7 +110,7 @@ export default {
 		copy({
             targets: [
     		    { 
-                	src: 'public/*',
+                	src: 'public/',
                 	dest: '../../static/moderation/moderator-api/'
                 }
 	        ]

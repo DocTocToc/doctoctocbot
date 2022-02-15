@@ -34,6 +34,6 @@
 
 {#each urls as url}
 <a href="{url}large">
-<img src="{url}thumb" class="img-fluid" alt="tweet image">
+<img src="{url}thumb" class="img-fluid" alt="status media">
 </a>
 {/each}

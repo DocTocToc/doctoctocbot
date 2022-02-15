@@ -9,9 +9,26 @@
 
 {% block head_css %}
 {{ block.super }}
-<link rel='stylesheet' href='{% static "conversation/scroll/build/smui.css" %}'>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/svelte-material-ui@6.0.0-beta.14/bare.min.css"
+/>
+<link
+rel="stylesheet"
+href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+<!-- Roboto -->
+<link
+rel="stylesheet"
+href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"
+/>
+<!-- Roboto Mono -->
+<link
+rel="stylesheet"
+href="https://fonts.googleapis.com/css?family=Roboto+Mono"
+/>
 <link rel='stylesheet' href='{% static "conversation/scroll/build/bundle.css" %}'>
-<link rel='stylesheet' href='{% static "conversation/scroll/global.css" %}'>
+<link rel='stylesheet' href='{% static "conversation/scroll/build/global.css" %}'>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 <style>
 .panel-title {

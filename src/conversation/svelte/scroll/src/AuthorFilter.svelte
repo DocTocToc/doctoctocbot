@@ -6,11 +6,15 @@
   addMessages("fr", fr);
   import Chip, { Set, Text } from '@smui/chips';
   export let authorQuery = '';
+
   let choices = [
 	    { k: 'all', v: $_("status_author_all") },
 	    { k: 'self', v: $_("status_author_self") }
 	  ];
-  let selected = { k: 'all', v: $_("status_author_all") };
+  
+  //let selected = { k: 'all', v: $_("status_author_all") };
+  let selected = choices[0];
+
 
   $: if ( selected && 'all' == selected.k ) {
 	  authorQuery = '';
@@ -26,9 +30,3 @@
     <Text>{chip.v}</Text>
   </Chip>
 </Set>
-
-<style global>
-/*@import "svelte-material-ui/bare.css";*/
-/*@import 'material-icons/iconfont/material-icons.css';*/
-</style>
-

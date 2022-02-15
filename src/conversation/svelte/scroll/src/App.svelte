@@ -4,10 +4,10 @@
 	import InfiniteScroll from "./InfiniteScroll.svelte";
 	import Status from "./Status.svelte";
 	import Categories from "./Categories.svelte";
-    import DatePicker from "./DatePicker.svelte";
-    import AuthorFilter from "./AuthorFilter.svelte";
-    import en from "../public/lang/en.json";
-    import fr from "../public/lang/fr.json";
+  import DatePicker from "./DatePicker.svelte";
+  import AuthorFilter from "./AuthorFilter.svelte";
+  import en from "../public/lang/en.json";
+  import fr from "../public/lang/fr.json";
 
     addMessages("en", en);
     addMessages("fr", fr);
@@ -202,15 +202,6 @@
 </script>
 
 <style>
-  main {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-
   ul {
     /*box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
       0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);*/

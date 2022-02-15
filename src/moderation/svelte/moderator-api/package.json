@@ -2,12 +2,12 @@
   "name": "moderator-api-svelte",
   "version": "1.0.0",
   "description": "On/Off checkbox wired to Moderator model API",
-  "main": "src/index.js",
+  "main": "src/main.js",
   "scripts": {
-    "build": "webpack",
-    "server": "node server.js",
-    "start": "npm run build & npm run server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": " sirv public",
+    "prepare": ""
   },
   "keywords": [
     "svelte",
@@ -17,20 +17,34 @@
   "author": "Jerome Pinguet",
   "license": "GPLv3",
   "dependencies": {
-    "express": "^4.17.1",
-    "js-cookie": "^2.2.1",
-    "rollup": "^2.60.1",
-    "svelte": "^1.59.0"
+    "js-cookie": "^3.0.1",
+    "sirv": "^1.0.19",
+    "sirv-cli": "^1.0.14",
+    "svelte": "^3.46.4",
+    "svelte-i18n": "^3.3.13",
+    "svelte-material-ui": "^6.0.0-beta.13",
+    "svelte-toggle": "3.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "filemanager-webpack-plugin": "^2.0.5",
-    "html-webpack-plugin": "^3.1.0",
+    "postcss": "^8.4.6",
+    "postcss-import": "^14.0.2",
+    "postcss-load-config": "^2.1.2",
+    "rollup": "^2.67.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-svelte": "^6.1.1",
+    "rollup-plugin-terser": "^7.0.2",
     "svelte-loader": "^2.13.6",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.7"
+    "svelte-preprocess": "^4.10.3",
+    "svelte-toggle": "^3.1.0",
+    "typescript": "^4.5.5"
   }
 }

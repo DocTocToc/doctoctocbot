@@ -8,8 +8,7 @@
 
 {% block head_css %}
 {{ block.super }}
-<link rel='stylesheet' href='{% static "optin/optin-api/bundle.css" %}'>
-<link rel='stylesheet' href='{% static "optin/optin-api/global.css" %}'>
+<link rel='stylesheet' href='{% static "moderation/moderator-api/build/bundle.css" %}'>
 {% endblock head_css %}
 
 {% block head_javascript %}
@@ -20,7 +19,5 @@
       {% include "landing/usernav.html" %}
       <h5 class="mb-3">{% trans "Collective moderation" %}</h5>
       <main></main>
-      <p>{% trans "You can suspend or resume your participation to collective moderation through the on/off switch." %}</p>
-      <p>{% trans "Set if you want to appear on the public list of moderators with the public/private switch." %}</p>
-      <script type="text/javascript" src="{% static "moderation/moderator-api/app.js" %}"></script>
+      <script type="text/javascript" src="{% static "moderation/moderator-api/build/bundle.js" %}"></script>
 {% endblock %}

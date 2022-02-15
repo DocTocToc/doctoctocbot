@@ -25,6 +25,9 @@ debug.log
 .pydevproject
 .settings
 
+# visual studio
+.vscode
+
 # Hypothesis testing module dir
 src/.hypothesis
 
@@ -52,3 +55,19 @@ src/geckodriver.log
 
 # eggs cache
 .eggs
+
+# svelte: node_modules
+node_modules/
+# svelte: build and static
+src/choice/static/choice/selector/
+src/choice/svelte/selector/public/build/
+src/conversation/svelte/scroll/public/build
+src/conversation/static/conversation/scroll/
+src/landing/svelte/customer/public/build
+src/landing/static/landing/javascript/customer/build
+src/optin/static/optin/optin-api
+src/optin/svelte/optin-api/public/build/
+src/moderation/static/moderation/moderator-api
+src/moderation/static/moderation/categorize/
+src/moderation/svelte/categorize/public/build/
+src/moderation/svelte/moderator-api/public/build

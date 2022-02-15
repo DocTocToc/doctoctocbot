@@ -4,7 +4,6 @@ import commonjs from 'rollup-plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import copy from 'rollup-plugin-copy'
-import dotenv from 'dotenv';
 
 const production = !process.env.ROLLUP_WATCH;
 

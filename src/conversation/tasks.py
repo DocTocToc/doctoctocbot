@@ -175,7 +175,7 @@ def handle_image(url, filename):
             logger.error(f"{name} image %s not found on disk." % filepath)
 
 @shared_task
-def handle_update_truncated_statuses():
+def handle_update_truncated_statuses(n):
     from bot.lib.statusdb import Addstatus
     from itertools import cycle
 
@@ -194,7 +194,7 @@ def handle_update_truncated_statuses():
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
 
-    truncated_qs = Tweetdj.objects.filter(json__truncated=True)
+    truncated_qs = Tweetdj.objects.filter(json__truncated=True)[:n]
     api_gen = gen_api()
     for chunk in chunks(truncated_qs, 100):
         API = next(api_gen)

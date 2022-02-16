@@ -1,6 +1,7 @@
 import logging
 import tweepy
 import requests
+import time
 from random import shuffle
 from datetime import timedelta
 from django.utils import timezone
@@ -8,7 +9,6 @@ from django.conf import settings
 from celery import shared_task
 from constance import config
 from pathlib import Path
-
 from conversation.models import Retweeted, Tweetdj
 from bot.models import Account
 from bot.tweepy_api import get_api
@@ -173,3 +173,40 @@ def handle_image(url, filename):
             logger.debug(f"{name} image %s written on disk." % filepath)
         else:
             logger.error(f"{name} image %s not found on disk." % filepath)
+
+@shared_task
+def handle_update_truncated_statuses():
+    from bot.lib.statusdb import Addstatus
+    from itertools import cycle
+
+    def gen_api():
+        qs = Account.objects.filter(active=True)
+        api_lst = [get_api(account.username) for account in qs]
+        for i in cycle(api_lst):
+            yield i
+
+    def gen():
+        lst =  [1,2]
+        for i in cycle(lst):
+            yield i
+
+    def chunks(lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
+
+    truncated_qs = Tweetdj.objects.filter(json__truncated=True)
+    api_gen = gen_api()
+    for chunk in chunks(truncated_qs, 100):
+        API = next(api_gen)
+        try:
+            s_lst = API.statuses_lookup(
+                [status.statusid for status in chunk],
+                include_entities=True,
+                tweet_mode='extended'
+            )
+        except tweepy.TweepError as e:
+            logger.debug("Tweepy error: %s", e)
+            return
+        for tweet in s_lst:
+            addstatus = Addstatus(tweet._json)
+            addstatus.addtweetdj(update=True)

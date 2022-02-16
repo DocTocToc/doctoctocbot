@@ -135,7 +135,11 @@ def statuses_lookup(statusid):
         size -= 100
         API = get_api()
         try:
-            s_lst = API.statuses_lookup(ids, include_entities=True, tweet_mode='extended')
+            s_lst = API.statuses_lookup(
+                ids,
+                include_entities=True,
+                tweet_mode='extended'
+            )
         except tweepy.TweepError as e:
             logger.debug("Tweepy error: %s", e)
             continue

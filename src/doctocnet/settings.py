@@ -175,6 +175,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.postgres',
     'constance',
     'rest_framework',
     'django_filters',

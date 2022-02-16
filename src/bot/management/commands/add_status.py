@@ -39,7 +39,7 @@ class Command(BaseCommand):
             for i in range(0, len(status_ids), chunk_size):
                 ids = status_ids[i:i+chunk_size]
                 try:
-                    statuses = API.statuses_lookup(ids)
+                    statuses = API.statuses_lookup(ids, tweet_mode='extended')
                 except TweepError as e:
                     self.stdout.write(
                         self.style.ERROR(

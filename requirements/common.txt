@@ -73,3 +73,4 @@ matrix-nio[e2e]
 django-webpush
 fontawesomefree
 humanize
+reportlab==3.6.6

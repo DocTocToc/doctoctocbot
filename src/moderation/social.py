@@ -114,12 +114,18 @@ def update_social_ids(
             return si.id_list
         else:
             return []
+
+    if cached and not delta:
+        if si:
+            return si.id_list
+        else:
+            return []
+
     ok = False
     try:
         ok = si.created > datetime_limit and cached
     except AttributeError:
         pass
-
     if ok and si:
         return si.id_list
 

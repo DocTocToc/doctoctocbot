@@ -3,7 +3,12 @@ import time
 from typing import List
 from community.models import Community
 from bot.tweepy_api import get_api
-from moderation.models import UserCategoryRelationship, SocialMedia, SocialUser
+from moderation.models import (
+    UserCategoryRelationship,
+    SocialMedia,
+    SocialUser,
+    Prospect,
+)
 from moderation.social import update_social_ids
 from community.helpers import (
     get_community_bot_socialuser,
@@ -56,29 +61,55 @@ def manage_active(friend, active):
     friend_su.active=active
     friend_su.save()
 
-def create_friendship_members(community: Community, users=400):
+def create_friendship_members(
+        community: Community,
+        friends_of: SocialUser | None = None,
+        followers_of: SocialUser | None = None,
+        prospects: bool = False,
+        users=400
+    ):
     SLEEP = config.bot__bin__friendship__create_friendship_members__sleep
     if not community or not isinstance(community, Community):
         return
-    member_id: Optional[List[int]] = get_community_member_id(community)
-    if not member_id:
-        return
+    members_id: Optional[List[int]] = get_community_member_id(community)
     bot_screen_name = community.account.username
     if not bot_screen_name:
         return
     bot_social_user = get_community_bot_socialuser(community)
     if not bot_social_user:
         return
-    friend_id: List[int] = update_social_ids(
+    community_friend_id: List[int] = update_social_ids(
         user=bot_social_user,
         cached=True,
         bot_screen_name=bot_screen_name,
         relationship="friends"
     )
-    if not friend_id:
+    friends_id = update_social_ids(
+        user=friends_of,
+        cached=True,
+        bot_screen_name=bot_screen_name,
+        relationship="friends"
+    ) if friends_of else []
+    followers_id = update_social_ids(
+        user=followers_of,
+        cached=True,
+        bot_screen_name=bot_screen_name,
+        relationship="followers"
+    ) if followers_of else []
+    prospects_id = Prospect.objects.filter(
+        community=community,
+        active=True,    
+    ).values_list("socialuser__user_id", flat=True) if prospects else []
+    to_add_id: List[int] = list(
+        set.union(
+            set( members_id ),
+            set( friends_id ),
+            set( followers_id ),
+            set( prospects_id )
+        ) - set( community_friend_id )
+    )
+    if not to_add_id:
         return
-    update_follow_request(friend_id, requestor=bot_social_user)
-    to_add_id: List[int] = list(set(member_id)-set(friend_id))
     api = get_api(username=bot_screen_name, backend=True)
     success_screen_name = []
     success_count = 0
@@ -91,6 +122,10 @@ def create_friendship_members(community: Community, users=400):
             sn = ""
         try:
             res = api.create_friendship(user_id=user_id)
+            # if res follow request sent:
+            # update_follow_request(
+            #     community_friend_id, requestor=bot_social_user
+            # )
             logger.debug(f"{res=}")
             success_count += 1
             success_screen_name.append(sn)
@@ -147,7 +182,7 @@ def create_friendship_members(community: Community, users=400):
 [{'code': 161, 'message': "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."}]
 [{'code': 162, 'message': 'You have been blocked from following this account at the request of the user.'}]
 """    
-    
+
 def create_friendship(userid, community: Community):
     if not community or not isinstance(community, Community):
         return

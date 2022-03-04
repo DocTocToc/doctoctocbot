@@ -94,8 +94,5 @@ class CreateTwitterSocialUser(APIView):
         except:
             return bad_request(request)
         domain = request.site.domain
-        handle_create_twitter_socialuser.apply_async(
-            args=(screen_name, username, domain),
-            ignore_result=True
-        )
+        handle_create_twitter_socialuser(screen_name, username, domain)
         return Response(status=200)

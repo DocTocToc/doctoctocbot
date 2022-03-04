@@ -79,6 +79,7 @@ class HealthCareProviderInline(admin.TabularInline):
 
 class TaxonomyAdmin(TranslationAdmin):
     list_display = (
+        'id',
         'code',
         'grouping_en',
         'classification_en',
@@ -86,6 +87,7 @@ class TaxonomyAdmin(TranslationAdmin):
         'definition_en',
     )
     fields = (
+        'id',
         'code',
         'grouping',
         'classification',
@@ -93,6 +95,7 @@ class TaxonomyAdmin(TranslationAdmin):
         'definition',
     )
     readonly_fields = (
+        'id',
         'code',
     )
     search_fields = (

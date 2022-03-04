@@ -22,7 +22,7 @@ class Taxonomy(models.Model):
     )
     
     def __str__(self):
-        return f"{self.classification} : {self.specialization}"
+        return f"{self.pk} {self.classification} : {self.specialization}"
     
     class Meta:
         ordering = ('grouping', 'classification', 'specialization',)
@@ -111,5 +111,7 @@ class TaxonomyCategory(models.Model):
     )
 
     def __str__(self):
-        return f"{self.code} {self.grouping} {self.classification} " \
-               f"{self.specialization} | {self.category}"
+        return (
+            f"{self.code} {self.grouping} {self.classification} "
+            f"{self.specialization} | {self.category}"
+        )

@@ -1,5 +1,6 @@
 import logging
 import time
+import random
 from typing import List
 from community.models import Community
 from bot.tweepy_api import get_api
@@ -86,7 +87,7 @@ def create_friendship_members(
     )
     friends_id = update_social_ids(
         user=friends_of,
-        cached=True,
+        cached=False,
         bot_screen_name=bot_screen_name,
         relationship="friends"
     ) if friends_of else []
@@ -115,7 +116,7 @@ def create_friendship_members(
     success_count = 0
     failure_screen_name = []
     failure_count = 0
-    for user_id in to_add_id[:users]:
+    for user_id in random.choices(to_add_id, k=users):
         try:
             sn = SocialUser.objects.get(user_id=user_id).screen_name_tag()
         except SocialUser.DoesNotExist:

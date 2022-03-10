@@ -9,11 +9,8 @@ import logging
 from bot.lib.datetime import get_datetime_tz
 from django.db import IntegrityError, DatabaseError, transaction
 from django.conf import settings
-from conversation.tasks import (
-    handle_image,
-    handle_retweeted_by,
-    handle_quoted_by
-)
+from conversation.retweet import add_retweeted_by, add_quoted_by
+from conversation.tasks import handle_image
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
 from conversation.models import Tweetdj
@@ -79,20 +76,16 @@ class Addstatus:
             return None, False
         hashtag_m2m_tweetdj(tweetdj)
         if tweetdj.retweetedstatus:
-            handle_retweeted_by.apply_async(
-                kwargs={
-                    'rt_statusid': tweetdj.json["retweeted_status"]["id"],
-                    'rt_userid': tweetdj.json["retweeted_status"]["user"]["id"],
-                    'by_socialuserid': tweetdj.socialuser.id
-                }
+            add_retweeted_by(
+                statusid = tweetdj.json["retweeted_status"]["id"],
+                userid = tweetdj.json["retweeted_status"]["user"]["id"],
+                by_socialuserid = tweetdj.socialuser.id
             )
         elif tweetdj.quotedstatus:
-            handle_quoted_by.apply_async(
-                kwargs={
-                    'quoted_statusid': tweetdj.json["quoted_status"]["id"],
-                    'quoted_userid': tweetdj.json["quoted_status"]["user"]["id"],
-                    'by_socialuserid': tweetdj.socialuser.id
-                }
+            add_quoted_by(
+                statusid = tweetdj.json["quoted_status"]["id"],
+                userid = tweetdj.json["quoted_status"]["user"]["id"],
+                by_socialuserid = tweetdj.socialuser.id
             )
         return tweetdj, True
 

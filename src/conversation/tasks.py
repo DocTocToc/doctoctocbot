@@ -2,6 +2,7 @@ import logging
 import tweepy
 import requests
 import time
+import gc
 from random import shuffle
 from datetime import timedelta
 from django.utils import timezone
@@ -131,32 +132,7 @@ def handle_category_timeline(category_name: str):
     user_id_list = category.twitter_id_list()
     shuffle(user_id_list)
     user_id_list_timeline(user_id_list)
-
-@shared_task
-def handle_retweeted_by(rt_statusid: int, rt_userid: int, by_socialuserid: int):
-    """
-    Get or create the retweeted status, then add the given socialuser
-    to retweeted_by m2m
-    """
-    status, _ = Tweetdj.objects.get_or_create(
-        statusid=rt_statusid,
-        userid=rt_userid
-    )
-    status.save()
-    status.retweeted_by.add(by_socialuserid)
-
-@shared_task
-def handle_quoted_by(quoted_statusid: int, quoted_userid: int, by_socialuserid: int):
-    """
-    Get or create the quoted status, then add the given socialuser
-    to quoted_by m2m
-    """
-    status, _ = Tweetdj.objects.get_or_create(
-        statusid=quoted_statusid,
-        userid=quoted_userid
-    )
-    status.quoted_by.add(by_socialuserid)
-    
+   
 @shared_task
 def handle_image(url, filename):
     for name in ["thumb", "large"]:
@@ -210,3 +186,53 @@ def handle_update_truncated_statuses(n):
         for tweet in s_lst:
             addstatus = Addstatus(tweet._json)
             addstatus.addtweetdj(update=True)
+
+@shared_task
+def handle_text_search_vector(statusid):
+    from conversation.search.search_vector import TextSearchVector
+    try:
+        tweetdj=Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
+    tsv=TextSearchVector(tweetdj)
+    tsv.update_status_text()
+
+def queryset_iterator(queryset, chunksize=10000):
+    counter = 0
+    count = chunksize
+    while count == chunksize:
+        offset = counter - counter % chunksize
+        count = 0
+        for item in queryset.all()[offset:offset + chunksize]:
+            count += 1
+            yield item
+        counter += count
+        gc.collect()
+
+@shared_task
+def handle_all_text_search_vector(n):
+    from conversation.search.search_vector import TextSearchVector
+    tweetdj_set = (
+        Tweetdj.objects
+        .exclude(json__isnull=True)
+        .exclude(json__has_key='retweeted_status')
+        .filter(status_text__isnull=True)
+        .filter(json__isnull=False)
+        .filter(json__has_any_keys=['full_text', 'text'])
+        .order_by('-statusid')
+        [:n]
+    )
+    for tweetdj in queryset_iterator(tweetdj_set, chunksize=500):
+        tsv=TextSearchVector(tweetdj)
+        tsv.update_status_text()
+        if settings.DEBUG:
+            tweetdj.refresh_from_db()
+            try:
+                txt = tweetdj.json["full_text"]
+            except:
+                try:
+                    txt = tweetdj.json["text"]
+                except:
+                    txt = ""
+            logger.debug(f'\n{tweetdj.statusid}\n{txt}\n{str(tweetdj.status_text)}\n\n')
+        gc.collect()

@@ -29,6 +29,7 @@ from .models import (
     TwitterUserTimeline,
     TwitterLanguageIdentifier,
     DoNotRetweetStatus,
+    PostgresqlDictionary,
 )
 
 
@@ -83,12 +84,17 @@ class LanguageListFilter(admin.SimpleListFilter):
     parameter_name = 'language'
 
     def lookups(self, request, model_admin):
-        lst = list(TwitterLanguageIdentifier.objects.all().values_list('tag', 'language'))
+        lst = list(
+            TwitterLanguageIdentifier.objects.values_list('tag', 'language')
+        )
         if hasattr(settings, "SORTING_LOCALE"):
             pool = Pool()
-            return pool.apply(localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE])
+            return pool.apply(
+                localized_tuple_list_sort, [lst, 1, settings.SORTING_LOCALE]
+            )
         else:
             return localized_tuple_list_sort(lst, 1)
+
 
     def queryset(self, request, queryset):
         if self.value():
@@ -116,6 +122,28 @@ class RetweetedByListFilter(admin.SimpleListFilter):
             retweeted_by=SocialUser.objects.get(user_id=int(self.value()))
         )
 
+
+class StatusTextFilter(admin.SimpleListFilter):
+    title = _('Status text')
+    parameter_name = 'status_text'
+
+    @staticmethod
+    def parse_str_to_bool(string):
+        return string == "True"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("True", _("True")),
+            ("False", _("False"))
+        ]
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        value: bool = not StatusTextFilter.parse_str_to_bool(self.value())
+        return queryset.filter(status_text__isnull = value)
+
+
 class TweetdjAdmin(admin.ModelAdmin):
     list_per_page = config.conversation__admin__tweetdj_list_per_page
     list_display = (
@@ -123,8 +151,11 @@ class TweetdjAdmin(admin.ModelAdmin):
         'userid',
         'screen_name',
         'status_text_tag',
+        'status_text',
         'status_link',
         'created_at',
+        'created',
+        'updated',
         'quotedstatus',
         'retweetedstatus',
         'deleted',
@@ -153,6 +184,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'rt_by_count',
         'quoted_by_screen_name',
         'qt_by_count',
+        'status_text',
     )
     readonly_fields = (
         'statusid',
@@ -163,6 +195,8 @@ class TweetdjAdmin(admin.ModelAdmin):
         'status_url_tag',
         'json',
         'created_at',
+        'created',
+        'updated',
         'quotedstatus',
         'retweetedstatus',
         'hashtag',
@@ -171,6 +205,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'rt_by_count',
         'quoted_by_screen_name',
         'qt_by_count',
+        'status_text',
     )
     list_filter = (
         ('created_at', DateTimeRangeFilter),
@@ -181,6 +216,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'hashtag',
         'tags',
         RetweetedByListFilter,
+        StatusTextFilter,
         LanguageListFilter,
     )
     filter_horizontal = ('retweeted_by',)
@@ -330,7 +366,8 @@ class TwitterLanguageIdentifierAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'language',
-        'tag',    
+        'tag',
+        'postgresql_dictionary',
     )
     readonly_fields = (
         'id',
@@ -357,6 +394,15 @@ class DoNotRetweetStatusAdmin(VersionedAdmin):
     search_fields = [
         'status__statusid',   
     ]
+
+
+@admin.register(PostgresqlDictionary)
+class PostgresqlDictionaryAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'cfgname',
+    )
+
 
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)

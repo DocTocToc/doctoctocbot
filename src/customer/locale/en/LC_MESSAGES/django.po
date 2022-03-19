@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-21 18:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: customer/forms.py:19 customer/models.py:30 customer/models.py:31
+msgid "First name"
+msgstr ""
+
+#: customer/forms.py:24 customer/models.py:35 customer/models.py:36
+msgid "Last name"
+msgstr ""
+
+#: customer/forms.py:29 customer/models.py:41 customer/models.py:42
+msgid "Company"
+msgstr ""
+
+#: customer/forms.py:34 customer/forms.py:39
+msgid "Address"
+msgstr ""
+
+#: customer/forms.py:45
+msgid "(select country)"
+msgstr ""
+
+#: customer/forms.py:48
+msgid "Telephone"
+msgstr ""
+
+#: customer/forms.py:54 customer/models.py:47 customer/models.py:48
+msgid "Email"
+msgstr ""
+
+#: customer/forms.py:59 customer/models.py:69 customer/models.py:70
+msgid "City"
+msgstr ""
+
+#: customer/forms.py:72 customer/models.py:80 customer/models.py:81
+msgid "ZIP code"
+msgstr ""
+
+#: customer/forms.py:91 customer/models.py:64 customer/models.py:65
+msgid "Country"
+msgstr ""
+
+#: customer/models.py:18
+msgid "Id of corresponding Silver Customer record."
+msgstr ""
+
+#: customer/models.py:25
+msgid "Django user"
+msgstr ""
+
+#: customer/models.py:26
+msgid "User"
+msgstr ""
+
+#: customer/models.py:52 customer/models.py:53
+msgid "Address Line 1"
+msgstr ""
+
+#: customer/models.py:58 customer/models.py:59
+msgid "Address Line 2 (optional)"
+msgstr ""
+
+#: customer/models.py:75 customer/models.py:76
+msgid "State"
+msgstr ""
+
+#: customer/templates/customer/update_customer.html:6
+msgid "Add your billing data"
+msgstr ""

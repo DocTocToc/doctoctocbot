@@ -3,7 +3,8 @@ import datetime
 import random
 from typing import Optional
 from celery import shared_task
-from django.contrib.auth import get_user_model 
+from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 from django.urls import reverse
 from django.conf import settings
 from constance import config
@@ -437,3 +438,26 @@ def handle_onhold_queues():
         moderation_filter__isnull=False
     ):
         process_onhold_queues(c)
+
+@shared_task
+def handle_all_socialuser_language(per_page: int = 100):
+    queryset = SocialUser.objects.all().filter(language__isnull=True)
+    paginator = Paginator(queryset, per_page)
+    for page_number in paginator.page_range:
+        page = paginator.page(page_number)
+        for su in page.object_list:
+            logger.debug(f'{su=}')
+            tli=su.get_language()
+            logger.debug(f'{tli=}')
+            su.language=tli
+            su.save()
+            logger.debug(f'{su.language=}')
+
+@shared_task
+def handle_socialuser_language(pk):
+    try:
+        su = SocialUser.objects.get(pk=pk)
+    except SocialUser.DoesNotExist:
+        return
+    su.language=su.get_language()
+    su.save()

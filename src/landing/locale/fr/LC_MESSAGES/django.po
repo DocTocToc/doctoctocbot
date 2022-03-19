@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-17 17:14+0100\n"
-"PO-Revision-Date: 2022-01-17 03:23+0300\n"
+"POT-Creation-Date: 2022-02-21 18:06+0100\n"
+"PO-Revision-Date: 2022-02-21 20:13+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -477,27 +477,11 @@ msgstr "Changer votre mot de passe."
 
 #: landing/templates/landing/user/billing.html:29
 msgid "Edit the form"
-msgstr ""
+msgstr "Éditer le formulaire"
 
-#: landing/templates/landing/user/moderation.html:21
+#: landing/templates/landing/user/moderation.html:20
 msgid "Collective moderation"
 msgstr "Modération collective"
-
-#: landing/templates/landing/user/moderation.html:23
-msgid ""
-"You can suspend or resume your participation to collective moderation "
-"through the on/off switch."
-msgstr ""
-"Vous pouvez suspendre ou reprendre votre participation à la modération "
-"collective via l'interrupteur on/off."
-
-#: landing/templates/landing/user/moderation.html:24
-msgid ""
-"Set if you want to appear on the public list of moderators with the public/"
-"private switch."
-msgstr ""
-"Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
-"modérateurs via l'interrupteur public / private."
 
 #: landing/templates/landing/user/profile.html:32
 msgid "Recent badges"
@@ -539,6 +523,20 @@ msgstr "Bienvenue sur le site compagnon de %(twitter_site)s."
 #: landing/views.py:39
 msgid "User"
 msgstr "Utilisateur"
+
+#~ msgid ""
+#~ "You can suspend or resume your participation to collective moderation "
+#~ "through the on/off switch."
+#~ msgstr ""
+#~ "Vous pouvez suspendre ou reprendre votre participation à la modération "
+#~ "collective via l'interrupteur on/off."
+
+#~ msgid ""
+#~ "Set if you want to appear on the public list of moderators with the "
+#~ "public/private switch."
+#~ msgstr ""
+#~ "Choisissez si vous souhaitez apparaître ou pas dans la liste publique des "
+#~ "modérateurs via l'interrupteur public / private."
 
 #~ msgid "Edit"
 #~ msgstr "Éditer"

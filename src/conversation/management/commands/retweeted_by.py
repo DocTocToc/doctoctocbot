@@ -3,7 +3,6 @@ import time
 from conversation.models import Tweetdj
 from moderation.social import get_socialuser_from_screen_name
 from conversation.retweet import RetweetedBy
-current_time = int(time.time())
 
 class Command(BaseCommand):
     help = 'Update retweeted_by'

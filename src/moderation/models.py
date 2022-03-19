@@ -25,6 +25,8 @@ from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from conversation.models import Tweetdj
 from optin.models import Option
+from conversation.models import TwitterLanguageIdentifier
+from django.db.models import Count
 
 logger = logging.getLogger(__name__)
 
@@ -196,6 +198,13 @@ class SocialUser(models.Model):
             "deactivated or deleted."
         )
     )
+    language = models.ForeignKey(
+        "conversation.TwitterLanguageIdentifier",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text="default language as a TwitterLanguageIdentifier object",
+    )
     created =  models.DateTimeField(auto_now_add=True, null=True)
     updated =  models.DateTimeField(auto_now=True, null=True)
 
@@ -274,6 +283,27 @@ class SocialUser(models.Model):
             logger.error(f'{e}')
         except Exception as e:
             logger.error(f'{e}')
+
+    def get_language(self) -> TwitterLanguageIdentifier | None:
+        dct_lst = (Tweetdj.objects
+            .filter(userid=self.user_id)
+            .exclude(json__lang='und')
+            .order_by('json__lang')
+            .values('json__lang')
+            .annotate(count=Count('json__lang'))
+            .order_by('-count')
+        )
+        logger.debug(f'{dct_lst=}')
+        try:
+            tag = list(dct_lst)[0]["json__lang"]
+        except IndexError:
+            return None
+        except KeyError:
+            return None
+        try:
+            return TwitterLanguageIdentifier.objects.get(tag=tag)
+        except TwitterLanguageIdentifier.DoesNotExist:
+            return
 
 
     class Meta:

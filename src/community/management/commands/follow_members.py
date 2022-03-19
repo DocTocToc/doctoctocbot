@@ -34,8 +34,6 @@ class Command(BaseCommand):
             followers_of = get_socialuser_from_screen_name(followers_sn)
         else:
             followers_of = None
-        logger.info(followers_of)
-        logger.info(friends_of)
         try:
             community = Community.objects.get(name=community_name)
         except Community.DoesNotExist:

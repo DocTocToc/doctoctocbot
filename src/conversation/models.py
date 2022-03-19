@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, IntegrityError
 from django.utils.safestring import mark_safe
 from django.conf import settings
 import logging
@@ -13,6 +13,9 @@ from versions.models import Versionable
 from fuzzycount import FuzzyCountManager
 from versions.models import Versionable
 from django.db.models import Q
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +66,12 @@ class Tweetdj(models.Model):
         null=True
     )
     created_at = models.DateTimeField(null=True)
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
+    updated = models.DateTimeField(
+        auto_now=True
+    )
     reply = models.PositiveIntegerField(null=True)
     like = models.PositiveIntegerField(null=True)
     retweet = models.PositiveIntegerField(null=True)
@@ -100,6 +109,7 @@ class Tweetdj(models.Model):
         related_name = "quotes",
         blank=True,
     )
+    status_text = SearchVectorField(null=True)
 
     objects = FuzzyCountManager()
 
@@ -108,6 +118,7 @@ class Tweetdj(models.Model):
         ordering = ('-statusid',)
         indexes = [
             models.Index(fields=['userid'], name='userid_idx'),
+            GinIndex(fields=["status_text"]),
         ]
 
     def __str__(self):
@@ -158,14 +169,15 @@ class Tweetdj(models.Model):
     
     screen_name_tag.short_description = "Screen name"    
 
-    #def save(self, *args, **kwargs):
-    #    if self.parentid is not None:
-    #        parentNode, _ = Treedj.objects.get_or_create(statusid=self.parentid)
-    #        try:
-    #            Treedj.objects.create(statusid = self.statusid, parent = parentNode)
-    #        except IntegrityError:
-    #            continue
-    #    super(Tweetdj, self).save(*args, **kwargs)
+    def admin_link(self):
+        return mark_safe(
+            '<a href="{link}">💽</a>'.format(
+                link = reverse(
+                    "admin:conversation_tweetdj_change",
+                    args=(self.pk,)
+                )
+            )
+        )
 
     @classmethod
     def getstatustext(cls, statusid: int) -> str:
@@ -226,7 +238,7 @@ class Treedj(MPTTModel):
 def create_tree(statusid):
     try:
         return Treedj.objects.create(statusid=statusid)
-    except DatabaseError as e:
+    except (DatabaseError, IntegrityError) as e:
         logger.error(str(e))
 
 def create_leaf(statusid, parentid):
@@ -235,12 +247,11 @@ def create_leaf(statusid, parentid):
     except Treedj.DoesNotExist:
         return None
     try:
-        leaf = Treedj.objects.create(statusid=statusid, parent=parent_mi)
-    except DatabaseError as e:
-        leaf = None
+        return Treedj.objects.get(statusid=statusid, parent=parent_mi)
+    except Treedj.DoesNotExist:
+        return Treedj.objects.create(statusid=statusid, parent=parent_mi)
+    except (DatabaseError, IntegrityError) as e:
         logger.error(str(e))
-    return leaf
-
 
 class Retweeted(Versionable):
     status = models.BigIntegerField()
@@ -284,12 +295,34 @@ class TwitterLanguageIdentifier(models.Model):
         max_length=255,
         unique=True
     )
+    postgresql_dictionary = models.ForeignKey(
+        "conversation.PostgresqlDictionary",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
 
-    class MPTTMeta:
+
+    class Meta:
+        ordering = ['language']
         unique_together = [['tag', 'language']]
+
 
     def __str__(self):
         return '%s %s' % (self.language, self.tag)
+
+
+class PostgresqlDictionary(models.Model):
+    cfgname = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    class Meta:
+        verbose_name_plural = "Postgresql dictionaries"
+
+    def __str__(self):
+        return '%s %s' % (self.id, self.cfgname)
 
 
 class DoNotRetweetStatus(Versionable):

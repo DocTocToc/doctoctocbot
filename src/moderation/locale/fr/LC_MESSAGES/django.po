@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"POT-Creation-Date: 2022-02-21 18:11+0100\n"
 "PO-Revision-Date: 2022-01-17 19:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: moderation/admin.py:362
+#: moderation/admin.py:367
 msgid "Specialty"
 msgstr "Spécialité"
 
-#: moderation/admin.py:740
+#: moderation/admin.py:771
 msgid "Count"
 msgstr "Compte"
 
-#: moderation/dm.py:305
+#: moderation/dm.py:314
 #, python-brace-format
 msgid ""
 "\n"
@@ -35,7 +35,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/dm.py:333
+#: moderation/dm.py:342
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -51,28 +51,28 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/dm.py:349
+#: moderation/dm.py:358
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/forms.py:20
+#: moderation/forms.py:26
 msgid "Submit"
 msgstr "Envoyer"
 
-#: moderation/forms.py:32
+#: moderation/forms.py:41
 msgid "None of those categories"
 msgstr "Aucune de ces catégories"
 
-#: moderation/forms.py:34
+#: moderation/forms.py:43 moderation/forms.py:50
 msgid "Please choose a category"
 msgstr "Merci de choisir une catégorie"
 
-#: moderation/forms.py:39
+#: moderation/forms.py:55
 msgid "I hereby certify that I do belong to this category."
 msgstr "Je certifie que j'appartiens bien à cette catégorie."
 
-#: moderation/forms.py:44
+#: moderation/forms.py:60
 msgid ""
 "This community is mostly comprised of people belonging to the listed "
 "categories. If you don't belong to any of them but you still want to join, "
@@ -83,39 +83,39 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:556
+#: moderation/models.py:586
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:557
+#: moderation/models.py:587
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:558
+#: moderation/models.py:588
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:559
+#: moderation/models.py:589
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:560
+#: moderation/models.py:590
 msgid "Self"
 msgstr ""
 
-#: moderation/models.py:561
+#: moderation/models.py:591
 msgid "On hold"
 msgstr "En attente"
 
-#: moderation/models.py:903
+#: moderation/models.py:933
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:904
+#: moderation/models.py:934
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:905
+#: moderation/models.py:935
 msgid "Ban"
 msgstr "Exclure"
 
@@ -186,7 +186,7 @@ msgstr "Ces personnes géniales filtrent et modèrent les questions %(hashtags)s
 msgid "User"
 msgstr "Utilisateur"
 
-#: moderation/views.py:44
+#: moderation/views.py:46
 msgid "Moderation team"
 msgstr "Équipe de modération"
 

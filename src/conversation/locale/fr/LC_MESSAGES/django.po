@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-17 17:14+0100\n"
-"PO-Revision-Date: 2020-04-20 06:39+0300\n"
+"POT-Creation-Date: 2022-02-21 18:11+0100\n"
+"PO-Revision-Date: 2022-02-21 19:38+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,20 +16,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
-#: conversation/admin.py:55
+#: conversation/admin.py:57
 msgid "Category"
 msgstr "Catégorie"
 
-#: conversation/admin.py:80
+#: conversation/admin.py:82
 msgid "Language"
-msgstr ""
+msgstr "Langue"
 
-#: conversation/admin.py:100
+#: conversation/admin.py:107
 msgid "retweeted by"
 msgstr "retweeté par"
 
-#: conversation/models.py:19
+#: conversation/models.py:24
 msgid "Object id"
 msgstr "ID de l'objet"
+
+#: conversation/templates/conversation/search.html:23
+msgid "Home"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:34
+msgid "Search"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:45
+msgid "French"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:49
+msgid "English"
+msgstr ""

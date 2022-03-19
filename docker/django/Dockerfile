@@ -6,7 +6,7 @@ ENV DOCKER_CONTAINER 1
 RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
     locales \
     python-pygraphviz \
     libgraphviz-dev \
@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     libproj-dev \
     gdal-bin \
     libolm-dev/buster-backports \
+    cython \
+    cython3 \
  && rm -rf /var/lib/apt/lists/*
  
 RUN echo "Europe/Paris" > /etc/timezone && \
@@ -35,8 +37,9 @@ ENV LANGUAGE fr_FR
 ENV LC_ALL fr_FR.UTF-8
 
 ADD ./requirements /code/requirements
-# RUN pip install pip==21.0.1
-RUN pip install -r /code/requirements/common.txt --upgrade
+RUN pip install pip --upgrade
+RUN pip install Cython --install-option="--no-cython-compile"
+RUN pip install -r /code/requirements/common.txt
 
 RUN mkdir /var/log/celery && touch /var/log/celery/celery.log
 RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/gunicorn.log

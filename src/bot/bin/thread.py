@@ -46,7 +46,7 @@ def retweetroot(statusid: int):
     authorid: int = status_mi.userid
     logger.debug(f"authorid:{authorid}")
     current_mi: Tweetdj = status_mi
-    
+
     while True:    
         parent_mi = getorcreate(current_mi.parentid)
         if parent_mi is None:
@@ -114,7 +114,7 @@ def add_root_to_tree(statusid):
         logger.error(f"Integrity error: {e}")
     except DatabaseError as e:
         logger.error(f" Database error: {e}")
-        
+
 def getorcreate(statusid: int, bot_username=None) -> Tweetdj:
     # Is status in database? If not, add it.
     if statusid is None:

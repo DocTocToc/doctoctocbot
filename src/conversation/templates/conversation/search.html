@@ -1,0 +1,78 @@
+{% extends "doctocnet/base.html" %}
+{% load i18n %}
+{% load cache %}
+{% load static %}
+{% load landing_tags %}
+{% load opengraph_tags %}
+
+{% block head_meta %}
+{% block head_css %}
+{{ block.super }}
+{% endblock head_css %}
+{{ block.super }}
+{% opengraph %}
+{% block style %}
+{{ block.super }}
+{% endblock style %}
+{% block head_javascript %}
+{{ block.super }}
+<script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+{% endblock head_javascript %}
+{% endblock head_meta %}
+
+{% block title %}{% trans "Home" %}{% endblock title %}
+
+{% block content %}
+
+  {% include "landing/funding.html" %}
+
+  {% if not user.is_authenticated %}
+    {% include "landing/sign_in.html" %}
+    
+  {% else %}
+  
+   <h1>{% translate "Search" %}</h1>
+
+    <form action="{% url 'conversation:search_results' %}" method="get">
+      <div class="input-group mb-3">
+        <input type="text" id="search" name="q" placeholder="" class="form-control" value="{{ query|default_if_none:'' }}">
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+      <div class="form-check">
+       <input class="form-check-input" type="radio" id="fr" name="lang" value="fr" {% if lang == "fr" %}checked{% endif %}>
+       <label for="fr">{% translate "French" %}</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="en" name="lang" value="en" {% if lang == "en" %}checked{% endif %}>
+        <label for="en">{% translate "English" %}</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="null" name="lang" value="null" {% if lang == "null" %}checked{% endif %}>
+        <label for="null">
+        {% translate "French" %} {% translate "or" %} {% translate "English" %}
+        </label>
+      </div>
+    </form>
+    {% for status in statuses %}
+    <div class="card mb-3">
+      <div class="card-body">
+      {{ status.status_text_tag }}
+      </div>
+      <div class="card-footer">
+      @<i>{{ status.json.user.screen_name }}</i>
+      {{ status.status_url_tag }}
+      {% if user.is_superuser %}{{ status.admin_link }}{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+    <!--  div class="container"-->
+    <!--  div class="row"-->
+     {% get_current_language as LANGUAGE_CODE %}
+     <!-- outside display cache {% now "jS F Y H:i:s" %} -->
+     <!-- LANGUAGE_CODE: {{ LANGUAGE_CODE }} -->
+     <!-- inside display cache {% now "jS F Y H:i:s" %} -->
+     <!-- TTL: {{ display_cache }} -->
+{% endblock content %}

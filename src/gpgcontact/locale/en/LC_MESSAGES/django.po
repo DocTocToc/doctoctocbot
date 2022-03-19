@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-21 18:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: gpgcontact/forms.py:55
+msgid "NO SPAM ALLOWED ON THIS SERVER SORRY!"
+msgstr ""
+
+#: gpgcontact/forms.py:66 gpgcontact/forms.py:76
+#, python-format
+msgid "The message must be encrypted Header %(begin)s is missing"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:18
+#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:4
+msgid "Contact"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:33
+msgid "Your name"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:41
+msgid "Your email address"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:49
+msgid "Your message"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form.html:59
+msgid "Encrypt & Send"
+msgstr ""
+
+#: gpgcontact/templates/gpg_contact_form/contact_form_sent.html:6
+msgid "Thank you. Your message is on its way. We'll get back to you ASAP."
+msgstr ""

@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Optional, List, Set
 import logging
 
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, IntegrityError
 from django.core.cache import cache
+
 from constance import config
 
 from conversation.models import Tweetdj, Treedj
@@ -66,8 +67,10 @@ def add_leaf(parent_id, statusid):
             statusid=statusid,
             parent=parent
         )
-    except DatabaseError:
-        return
+    except IntegrityError as e:
+        logger.error(f"Integrity error: {e}")
+    except DatabaseError as e:
+        logger.error(f" Database error: {e}")
 
 def add_tweetdj_to_treedj():
     # create a set of all treedj pk

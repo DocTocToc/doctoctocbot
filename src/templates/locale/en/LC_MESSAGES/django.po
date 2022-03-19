@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-21 18:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: templates/404.html:7
+msgid ""
+"\n"
+"<h1>4🧐4 Page Not Found</h1>\n"
+"<p>This page does not exist yet!</p>\n"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:7
+#: templates/billing_documents/invoice_pdf.html:118
+msgid "Canceled"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:7
+msgid "storno of"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:125
+msgid "Number"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:129
+msgid "Issue date"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:134
+msgid "Due date"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:158
+msgid "Issuer"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:162
+#: templates/billing_documents/invoice_pdf.html:185
+msgid "Address"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:181
+msgid "Customer"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:183
+msgid "Tax ID"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:197
+msgid "Email"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:200
+msgid "Name"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:203
+msgid "Customer Reference"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:214
+msgid "Service"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:215
+msgid "Start date"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:216
+msgid "End date"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:217
+msgid "Unit"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:218
+msgid "Qty"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:219
+msgid "Unit price"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:220
+msgid "Total Amount"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:236
+msgid "Total"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:245
+msgid "Date of payment"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:249
+msgid "Payment method"
+msgstr ""
+
+#: templates/billing_documents/invoice_pdf.html:250
+msgid "Debit card"
+msgstr ""
+
+#: templates/cas/login.html:46
+msgid "Central Authentication Service"
+msgstr ""
+
+#: templates/cas/login.html:52
+msgid ""
+"Please sign in with Twitter.\n"
+"        You will be redirected to <mark>https://api.twitter.com</mark> and\n"
+"        Twitter will ask for your password from its own page.\n"
+"        Your password remains between your and Twitter: it is never revealed "
+"to us.\n"
+"        Only verified Twitter users are allowed to use our secure "
+"messenger.\n"
+"        "
+msgstr ""
+
+#: templates/cas/login.html:60 templates/registration/login.html:23
+#: templates/registration/login.html:35
+msgid "Sign in with Twitter"
+msgstr ""
+
+#: templates/cas/login.html:70
+#, python-format
+msgid ""
+"If you don't have a Twitter account\n"
+"      and if your registered an account on\n"
+"      <mark>%(scheme)s://%(domain)s</mark>, please login here:\n"
+"      "
+msgstr ""
+
+#: templates/cas/login.html:86 templates/registration/login.html:66
+msgid "Login"
+msgstr ""
+
+#: templates/registration/login.html:13
+msgid ""
+"Your account doesn't have access to this page. To proceed, please login with "
+"an account that has access."
+msgstr ""
+
+#: templates/registration/login.html:20
+msgid "Twitter"
+msgstr ""
+
+#: templates/registration/login.html:25
+msgid ""
+"'Sign in with Twitter' is simple and secure. After you click the button, you "
+"will land on a twitter.com page. There, you will be asked to enter your "
+"Twitter credentials. Then, you will be redirected here. We CANNOT know your "
+"Twitter password. Do you think @jack would let us have it?"
+msgstr ""
+
+#: templates/registration/login.html:46
+msgid "Sign in with your username and password"
+msgstr ""
+
+#: templates/registration/login.html:48
+msgid ""
+"Don't hesitate to reset your password if your forgot it (all you need to "
+"remember is the email you used to create your account)."
+msgstr ""
+
+#: templates/registration/login.html:54
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+
+#: templates/registration/login.html:72
+msgid "Reset your password"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:4
+msgid "The password has been changed!"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:5
+msgid "Log in again?"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:4
+msgid ""
+"We've emailed you instructions for setting your password. If they haven't "
+"arrived in a few minutes, check your spam folder."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+msgid "Username"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:4
+msgid "Someone asked for password reset. Follow the link below:"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:4
+msgid "Please enter the email you used to register your account."
+msgstr ""
+
+#: templates/versions/datetimefilter.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: templates/versions/datetimefilter.html:29
+msgid "Search"
+msgstr ""
+
+#: templates/versions/datetimefilter.html:30
+msgid "Clear"
+msgstr ""

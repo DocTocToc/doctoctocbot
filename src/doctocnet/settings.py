@@ -231,7 +231,7 @@ INSTALLED_APPS = [
     'django_dumpdata_one',
     'hive',
     'durationwidget',
-    'widget_tweaks',
+    #'widget_tweaks',
     'django.contrib.gis',
     'leaflet',
     'choice',
@@ -248,7 +248,12 @@ if DEBUG:
         'corsheaders',
     ]
 
-MIDDLEWARE = [
+MIDDLEWARE = []
+
+if DEBUG:
+    MIDDLEWARE += "corsheaders.middleware.CorsMiddleware",
+
+MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -261,11 +266,6 @@ MIDDLEWARE = [
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'user_visit.middleware.UserVisitMiddleware',
 ]
-
-if DEBUG:
-    MIDDLEWARE += [
-        'corsheaders.middleware.CorsMiddleware',
-    ]
 
 ROOT_URLCONF = config('ROOT_URLCONF', default='doctocnet.urls')
 
@@ -337,18 +337,18 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
-    ('fr', _('French')),
     ('en', _('English')),
+    ('fr', _('French')),
 ]
 # Model Translation
 MODELTRANSLATION_FALLBACK_LANGUAGES = {'default': ('en', 'fr'), 'fr': ('en',)}
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
-    "templates/locale",
+    os.path.join(BASE_DIR, 'templates/locale'),
 ]
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
 # you have to generate the locales you will use on your GNU/Linux server:

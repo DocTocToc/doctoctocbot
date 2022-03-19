@@ -81,13 +81,13 @@ def create_friendship_members(
         return
     community_friend_id: List[int] = update_social_ids(
         user=bot_social_user,
-        cached=True,
+        cached=False,
         bot_screen_name=bot_screen_name,
         relationship="friends"
     )
     friends_id = update_social_ids(
         user=friends_of,
-        cached=False,
+        cached=True,
         bot_screen_name=bot_screen_name,
         relationship="friends"
     ) if friends_of else []

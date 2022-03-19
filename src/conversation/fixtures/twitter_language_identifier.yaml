@@ -201,7 +201,7 @@
 - model: conversation.twitterlanguageidentifier
   pk: 41
   fields:
-    tag: no
+    tag: 'no'
     language: Norwegian
 - model: conversation.twitterlanguageidentifier
   pk: 42
@@ -348,3 +348,8 @@
   fields:
     tag: cy 
     language: Welsh
+- model: conversation.twitterlanguageidentifier
+  pk: 71
+  fields:
+    tag: und 
+    language: undefined

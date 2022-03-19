@@ -210,6 +210,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'user_id',
         'hcp_taxonomy_tag',
         'hcp_admin',
+        'language',
         'created',
         'updated',
     )
@@ -229,6 +230,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'hcp_taxonomy_tag',
         'hcp_admin',
         'human_tag',
+        'language',
         'created',
         'updated',
     )
@@ -259,6 +261,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFriend,
         by_null_filter('category', 'Category'),
         'active',
+        'language',
     )
 
     def get_queryset(self, request):

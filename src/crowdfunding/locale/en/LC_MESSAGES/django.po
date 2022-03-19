@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-21 18:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: crowdfunding/forms.py:28 crowdfunding/forms.py:93
+msgid "Submit"
+msgstr ""
+
+#: crowdfunding/forms.py:44 crowdfunding/forms.py:96
+msgid "Custom amount"
+msgstr ""
+
+#: crowdfunding/forms.py:59
+msgid "Username"
+msgstr ""
+
+#: crowdfunding/forms.py:69
+msgid "Email"
+msgstr ""
+
+#: crowdfunding/forms.py:74 crowdfunding/forms.py:110
+msgid "Do you want to appear on the donor list?"
+msgstr ""
+
+#: crowdfunding/forms.py:76 crowdfunding/forms.py:112
+msgid "Yes"
+msgstr ""
+
+#: crowdfunding/forms.py:76 crowdfunding/forms.py:112
+msgid "No"
+msgstr ""
+
+#: crowdfunding/forms.py:102
+msgid "Preset amount"
+msgstr ""
+
+#: crowdfunding/forms.py:125
+msgid "You must choose a preset amount or a custom amount. Thank you."
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/browser_warning.html:3
+#, python-format
+msgid ""
+"\n"
+"This page will only work with a real, fully-fledged mobile or desktop "
+"browser (Firefox, Chrome, Safari...).\n"
+"It will not work if you open it with the in-app browser of Twitter (iOS or "
+"Android app).\n"
+"Please open your favourite browser and copy / paste or type this url in the "
+"address bar: %(uri)s\n"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/fund.html:6
+msgid "Funding"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/fund.html:26
+#, python-format
+msgid "%(investor_cnt)s person invested in our project. Thank you!"
+msgid_plural "%(investor_cnt)s persons invested in our project. Thank you!"
+msgstr[0] ""
+msgstr[1] ""
+
+#: crowdfunding/templates/crowdfunding/fund.html:28
+#, python-format
+msgid "%(public_investor_cnt)s person accepted to appear on this list."
+msgid_plural "%(public_investor_cnt)s persons accepted to appear on this list."
+msgstr[0] ""
+msgstr[1] ""
+
+#: crowdfunding/templates/crowdfunding/fund.html:32
+msgid "Be the first to invest in our project!"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/fund.html:33
+msgid "I want to fund!"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/investor_progress_bar.html:6
+msgid "Active members"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/investor_progress_bar.html:7
+msgid "Investors"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/progress.html:6
+msgid "Goal"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/progress.html:7
+msgid "Current amount"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/progress_template.html:6
+msgid "Progress"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:5
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:16
+msgid "Payment"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:17
+#, python-format
+msgid ""
+"%(username)s, please proceed to pay %(amount_str)s %(currency)s with a bank "
+"card."
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:18
+msgid ""
+"The transaction will be processed by our trusted & secure payment processor "
+"partner Stripe on its checkout page https://checkout.stripe.com"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:21
+msgid "Checkout"
+msgstr ""
+
+#: crowdfunding/templates/crowdfunding/stripe_checkout2.html:24
+msgid "Thank you for investing in your independent professional tools"
+msgstr ""
+
+#: crowdfunding/views.py:438
+msgid "Pay with card"
+msgstr ""
+
+#: crowdfunding/views.py:473
+msgid "UUID verification error."
+msgstr ""
+
+#: crowdfunding/views.py:510
+msgid ""
+"You payment card was not authorized.Pleace try again with this card or "
+"another. {}"
+msgstr ""
+
+#: crowdfunding/views.py:519
+msgid "Too many requests made to the API too quickly"
+msgstr ""
+
+#: crowdfunding/views.py:527
+msgid "Invalid parameters were supplied to Stripe's API"
+msgstr ""
+
+#: crowdfunding/views.py:536
+msgid ""
+"Authentication with Stripe's API failed(maybe you changed API keys recently)"
+msgstr ""
+
+#: crowdfunding/views.py:546
+msgid "Network communication with Stripe failed"
+msgstr ""
+
+#: crowdfunding/views.py:555
+msgid ""
+"An error occured during the processing of your payment.We will look into the "
+"matter and contact you as soon as possible."
+msgstr ""
+
+#: crowdfunding/views.py:567
+msgid ""
+"Ann error occurred during the processing of your payment.You will not be "
+"charged. Please try again."
+msgstr ""

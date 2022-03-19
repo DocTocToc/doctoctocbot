@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-17 17:14+0100\n"
+"POT-Creation-Date: 2022-02-21 18:11+0100\n"
 "PO-Revision-Date: 2021-12-06 15:14+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -28,53 +28,53 @@ msgstr ""
 "<h1>4🧐4 Page non trouvée</h1>\n"
 "<p>Cette page n'existe pas encore!</p>\n"
 
-#: templates/billing_documents/invoice_pdf.html:6
-#: templates/billing_documents/invoice_pdf.html:117
+#: templates/billing_documents/invoice_pdf.html:7
+#: templates/billing_documents/invoice_pdf.html:118
 msgid "Canceled"
 msgstr "Annulée"
 
-#: templates/billing_documents/invoice_pdf.html:6
+#: templates/billing_documents/invoice_pdf.html:7
 msgid "storno of"
 msgstr "extourne de"
 
-#: templates/billing_documents/invoice_pdf.html:124
+#: templates/billing_documents/invoice_pdf.html:125
 msgid "Number"
 msgstr "Numéro"
 
-#: templates/billing_documents/invoice_pdf.html:128
+#: templates/billing_documents/invoice_pdf.html:129
 msgid "Issue date"
 msgstr "Date d'émission"
 
-#: templates/billing_documents/invoice_pdf.html:133
+#: templates/billing_documents/invoice_pdf.html:134
 msgid "Due date"
 msgstr "Échéance"
 
-#: templates/billing_documents/invoice_pdf.html:157
+#: templates/billing_documents/invoice_pdf.html:158
 msgid "Issuer"
 msgstr "Prestataire"
 
-#: templates/billing_documents/invoice_pdf.html:161
-#: templates/billing_documents/invoice_pdf.html:184
+#: templates/billing_documents/invoice_pdf.html:162
+#: templates/billing_documents/invoice_pdf.html:185
 msgid "Address"
 msgstr "Adresse"
 
-#: templates/billing_documents/invoice_pdf.html:180
+#: templates/billing_documents/invoice_pdf.html:181
 msgid "Customer"
 msgstr "Client"
 
-#: templates/billing_documents/invoice_pdf.html:182
+#: templates/billing_documents/invoice_pdf.html:183
 msgid "Tax ID"
 msgstr "ID taxe"
 
-#: templates/billing_documents/invoice_pdf.html:196
+#: templates/billing_documents/invoice_pdf.html:197
 msgid "Email"
 msgstr "Courriel"
 
-#: templates/billing_documents/invoice_pdf.html:199
+#: templates/billing_documents/invoice_pdf.html:200
 msgid "Name"
 msgstr "Nom"
 
-#: templates/billing_documents/invoice_pdf.html:202
+#: templates/billing_documents/invoice_pdf.html:203
 msgid "Customer Reference"
 msgstr "Référence client"
 
@@ -106,19 +106,19 @@ msgstr "Prix unitaire"
 msgid "Total Amount"
 msgstr "Montant total"
 
-#: templates/billing_documents/invoice_pdf.html:240
+#: templates/billing_documents/invoice_pdf.html:236
 msgid "Total"
 msgstr "Total"
 
-#: templates/billing_documents/invoice_pdf.html:250
+#: templates/billing_documents/invoice_pdf.html:245
 msgid "Date of payment"
 msgstr "Date du règlement"
 
-#: templates/billing_documents/invoice_pdf.html:254
+#: templates/billing_documents/invoice_pdf.html:249
 msgid "Payment method"
 msgstr "Méthode de paiement"
 
-#: templates/billing_documents/invoice_pdf.html:255
+#: templates/billing_documents/invoice_pdf.html:250
 msgid "Debit card"
 msgstr "Carte bancaire"
 

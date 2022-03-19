@@ -1,4 +1,3 @@
-pip>=21.3.1,<21.4
 Django>=3.2,<4.0
 pytz                                                                  
 kombu==5.2.0
@@ -9,9 +8,7 @@ django-redis==5.0.0
 tweepy==3.10.0
 configparser==3.7.3
 unidecode==1.0.23
-#psycopg2-binary>=2.8,<2.9
-psycopg2-binary==2.9.1
-django-mptt
+psycopg2-binary==2.9.3
 social-auth-app-django
 git+https://github.com/DocTocToc/cleanerversion.git@django32 #update
 pillow
@@ -65,7 +62,7 @@ django-dumpdata-one
 django-postgres-fuzzycount
 pyyaml
 git+https://github.com/DocTocToc/django-durationwidget.git@800d9393ca2e99acb39ced8cd73dea27503423d1
-django-widget-tweaks
+#django-widget-tweaks
 django-leaflet
 #django-geojson==3.1.0
 git+https://github.com/DocTocToc/django-geojson.git@31cf507e504d4b7aec99b28d4c503cd8839185bc
@@ -74,3 +71,5 @@ django-webpush
 fontawesomefree
 humanize
 reportlab==3.6.6
+whatthelang
+django-mptt

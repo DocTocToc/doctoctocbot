@@ -3,6 +3,7 @@ from typing import List
 from community.models import Community
 from bot.tweepy_api import get_api
 from bot.lib.statusdb import Addstatus
+from bot.models import Account
 from timeline.models import add_status_tl, Status
 import tweepy
 import logging
@@ -32,10 +33,14 @@ def record_timeline():
             force=False
         )
 
-def get_timeline_id_lst(n=None) -> List:
-    """
-    Return n last tweet from timeline as a list of statusid, excluding replies
-    """
-    return [status.statusid
-            for status
-            in Status.objects.all().filter(json__contains={'in_reply_to_status_id': None})][:n]
+def record_socialuser_timeline(socialuser):
+    """Record timeline for SocialUser. (Limited to accounts for now.)"""
+    # TODO: extend to all SocialUsers. If protected, check if it is the friend
+    # of one of the accounts. 
+    if socialuser.id in Account.objects.values_list("socialuser", flat=True):
+        api = get_api(username=socialuser.screen_name_tag())
+        get_user_timeline(
+            userid=socialuser.user_id,
+            api=api,
+            force=False
+        )

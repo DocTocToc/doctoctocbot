@@ -4,7 +4,10 @@ from conversation.models import create_leaf, Tweetdj
 
 class Command(BaseCommand):
     help = 'Add known leaves'
-        
+
+    def add_arguments(self, parser):
+        parser.add_argument('statusid', type=int)
+
     def handle(self, *args, **options):
         count = 0  
         for tweetdj in Tweetdj.objects.filter(json__in_reply_to_status_id__isnull=False):

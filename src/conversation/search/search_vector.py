@@ -108,17 +108,19 @@ class TextSearchVector():
     def get_lang_socialuser(self):
         try:
             return self.tweetdj.socialuser.language.tag
-        except (AttributeError, TypeError):
+        except AttributeError:
             addsocialuser(self.tweetdj)
             self.tweetdj.refresh_from_db()
-            self.tweetdj.socialuser.refresh_from_db()
             try:
                 return self.tweetdj.socialuser.language.tag
-            except:
-                ##handle_socialuser_language.si(self.tweetdj.socialuser.id)
-                ##| handle_text_search_vector.si(self.tweetdj.statusid)
+            except AttributeError:
                 handle_socialuser_language(self.tweetdj.socialuser.id)
-                return self.get_lang_socialuser()
+                su = self.tweetdj.socialuser
+                su.refresh_from_db()
+                try:
+                    return su.language.tag
+                except:
+                    return
 
     def get_lang(self):
         try:
@@ -178,4 +180,3 @@ class TextSearchVector():
         )
         self.tweetdj.status_text=sv
         self.tweetdj.save()
-        #logger.debug(f'{self.tweetdj.statusid}: {self.tweetdj.status_text}')

@@ -10,7 +10,6 @@ docstest
 
 # Development
 /env
-status_*
 
 # Python
 *.pyc

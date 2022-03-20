@@ -66,7 +66,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
             return
         lang = self.request.GET.get("lang")
         lang_dct = {
-            "fr": "french",
+            "fr": "french_unaccent",
             "en": "english",
             "null": None  
         }
@@ -74,7 +74,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
         try:
             config = lang_dct[lang]
         except:
-            config = "french"
+            config = "french_unaccent"
         q_filter = Q(
             status_text=SearchResultsList.search_query(
                 query, config, search_type

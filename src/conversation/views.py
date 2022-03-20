@@ -118,10 +118,12 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
         return qs.annotate(
             highlight=SearchHeadline(
                 Coalesce("json__full_text", "json__text"),
-                query,
+                search_query,
                 highlight_all=True,
                 start_sel='<mark>',
                 stop_sel='</mark>',
+                max_fragments=None,
+                config=config,
             )
         )
 

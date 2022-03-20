@@ -4,6 +4,7 @@
 {% load static %}
 {% load landing_tags %}
 {% load opengraph_tags %}
+{% load misc_tags %}
 
 {% block head_meta %}
 {% block head_css %}
@@ -55,18 +56,54 @@
         </label>
       </div>
     </form>
-    {% for status in statuses %}
+    <p>
+    {% if page_obj %}
+    {% blocktranslate count counter=page_obj.paginator.count %}
+    {{ counter }} result
+    {% plural %}
+    {{ counter }} results
+    {% endblocktranslate %}
+    {% endif %}
+    {% for status in page_obj %}
+    </p>
     <div class="card mb-3">
       <div class="card-body">
-      {{ status.status_text_tag }}
+        <ul class="list-group list-group-flush">
+          {#<li class="list-group-item">{{ status.status_text_tag }}</li>#}
+          <li class="list-group-item">{{ status.highlight|cutnl|nowhitespace|slice:"1:-1"|safe }}</li>
+        </ul>
       </div>
       <div class="card-footer">
-      @<i>{{ status.json.user.screen_name }}</i>
+      <a href="https://twitter.com/{{ status.json.user.screen_name}}">@<i>{{ status.json.user.screen_name }}</i></a>
+      {{ status.created_at|date:"SHORT_DATE_FORMAT" }} {{ status.created_at|time:"H:i" }}
       {{ status.status_url_tag }}
       {% if user.is_superuser %}{{ status.admin_link }}{% endif %}
       </div>
     </div>
     {% endfor %}
+    <p>
+    {% if page_obj %}
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?q={{ query }}&lang={{ lang }}&page=1">&laquo; {% translate "first" %}</a>
+            &nbsp;
+            <a href="?q={{ query }}&lang={{ lang }}&page={{ page_obj.previous_page_number }}">&lt; {% translate "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            &nbsp;{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}&nbsp;
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?q={{ query }}&lang={{ lang }}&page={{ page_obj.next_page_number }}">{% translate "next" %} &gt;</a>
+            &nbsp;
+            <a href="?q={{ query }}&lang={{ lang }}&page={{ page_obj.paginator.num_pages }}">{% translate "last"%} &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+    {% endif %}
+    </p>
   {% endif %}
     <!--  div class="container"-->
     <!--  div class="row"-->

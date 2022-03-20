@@ -6,10 +6,15 @@ from rest_framework import viewsets
 from .serializers import HashtagSerializer
 from .models import Hashtag
 from django.views.generic import ListView
-from django.contrib.postgres.search import SearchQuery
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchHeadline,
+    SearchRank,
+)
 from django.contrib.sites.shortcuts import get_current_site
 from common.twitter import status_url_from_id
-from django.db.models import Q
+from django.db.models import F, Q, Func
+from django.db.models.functions import Coalesce
 from .models import Treedj, Tweetdj
 from common.mixins import AdminStaffRequiredMixin
 
@@ -37,6 +42,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
     model = Tweetdj
     context_object_name = "statuses"
     template_name = "conversation/search.html"
+    paginate_by = 20
 
     @staticmethod
     def search_query(query, config, search_type):
@@ -45,8 +51,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
             config=config,
             search_type=search_type,
         )
-        
-        
+
     @staticmethod
     def is_websearch(query):
         def starts_with_dash(query):
@@ -63,7 +68,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
     def get_queryset(self):
         query = self.request.GET.get("q")
         if not query:
-            return
+            return []
         lang = self.request.GET.get("lang")
         lang_dct = {
             "fr": "french_unaccent",
@@ -80,6 +85,7 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
                 query, config, search_type
             )
         )
+        """
         q_split : list = query.split()
         if q_split and not SearchResultsList.is_websearch(query):
             query_or = " OR ".join(q_split)
@@ -94,18 +100,30 @@ class SearchResultsList(AdminStaffRequiredMixin, ListView):
                     )
                 )
             )
+        """
+        vector = F('status_text')
+        search_query = SearchResultsList.search_query(query, config, search_type)
         qs = (
             Tweetdj.objects
             .exclude(retweetedstatus=True)
             .filter(q_filter)
-            .order_by("-statusid")
+            .annotate(rank=SearchRank(vector,search_query))
+            .order_by('-rank', '-statusid')
         )
         if not lang == "null":
             qs = qs.filter(
                 Q(json__lang=lang) | Q(socialuser__language__tag=lang)
             )
         logger.debug(f'{qs.count()=}')
-        return qs
+        return qs.annotate(
+            highlight=SearchHeadline(
+                Coalesce("json__full_text", "json__text"),
+                query,
+                highlight_all=True,
+                start_sel='<mark>',
+                stop_sel='</mark>',
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super(SearchResultsList, self).get_context_data(**kwargs)

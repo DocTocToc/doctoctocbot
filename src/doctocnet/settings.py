@@ -176,6 +176,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.postgres',
+    'common',
     'constance',
     'rest_framework',
     'django_filters',

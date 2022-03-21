@@ -14,6 +14,7 @@ from conversation.tasks import handle_image
 from moderation.models import addsocialuser_from_userid
 from conversation.utils import hashtag_m2m_tweetdj
 from conversation.models import Tweetdj
+from conversation.search.search_vector import TextSearchVector
 
 
 
@@ -28,6 +29,10 @@ __status__ = "Production"
 
 logger = logging.getLogger(__name__)
 
+
+def add_status_text(tweetdj):
+    tsv=TextSearchVector(tweetdj)
+    tsv.update_status_text()
 
 
 class Addstatus:
@@ -61,7 +66,7 @@ class Addstatus:
                     parentid = self.parentid(),
                     quotedstatus = self.has_quoted_status(),
                     retweetedstatus = self.has_retweeted_status(),
-                    deleted = None
+                    deleted = None,
                 )
             logger.debug(f"function addtweetdj added status {tweetdj}")
         except IntegrityError:
@@ -87,6 +92,8 @@ class Addstatus:
                 userid = tweetdj.json["quoted_status"]["user"]["id"],
                 by_socialuserid = tweetdj.socialuser.id
             )
+        if not tweetdj.retweetedstatus:
+            add_status_text(tweetdj)
         return tweetdj, True
 
     def update(self):
@@ -153,3 +160,5 @@ class Addstatus:
         """is this status a Quote?
         """
         return "quoted_status" in self.json.keys()
+    
+

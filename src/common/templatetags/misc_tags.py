@@ -10,5 +10,5 @@ def nowhitespace(value):
     return " ".join(value.split())
 
 @register.filter
-def cutnl(value):
-    return value.replace('\\n',' ')
+def cut_escape(value):
+    return value.replace('\\n',' ').replace('\\"','"')

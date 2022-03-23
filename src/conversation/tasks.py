@@ -223,6 +223,8 @@ def handle_all_text_search_vector(n):
         [:n]
     )
     for tweetdj in queryset_iterator(tweetdj_set, chunksize=500):
+        if tweetdj.status_text:
+            continue
         tsv=TextSearchVector(tweetdj)
         tsv.update_status_text()
         if settings.DEBUG:

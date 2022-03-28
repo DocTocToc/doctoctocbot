@@ -483,7 +483,6 @@ MIGRATION_MODULES = {
 }
 
 PAGINATION = config('PAGINATION', cast=int, default=1000)
-DATA_UPLOAD_MAX_NUMBER_FIELDS = config('DATA_UPLOAD_MAX_NUMBER_FIELDS', cast=int, default=5000)
 
 MODERATION = {
     "dev": False,
@@ -662,11 +661,6 @@ COVID19_CATEGORIES = config(
     cast=Csv(),
     default='physician, midwife, pharmacist'
 )
-DATA_UPLOAD_MAX_NUMBER_FIELDS = config(
-    'DATA_UPLOAD_MAX_NUMBER_FIELDS',
-    cast=int,
-    default=1000
-) # higher than the count of fields
 
 # Time in seconds between two Friends API requests
 API_FRIENDS_PERIOD = config('API_FRIENDS_PERIOD', cast=int, default=70)

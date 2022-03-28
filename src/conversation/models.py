@@ -122,8 +122,17 @@ class Tweetdj(models.Model):
         ]
 
     def __str__(self):
-        return str(self.statusid)
-    
+        try:
+            txt = self.json["full_text"]
+        except AttributeError:
+            txt = None
+        except KeyError:
+            try:
+                txt = self.json["text"]
+            except KeyError:
+                txt = None
+        return f"{self.statusid} {txt}"
+
     def convertDatetimeToString(self):
         import datetime
         DATE_FORMAT = "%Y-%m-%d" 

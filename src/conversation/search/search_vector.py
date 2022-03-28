@@ -24,8 +24,9 @@ class TextSearchVector():
     except PostgresqlDictionary.DoesNotExist:
         simple_dict = None
 
-    def __init__(self, tweetdj: Tweetdj):
+    def __init__(self, tweetdj: Tweetdj, config: str | None = None):
         self.tweetdj = tweetdj
+        self.config = config
         self.text = self.get_text()
         self.dictionary: PostgresqlDictionary | None = None
 
@@ -168,15 +169,17 @@ class TextSearchVector():
         if not self.text:
             logger.debug("\nno text lef")
             return
-        tag = self.get_lang()
-        if tag:
-            self.dictionary = self.get_dictionary(tag)
-        else:
-            logger.debug("no allowed lang tag found: skip")
-            return
+        if not self.config:
+            tag = self.get_lang()
+            if tag:
+                self.dictionary = self.get_dictionary(tag)
+            else:
+                logger.debug("no allowed lang tag found: skip")
+                return
+            self.config = self.dictionary.cfgname
         sv=SearchVector(
             Value(self.text),
-            config=self.dictionary.cfgname
+            config=self.config
         )
         self.tweetdj.status_text=sv
         self.tweetdj.save()

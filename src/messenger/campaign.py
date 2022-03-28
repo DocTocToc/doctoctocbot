@@ -10,17 +10,17 @@ from tweepy import TweepError
 from django.db.models import Q
 from django.utils.formats import date_format
 from django.utils import timezone
-from community.helpers import activate_language
 
 from dm.models import DirectMessage
 from bot.tweepy_api import get_api
 from moderation.social import update_social_ids
 from messenger.models import Campaign, Receipt, Message, StatusLog
 from moderation.models import SocialUser, Follower
-from crowdfunding.models import ProjectInvestment
+from crowdfunding.models import ProjectInvestment, Project
 from conversation.models import Tweetdj
 from moderation.profile import recent_twitter_screen_name
-from community.helpers import site_url
+from community.helpers import site_url, activate_language
+from django.template.defaultfilters import date as _date
 
 logger = logging.getLogger(__name__)
 
@@ -306,7 +306,16 @@ class MessageManager:
             if receipt.event_id:
                 return True
 
+    def activate_language(self):
+        try:
+            community = self.campaign.account.account.community
+        except:
+            community = None
+        if community:
+            activate_language(community)
+
     def first_retweet_date(self) -> str:
+        self.activate_language()
         try:
             community = self.campaign.account.account.community
         except:
@@ -323,6 +332,33 @@ class MessageManager:
         community = self.sender.account.community
         return site_url(community)
 
+    def investment_date(self) -> str:
+        self.activate_language()
+        projects : list[Project] = [
+            cf.project for cf in self.campaign.crowdfunding.all()
+        ]
+        qs = (ProjectInvestment.objects
+            .filter(
+                user__in=self.recipient.user_set.all(),
+                project__in=projects,
+            )
+            .order_by('datetime', 'uuid')
+            .distinct('datetime', 'uuid')
+            .values_list('datetime', flat=True)
+        )
+        if not qs:
+            return ""
+        dt_str: list[str] = [
+            date_format(dt, format='DATE_FORMAT', use_l10n=True)
+            for dt in qs
+        ]
+        if len(dt_str) == 1:
+            return dt_str[0]
+        elif len(dt_str) == 2:
+            return " & ".join(dt_str)
+        else:
+            return ", ".join(dt_str[:-1]) + " & " + dt_str[-1]
+
     def _format(self):
         d = {
             'screen_name' : self.recipient.profile.screen_name_tag(),
@@ -330,6 +366,7 @@ class MessageManager:
             'retweet_count' : self.retweeted_qs.count(),
             'first_retweet_date' : self.first_retweet_date(),
             'site_url' : self.site_url(),
+            'investment_date': self.investment_date(),
         }
         return self.message.content.format(**d)
 

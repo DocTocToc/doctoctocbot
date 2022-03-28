@@ -113,10 +113,10 @@ class CampaignManager:
         if self.campaign.restrict_by_category is not None:
             qs = self.filter_category(qs)
             logger.debug(f'restrict_by_category: {qs=} count={qs.count()=}')
-        logger.debug(f'{self.campaign.restrict_by_crowdfunding=}')
         qs = self.filter_crowdfunding(qs)
-        logger.debug(f'restrict_by_crowdfunding: {qs=} count={qs.count()=}')
         logger.debug(f'{self.campaign.retweet_range=}')
+        if self.campaign.restrict_by_last_investment:
+            qs = self.filter_last_investment(qs)
         if self.campaign.retweet_range:
             qs = self.filter_retweet_range(qs)
             logger.debug(f'filter_retweet_range: {qs=} count={qs.count()=}')
@@ -162,6 +162,29 @@ class CampaignManager:
             return qs
         for toggle in [True, False]:
             qs = self.process_filter_crowdfunding(qs, toggle)
+        return qs
+
+    def filter_last_investment(self, qs):
+        """
+        Select users who participated to campaigns included in 'crowdfunding'
+        field where toggle is True, except those who participated less than
+        'restrict_by_last_investment' duration ago.
+        """
+        cutoff: datetime.datetime = (
+            timezone.now() - self.campaign.restrict_by_last_investment
+        )
+        for cc in self.campaign.crowdfunding.filter(
+            messengercrowdfunding__toggle=True
+        ):
+            _su = ProjectInvestment.objects.filter(
+                paid=True,
+                datetime__gt=cutoff,
+                project=cc.project
+            ).values_list("user__socialuser__id", flat=True)
+            ids=list(_su)
+            # remove None items
+            ids = list(filter(None, ids))
+            qs = qs.filter(~Q(id__in=ids))
         return qs
 
     def filter_retweet_range(self, qs):

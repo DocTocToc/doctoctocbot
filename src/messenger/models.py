@@ -172,9 +172,19 @@ class Campaign(models.Model):
         null=True,
         blank=True
     )
+    restrict_by_last_investment = models.DurationField(
+        null=True,
+        blank=True,
+        help_text = _(
+            'exclude if duration since last investment inferior to this value'
+        )
+    )
     crowdfunding_campaign = models.ManyToManyField(
         'crowdfunding.Campaign',
         blank=True,
+        help_text = _(
+            'deprecated in favor of crowdfunding m2m field with through model'
+        )
     )
     crowdfunding = models.ManyToManyField(
         'crowdfunding.Campaign',

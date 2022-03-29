@@ -185,7 +185,7 @@ class CampaignManager:
         else:
             return (
                 qs.filter(id__in=include_id_set)
-                | qs.exclude(in_in=exclude_id_set)
+                | qs.exclude(id__in=exclude_id_set)
             )
 
     def filter_last_investment(self, qs):

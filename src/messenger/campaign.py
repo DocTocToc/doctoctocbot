@@ -14,7 +14,13 @@ from django.utils import timezone
 from dm.models import DirectMessage
 from bot.tweepy_api import get_api
 from moderation.social import update_social_ids
-from messenger.models import Campaign, Receipt, Message, StatusLog
+from messenger.models import (
+    Campaign,
+    Receipt,
+    Message,
+    StatusLog,
+    MessengerCrowdfunding,
+)
 from moderation.models import SocialUser, Follower
 from crowdfunding.models import ProjectInvestment, Project
 from conversation.models import Tweetdj
@@ -136,9 +142,13 @@ class CampaignManager:
             qs = qs.exclude(id__in=ids)
         return qs
 
-    def process_filter_crowdfunding(self, qs, toggle: bool):
-        for cc in self.campaign.crowdfunding.filter(
-            messengercrowdfunding__toggle=toggle
+    def filter_crowdfunding(self, qs, toggle: bool):
+        include_id_set = set()
+        exclude_id_set = set()
+        for index, cc in enumerate(
+            self.campaign.crowdfunding.filter(
+                messengercrowdfunding__toggle=toggle
+            )
         ):
             _su = ProjectInvestment.objects.filter(
                 paid=True,
@@ -149,26 +159,38 @@ class CampaignManager:
             ids=list(_su)
             # remove None items
             ids = list(filter(None, ids))
-            if toggle:
+            mc = MessengerCrowdfunding.objects.get(
+                messenger_campaign=self.campaign,
+                crowdfunding_campaign=cc
+            )
+            if mc.toggle:
                 logger.debug("filter")
                 if self.campaign.crowdfunding_and:
-                    qs = qs.filter(id__in=ids)
+                    if index==0:
+                        include_id_set.update(set(ids))
+                    else:
+                        include_id_set.intersection_update(set(ids))
                 else:
-                    qs = qs | qs.filter(id__in=ids)
+                    include_id_set.update(set(ids))
             else:
                 logger.debug("exclude")
                 if self.campaign.crowdfunding_and:
-                    qs = qs.filter(~Q(id__in=ids))
+                    if index==0:
+                        exclude_id_set.update(set(ids))
+                    else:
+                        exclude_id_set.intersection_update(set(ids))
                 else:
-                    qs = qs | qs.filter(~Q(id__in=ids))
-        return qs.distinct("id")
+                    exclude_id_set.update(set(ids))
 
-    def filter_crowdfunding(self, qs):
-        if not self.campaign.crowdfunding.all():
-            return qs
-        for toggle in [True, False]:
-            qs = self.process_filter_crowdfunding(qs, toggle)
-        return qs
+        if self.campaign.crowdfunding_and:
+            return (
+                qs.filter(id__in=include_id_set).exclude(id__in=exclude_id_set)
+            )
+        else:
+            return (
+                qs.filter(id__in=include_id_set)
+                | qs.exclude(in_in=exclude_id_set)
+            )
 
     def filter_last_investment(self, qs):
         """

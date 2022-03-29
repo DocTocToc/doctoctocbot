@@ -155,10 +155,12 @@ class CampaignManager:
             ids=list(_su)
             # remove None items
             ids = list(filter(None, ids))
+            logger.debug(f'{ids=}')
             mc = MessengerCrowdfunding.objects.get(
                 messenger_campaign=self.campaign,
                 crowdfunding_campaign=cc
             )
+            logger.debug(f'{mc=} {mc.toggle=}')
             if mc.toggle:
                 logger.debug("filter")
                 if self.campaign.crowdfunding_and:
@@ -177,16 +179,17 @@ class CampaignManager:
                         exclude_id_set.intersection_update(set(ids))
                 else:
                     exclude_id_set.update(set(ids))
+            logger.debug(f'{include_id_set=}\n{exclude_id_set=}')
 
         if self.campaign.crowdfunding_and:
-            return (
-                qs.filter(id__in=include_id_set).exclude(id__in=exclude_id_set)
-            )
+            qs = qs.filter(id__in=include_id_set)
+            if exclude_id_set:
+                qs = qs.exclude(id__in=exclude_id_set)
         else:
-            return (
-                qs.filter(id__in=include_id_set)
-                | qs.exclude(id__in=exclude_id_set)
-            )
+            qs = qs.filter(id__in=include_id_set)
+            if exclude_id_set:
+                qs = qs | qs.exclude(id__in=exclude_id_set)
+        return qs
 
     def filter_last_investment(self, qs):
         """

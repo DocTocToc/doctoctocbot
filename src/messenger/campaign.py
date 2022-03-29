@@ -368,6 +368,7 @@ class MessageManager:
             .filter(
                 user__in=self.recipient.user_set.all(),
                 project__in=projects,
+                paid=True,
             )
             .order_by('datetime', 'uuid')
             .distinct('datetime', 'uuid')

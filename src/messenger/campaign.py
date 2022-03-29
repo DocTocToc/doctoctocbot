@@ -151,10 +151,16 @@ class CampaignManager:
             ids = list(filter(None, ids))
             if toggle:
                 logger.debug("filter")
-                qs = qs.filter(id__in=ids)
+                if self.campaign.crowdfunding_and:
+                    qs = qs.filter(id__in=ids)
+                else:
+                    qs = qs | qs.filter(id__in=ids)
             else:
                 logger.debug("exclude")
-                qs = qs.filter(~Q(id__in=ids))
+                if self.campaign.crowdfunding_and:
+                    qs = qs.filter(~Q(id__in=ids))
+                else:
+                    qs = qs | qs.filter(~Q(id__in=ids))
         return qs
 
     def filter_crowdfunding(self, qs):

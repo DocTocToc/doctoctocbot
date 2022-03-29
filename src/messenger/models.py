@@ -191,6 +191,10 @@ class Campaign(models.Model):
         through='MessengerCrowdfunding',
         related_name="messenger_campaigns",
     )
+    crowdfunding_and = models.BooleanField(
+        default=True,
+        help_text = "if multiple crowdfunding Campaigns: AND or OR?"
+    )
     retweet_range = IntegerRangeField(
         blank=True,
         null=True,

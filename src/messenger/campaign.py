@@ -142,14 +142,10 @@ class CampaignManager:
             qs = qs.exclude(id__in=ids)
         return qs
 
-    def filter_crowdfunding(self, qs, toggle: bool):
+    def filter_crowdfunding(self, qs):
         include_id_set = set()
         exclude_id_set = set()
-        for index, cc in enumerate(
-            self.campaign.crowdfunding.filter(
-                messengercrowdfunding__toggle=toggle
-            )
-        ):
+        for index, cc in enumerate(self.campaign.crowdfunding.all()):
             _su = ProjectInvestment.objects.filter(
                 paid=True,
                 datetime__gte=cc.start_datetime,

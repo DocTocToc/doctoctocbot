@@ -161,7 +161,7 @@ class CampaignManager:
                     qs = qs.filter(~Q(id__in=ids))
                 else:
                     qs = qs | qs.filter(~Q(id__in=ids))
-        return qs
+        return qs.distinct("id")
 
     def filter_crowdfunding(self, qs):
         if not self.campaign.crowdfunding.all():

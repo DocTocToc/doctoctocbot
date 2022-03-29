@@ -98,6 +98,7 @@ class CampaignAdmin(admin.ModelAdmin):
         'send_status',
         'status_delay',
         'status',
+        'crowdfunding_and',
     )
     readonly_fields = (
         'recipients_socialuser_tag',

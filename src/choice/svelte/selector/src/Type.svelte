@@ -14,7 +14,7 @@
 </script>
 
 {#await fetch_types() then types}
-  <select bind:value={$sTypeJsn} class="custom-select">
+  <select bind:value={$sTypeJsn} class="custom-select" id="selectType">
     <option value={defaultJsn} selected>Statut</option>
     {#each types as type (type.id) }	
       <option value={type}>{type.label}</option>

@@ -1,12 +1,14 @@
 {% load leaflet_tags %}
 
-  <div class="row">
+<div class="card mb-2 p-2">
+  <div class="row px-3">
       {% leaflet_map "main" callback="main_map_init" %}
   </div>
-  <div class="row">
+  <div class="row px-3">
       {% leaflet_map "guadeloupe" callback="map_init_2" %}
       {% leaflet_map "reunion" callback="map_init_3" %}
   </div>
+</div>
 
     <script type="text/javascript">
         function main_map_init (map, options) {

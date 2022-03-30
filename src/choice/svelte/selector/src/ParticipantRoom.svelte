@@ -54,7 +54,7 @@
         {#if room.active}
           <li
             class="list-group-item">
-            <a href="{ room.room_link }">
+            <a href="{ room.room_link }" target="_blank" class="my-1 btn btn-outline-primary" role="button" aria-pressed="true">
             { room.diploma.label } | { room.school.tag }
             </a>
             <button class="btn btn-light btn-sm" on:click|once={async () => {await fetchInactivateRooms(room.diploma.slug, room.school.slug)}}>❌</button>

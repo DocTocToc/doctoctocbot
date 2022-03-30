@@ -29,17 +29,20 @@
 
 <main>
     {#key $roomIsDirty}
+    <div class="card mb-2">
       <ParticipantRoom />
+    </div>
     {/key}
-    
-    <CreateRoom />
-
-	<form>
-	  <div class="form-group row">
-	    <label class="col-sm-2 col-form-label">Statut</label>
+    <div class="card mb-2">
+      <CreateRoom />
+    </div>
+    <div class="card mb-2">
+	  <form>
+	  <div class="form-group row m-2">
+	    <label for="selectType" class="col-sm-2 col-form-label">Statut</label>
 	    <div class="col-sm-10"><Type /></div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row m-2">
         <div class="col-sm-2 col-form-label">
           DES
         </div>
@@ -49,7 +52,8 @@
         {/key}
         </div>
 	  </div>
-	<form>
+	  <form>
+	</div>
 </main>
 
 <style>

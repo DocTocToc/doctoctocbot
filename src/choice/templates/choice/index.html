@@ -40,7 +40,7 @@
 
 {% block content %}
   {% if "twitter" in backends.not_associated %}
-  <div class="alert alert-warning" role="alert">
+  <div class="alert alert-warning mb-2" role="alert">
     <h4 class="alert-heading">Authentification</h4>
     <p>Vous devez vous connecter via votre compte Twitter pour accéder aux salons.</p>
     <hr>
@@ -50,17 +50,28 @@
   </div>
   {% endif %}
   {% if user.is_authenticated %}
-  <div class="alert alert-warning" role="alert">
+  <div class="alert alert-warning mb-2" role="alert">
     <h4 class="alert-heading">{medica} messenger</h4>
     <p>Avant de rejoindre le salon de votre choix, vous devez démarrer le messenger.</p>
     <ol>
     <li>
-    Démarrer le messenger en cliquant ici
+    Démarrer le messenger en cliquant ici: 
     <a href="https://element.medica.im/#/login" target="_blank" class="my-1 btn btn-outline-primary" role="button" aria-pressed="true">Démarrer {medica} messenger!</a>
     </li>
     <li>
-    Un nouvel onglet s'ouvre sur la page de connexion. Cliquer sur <button type="button" class="my-1 btn btn-outline-success btn-sm disabled" disabled>Se connecter avec l’authentification unique</button></p>
-    </li>  
+    Un nouvel onglet s'ouvre sur la page de connexion: cliquer sur <button type="button" class="my-1 btn btn-light btn-sm disabled" disabled>Continuer avec CAS</button></p>
+    </li>
+    <li>
+    Choisissez un statut, un DES et une ville sur la carte puis cliquer sur le bouton "Ajouter le salon".
+    </li>
+    <li>
+    Le nouveau salon apparaît dans la liste "Mes salons": cliquer sur son bouton pour le rejoindre. 
+    </li>
+    </ol>
+    <p>
+    L'application mobile {medica} messenger est beaucoup plus pratique que la version web.
+    <a href="/messenger/get-started/" target="_blank" class="my-1 btn btn-outline-primary" role="button" aria-pressed="true">Télécharger l'app mobile {medica} messenger</a>
+    </p>
   </div>
   {% endif %}
   <div id="app-container"></div>

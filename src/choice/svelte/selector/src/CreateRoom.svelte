@@ -30,35 +30,35 @@ async function fetchCreateRoom() {
 
 <div class="card">
   <div class="card-body">
-    <p class="card-text">Pour rejoindre le salon de discussion et poser des questions ou apporter des réponses, veuillez sélectionner votre statut, un DES et une ville.</p>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
         {#if $sTypeJsn.label != ""}
         <span class="badge badge-info">{$sTypeJsn.label}</span>
         {:else}
-        <span class="badge badge-light">Statut</span>
+        <p class="text-muted">Statut</p>
         {/if}
       </li>
       <li class="list-group-item">
         {#if $sDiplomaJsn.label != ""}
         <span class="badge badge-info">{$sDiplomaJsn.label}</span>
         {:else}
-        <span class="badge badge-light">DES</span>
+        <p class="text-muted">DES</p>
         {/if}
       <li class="list-group-item">
         {#if $sSchoolLabel != ""}
         <span class="badge badge-info">{$sSchoolLabel}</span>
         {:else}
-        <span class="badge badge-light">Ville</span>
+        <p class="text-muted">Ville</p>
         {/if}
       </ul>
       {#key buttonRefresh}
       {#if $sTypeJsn.label && $sDiplomaJsn.label && $sSchoolLabel}
-        <button on:click={fetchCreateRoom} class="btn btn-outline-primary btn-lg">Go!</button>
+        <button on:click={fetchCreateRoom} class="btn btn-outline-primary btn-lg">Ajouter le salon</button>
       {:else}
-        <button class="btn btn-outline-primary disabled btn-lg" disabled>Go!</button>
+        <button class="btn btn-outline-muted disabled btn-lg" disabled>Ajouter le salon</button>
       {/if}
       {/key}
+      <p class="card-text">Pour rejoindre le salon de discussion et poser des questions ou apporter des réponses, veuillez sélectionner votre statut, un DES et une ville sur la carte.</p>
     </div>
 </div>
 

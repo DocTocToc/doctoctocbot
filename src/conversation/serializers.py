@@ -172,11 +172,23 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
         if api_access and api_access.status_media:
             try:
                 return obj.json["extended_entities"]["media"]
-            except KeyError:
+            except TypeError as e:
+                logger.error(f'Type error with {obj.json=}: {e}')
+                return
+            except KeyError as e:
+                logger.error(f'Key error with {obj.json=}: {e}')
                 try:
                     return obj.json["entities"]["media"]
-                except KeyError:
-                    return
+                except TypeError as e:
+                    logger.error(f'Type error with {obj.json=}: {e}')
+                except KeyError as e:
+                    logger.error(f'Key error with {obj.json=}: {e}')
+                except BaseException as err:
+                    logger.error(f"Unexpected {err=}, {type(err)=}")
+                    raise
+            except BaseException as err:
+                logger.error(f"Unexpected {err=}, {type(err)=}")
+                raise
 
     def get_reply_count(self, obj):
         api_access = get_api_access(self.context['request'])

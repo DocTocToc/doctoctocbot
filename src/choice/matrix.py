@@ -12,6 +12,7 @@ from choice.template import choice_text
 from django.template import Context
 from matrix.models import Account
 from nio.responses import RoomCreateError, RoomInfo
+from asgiref.sync import sync_to_async
 
 from nio import (
     AsyncClient,
@@ -95,10 +96,13 @@ class CustomEncryptedClient(AsyncClient):
         logger.debug(f"{self.user_id=}")
         logger.debug(f"{self.user=}")
         try:
-            account = Account.objects.get(user_id=user_id)
-        except Account.DoesNotExist:
+            account = await sync_to_async(
+            Account.objects.get, thread_sensitive=True
+            )(user_id=user_id)
+        except:
             logger.error(f"No Account exists for {user_id}")
             sys.exit(1)
+            return
         self.user_id = user_id
         self.access_token = account.access_token
         self.device_id = account.device_id
@@ -382,9 +386,12 @@ async def main(
     # For more info, check out https://matrix-nio.readthedocs.io/en/latest/nio.html#asyncclient
     config = ClientConfig(store_sync_tokens=True)
     try:
-        account = Account.objects.get(user_id=user_id)
-        logger.debug(f"{account=}")
-    except Account.DoesNotExist:
+        account = await sync_to_async(
+            Account.objects.get, thread_sensitive=True
+            )(user_id=user_id)
+    except:
+        return
+    if not account:
         return
     store_path = f"{settings.MEDIA_ROOT}/{account.nio_store}"
     if store_path and not os.path.isdir(store_path):
@@ -413,7 +420,6 @@ async def main(
 
 
 class CreateRoomSync:
-
 
     def __init__(self, diploma, school):
         self.school = school
@@ -451,8 +457,7 @@ class CreateRoomSync:
         return choice_text(self.context, "greeting")
 
     def create(self):
-        loop = asyncio.get_event_loop()
-        resp = loop.run_until_complete(
+        resp = asyncio.run(
             main(
                 self.user_id,
                 room_alias=self.room_alias,

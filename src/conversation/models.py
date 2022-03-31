@@ -124,7 +124,8 @@ class Tweetdj(models.Model):
     def __str__(self):
         try:
             txt = self.json["full_text"]
-        except AttributeError:
+        except (AttributeError, TypeError) as e:
+            logger.error(f'Tweetdj {e} {self.statusid=}')
             txt = None
         except KeyError:
             try:

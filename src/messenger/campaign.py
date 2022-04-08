@@ -119,7 +119,8 @@ class CampaignManager:
         if self.campaign.restrict_by_category is not None:
             qs = self.filter_category(qs)
             logger.debug(f'restrict_by_category: {qs=} count={qs.count()=}')
-        qs = self.filter_crowdfunding(qs)
+        if self.campaign.crowdfunding.all():
+            qs = self.filter_crowdfunding(qs)
         logger.debug(f'{self.campaign.retweet_range=}')
         if self.campaign.restrict_by_last_investment:
             qs = self.filter_last_investment(qs)

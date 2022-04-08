@@ -85,6 +85,7 @@ class CampaignAdmin(admin.ModelAdmin):
         'restrict_by_crowdfunding',
         'crowdfunding_campaign',
         'restrict_by_last_investment',
+        'crowdfunding_project',
         'retweet_range',
         'recipients',
         'recipients_socialuser_tag',

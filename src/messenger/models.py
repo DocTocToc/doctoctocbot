@@ -195,6 +195,10 @@ class Campaign(models.Model):
         default=True,
         help_text = "if multiple crowdfunding Campaigns: AND or OR?"
     )
+    crowdfunding_project = models.ManyToManyField(
+        'crowdfunding.Project',
+        related_name="messenger_projects",
+    )
     retweet_range = IntegerRangeField(
         blank=True,
         null=True,

@@ -201,13 +201,24 @@ class CampaignManager:
         cutoff: datetime.datetime = (
             timezone.now() - self.campaign.restrict_by_last_investment
         )
-        for cc in self.campaign.crowdfunding.filter(
-            messengercrowdfunding__toggle=True
-        ):
+        if self.campaign.crowdfunding.all():
+            for cc in self.campaign.crowdfunding.filter(
+                messengercrowdfunding__toggle=True
+            ):
+                _su = ProjectInvestment.objects.filter(
+                    paid=True,
+                    datetime__gt=cutoff,
+                    project=cc.project
+                ).values_list("user__socialuser__id", flat=True)
+                ids=list(_su)
+                # remove None items
+                ids = list(filter(None, ids))
+                qs = qs.filter(~Q(id__in=ids))
+        else:
             _su = ProjectInvestment.objects.filter(
                 paid=True,
                 datetime__gt=cutoff,
-                project=cc.project
+                project__in=self.campaign.crowdfunding_project.all()
             ).values_list("user__socialuser__id", flat=True)
             ids=list(_su)
             # remove None items

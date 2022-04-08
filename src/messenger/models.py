@@ -198,6 +198,7 @@ class Campaign(models.Model):
     crowdfunding_project = models.ManyToManyField(
         'crowdfunding.Project',
         related_name="messenger_projects",
+        blank=True,
     )
     retweet_range = IntegerRangeField(
         blank=True,

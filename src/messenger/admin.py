@@ -164,7 +164,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         'created',
     )
     search_fields = (
-        'user',
+        'user__profile__json__screen_name',
         'event_id',
     )
     list_filter = [

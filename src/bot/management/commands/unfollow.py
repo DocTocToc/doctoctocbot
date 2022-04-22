@@ -30,6 +30,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "-d",
             "--days",
+            required=True,
             type=int,
             help="destroy unrequited friendship after this many days"
         )

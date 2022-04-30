@@ -68,9 +68,9 @@ def add_leaf(parent_id, statusid):
             parent=parent
         )
     except IntegrityError as e:
-        logger.error(f"Integrity error: {e}")
+        logger.debug(f"Integrity error: {e}")
     except DatabaseError as e:
-        logger.error(f" Database error: {e}")
+        logger.debug(f" Database error: {e}")
 
 def add_tweetdj_to_treedj():
     # create a set of all treedj pk

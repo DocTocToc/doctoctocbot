@@ -156,9 +156,9 @@ def add_leaf(node_id, parent_id):
             parent=parent
         )
     except IntegrityError as e:
-        logger.error(f"Integrity error: {e}")
+        logger.debug(f"Integrity error: {e}")
     except DatabaseError as e:
-        logger.error(f" Database error: {e}")
+        logger.debug(f" Database error: {e}")
 
 def question_api(start_status_id: int) -> bool:
     try:

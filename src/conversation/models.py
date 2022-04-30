@@ -249,19 +249,20 @@ def create_tree(statusid):
     try:
         return Treedj.objects.create(statusid=statusid)
     except (DatabaseError, IntegrityError) as e:
-        logger.error(str(e))
+        logger.debug(str(e))
 
 def create_leaf(statusid, parentid):
     try:
         parent_mi = Treedj.objects.get(statusid=parentid)
     except Treedj.DoesNotExist:
-        return None
+        return
     try:
         return Treedj.objects.get(statusid=statusid, parent=parent_mi)
     except Treedj.DoesNotExist:
-        return Treedj.objects.create(statusid=statusid, parent=parent_mi)
-    except (DatabaseError, IntegrityError) as e:
-        logger.error(str(e))
+        try:
+            return Treedj.objects.create(statusid=statusid, parent=parent_mi)
+        except (DatabaseError, IntegrityError) as e:
+            logger.debug(str(e))
 
 class Retweeted(Versionable):
     status = models.BigIntegerField()

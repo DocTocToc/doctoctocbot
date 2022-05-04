@@ -89,7 +89,6 @@ $: if ( selected_categories.length > 0 ) {
 } else {
 	query=""
 }
-
 </script>
  
 <style>
@@ -100,7 +99,7 @@ ul {
 	}
 </style>
 
-  <h3>{title}</h3>
+  <h4>{title}</h4>
    <ul>
    {#if id=="cat"}
    <li>

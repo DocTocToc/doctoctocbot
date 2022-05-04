@@ -163,6 +163,7 @@ class ApiAccessAdmin(admin.ModelAdmin):
         'status_media',
         'reply_count',
         'filter_author_self',
+        'search_engine',
     )
     list_filter = (
     'community',

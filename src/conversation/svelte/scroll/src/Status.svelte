@@ -55,6 +55,16 @@
 		  return true
 	  }
   }
+  function displayStatus(status) {
+    return status.highlight ? status.highlight : status.text;
+  }
+  function processHighlight(value) {
+    value = value.slice(1, -1);
+    value = value.replace(/\\n/g, " ");
+    value = value.replace(/\r?\n|\r/g, " ");
+    value = value.replace(/\\"/g, '"');
+    return value;
+  }
 </script>
 
 <style>
@@ -102,7 +112,11 @@
       <span class="badge badge-secondary">{status.author_specialty}</span>
       {/if}
       </h6>
+      {#if status.highlight}
+      {@html processHighlight(status.highlight)}
+      {:else}
       <p class="card-text">{status.text}</p>
+      {/if}
       {#if categoryOrTag(status) }
       <div class="mx-0 mt-0 mb-1">
         {#if has_status_category}

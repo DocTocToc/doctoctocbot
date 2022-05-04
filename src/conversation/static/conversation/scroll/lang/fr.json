@@ -20,5 +20,16 @@
 "reply": {
   "singular": "réponse",
   "plural": "réponses"
-  }
+  },
+"or" : "ou",
+"english": "Anglais",
+"loading": "Chargement...",
+"search": "Rechercher",
+"result": "{n, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+"no result": "Aucun document ne correspond aux termes de recherche spécifiés.",
+"suggestions": "Suggestions",
+"suggestion0": "Réinitialisez les filtres à leurs valeurs par défaut en rechargeant la page.",
+"suggestion1": "Vérifiez l’orthographe des termes de recherche.",
+"suggestion2": "Essayez d'autres mots.",
+"suggestion3": "Utilisez des mots clés plus généraux."
 }

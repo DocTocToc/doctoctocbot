@@ -2,6 +2,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
 from django.shortcuts import get_object_or_404
+from django.contrib.sites.shortcuts import get_current_site
 
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
@@ -13,8 +14,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
 from community.helpers import get_community
-from community.models import ApiAccess
-from community.serializers import ApiAccessSerializer
+from community.models import ApiAccess, Community
+from community.serializers import (
+    ApiAccessSerializer,
+    CommunityLanguageSerializer
+)
 from users.utils import get_api_level
 
 
@@ -38,6 +42,19 @@ class UserApiAccessView(viewsets.ModelViewSet):
             return Response(data={"message": "No corresponding ApiAccess in DB"})
         serializer = ApiAccessSerializer(api_access)
         return Response(data=serializer.data)
+
+
+class CommunityLanguageViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Community.objects.all()
+    serializer_class = CommunityLanguageSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(
+            id=get_current_site(self.request).community.id,
+        )
+
 """
 class UserApiAccessView(GenericAPIView):
     queryset = ApiAccess.objects.all()

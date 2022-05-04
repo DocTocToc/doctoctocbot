@@ -24,7 +24,7 @@
 	}
 </script>
 
-<h3>{$_("status_author")}</h3>
+<h4>{$_("status_author")}</h4>
 <Set chips={choices} let:chip key={(chip) => chip.k} choice bind:selected>
   <Chip {chip}>
     <Text>{chip.v}</Text>

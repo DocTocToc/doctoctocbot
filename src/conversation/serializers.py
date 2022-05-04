@@ -42,6 +42,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     status_tag = serializers.SerializerMethodField()
     media = serializers.SerializerMethodField()
     reply_count = serializers.SerializerMethodField()
+    highlight = serializers.CharField()
 
     class Meta:
         model = Tweetdj
@@ -61,6 +62,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             'status_tag',
             'media',
             'reply_count',
+            'highlight',
         )
 
     def get_id_str(self, obj):

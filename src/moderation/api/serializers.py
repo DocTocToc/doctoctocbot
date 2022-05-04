@@ -5,14 +5,8 @@ from moderation.models import (
     Profile,
     Category,
     Human,
+    UserCategoryRelationship,
 )
-
-class ModeratorSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Moderator
-        fields = ('socialuser', 'active', 'public',)
-
 
 class ProfileSerializer(serializers.ModelSerializer):
 
@@ -23,6 +17,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             'json',
             'created',
             'updated',
+        )
+
+
+class HumanSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Human
+        fields = (
+            'id',
+            'created',
         )
 
 
@@ -37,20 +41,50 @@ class CategorySerializer(serializers.ModelSerializer):
         )
 
 
-class HumanSerializer(serializers.ModelSerializer):
-    
+class SocialUserSerializer2(serializers.ModelSerializer):
+    profile = ProfileSerializer
+
     class Meta:
-        model = Human
+        model = SocialUser
         fields = (
             'id',
-            'created',
+            'user_id',
+            'profile',
         )
+        depth=1
+
+
+class UserCategoryRelationshipSerializer(serializers.ModelSerializer):
+    social_user = SocialUserSerializer2(
+        many=False,
+        read_only=True
+    )
+    moderator = SocialUserSerializer2(
+        many=False,
+        read_only=True
+    )
+
+    class Meta:
+        model = UserCategoryRelationship
+        fields = (
+            'social_user',
+            'category',
+            'moderator',
+            'community',
+            'created',
+            'updated',
+        )
+        depth=2
 
 
 class SocialUserSerializer(serializers.ModelSerializer):
     category= CategorySerializer
     profile = ProfileSerializer
     human = HumanSerializer(source='human_set', many=True, read_only=True)
+    categoryrelationships = UserCategoryRelationshipSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = SocialUser
@@ -61,6 +95,19 @@ class SocialUserSerializer(serializers.ModelSerializer):
             'active',
             'profile',
             'human',
+            'categoryrelationships',
         )
         depth=1
-        
+
+
+
+
+
+
+class ModeratorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Moderator
+        fields = ('socialuser', 'active', 'public',)
+
+

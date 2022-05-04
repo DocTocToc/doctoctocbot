@@ -20,5 +20,16 @@
 "reply": {
   "singular": "reply",
   "plural": "replies"
-  }
+  },
+"or": "or",
+"english": "English",
+"loading": "Loading...",
+"search": "Search",
+"result": "{n, plural, =0 {No results} one {# result} other {# results}}",
+"no result": "Your search did not match any documents.",
+"suggestions": "Suggestions",
+"suggestion0": "Reset filters to their defaults by reloading the page.",
+"suggestion1": "Make sure that all words are spelled correctly.",
+"suggestion2": "Try different keywords.",
+"suggestion3": "Try more general keywords."
 }

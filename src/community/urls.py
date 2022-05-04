@@ -4,7 +4,11 @@ from rest_framework import routers
 from . import api_views
 
 router = routers.DefaultRouter()
-#router.register(r'user-api-access', api_views.UserApiAccessView, basename='ApiAccess')
+router.register(
+    r'community/language',
+    api_views.CommunityLanguageViewSet,
+    basename='CommunityLanguage'
+)
 
 app_name = 'community'
 

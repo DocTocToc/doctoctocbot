@@ -2,7 +2,14 @@ import logging
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
-from django.db.models import Q, DateTimeField
+from django.db.models import F, Q, DateTimeField, Value
+from django.db.models.functions import Coalesce
+
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchHeadline,
+    SearchRank,
+)
 
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -31,11 +38,19 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
     permission_classes = (AllowAny,)
 
+    @staticmethod
+    def search_query(query, config, search_type):
+        return SearchQuery(
+            query,
+            config=config,
+            search_type=search_type,
+        )
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = self.filter_by_site(qs)
         api_access = get_api_access(self.request)
+        logger.debug(f'{api_access=}')
+        qs = self.filter_by_type(qs, api_access)
 
         # from_datetime
         req_from_datetime = self.request.query_params.getlist('from_datetime')
@@ -99,6 +114,69 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs[:api_access.status_limit]
         return qs
 
+    def filter_by_type(self, queryset, api_access):
+        """Determine the type of the query. 
+        2 types: 'question' (default) and 'search'.
+        """
+        req_search = self.request.query_params.getlist('search')
+        logger.debug(f'{req_search=}')
+        if req_search:
+            logger.debug(f'{api_access.search_engine=}')
+            if api_access.search_engine:
+                return self.filter_by_search(queryset)
+            else:
+                return queryset.none()
+        else:
+            return self.filter_by_site(queryset)
+
+    def filter_by_search(self, queryset):
+        req_search = self.request.query_params.get('search')
+        if not req_search:
+            return queryset.none()
+        lang = self.request.query_params.get("lang")
+        logger.debug(f'{lang=}')
+        lang_dct = {
+            "fr": "french_unaccent",
+            "en": "english",
+            "null": None  
+        }
+        search_type="websearch"
+        try:
+            config = lang_dct[lang]
+        except:
+            config = None
+        search_query = TweetdjViewSet.search_query(
+            req_search,
+            config,
+            search_type
+        )
+        logger.debug(f'{search_query=} {search_query.__dict__=}')
+        q_filter = Q(status_text=search_query)
+        vector = F('status_text')
+        queryset = (
+            queryset
+            .exclude(retweetedstatus=True)
+            .filter(q_filter)
+            .annotate(rank=SearchRank(vector,search_query))
+            .order_by('-rank', '-statusid')
+        )
+        logger.debug(f'{queryset=} {queryset.count()=}')
+        if not lang == "null":
+            queryset = queryset.filter(
+                Q(json__lang=lang) | Q(socialuser__language__tag=lang)
+            )
+        return queryset.annotate(
+            highlight=SearchHeadline(
+                Coalesce("json__full_text", "json__text"),
+                search_query,
+                highlight_all=True,
+                start_sel='<mark>',
+                stop_sel='</mark>',
+                max_fragments=None,
+                config=config,
+            )
+        )
+
     def filter_by_author_is_self(self, queryset):
         user = self.request.user
         if not user.is_authenticated:
@@ -119,7 +197,7 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
             su = get_current_site(self.request).community.account.socialuser
         except:
             return queryset
-        return queryset.filter(retweeted_by=su)
+        return queryset.filter(retweeted_by=su).annotate(highlight=Value(''))
     
     def filter_by_categories(self, queryset, cats):
         logger.debug(f"{queryset} {cats}")
@@ -139,3 +217,4 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
     def filter_by_to_datetime(self, queryset, to_datetime):
         to_datetime = DateTimeField().to_python(to_datetime)
         return queryset.filter(created_at__lte=to_datetime)
+

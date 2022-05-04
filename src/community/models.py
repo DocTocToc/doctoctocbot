@@ -602,6 +602,11 @@ class ApiAccess(models.Model):
         verbose_name=_('Filter author self'),
         help_text=_("Filter status by authenticated author."),
     )
+    search_engine = models.BooleanField(
+        default=False,
+        verbose_name=_('Search engine'),
+        help_text=_("Search engine."),
+    )
 
     objects = ApiAccessManager()
 

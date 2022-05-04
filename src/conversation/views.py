@@ -14,7 +14,7 @@ from django.contrib.postgres.search import (
 from django.contrib.sites.shortcuts import get_current_site
 from common.twitter import status_url_from_id
 from django.db.models import F, Q, Func
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Replace
 from .models import Treedj, Tweetdj
 from common.mixins import AdminStaffRequiredMixin
 

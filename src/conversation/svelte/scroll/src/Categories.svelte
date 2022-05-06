@@ -5,9 +5,9 @@ import { _ } from "svelte-i18n";
 export let id;
 export let title;
 export let categories = [];
-export let selected_categories;
+export let selected_categories = [];
 let cat_length = 0;
-let checkAll = true;
+let checkAll = false;
 export let query = "";
 
 function arrayRemove(arr, value) {
@@ -43,9 +43,11 @@ function checkedCount() {
   return count;
 }
 
-$: if ( selected_categories.length == categories.length ) {
+/*
+$: if ( selected_categories.length == categories.length && selected_categories.length > 0 ) {
 	  checkAll = true;
 	}
+*/
 
 $: if ( selected_categories.length < categories.length ) {
   checkAll = false;
@@ -58,7 +60,7 @@ function checkAllClicked() {
 	setAllCheckboxesTo(true);
     //console.log(`total: ${categories.length}`);
     //console.log(`selected: ${selected_categories.length}`);
-	checkAll=true;
+	//checkAll=true;
   } else if ( selected_categories.length == categories.length ) {
 	if  (selected_categories.length == 0) {
 	  setAllCheckboxesTo(true);

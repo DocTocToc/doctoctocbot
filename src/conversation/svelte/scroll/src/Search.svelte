@@ -59,7 +59,15 @@
 
   $: color = disabled ? "primary" : "secondary";
 
-  $: searchQuery = searchValue ? ("&search=" + searchValue + "&lang=" + selected) : "";
+  //$: searchQuery = searchValue ? ("&search=" + searchValue + "&lang=" + selected) : "";
+  $: searchQuery = searchValue ? ('&' + getSearchParams(searchValue, selected)) : "";
+
+  function getSearchParams(searchValue, selected) {
+    const params = new URLSearchParams();
+    params.append('search', searchValue);
+    params.append('lang', selected);
+    return params.toString();
+  }
 
   function doSearch() {
     searchValue = inputValue;

@@ -45,7 +45,7 @@
     tag: $_("uncategorized"),
     summary: $_("uncategorized_summary"),
     taggit_tag: 0,
-    checked: true,
+    checked: false,
   };
   let selected_categories = [];
   let selected_tags = [];
@@ -112,7 +112,7 @@
     resCategories = await response.json();
     categories = resCategories["results"];
     for (var i = 0; i < categories.length; i++) {
-      categories[i].checked = true;
+      categories[i].checked = false;
       selected_categories.push(categories[i].taggit_tag);
     }
     categories.push(not_categorized);

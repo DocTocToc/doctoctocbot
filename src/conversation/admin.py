@@ -410,8 +410,9 @@ class SearchLogAdmin(admin.ModelAdmin):
         'id',
         'search_parameter_tag',
         'lang_parameter_tag',
+        'query_parameters',
         'site',
-        'created',
+        'created_tag',
     )
 
     list_filter=(
@@ -445,6 +446,18 @@ class SearchLogAdmin(admin.ModelAdmin):
             return
 
     search_parameter_tag.short_description = 'Search'
+
+    def created_tag(self, obj):
+        try:
+            return (
+            '{:%Y-%m-%d %H:%M:%S}.{:03d}'
+            .format(obj.created, obj.created.microsecond // 1000)
+        )
+        except:
+            return
+
+    created_tag.short_description = 'Created'
+    
 
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)

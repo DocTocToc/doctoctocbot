@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.urls import reverse
+from django.contrib.sites.models import Site
 
 logger = logging.getLogger(__name__)
 
@@ -373,4 +374,26 @@ class DoNotRetweetStatus(Versionable):
                 condition=Q(version_end_date__isnull=True),
                 name='current_status_community'
             ),
-        ] 
+        ]
+
+
+class SearchLog(models.Model):
+    query_parameters = models.JSONField()
+    categories = models.ManyToManyField(
+        "moderation.Category"
+    )
+    taxonomies = models.ManyToManyField(
+        "hcp.Taxonomy"
+    )
+    site = models.ForeignKey(
+        Site,
+        related_name = "search_logs",
+        on_delete = models.PROTECT,
+    )
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+        return f'Search log {self.id} {self.query_parameters}'

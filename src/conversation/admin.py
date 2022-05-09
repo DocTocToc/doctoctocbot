@@ -30,6 +30,7 @@ from .models import (
     TwitterLanguageIdentifier,
     DoNotRetweetStatus,
     PostgresqlDictionary,
+    SearchLog,
 )
 
 
@@ -403,6 +404,47 @@ class PostgresqlDictionaryAdmin(admin.ModelAdmin):
         'cfgname',
     )
 
+@admin.register(SearchLog)
+class SearchLogAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'search_parameter_tag',
+        'lang_parameter_tag',
+        'site',
+        'created',
+    )
+
+    list_filter=(
+        'site',
+        'created',
+    )
+
+    readonly_fields = (
+        'id',
+        'search_parameter_tag',
+        'lang_parameter_tag',
+        'query_parameters',
+        'categories',
+        'taxonomies',
+        'site',
+        'created',
+    )
+
+    def search_parameter_tag(self, obj):
+        try:
+            return obj.query_parameters["search"]
+        except:
+            return
+
+    search_parameter_tag.short_description = 'Search'
+
+    def lang_parameter_tag(self, obj):
+        try:
+            return obj.query_parameters["lang"]
+        except:
+            return
+
+    search_parameter_tag.short_description = 'Search'
 
 admin.site.register(Treedj, TreedjAdmin)
 admin.site.register(Hashtag, HashtagAdmin)

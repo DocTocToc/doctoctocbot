@@ -261,6 +261,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFriend,
         by_null_filter('category', 'Category'),
         'active',
+        'social_media',
         'language',
     )
 

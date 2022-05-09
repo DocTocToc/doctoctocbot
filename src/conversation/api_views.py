@@ -4,26 +4,21 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.db.models import F, Q, DateTimeField, Value
 from django.db.models.functions import Coalesce
-
 from django.contrib.postgres.search import (
     SearchQuery,
     SearchHeadline,
     SearchRank,
 )
-
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
-
 from . import models
 from rest_framework.pagination import PageNumberPagination
-
 from community.helpers import get_community
 from users.utils import get_api_level
-
 from moderation.models import SocialUser
 from tagging.models import Category, TagKeyword
-
 from conversation.serializers import get_api_access, TweetdjSerializer
+from conversation.search.logging import SearchLogger
 
 logger = logging.getLogger(__name__)
 
@@ -51,9 +46,12 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
         api_access = get_api_access(self.request)
         logger.debug(f'{api_access=}')
         qs = self.filter_by_type(qs, api_access)
-
+        if self.request.user.is_authenticated:
+            sl = SearchLogger(self.request)
+            sl.log()
         # from_datetime
         req_from_datetime = self.request.query_params.getlist('from_datetime')
+        logger.debug(f'{self.request.query_params}')
         logger.debug(f"{req_from_datetime=}")
         if req_from_datetime and len(req_from_datetime) == 1:
             qs = self.filter_by_from_datetime(qs, req_from_datetime[0])

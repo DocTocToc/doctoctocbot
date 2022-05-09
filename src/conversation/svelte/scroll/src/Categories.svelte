@@ -1,7 +1,9 @@
 <script>
-
+import IconButton, { Icon } from '@smui/icon-button';
+import Button, { Label } from '@smui/button';
 import {onMount} from "svelte";
 import { _ } from "svelte-i18n";
+let initialOff = true;
 export let id;
 export let title;
 export let categories = [];
@@ -14,6 +16,12 @@ function arrayRemove(arr, value) {
 	return arr.filter(function(ele){ return ele != value; });
 }
 
+onMount(() => {
+  selected_categories = [];
+  query = "";
+	})
+
+/*
 function addCheckedToSelected(bool) {
   for (var i = 0; i < categories.length; i++) {
 	categories[i].checked = bool;
@@ -25,22 +33,17 @@ function addCheckedToSelected(bool) {
     }
   }
 }
-
+*/
 function setAllCheckboxesTo(bool) {
   for (var i = 0; i < categories.length; i++) {
-    categories[i].checked = bool;	
+    categories[i].checked = bool;
   }
-  addCheckedToSelected(bool)
-}
-
-function checkedCount() {
-  let count = 0;
-  for (var i = 0; i < categories.length; i++) {
-    if (categories[i].checked === true) {
-      count += 1; 
+  selected_categories = [];
+  if (bool) {
+    for (let category of categories) {
+      selected_categories.push(category.taggit_tag)
     }
   }
-  return count;
 }
 
 /*
@@ -49,29 +52,18 @@ $: if ( selected_categories.length == categories.length && selected_categories.l
 	}
 */
 
-$: if ( selected_categories.length < categories.length ) {
-  checkAll = false;
-}
-
 function checkAllClicked() {
   //console.log(`total: ${categories.length}`);
   //console.log(`selected: ${selected_categories.length}`);
-  if ( selected_categories.length < categories.length ) {
-	setAllCheckboxesTo(true);
+  if ( selected_categories.length == categories.length ) {
+	setAllCheckboxesTo(false);
     //console.log(`total: ${categories.length}`);
     //console.log(`selected: ${selected_categories.length}`);
-	//checkAll=true;
-  } else if ( selected_categories.length == categories.length ) {
-	if  (selected_categories.length == 0) {
+  } else {
 	  setAllCheckboxesTo(true);
 	  //console.log(`total: ${categories.length}`);
 	  //console.log(`selected: ${selected_categories.length}`);
-	} else {
-	  setAllCheckboxesTo(false);
-	  //console.log(`total: ${categories.length}`);
-	  //console.log(`selected: ${selected_categories.length}`);
 	}
-  }
 }
 
 function buildQuery() {
@@ -91,6 +83,7 @@ $: if ( selected_categories.length > 0 ) {
 } else {
 	query=""
 }
+
 </script>
  
 <style>
@@ -102,19 +95,28 @@ ul {
 </style>
 
   <h4>{title}</h4>
-   <ul>
    {#if id=="cat"}
-   <li>
-   <div class="custom-control custom-checkbox">
-     <input class="custom-control-input" id="checkAll{id}" type="checkbox" bind:checked="{checkAll}" on:click="{checkAllClicked}">
-     <label class="custom-control-label font-weight-bold" for="checkAll{id}"><bold>{$_("select_all")}</bold></label>
-   </div>
-   </li>
-   {/if}
+   <div style="display: flex; align-items: center;">
+    <IconButton toggle bind:pressed={initialOff} on:click={checkAllClicked}>
+      <Icon class="material-icons">star</Icon>
+      <Icon class="material-icons" on>star_border</Icon>
+    </IconButton>
+    <Button on:click={() => (initialOff = !initialOff)} on:click={checkAllClicked}>
+      <Label>
+        {#if initialOff}
+        {$_("select_all")}
+        {:else}
+        {$_("clear_all")}
+        {/if}
+      </Label>
+    </Button>
+  </div>
+  {/if}
+  <ul>
    {#each categories as category, i}
    <li>
      <div class="custom-control custom-checkbox">
-       <input class="custom-control-input" id="customCheck{category.taggit_tag}" type="checkbox" bind:group={selected_categories} value="{category.taggit_tag}" bind:checked="{category.checked}">
+       <input class="custom-control-input" id="customCheck{category.taggit_tag}" type=checkbox bind:group={selected_categories} name="categories" value={category.taggit_tag} bind:checked="{category.checked}">
        <label class="custom-control-label" for="customCheck{category.taggit_tag}">{category.tag}</label>
      </div>
    </li>

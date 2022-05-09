@@ -10,6 +10,7 @@
 "status_categories": "Catégories",
 "status_tags": "Étiquettes",
 "select_all": "Tout sélectionner",
+"clear_all": "Tout effacer",
 "uncategorized": "sans catégorie",
 "uncategorized_summary": "N'appartient à aucune catégorie.",
 "view_on_twitter": "Voir sur Twitter",

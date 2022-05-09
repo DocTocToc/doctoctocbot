@@ -113,10 +113,10 @@
     categories = resCategories["results"];
     for (var i = 0; i < categories.length; i++) {
       categories[i].checked = false;
-      selected_categories.push(categories[i].taggit_tag);
+      //selected_categories.push(categories[i].taggit_tag);
     }
     categories.push(not_categorized);
-    selected_categories.push(not_categorized.taggit_tag);
+    //selected_categories.push(not_categorized.taggit_tag);
   }
 
   async function fetchDataTags() {

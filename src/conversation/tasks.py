@@ -122,17 +122,19 @@ def handle_community_members_timeline(community_name: str):
         logger.error(f"'{community_name}' does not exist.")
         return
     community_timeline(community)
-    
+
 @shared_task
-def handle_category_timeline(category_name: str):
-    try:
-        category = Category.objects.get(name=category_name)
-    except Category.DoesNotExist:
-        return
-    user_id_list = category.twitter_id_list()
-    shuffle(user_id_list)
-    user_id_list_timeline(user_id_list)
-   
+def handle_category_timeline(category_name_lst: [str]):
+    for category_name in category_name_lst:
+        try:
+            category = Category.objects.get(name=category_name)
+        except Category.DoesNotExist as e:
+            logger.error(f"Category {category_name} does not exist: {e}")
+            continue
+        user_id_list = category.twitter_id_list()
+        shuffle(user_id_list)
+        user_id_list_timeline(user_id_list)
+
 @shared_task
 def handle_image(url, filename):
     for name in ["thumb", "large"]:

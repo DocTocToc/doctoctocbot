@@ -29,22 +29,24 @@
   })  
   
   function dateTimeLocale(id_str) {
-	    var datetime = dateTime(id_str);
-	    return dayjs(datetime).format('llll')
-	  }
+	  var datetime = dateTime(id_str);
+	  return dayjs(datetime).format('llll')
+	}
   
   function dateTime(id_str) {
-	let status_id = BigInt(id_str);
-	let offset = BigInt(1288834974657);
-	let timestamp = ((status_id >> BigInt(22)) + offset);
-	var created_at = new Date(Number(timestamp));
+	  let status_id = BigInt(id_str);
+	  let offset = BigInt(1288834974657);
+	  let timestamp = ((status_id >> BigInt(22)) + offset);
+	  var created_at = new Date(Number(timestamp));
     return created_at;
   }
+
   function fromNow(id_str) {
 	let dt = dateTime(id_str);
     let dtFromNow = dayjs(dt).locale(getLocaleFromNavigator()).fromNow();
     return dtFromNow;
   }
+
   function categoryOrTag(status) {
 	  if ( status.status_tag == null && status.status_category == null ) {
 		  return false
@@ -55,15 +57,26 @@
 		  return true
 	  }
   }
-  function displayStatus(status) {
-    return status.highlight ? status.highlight : status.text;
+
+  function replaceUrls(value) {
+    let url;
+    for (url of status.urls) {
+      let link = `<a href="${url.expanded_url}" class="link-primary">${url.expanded_url}</a>`;
+      value = value.replace(url.url, link)
+    }
+    return value;
   }
+
+  function processStatus(text) {
+    return replaceUrls(text);
+  }
+
   function processHighlight(value) {
     value = value.slice(1, -1);
     value = value.replace(/\\n/g, " ");
     value = value.replace(/\r?\n|\r/g, " ");
     value = value.replace(/\\"/g, '"');
-    return value;
+    return replaceUrls(value);
   }
 </script>
 
@@ -115,7 +128,7 @@
       {#if status.highlight}
       {@html processHighlight(status.highlight)}
       {:else}
-      <p class="card-text">{status.text}</p>
+      <p class="card-text">{@html processStatus(status.text)}</p>
       {/if}
       {#if categoryOrTag(status) }
       <div class="mx-0 mt-0 mb-1">

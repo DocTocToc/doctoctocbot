@@ -43,6 +43,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
     media = serializers.SerializerMethodField()
     reply_count = serializers.SerializerMethodField()
     highlight = serializers.CharField()
+    urls = serializers.SerializerMethodField()
 
     class Meta:
         model = Tweetdj
@@ -63,6 +64,7 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
             'media',
             'reply_count',
             'highlight',
+            'urls',
         )
 
     def get_id_str(self, obj):
@@ -202,6 +204,13 @@ class TweetdjSerializer(TaggitSerializer, serializers.ModelSerializer):
                 return
             community = get_community(self.context['request'])
             return reply_by_member_count(status_id, community)
+
+    def get_urls(self, obj):
+        try:
+            return obj.json['entities']['urls']
+        except TypeError as e:
+            logger.debug(e)
+            return
 
 
 def tagging_categories_id(community) -> List[int]:

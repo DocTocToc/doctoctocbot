@@ -34,12 +34,10 @@
     };
     let data = await fetch(uri).then((x) => x.json());
     let lang = data[0];
-    console.log(lang);
     let communityLanguage = {
       name: lang.language_name.capitalize(),
       code: lang.language,
     };
-    console.log(communityLanguage);
     selected = communityLanguage.code;
     let or = {
       name:
@@ -50,9 +48,7 @@
         $_("english"),
       code: "null",
     };
-    console.log(or);
     options = [communityLanguage, defaultLanguage, or];
-    console.log(options);
   });
 
   $: disabled = !Boolean(inputValue);

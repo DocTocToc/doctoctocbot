@@ -278,6 +278,7 @@
           {/if}
         {/if}
         {#each data as item}
+          {#if item.text}
           <li class="list-group-item">
             <Status
               status={item}
@@ -286,6 +287,7 @@
               bind:has_status_tag
             />
           </li>
+          {/if}
         {/each}
         <InfiniteScroll
           bind:hasMore

@@ -120,6 +120,7 @@ class Tweetdj(models.Model):
         indexes = [
             models.Index(fields=['userid'], name='userid_idx'),
             GinIndex(fields=["status_text"]),
+            models.Index(fields=['-created_at']),
         ]
 
     def __str__(self):

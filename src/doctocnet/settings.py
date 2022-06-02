@@ -15,8 +15,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 CONFIG_DIR = Path(BASE_DIR + "/..")
 config = AutoConfig(search_path = CONFIG_DIR)
+
+SITE_ID = config('SITE_ID_1', cast=int, default=1)
+
 DJANGO_LOG_DIR = config('DJANGO_LOG_DIR', default='')
-LOG_FILE = os.path.join(DJANGO_LOG_DIR, "django.log")
+LOG_FILE = os.path.join(DJANGO_LOG_DIR, f"django{SITE_ID}.log")
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 

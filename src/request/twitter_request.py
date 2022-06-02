@@ -17,6 +17,8 @@ def get_incoming_friendship(community):
     api = twitter_api(username=screen_name)
     try:
         return api.IncomingFriendship()
+    except AttributeError:
+        return
     except TweepError as e:
         logger.error(f'{e}')
     except Exception as e:

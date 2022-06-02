@@ -12,10 +12,9 @@ from django.conf import settings
 from conversation.retweet import add_retweeted_by, add_quoted_by
 from conversation.tasks import handle_image
 from moderation.models import addsocialuser_from_userid
-from conversation.utils import hashtag_m2m_tweetdj
-from conversation.models import Tweetdj
+from conversation.models import Tweetdj, Hashtag
 from conversation.search.search_vector import TextSearchVector
-
+from common.utils import dictextract
 
 
 __author__ = "Jerome Pinguet"
@@ -54,7 +53,7 @@ class Addstatus:
     def create(self):
         try:
             with transaction.atomic():
-                tweetdj = Tweetdj.objects.create(
+                self.tweetdj = Tweetdj.objects.create(
                     statusid = self.statusid,
                     userid = self.userid(),
                     socialuser = addsocialuser_from_userid(self.userid()),
@@ -68,7 +67,7 @@ class Addstatus:
                     retweetedstatus = self.has_retweeted_status(),
                     deleted = None,
                 )
-            logger.debug(f"function addtweetdj added status {tweetdj}")
+            logger.debug(f"function addtweetdj added status {self.tweetdj}")
         except IntegrityError:
             logger.warn(
                 f"Status {self.statusid} already exists in database."
@@ -79,22 +78,22 @@ class Addstatus:
                 return None, False
         except DatabaseError:
             return None, False
-        hashtag_m2m_tweetdj(tweetdj)
-        if tweetdj.retweetedstatus:
+        self.hashtag_m2m()
+        if self.tweetdj.retweetedstatus:
             add_retweeted_by(
-                statusid = tweetdj.json["retweeted_status"]["id"],
-                userid = tweetdj.json["retweeted_status"]["user"]["id"],
-                by_socialuserid = tweetdj.socialuser.id
+                statusid = self.json["retweeted_status"]["id"],
+                userid = self.json["retweeted_status"]["user"]["id"],
+                by_socialuserid = self.tweetdj.socialuser.id
             )
-        elif tweetdj.quotedstatus:
+        elif self.tweetdj.quotedstatus:
             add_quoted_by(
-                statusid = tweetdj.json["quoted_status"]["id"],
-                userid = tweetdj.json["quoted_status"]["user"]["id"],
-                by_socialuserid = tweetdj.socialuser.id
+                statusid = self.json["quoted_status"]["id"],
+                userid = self.json["quoted_status"]["user"]["id"],
+                by_socialuserid = self.tweetdj.socialuser.id
             )
-        if not tweetdj.retweetedstatus:
-            add_status_text(tweetdj)
-        return tweetdj, True
+        if not self.tweetdj.retweetedstatus:
+            add_status_text(self.tweetdj)
+        return self.tweetdj, True
 
     def update(self):
         """
@@ -102,20 +101,21 @@ class Addstatus:
         """
         with transaction.atomic():
             try:
-                tweetdj = Tweetdj.objects.get(pk=self.statusid)
+                self.tweetdj = Tweetdj.objects.get(pk=self.statusid)
             except Tweetdj.DoesNotExist:
                 return None, False
-            tweetdj.json = self.json
-            tweetdj.socialuser = addsocialuser_from_userid(self.userid())
-            tweetdj.created_at = get_datetime_tz(self.json)
-            tweetdj.like = self.like()
-            tweetdj.retweet = self.retweet()
-            tweetdj.parentid = self.parentid()
-            tweetdj.quotedstatus = self.has_quoted_status()
-            tweetdj.retweetedstatus = self.has_retweeted_status()
-            tweetdj.save()
-        logger.debug(f"updated tweetdj {tweetdj}")
-        return tweetdj, False
+            self.tweetdj.json = self.json
+            self.tweetdj.socialuser = addsocialuser_from_userid(self.userid())
+            self.tweetdj.created_at = get_datetime_tz(self.json)
+            self.tweetdj.like = self.like()
+            self.tweetdj.retweet = self.retweet()
+            self.tweetdj.parentid = self.parentid()
+            self.tweetdj.quotedstatus = self.has_quoted_status()
+            self.tweetdj.retweetedstatus = self.has_retweeted_status()
+            self.tweetdj.save()
+            self.hashtag_m2m()
+        logger.debug(f"updated tweetdj {self.tweetdj}")
+        return self.tweetdj, False
 
     def userid(self):
         return self.json["user"]["id"]
@@ -160,5 +160,27 @@ class Addstatus:
         """is this status a Quote?
         """
         return "quoted_status" in self.json.keys()
-    
 
+    def hashtag_m2m(self):
+        jsn = self.json
+        key = "hashtags"
+        keyword_lst = Hashtag.objects.values_list("hashtag", flat=True)
+        if not keyword_lst:
+            return
+        keyword_lst_lower = [keyword.lower() for keyword in keyword_lst]
+        hash_dct = dict()
+        for h in Hashtag.objects.all():
+            hash_dct[h.hashtag.lower()]= h
+        hashtag_mi_lst = []
+        for hashtags in dictextract(key, jsn):
+            for hashtag in hashtags:
+                status_hashtag = hashtag["text"].lower()
+                if status_hashtag in keyword_lst_lower:
+                    hashtag_mi = hash_dct[status_hashtag]
+                    hashtag_mi_lst.append(hashtag_mi)
+        for h in hashtag_mi_lst:
+            try:
+                self.tweetdj.hashtag.add(h)
+            except DatabaseError as e:
+                logger.error(e)
+                continue

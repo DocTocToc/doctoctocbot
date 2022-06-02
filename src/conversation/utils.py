@@ -14,7 +14,6 @@ from community.helpers import get_community
 logger = logging.getLogger(__name__)
 
 def normalize(statusid):
-    hashtag_m2m(statusid)
     retweetedstatus(statusid)
     quotedstatus(statusid)
     
@@ -63,41 +62,6 @@ def allquotedstatus():
     for status_mi in Tweetdj.objects.all():
         quotedstatus(status_mi.statusid)    
 
-def hashtag_m2m(statusid: int):
-    logger = logging.getLogger(__name__)
-    try:
-        status_mi = Tweetdj.objects.get(pk=statusid)
-    except Tweetdj.DoesNotExist as e:
-        logger.info(f"Status {statusid} does not exist in table Tweetdj."
-                    f"Error message: {e}")
-        return
-
-    hashtag_m2m_tweetdj(status_mi) 
-
-def hashtag_m2m_tweetdj(status_mi: Tweetdj):
-    jsn = status_mi.json
-    key = "hashtags"
-    keyword_lst = Hashtag.objects.values_list("hashtag", flat=True)
-    if not keyword_lst:
-        return
-    keyword_lst_lower = [keyword.lower() for keyword in keyword_lst]
-    hash_dct = dict()
-    for h in Hashtag.objects.all():
-        hash_dct[h.hashtag.lower()]= h
-    hashtag_mi_lst = []
-    for hashtags in dictextract(key, jsn):
-        for hashtag in hashtags:
-            status_hashtag = hashtag["text"].lower()
-            if status_hashtag in keyword_lst_lower:
-                hashtag_mi = hash_dct[status_hashtag]
-                hashtag_mi_lst.append(hashtag_mi)
-    for h in hashtag_mi_lst:
-        try:
-            status_mi.hashtag.add(h)
-        except DatabaseError as e:
-            logger.error(e)
-            continue
-
 def m2m_objects(pks: List[int], hashtag: Hashtag):
     return [
         Tweetdj.hashtag.through(
@@ -133,10 +97,6 @@ def bulk_hashtag(hashtag: Hashtag):
         m2m_objects(pks, hashtag)
     )
 
-def allhashtag():
-    for status_mi in Tweetdj.objects.all():
-        hashtag_m2m(status_mi.statusid)
-        
 def userhashtagcount(userid: int, request) -> dict:
     """
     Return the count of status posted by the user with this userid for the following hashtags:

@@ -76,7 +76,7 @@ class ReplyCrawler(object):
             hrefs = []
             for link in links:
                 try:
-                    hrefs.append(link.get_attribute("href"))
+                    hrefs.append(link["href"])
                 except StaleElementReferenceException as e:
                     logger.error(f"Element became stale. {e}")
                 except NoSuchElementException as e:

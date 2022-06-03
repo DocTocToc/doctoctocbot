@@ -42,7 +42,6 @@ class CommunityStdOutListener(StdOutListener):
 def main(community: Optional[str] = None):
     if not community:
         return
-    #This handles Twitter authentication and the connection to Twitter Streaming API
     try:
         community_mi = Community.objects.get(name=community)
     except Community.DoesNotExist:
@@ -55,13 +54,6 @@ def main(community: Optional[str] = None):
         api = get_api(screen_name, backend=True)
     except:
         return
-    l = CommunityStdOutListener(community=community)
-    try:
-        stream = tweepy.Stream(auth = api.auth, listener=l)
-    except AttributeError as e:
-        logger.error(f"{e}")
-        return
-    #This line filter Twitter Streams to capture data by the keywords
     track_list = []
     try:
         hashtags = Community.objects.get(name=community).hashtag.all()
@@ -71,9 +63,16 @@ def main(community: Optional[str] = None):
         return
     for hashtag in hashtags:
         track_list.append(f"#{hashtag}")
+    # search for and process recent tweets containing this community's hashtags
+    retweet_recent(track_list, community, api)
+    # start stream listener
+    l = CommunityStdOutListener(community=community)
+    try:
+        stream = tweepy.Stream(auth = api.auth, listener=l)
+    except AttributeError as e:
+        logger.error(f"{e}")
+        return
     stream.filter(track = track_list)
-    # search for tweets containing the hashtags sent while server was down
-    retweet_recent(track_list, api)
 
 if __name__ == '__main__':
     main()

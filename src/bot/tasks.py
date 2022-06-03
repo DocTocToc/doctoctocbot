@@ -36,7 +36,9 @@ def handle_question(statusid: int):
 @shared_task
 def handle_on_status(json: dict, community: str):
     from bot.onstatus import triage
-    logger.info(f"handling status {status_json_log(json)} for community {community}")
+    logger.info(
+        f"handling status {status_json_log(json)} for community {community}"
+    )
     triage(json=json, community=community)
 
 @shared_task

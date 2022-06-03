@@ -40,22 +40,43 @@ def create_twitter_social_user(userid):
         logger.error(e)
         return None, None
 
-def create_twitter_social_user_and_profile(userid, cache=False):
+def create_twitter_social_user_and_profile(
+        userid,
+        cache=False,
+        community: Community=None,
+    ):
     try:
         su, created = create_twitter_social_user(userid)
     except TypeError:
         return
-    if su:
-        bot_screen_names = Account.objects \
-            .filter(active=True) \
-            .values_list("username", flat=True)
-        bot_screen_name = random.choice(bot_screen_names)
-        create_update_profile_twitter(
-            su,
-            bot_screen_name=bot_screen_name,
-            cache=cache
-        )
-    return su, created
+    if not su:
+        return
+    bot_screen_names = []
+    other_bots_sn = Account.objects \
+        .filter(active=True) \
+        .values_list("username", flat=True)
+    if community:
+        try:
+            community_bot_screen_name = community.account.username
+        except:
+            logger.error(f'Set up a bot account for {community}')
+            community_bot_screen_name = None
+        if community_bot_screen_name:
+            bot_screen_names.append(community_bot_screen_name)
+        try:
+            other_bots_sn.remove(community_bot_screen_name)
+        except ValueError:
+            pass
+    bot_screen_names.extend(other_bots_sn)
+    for bot_screen_name in bot_screen_names:
+        if (
+            create_update_profile_twitter(
+                su,
+                bot_screen_name=bot_screen_name,
+                cache=cache
+            )
+        ):
+            return su, created
 
 def twitterprofile(jsn):
     if not jsn or not isinstance(jsn, dict):
@@ -89,6 +110,7 @@ def twitterprofile(jsn):
             logger.debug(e)
             return
     avatar(p, jsn)
+    return True
             
 def avatar(profile, response):
     img_url = response.get("profile_image_url_https")
@@ -215,7 +237,7 @@ def create_update_profile_twitter(
     except SocialUser.profile.RelatedObjectDoesNotExist:
         has_profile = False
     if cache and has_profile:
-        return
+        return True
     userid = su.user_id
     try:
         tweetdj_mi = Tweetdj.objects.filter(
@@ -231,7 +253,7 @@ def create_update_profile_twitter(
         )
     else:
         userjson = tweetdj_mi.json.get("user")
-    twitterprofile(userjson)
+    return twitterprofile(userjson)
     
 def create_update_profile_local(su: SocialUser):
     try:

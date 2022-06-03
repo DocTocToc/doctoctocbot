@@ -198,6 +198,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
         'id',
+        'user_id',
         'mini_image_tag',
         'screen_name_tag',
         'category_tag',

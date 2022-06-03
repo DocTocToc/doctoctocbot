@@ -88,15 +88,15 @@ def warn_senior_moderator(user_id, status_id, community):
     )
     logger.debug(f"{res=}")
 
-def set_queue_type(user_id, community: Community):
+def create_social_user(user_id, community: Community):
     try:
         su = SocialUser.objects.get(user_id=user_id)
     except SocialUser.DoesNotExist:
-        su, _ = create_twitter_social_user_and_profile(user_id)
+        su, _ = create_twitter_social_user_and_profile(user_id, community)
     if not su:
         return
 
-def addtoqueue(user_id, status_id, community_name):
+def addtoqueue(user_id, status_id, community_name, queue_type=None):
     try:
         community = Community.objects.get(name=community_name)
     except Community.DoesNotExist as e:
@@ -120,7 +120,12 @@ def addtoqueue(user_id, status_id, community_name):
         )
         logger.debug(f'{queue}')
         if created:
-            set_queue_type(user_id, community)
+            create_social_user(user_id, community)
+            if queue_type:
+                queue.type = queue_type
+            else:
+                queue.type = Queue.MODERATOR
+            queue.save()
             create_initial_moderation(queue)
     except IntegrityError:
         logger.error(

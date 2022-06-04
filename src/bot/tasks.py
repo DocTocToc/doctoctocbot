@@ -1,6 +1,6 @@
 import logging
 import time
-
+from typing import Optional
 from django.conf import settings
 from celery import shared_task
 
@@ -14,6 +14,16 @@ from moderation.profile import (
     create_update_profile_twitter
 )
 from moderation.social import update_social_ids
+from bot.follow import Follow
+from moderation.social import get_socialuser_from_screen_name
+from django.core.management.base import BaseCommand, CommandError
+from moderation.profile import create_twitter_social_user_and_profile
+from moderation.models import SocialUser, Category, UserCategoryRelationship
+from bot.tweepy_api import get_api
+from tweepy.error import TweepError
+from typing import List
+from django.db.utils import DatabaseError
+
 
 logger = logging.getLogger(__name__)
 
@@ -158,3 +168,34 @@ def update_bots_friends():
         except AttributeError:
             logger.error(f"API_FRIENDS_PERIOD is not set.")
             pass
+
+@shared_task
+def follow(
+        screen_name: str,
+        count: int,
+        days: int,
+        sample_size: Optional[int] = None,
+        force: bool = False,
+        sleep: Optional[int] = None
+    ):
+        """Create friendships based on categories and prospects"""
+        socialuser = get_socialuser_from_screen_name(screen_name)
+        if not socialuser:
+            logger.ERROR(
+                'No SocialUser found for screen_name "%s"' % screen_name
+            )
+            return
+        if count is None or count > 20 or count < 0:
+            logger.ERROR(
+                'count is %s, it should be a positive integer <= 20' % count
+            )
+            return
+        follow = Follow(
+            socialuser=socialuser,
+            count=count,
+            delta=days,
+            force=force,
+            sample_size=sample_size,
+            sleep=sleep
+        )
+        return follow.process()

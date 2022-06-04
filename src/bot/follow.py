@@ -1,4 +1,5 @@
 import logging
+import time
 from random import sample
 from typing import Optional
 from datetime import datetime, timedelta
@@ -57,8 +58,9 @@ class Follow():
             socialuser: SocialUser,
             count: Optional[int] = None,
             delta: Optional[int] = 7, # days
-            force_follow: bool = False,
-            sample: Optional[int] = None,
+            force: bool = False,
+            sample_size: Optional[int] = None,
+            sleep: Optional[int] = None
         ):
         self.socialuser = socialuser
         self.friends: List[int] = self.get_friends()
@@ -68,8 +70,9 @@ class Follow():
         self.api = self.get_api()
         self.candidates: List[User] = []
         self.delta = delta
-        self.force_follow = force_follow
-        self.sample = sample
+        self.force = force
+        self.sample_size = sample_size
+        self.sleep = sleep or 60
 
     def process(self):
         if self.count is None:
@@ -81,7 +84,7 @@ class Follow():
         logger.debug(f'\n1. Count:{len(self.candidates)}\n{self.candidates}')
         self.add_prospects()
         logger.debug(f'\n2. Count:{len(self.candidates)}\n{self.candidates}')
-        if self.sample:
+        if self.sample_size:
             self.candidates[:]=self.random_sample(self.candidates)
         logger.debug(f'\n3. Count:{len(self.candidates)}\n{self.candidates}')
         self.friend_latest()
@@ -91,7 +94,8 @@ class Follow():
         logger.debug(f'\n5. Count:{len(self.candidates)}\n{self.candidates}')
         self.order_latest()
         logger.debug(f'\n6. Count:{len(self.candidates)}\n{self.candidates}')
-        self.filter_count()
+        # check follow_request: TODO: implement this when we upgrade Tweepy
+        # to version >= 4.0
         logger.debug(f'\n7. Count:{len(self.candidates)}\n{self.candidates}')
         followed_dict = self.follow()
         logger.info(followed_dict)
@@ -126,11 +130,11 @@ class Follow():
             return []
 
     def random_sample(self, iterable):
-        if self.sample > len(iterable) or self.sample < 0:
+        if self.sample_size > len(iterable) or self.sample_size < 0:
             return iterable
         return sample(
             iterable,
-            self.sample
+            self.sample_size
         )
 
     def order_latest(self):
@@ -143,11 +147,14 @@ class Follow():
         )
         self.candidates=candidates
 
-    def filter_count(self):
-        del self.candidates[self.count:]
+    def sample_candidates(self):
+        sample, self.candidates = (
+            self.candidates[:self.count], self.candidates[self.count:]
+        )
+        return sample
 
     def follow(self):
-        if settings.DEBUG and not self.force_follow:
+        if settings.DEBUG and not self.force:
             for user in self.candidates:
                 logger.debug(f"{user} was followed.")
         else:
@@ -155,45 +162,54 @@ class Follow():
                 "candidates": len(self.candidates),
                 "followed": 0    
             }
-            for idx, user in enumerate(self.candidates):
-                try:
-                    response = self.api.create_friendship(user_id=str(user.id))
-                except TweepError as e:
-                    logger.error(e)
+            follow_count = self.count
+            while follow_count > 0:
+                sample = self.sample_candidates()
+                sample = self.filter_friendship(sample)
+                for idx, user in enumerate(sample):
                     try:
-                        sn = (
-                            SocialUser.objects.get(user_id=user.id)
-                            .screen_name_tag()
+                        response = self.api.create_friendship(
+                            user_id=str(user.id)
                         )
-                    except SocialUser.DoesNotExist:
-                        sn = "?"
-                    followed_dict.update({
-                        idx: {
-                            'screen_name': sn,
-                            'error': str(e)
-                        }
-                    })
+                        if follow_count > 1:
+                            time.sleep(self.sleep)
+                        follow_count -= 1
+                    except TweepError as e:
+                        logger.error(e)
+                        try:
+                            sn = (
+                                SocialUser.objects.get(user_id=user.id)
+                                .screen_name_tag()
+                            )
+                        except SocialUser.DoesNotExist:
+                            sn = "?"
+                        followed_dict.update({
+                            idx: {
+                                'screen_name': sn,
+                                'error': str(e)
+                            }
+                        })
+                        try:
+                            error_code =  e.args[0][0]['code']
+                            self.process_error(error_code, user.id)
+                        except:
+                            pass
+                        continue
                     try:
-                        error_code =  e.args[0][0]['code']
-                        self.process_error(error_code, user.id)
+                        screen_name = response._json['screen_name']
+                        logger.debug(
+                            f"User {screen_name} was followed\n ({user})"
+                        )
+                        followed_dict.update({
+                            idx: {'screen_name': screen_name},
+                            'followed': followed_dict['followed'] + 1
+                        })
                     except:
-                        pass
-                    continue
-                try:
-                    screen_name = response._json['screen_name']
-                    logger.debug(
-                        f"User {screen_name} was followed\n ({user})"
-                    )
-                    followed_dict.update({
-                        idx: {'screen_name': screen_name},
-                        'followed': followed_dict['followed'] + 1
-                    })
-                except:
-                    logger.error(response)
-                    followed_dict.update({
-                        idx: {'error': str(response)}
-                    })
-                    continue
+                        logger.error(response)
+                        followed_dict.update({
+                            idx: {'error': str(response)}
+                        })
+                        continue
             return followed_dict
 
     def update_social(self):
@@ -275,7 +291,7 @@ class Follow():
             .values_list("social_user__user_id", flat=True)
         )
         logger.debug(f'{potential_members_ids=}')
-        if self.sample and potential_members_ids:
+        if self.sample_size and potential_members_ids:
             potential_members_ids[:] = self.random_sample(
                 potential_members_ids
             )
@@ -292,7 +308,7 @@ class Follow():
             ).values_list("socialuser__user_id", flat=True)
         )
         logger.debug(f'{prospects_ids=}')
-        if self.sample and prospects_ids:
+        if self.sample_size and prospects_ids:
             prospects_ids[:] = self.random_sample(
                 prospects_ids
             )
@@ -342,3 +358,33 @@ class Follow():
         #160 You've already requested to follow MadameProf1.
         elif (error_code==160):
             su.twitter_follow_request.add(self.socialuser)
+
+    def filter_friendship(self, sample):
+        filtered_sample=[]
+        bot_id = self.socialuser.user_id
+        for candidate in sample:
+            try:
+                friendship = self.api.show_friendship(
+                    source_id=bot_id,
+                    target_id=candidate.id
+                )
+            except TweepError as e:
+                error_code =  e.args[0][0]['code']
+                self.process_error(error_code, candidate.id)
+                continue
+            if friendship[0].blocked_by:
+                try:
+                    su = SocialUser.objects.get(user_id=candidate.id)
+                except SocialUser.DoesNotExist:
+                    continue
+                su.twitter_block.add(self.socialuser)
+                continue
+            elif friendship[0].following_requested:
+                try:
+                    su = SocialUser.objects.get(user_id=candidate.id)
+                except SocialUser.DoesNotExist:
+                    continue
+                su.twitter_follow_request.add(self.socialuser)
+                continue
+            filtered_sample.append(candidate)
+        return filtered_sample

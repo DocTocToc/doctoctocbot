@@ -41,19 +41,18 @@ class Command(BaseCommand):
             help="size of a random sample of friends to process"
         )
         parser.add_argument(
-            '--force-unfollow',
-            dest='force_unfollow',
+            '--force',
+            dest='force',
             action='store_true'
         )
-        parser.set_defaults(force_unfollow=False)
+        parser.set_defaults(force=False)
 
     def handle(self, *args, **options):
         screen_name: str =  options['screen_name']
         count: int = options['count']
         days: int = options['days']
-        force_unfollow = options['force_unfollow']
+        force = options['force']
         sample = options['sample']
-        logger.debug(f'{force_unfollow=}')
         socialuser = get_socialuser_from_screen_name(screen_name)
         if not socialuser:
             self.stdout.write(
@@ -73,7 +72,7 @@ class Command(BaseCommand):
             socialuser=socialuser,
             count=count,
             delta=days,
-            force_unfollow=force_unfollow,
+            force=force,
             sample=sample,
         )
         unfollowed_dict = unfollow.process()

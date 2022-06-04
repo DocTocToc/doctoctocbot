@@ -51,22 +51,18 @@ class Unfollow():
     def __init__(
             self,
             socialuser: SocialUser,
-            transfer: bool = False,
-            to_socialuser: Optional[SocialUser] = None,
             count: Optional[int] = None,
             delta: Optional[int] = 7, # days
-            force_unfollow: bool = False,
-            sample: Optional[int] = None,
+            force: bool = False,
+            sample_size: Optional[int] = None,
         ):
         self.socialuser = socialuser
-        self.transfer = transfer
-        self.to_socialuser = to_socialuser,
         self.count = count
         self.api = self.get_api()
         self.candidates: List[User] = []
         self.delta = delta
-        self.force_unfollow = force_unfollow
-        self.sample = sample
+        self.force = force
+        self.sample_size = sample_size
 
     def process(self):
         if self.count is None:
@@ -75,7 +71,7 @@ class Unfollow():
         logger.debug(f'0. Count:{len(self.candidates)}\n{self.candidates}')
         self.update_social()
         self.get_no_follow_back()
-        if self.sample:
+        if self.sample_size:
             self.random_sample()
         self.add_prospect()
         logger.debug(f'\n1. Count:{len(self.candidates)}\n{self.candidates}')
@@ -99,11 +95,11 @@ class Unfollow():
         )
 
     def random_sample(self):
-        if self.sample > len(self.candidates) or self.sample < 0:
+        if self.sample_size > len(self.candidates) or self.sample_size < 0:
             return
         self.candidates[:] = sample(
             self.candidates,
-            self.sample
+            self.sample_size
         )
 
     def order_since(self):
@@ -116,7 +112,7 @@ class Unfollow():
         del self.candidates[self.count:]
 
     def unfollow(self):
-        if settings.DEBUG and not self.force_unfollow:
+        if settings.DEBUG and not self.force:
             for user in self.candidates:
                 logger.debug(f"{user} was unfollowed.")
         else:

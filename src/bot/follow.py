@@ -163,7 +163,7 @@ class Follow():
                 "followed": 0    
             }
             follow_count = self.count
-            while follow_count > 0:
+            while follow_count > 1:
                 sample = self.sample_candidates()
                 sample = self.filter_friendship(sample)
                 for idx, user in enumerate(sample):

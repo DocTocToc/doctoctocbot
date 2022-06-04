@@ -15,6 +15,7 @@ from moderation.profile import (
 )
 from moderation.social import update_social_ids
 from bot.follow import Follow
+from bot.unfollow import Unfollow
 from moderation.social import get_socialuser_from_screen_name
 from django.core.management.base import BaseCommand, CommandError
 from moderation.profile import create_twitter_social_user_and_profile
@@ -23,7 +24,6 @@ from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from typing import List
 from django.db.utils import DatabaseError
-
 
 logger = logging.getLogger(__name__)
 
@@ -199,3 +199,33 @@ def follow(
             sleep=sleep
         )
         return follow.process()
+
+
+@shared_task
+def unfollow(
+        screen_name: str,
+        count: int,
+        days: int,
+        sample_size: Optional[int] = None,
+        force: bool = False,
+    ):
+        """Destroy friendships"""
+        socialuser = get_socialuser_from_screen_name(screen_name)
+        if not socialuser:
+            logger.ERROR(
+                'No SocialUser found for screen_name "%s"' % screen_name
+            )
+            return
+        if count is None or count > 40 or count < 0:
+            logger.ERROR(
+                'count is %s, it should be a positive integer <= 40' % count
+            )
+            return
+        unfollow = Unfollow(
+            socialuser=socialuser,
+            count=count,
+            delta=days,
+            force=force,
+            sample_size=sample_size,
+        )
+        return unfollow.process()

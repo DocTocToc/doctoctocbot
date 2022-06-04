@@ -244,6 +244,7 @@ INSTALLED_APPS = [
     'fontawesomefree',
     'silver',
     'textareacounter',
+    'twttr',
 ]
 
 if DEBUG:

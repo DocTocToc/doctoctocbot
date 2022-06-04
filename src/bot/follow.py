@@ -21,6 +21,7 @@ from moderation.models import (
     UserCategoryRelationship,
     Category,
 )
+from twttr.models import UserActive
 from tweepy.error import TweepError
 
 logger = logging.getLogger(__name__)
@@ -94,6 +95,7 @@ class Follow():
         logger.debug(f'\n7. Count:{len(self.candidates)}\n{self.candidates}')
         followed_dict = self.follow()
         logger.info(followed_dict)
+        return followed_dict
 
     def get_api(self):
         return get_api(
@@ -158,9 +160,24 @@ class Follow():
                     response = self.api.create_friendship(user_id=str(user.id))
                 except TweepError as e:
                     logger.error(e)
+                    try:
+                        sn = (
+                            SocialUser.objects.get(user_id=user.id)
+                            .screen_name_tag()
+                        )
+                    except SocialUser.DoesNotExist:
+                        sn = "?"
                     followed_dict.update({
-                        idx: {'error': str(e)}
+                        idx: {
+                            'screen_name': sn,
+                            'error': str(e)
+                        }
                     })
+                    try:
+                        error_code =  e.args[0][0]['code']
+                        self.process_error(error_code, user.id)
+                    except:
+                        pass
                     continue
                 try:
                     screen_name = response._json['screen_name']
@@ -228,6 +245,13 @@ class Follow():
                         continue
 
     def add_potential_members(self):
+        latest_inactive_ids = (
+            UserActive.objects
+            .filter(active=False)
+            .order_by('socialuser__user_id', '-created')
+            .distinct('socialuser__user_id')
+            .values_list("socialuser__user_id", flat=True)
+        )
         potential_members_ids = list(
             UserCategoryRelationship.objects
             .filter(community__in=self.network)
@@ -242,7 +266,13 @@ class Follow():
                     community_relationship__do_not_follow=True,
                     community_relationship__community=self.community,
                 )
-            ).values_list("social_user__user_id", flat=True)
+            )
+            .exclude(
+                social_user__twitter_follow_request=self.socialuser,
+                social_user__twitter_block=self.socialuser,
+                social_user__user_id__in=latest_inactive_ids,
+            )
+            .values_list("social_user__user_id", flat=True)
         )
         logger.debug(f'{potential_members_ids=}')
         if self.sample and potential_members_ids:
@@ -291,3 +321,24 @@ class Follow():
             except Friend.DoesNotExist:
                 continue
             user.latest = latest_friend.created
+
+    def process_error(self, error_code, user_id):
+        try:
+            su = SocialUser.objects.get(user_id=user_id)
+        except SocialUser.DoesNotExist:
+            return
+        #108 Cannot find specified user
+        if (error_code==108):
+            try:
+                UserActive.objects.create(
+                    active=False,
+                    socialuser=su,
+                )
+            except:
+                return
+        #162 You have been blocked from following this account at the request of the user.
+        elif (error_code==162):
+            su.twitter_block.add(self.socialuser)
+        #160 You've already requested to follow MadameProf1.
+        elif (error_code==160):
+            su.twitter_follow_request.add(self.socialuser)

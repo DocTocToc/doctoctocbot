@@ -16,6 +16,7 @@ from community.helpers import (
     get_community_member_id,
     get_community_twitter_tweepy_api,
 )
+from twttr.models import UserActive
 from constance import config
 from tweepy.error import TweepError
 
@@ -59,8 +60,13 @@ def manage_active(friend, active):
         friend_su = SocialUser.objects.get(user_id=friend)
     except SocialUser.DoesNotExist:
         return
-    friend_su.active=active
-    friend_su.save()
+    try:
+        UserActive.objects.create(
+            active=active,
+            socialuser=friend_su,
+        )
+    except:
+        return
 
 def create_friendship_members(
         community: Community,

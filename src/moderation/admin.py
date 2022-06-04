@@ -207,7 +207,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         'profile_link',
         'follow_request_tag',
         'block_tag',
-        'active',
         'user_id',
         'hcp_taxonomy_tag',
         'hcp_admin',
@@ -227,7 +226,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         'category_moderator_lst',
         'follow_request_tag',
         'block_tag',
-        'active',
         'hcp_taxonomy_tag',
         'hcp_admin',
         'human_tag',
@@ -261,7 +259,6 @@ class SocialUserAdmin(admin.ModelAdmin):
         BotFollower,
         BotFriend,
         by_null_filter('category', 'Category'),
-        'active',
         'social_media',
         'language',
     )

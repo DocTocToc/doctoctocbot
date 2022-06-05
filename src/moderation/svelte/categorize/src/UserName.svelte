@@ -12,7 +12,6 @@
 	$: {
 		let param = new URL(document.location).searchParams.get("screen_name");
 		if (param) {
-			console.log(param);
 			socialusers = fetchApi(param);
 			screenName = param;
 			input = param;
@@ -25,19 +24,16 @@
 
 	function toHRDate(isoDateTimeString) {
 		const date = new Date(isoDateTimeString);
-		return date.toDateString()
+		return date.toDateString();
 	}
 
 	async function fetchApi(sn) {
 		let url = apiPath + "?search=" + sn;
-		console.log(url);
 		await fetch(url)
 			.then((r) => r.json())
 			.then((data) => {
-				console.log('data:' + data);
 				socialusers = data;
 			});
-		console.log(socialusers);
 		return socialusers;
 	}
 
@@ -98,9 +94,20 @@
 					<li>
 						category
 						<ul>
-							{#each socialuser.categoryrelationships as catRel}<li><div style="white-space: nowrap">
-									{catRel.category.label}{#if catRel.moderator.id == socialuser.id}<mark>*</mark>{/if} | {catRel.moderator.profile.json.screen_name} | Created {toHRDate(catRel.created)} | Updated {toHRDate(catRel.updated)}
-								</div></li>{/each}
+							{#each socialuser.categoryrelationships as catRel}<li
+								>
+									<div style="white-space: nowrap">
+										{catRel.category.label}
+										{#if catRel.moderator}
+											{#if catRel.moderator.id == socialuser.id}<mark
+													>*</mark
+												>{/if} | {catRel.moderator
+												.profile.json.screen_name}
+										{/if}
+										| Created {toHRDate(catRel.created)} | Updated
+										{toHRDate(catRel.updated)}
+									</div>
+								</li>{/each}
 						</ul>
 					</li>
 					<li>

@@ -1,4 +1,5 @@
 import logging
+import time
 from random import sample
 from typing import Optional
 from datetime import datetime, timedelta
@@ -55,6 +56,7 @@ class Unfollow():
             delta: Optional[int] = 7, # days
             force: bool = False,
             sample_size: Optional[int] = None,
+            sleep: Optional[int] = None,
         ):
         self.socialuser = socialuser
         self.count = count
@@ -63,6 +65,7 @@ class Unfollow():
         self.delta = delta
         self.force = force
         self.sample_size = sample_size
+        self.sleep = sleep or 60
 
     def process(self):
         if self.count is None:
@@ -116,8 +119,9 @@ class Unfollow():
             for user in self.candidates:
                 logger.debug(f"{user} was unfollowed.")
         else:
+            candidates_count = len(self.candidates)
             unfollowed_dict = {
-                "candidates": len(self.candidates),
+                "candidates": candidates_count,
                 "unfollowed": 0    
             }
             for idx, user in enumerate(self.candidates):
@@ -125,6 +129,9 @@ class Unfollow():
                     response = self.api.destroy_friendship(
                         user_id=str(user.id)
                     )
+                    if idx + 1 < candidates_count:
+                        time.sleep(self.sleep)
+
                 except TweepError as e:
                     logger.error(e)
                     unfollowed_dict.update({

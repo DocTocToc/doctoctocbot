@@ -208,6 +208,7 @@ def unfollow(
         days: int,
         sample_size: Optional[int] = None,
         force: bool = False,
+        sleep: Optional[int] = None,
     ):
         """Destroy friendships"""
         socialuser = get_socialuser_from_screen_name(screen_name)
@@ -227,5 +228,6 @@ def unfollow(
             delta=days,
             force=force,
             sample_size=sample_size,
+            sleep=sleep,
         )
         return unfollow.process()

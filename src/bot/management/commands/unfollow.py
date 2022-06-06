@@ -36,23 +36,34 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "-s",
-            "--sample",
+            "--sample_size",
             type=int,
             help="size of a random sample of friends to process"
         )
         parser.add_argument(
+            '-f',
             '--force',
             dest='force',
             action='store_true'
         )
         parser.set_defaults(force=False)
+        parser.add_argument(
+            "-p",
+            "--sleep",
+            type=int,
+            help=(
+                "The bot will pause this number of seconds between two "
+                "friendship destruction API requests"
+            )
+        )
 
     def handle(self, *args, **options):
         screen_name: str =  options['screen_name']
         count: int = options['count']
         days: int = options['days']
         force = options['force']
-        sample = options['sample']
+        sample_size = options['sample_size']
+        sleep = options['sleep']
         socialuser = get_socialuser_from_screen_name(screen_name)
         if not socialuser:
             self.stdout.write(
@@ -73,7 +84,8 @@ class Command(BaseCommand):
             count=count,
             delta=days,
             force=force,
-            sample=sample,
+            sample_size=sample_size,
+            sleep=sleep,
         )
         unfollowed_dict = unfollow.process()
         self.stdout.write(

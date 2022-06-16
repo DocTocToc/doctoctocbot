@@ -39,6 +39,7 @@ class Command(BaseCommand):
             )
             return
         hcp_qs = HealthCareProvider.objects.filter(taxonomy=taxonomy)
+        logger.debug(f'{hcp_qs=}')
         if not hcp_qs:
             self.stdout.write(
                 self.style.ERROR(
@@ -48,8 +49,9 @@ class Command(BaseCommand):
             return
         su_lst = []
         for hcp in hcp_qs:
-            su = hcp.human.socialuser.filter(active=True).last()
-            su_lst.append(su)
+            su = hcp.human.socialuser.last()
+            if not su.active.filter(active=False):
+                su_lst.append(su)
         su_lst = list(filter(None, su_lst))
         if not friend:
             screen_name_lst = [

@@ -1,6 +1,7 @@
 import logging
 import re
 import unidecode
+import string
 from typing import Set
 from filter.models import Filter
 from community.models import Community
@@ -37,10 +38,25 @@ class Flag():
 
 
 class FilterStatus():
-    def __init__(self, status: str, community: str):
-        self.status = frozenset(unidecode.unidecode(status).split())
+    def __init__(self, raw_status: str, community: str):
+        self.raw_status = raw_status
+        self.status = self.process_status()
         self.community = community
         
+    def process_status(self):
+        status = frozenset(
+            unidecode.unidecode(
+                "".join(
+                    [
+                        (ch if ch not in string.punctuation else " ")
+                        for ch
+                        in self.raw_status
+                    ]
+                )
+            ).split()
+        )
+        return status
+
     def dictionary(self, filter):
         dct = {}
         for w in filter.word.all():
@@ -73,7 +89,7 @@ def filter_status(statusid: int, community: str):
     text = Tweetdj.getstatustext(statusid)
     if not text:
         return Flag()
-    f = FilterStatus(status=text, community=community)
+    f = FilterStatus(raw_status=text, community=community)
     return f.filter()
             
             

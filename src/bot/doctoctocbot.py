@@ -485,28 +485,5 @@ def main():
     for tweet in timelineIterator:
         triage(tweet.id)
 
-def retweet_lst(lst):
-    api = get_api()
-    tw_counter = 0
-    err_counter = 0
-    for status in lst:
-        try:
-            logger.debug("(%(date)s) %(name)s: %(message)s\n" % \
-                  {"date": status.created_at,
-                   "name": status.author.screen_name.encode('utf-8'),
-                   "message": status.full_text.encode('utf-8')})
-    
-            api.retweet(status.id)
-            tw_counter += 1
-        except tweepy.error.TweepError as e:
-            # just in case tweet got deleted in the meantime or already retweeted
-            err_counter += 1
-            logger.debug("error: %s", e)
-            continue
-        except AttributeError:
-            return
-    
-    logger.info("Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter))
-        
 if __name__ == '__main__':
     main()

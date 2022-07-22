@@ -850,6 +850,22 @@ CONSTANCE_CONFIG = {
         7,
         "days after which latest recorded screen_name is considered stale"    
     ),
+    "bot_follow_soft_time_limit": (
+        3500,
+        "soft time limit for bot follow task"
+    ),
+    "bot_follow_time_limit": (
+        3600,
+        "soft time limit for bot follow task"
+    ),
+    "bot_unfollow_soft_time_limit": (
+        3500,
+        "soft time limit for bot follow task"
+    ),
+    "bot_unfollow_time_limit": (
+        3600,
+        "soft time limit for bot follow task"
+    ),
 }
 
 MESSENGER_DM_LIMIT = 15

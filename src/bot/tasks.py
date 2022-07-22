@@ -2,6 +2,7 @@ import logging
 import time
 from typing import Optional
 from django.conf import settings
+from constance import config
 from celery import shared_task
 
 from bot.bin.friendship import create_friendship
@@ -128,7 +129,7 @@ def handle_add_friends_to_socialusers():
                     account.username,
                     cache=True
                 )
-  
+
 @shared_task
 def update_bots_followers():
     for account in Account.objects.filter(active=True):
@@ -169,7 +170,10 @@ def update_bots_friends():
             logger.error(f"API_FRIENDS_PERIOD is not set.")
             pass
 
-@shared_task
+@shared_task(
+    soft_time_limit=config.bot_follow_soft_time_limit,
+    time_limit=config.bot_follow_time_limit
+)
 def follow(
         screen_name: str,
         count: int,
@@ -201,7 +205,10 @@ def follow(
         return follow.process()
 
 
-@shared_task
+@shared_task(
+    soft_time_limit=config.bot_unfollow_soft_time_limit,
+    time_limit=config.bot_unfollow_time_limit
+)
 def unfollow(
         screen_name: str,
         count: int,

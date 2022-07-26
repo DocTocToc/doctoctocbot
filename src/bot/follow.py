@@ -192,6 +192,9 @@ class Follow():
                         try:
                             error_code =  e.args[0][0]['code']
                             self.process_error(error_code, user.id)
+                            if error_code == 161:
+                            #You are unable to follow more people at this time.
+                                break
                         except:
                             pass
                         continue
@@ -210,6 +213,11 @@ class Follow():
                             idx: {'error': str(response)}
                         })
                         continue
+                else:
+                    # Continue if the inner loop wasn't broken.
+                    continue
+                # Inner loop was broken, break the outer.
+                break
             return followed_dict
 
     def update_social(self):

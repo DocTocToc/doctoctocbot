@@ -90,6 +90,7 @@ class Unfollow():
         logger.debug(f'\n5. Count:{len(self.candidates)}\n{self.candidates}')
         unfollowed_dict = self.unfollow()
         logger.info(unfollowed_dict)
+        return unfollowed_dict
 
     def get_api(self):
         return get_api(

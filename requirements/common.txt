@@ -1,6 +1,6 @@
 Django>=3.2,<4.0
 pytz                                                                  
-kombu==5.2.0
+kombu==5.2.3
 vine==5.0.0
 billiard==3.6.4.0
 redis==3.5.3
@@ -12,7 +12,7 @@ psycopg2-binary==2.9.3
 social-auth-app-django
 git+https://github.com/DocTocToc/cleanerversion.git@django32 #update
 pillow
-Celery==5.1.2
+Celery==5.2.7
 python-decouple
 dj-database-url
 lxml

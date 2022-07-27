@@ -30,7 +30,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=${CELERY_WORKER_CONCURRENCY} -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=${CELERY_RETWEET_CONCURRENCY} -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -45,7 +45,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=${CELERY_WORKER_CONCURRENCY} -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE} --time-limit=${CELERY_TREE_SOFT_TIME_LIMIT}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=${CELERY_TREE_CONCURRENCY} -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE} --time-limit=${CELERY_TREE_TIME_LIMIT}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -62,7 +62,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --concurrency=${CELERY_WORKER_CONCURRENCY} -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY} -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}

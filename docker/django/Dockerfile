@@ -1,25 +1,24 @@
-FROM python:3.10-buster AS prod
+FROM python:3.10-bullseye AS prod
 
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
 
-RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
+#RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -y \
     locales \
-    python-pygraphviz \
+    python3-pygraphviz \
     libgraphviz-dev \
     build-essential \
     libgl1-mesa-glx \
     libgtk-3-dev \
     libdbus-glib-1-2 \
-    python-yaml \
+    python3-yaml \
     binutils \
     libproj-dev \
     gdal-bin \
-    libolm-dev/buster-backports \
-    cython \
+    libolm-dev \
     cython3 \
  && rm -rf /var/lib/apt/lists/*
  

@@ -79,7 +79,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=
+    command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}

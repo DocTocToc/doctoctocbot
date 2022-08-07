@@ -261,11 +261,13 @@ class CampaignManager:
                     api=api
                 )
                 result = message_manager.create()
+                if result is False:
+                    return
                 if result is True:
                     self.current_limit-=1
                     self.sleep_random()
-                elif result is False:
-                    return
+                if result is None:
+                    continue
 
     def send_status(self):
         if not self.campaign.status:

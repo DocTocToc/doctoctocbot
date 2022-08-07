@@ -32,11 +32,17 @@ logger = logging.getLogger(__name__)
 
 
 class CampaignManager:
-    def __init__(self, campaign: Campaign, dry_run: bool = False):
+    def __init__(
+            self,
+            campaign: Campaign,
+            dry_run: bool = False,
+            cache_followers: bool = False,
+        ):
         self.campaign = campaign
         self.dry_run = dry_run
         self.current_limit = self.set_current_limit()
         self.status_current_limit = self.set_current_limit()
+        self.cache_followers = cache_followers
 
     def set_current_limit(self):
         try:
@@ -88,7 +94,7 @@ class CampaignManager:
         bot_screen_name = bot_su.screen_name_tag()
         update_social_ids(
             bot_su,
-            cached=True,
+            cached=self.cache_followers,
             bot_screen_name=bot_screen_name,
             relationship="followers",    
         )

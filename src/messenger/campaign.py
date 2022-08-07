@@ -257,6 +257,7 @@ class CampaignManager:
                 result = message_manager.create()
                 if result is True:
                     self.current_limit-=1
+                    self.sleep_random()
                 elif result is False:
                     return
 
@@ -422,6 +423,9 @@ class MessageManager:
             )
         except:
             return
+        if self.is_message_sent():
+            receipt.delete()
+            return
         try:
             res = self.api.send_direct_message(
                 recipient_id=self.recipient.user_id,
@@ -430,7 +434,6 @@ class MessageManager:
             logger.debug(res)
             receipt.event_id=res.id
             receipt.save()
-            self.sleep_random()
             return True
         except TweepError as e:
             logger.error(f"addstatus: Tweepy error: {e}")

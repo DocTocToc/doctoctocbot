@@ -289,6 +289,22 @@ class CampaignManager:
             elif result is False:
                 return           
 
+    def randinterval(self):
+        backoff = self.campaign.backoff
+        if backoff <= 0:
+            return
+        variance = backoff*0.1
+        return random.randint(
+            int(round(backoff-variance)),
+            int(round(backoff+variance))
+        )
+
+    def sleep_random(self):
+        duration = self.randinterval()
+        if not duration:
+            return
+        time.sleep(duration)
+
 
 class MessageManager:
     def __init__(
@@ -431,9 +447,6 @@ class MessageManager:
             )
         except:
             return
-        if self.is_message_sent():
-            receipt.delete()
-            return
         try:
             res = self.api.send_direct_message(
                 recipient_id=self.recipient.user_id,
@@ -454,21 +467,7 @@ class MessageManager:
             if error_code in [420, 429, 88, 226]:
                 return False
 
-    def randinterval(self):
-        backoff = self.campaign.backoff
-        if backoff <= 0:
-            return
-        variance = backoff*0.1
-        return random.randint(
-            int(round(backoff-variance)),
-            int(round(backoff+variance))
-        )
 
-    def sleep_random(self):
-        duration = self.randinterval()
-        if not duration:
-            return
-        time.sleep(duration)
 
 
 class StatusManager:

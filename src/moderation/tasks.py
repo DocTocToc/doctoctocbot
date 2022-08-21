@@ -9,6 +9,8 @@ from django.urls import reverse
 from django.conf import settings
 from constance import config
 from webpush import send_user_notification
+from versions.exceptions import DeletionOfNonCurrentVersionError
+
 from bot.bin.user import getuser_lst
 from conversation.models import Tweetdj
 from moderation.profile import twitterprofile, create_update_profile
@@ -158,6 +160,8 @@ def handle_twitter_friends(user_id, bot_screen_name):
 def handle_pending_moderations():
     logger.debug("handle_pending_moderations()")
     for mod in Moderation.objects.current.filter(state__isnull=True):
+        if not mod.is_current:
+            continue
         try:
             queue = mod.queue
         except (KeyError, Queue.DoesNotExist) as e:
@@ -209,8 +213,11 @@ def handle_pending_moderations():
                     mod.queue,
                     senior=True,
                 )
-                handle_sendmoderationdm.apply_async(args=(new_mod.id,))
-                expire_and_delete(mod)
+                try:
+                    handle_sendmoderationdm.apply_async(args=(new_mod.id,))
+                    expire_and_delete(mod)
+                except AttributeError as e:
+                    logger.error(f'{new_mod=}: {e}')
         moderator_exclude: List[int] = list(
             Moderation.objects.filter(queue=mod.queue)
             .values_list('moderator__id', flat=True)
@@ -223,8 +230,11 @@ def handle_pending_moderations():
             exclude=moderator_exclude,
             senior=False,
         )
-        handle_sendmoderationdm.apply_async(args=(new_mod.id,))
-        expire_and_delete(mod)
+        try:
+            handle_sendmoderationdm.apply_async(args=(new_mod.id,))
+            expire_and_delete(mod)
+        except AttributeError as e:
+            logger.error(f'{new_mod=}: {e}')
 
 def expire_and_delete(moderation):
         try:
@@ -233,7 +243,10 @@ def expire_and_delete(moderation):
             state = None
         moderation.state = state
         moderation.save()
-        moderation.delete()
+        try:
+            moderation.delete()
+        except DeletionOfNonCurrentVersionError:
+            pass
 
 @shared_task   
 def handle_viral_moderation(socialuser_id):

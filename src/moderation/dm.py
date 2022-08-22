@@ -398,6 +398,10 @@ def create_moderation(community, queue, exclude=None, senior=False):
             senior=True,
         )
     if not qs:
+        logger.error(
+            f'create_moderation(): we could not find a moderator for '
+            f'{community=} {queue=} {exclude=} {senior=}'
+        )
         return
     logger.debug(f"create_moderation QuerySet (after excluding {exclude}): {qs}")
     random.seed(os.urandom(128))

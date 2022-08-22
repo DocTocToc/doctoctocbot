@@ -382,3 +382,22 @@ def self_categorize(socialuser: SocialUser, community: Community):
             logger.error(e)
             return
         create_initial_moderation(queue)
+
+def trusted_category_exists(su: SocialUser, community: Community) -> bool:
+    trusts = Trust.objects.filter(from_community=community)
+    if not trusts:
+        return False
+    ucrs = (
+        UserCategoryRelationship.objects.filter(social_user=su)
+        .exclude(moderator=su)
+    )
+    if not ucrs:
+        return False
+    for ucr in ucrs:
+        for trust in trusts:
+            if (
+                (ucr.community == trust.to_community)
+                and (ucr.category == trust.category)
+            ):
+                return True
+    return False

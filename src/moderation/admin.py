@@ -977,6 +977,22 @@ class FilterAdmin(admin.ModelAdmin):
     }
 
 
+@admin.register(UserCategoryRelationship)
+class UserCategoryRelationshipAdmin(admin.ModelAdmin):
+    list_display = [
+        'social_user',
+        'category',
+        'moderator',
+        'community',
+        'created',
+        'updated',
+    ]
+    list_filter = (
+        'category',
+        'community',
+    )
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SocialUser, SocialUserAdmin)
 

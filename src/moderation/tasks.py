@@ -42,7 +42,7 @@ from moderation.profile import (
 from community.helpers import get_community_bot_socialuser
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
-from moderation.moderate import self_mod
+from moderation.moderate import self_mod, trusted_category_exists
 from moderation.filter import process_onhold_queues
 
 logger = get_task_logger(__name__)
@@ -180,14 +180,19 @@ def handle_pending_moderations():
                 continue
         except KeyError:
             continue
-        # check if category already exists:
         user_id = mod.queue.user_id
         su = SocialUser.objects.get(user_id=user_id)
+        # check if ucr created by community already exists:
         if (
             UserCategoryRelationship.objects
             .filter(social_user=su, community=community)
             .exclude(moderator=su).exists()
         ):
+            expire_and_delete(mod)
+            continue
+        # check if trusted ucr already exists
+        if trusted_category_exists(su, community):
+            expire_and_delete(mod)
             continue
         # TODO: add default pending moderation period in settings
         # return if not set

@@ -30,7 +30,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --concurrency=${CELERY_RETWEET_CONCURRENCY} -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q retweet --hostname=retweet@%h --concurrency=${CELERY_RETWEET_CONCURRENCY} -n retweet_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -45,7 +45,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --concurrency=${CELERY_TREE_CONCURRENCY} -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE} --time-limit=${CELERY_TREE_TIME_LIMIT}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q tree --hostname=tree@%h --concurrency=${CELERY_TREE_CONCURRENCY} -n tree_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE} --time-limit=${CELERY_TREE_TIME_LIMIT}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -62,7 +62,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY} -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    command: bash -c "celery --app=${CELERY_APP} worker -Q celery --hostname=celery@%h --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY} -n celery_worker@%n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
     volumes:
       - ./src:/code/src
       - ${STATIC_ROOT}:${STATIC_ROOT}
@@ -93,6 +93,26 @@ services:
       - celery_retweet_worker
       - celery_tree_worker
       - celery_celery_worker
+    working_dir: /code/src
+  flower:
+    restart: always
+    env_file:
+      - .env
+    command: celery -A ${PROJECT} flower --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}
+    environment:
+      - CELERY_BROKER_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      - FLOWER_PORT=8888
+    ports:  
+      - 8888:8888
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
     working_dir: /code/src
   stream_1:
     env_file:

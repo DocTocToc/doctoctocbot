@@ -74,3 +74,4 @@ reportlab==3.6.6
 whatthelang
 django-mptt
 langcodes[data]
+flower

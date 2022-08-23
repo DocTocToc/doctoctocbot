@@ -173,6 +173,8 @@ services:
     image: dtn_prod
   celery-beat:
     image: dtn_prod
+  flower:
+    image: dtn_dev
   stream_1:
     image: dtn_prod
     restart: always

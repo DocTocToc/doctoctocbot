@@ -21,12 +21,13 @@ from messenger.models import (
     StatusLog,
     MessengerCrowdfunding,
 )
-from moderation.models import SocialUser, Follower
+from moderation.models import SocialUser, Follower, Profile
 from crowdfunding.models import ProjectInvestment, Project
 from conversation.models import Tweetdj
 from moderation.profile import recent_twitter_screen_name
 from community.helpers import site_url, activate_language
 from django.template.defaultfilters import date as _date
+from moderation.profile import create_update_profile_twitter
 
 logger = logging.getLogger(__name__)
 
@@ -425,8 +426,19 @@ class MessageManager:
             return ", ".join(dt_str[:-1]) + " & " + dt_str[-1]
 
     def _format(self):
+        try:
+            screen_name = self.recipient.screen_name_tag()
+        except Profile.DoesNotExist:
+            create_update_profile_twitter(
+                self.recipient,
+                bot_screen_name=self.sender.screen_name_tag(),
+                cache=False
+            )
+            self.recipient.refresh_from_db()
+            screen_name = self.recipient.screen_name_tag()
+
         d = {
-            'screen_name' : self.recipient.profile.screen_name_tag(),
+            'screen_name' : screen_name,
             'bot_screen_name' : self.sender.screen_name_tag(),
             'retweet_count' : self.retweeted_qs.count(),
             'first_retweet_date' : self.first_retweet_date(),

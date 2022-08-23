@@ -234,7 +234,7 @@ def create_update_profile_twitter(
     try:
         su.profile
         has_profile = True
-    except SocialUser.profile.RelatedObjectDoesNotExist:
+    except Profile.DoesNotExist:
         has_profile = False
     if cache and has_profile:
         return True

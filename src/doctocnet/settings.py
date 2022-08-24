@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 import os
 import logging
+from copy import deepcopy
 from django.utils.log import DEFAULT_LOGGING
 from decouple import AutoConfig, Csv
 from pathlib import Path
@@ -27,25 +28,24 @@ DEBUG_HTTPS = config('DEBUG_HTTPS', default=False, cast=bool)
 
 LOG_LEVEL = config('LOG_LEVEL', default='DEBUG')
 
-DICT_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    'filters': {
+logging_dict = deepcopy(DEFAULT_LOGGING)
+
+logging_dict["filters"] = {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
         },
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
-    },
-    "formatters": {
-        "default": {
-            "format": "%(asctime)s %(name)s %(pathname)s:%(lineno)s:%(funcName)s %(levelname)s %(message)s",
+    }
+logging_dict["formatters"] = {
+    "default": {
+        "format": "%(asctime)s %(name)s %(pathname)s:%(lineno)s:%(funcName)s %(levelname)s %(message)s",
         },
-        "django.server": DEFAULT_LOGGING['formatters']['django.server'],
-    },
+    "django.server": DEFAULT_LOGGING['formatters']['django.server'],
+    }
 
-    "handlers": {
+logging_dict["handlers"] = {
         'console': {
             'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
@@ -57,21 +57,20 @@ DICT_CONFIG = {
             "filters": ["require_debug_false"],
             "class": "logging.StreamHandler",
         },
-
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false"],
-            "class": "django.utils.log.AdminEmailHandler"
-        },
+        #"mail_admins": {
+        #    "level": "ERROR",
+        #    "filters": ["require_debug_false"],
+        #    "class": "django.utils.log.AdminEmailHandler"
+        #},
         "applogfile": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
             "filename": LOG_FILE,
         },
         "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
-    },
+    }
 
-    "loggers": {
+logging_dict["loggers"] = {
         '': {
             'level': LOG_LEVEL,
             'handlers': ['console', 'console_debug_false', 'applogfile',],
@@ -81,77 +80,70 @@ DICT_CONFIG = {
             "handlers": [
                 "console",
                 "console_debug_false",
-                "mail_admins",
+                #"mail_admins",
                 "applogfile",
             ],
             "level": LOG_LEVEL,
         },
         "bot.stream": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "bot.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "bot.doctoctocbot": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "messenger.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "tagging.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "timeline": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "django-invitations": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "bot.bin.thread": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "moderation.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "moderation.moderate": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "moderation.social": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "request.tasks": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "dm": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "autotweet": {
-            "handlers": ["console", "console_debug_false", "mail_admins"],
+            "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
         "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
-    },
-}
-logging.config.dictConfig(DICT_CONFIG)
-
-#sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-
-
-
+    }
+logging.config.dictConfig(logging_dict)
 
 SECRET_KEY = config('SECRET_KEY')
 

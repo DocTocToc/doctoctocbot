@@ -25,7 +25,6 @@ from django.db.utils import DatabaseError
 from django.conf import settings
 
 from bot.addstatusdj import addstatus
-from bot.tweepy_api import getAuth
 from moderation.models import SocialUser, Category
 from moderation.social import update_social_ids
 from community.models import Community, Retweet
@@ -388,11 +387,11 @@ def rt(statusid, dct, community):
         )
         return
     username = dct["_bot_screen_name"]
-    api = get_api(username=username, backend=True)
+    Client = get_api(username=username, oauth2=True)
     if community.active:
         if dct["_retweet"]:
             try:
-                res = api.retweet(statusid)
+                res = Client.retweet(statusid, user_auth=False)
                 logger.info(
                     f"I just retweeted status {statusid}\n"
                     f"Response: {res}"
@@ -407,7 +406,7 @@ def rt(statusid, dct, community):
                 create_update_retweeted(statusid, community, res._json)
         if dct["_favorite"]:
             try:
-                res = api.create_favorite(statusid)
+                res = Client.like(statusid, user_auth=False)
                 logger.info(
                     f"I just favorited status {statusid}\n"
                     f"Response: {res}"

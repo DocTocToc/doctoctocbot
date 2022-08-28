@@ -58,7 +58,8 @@ class TwitterUser:
             logger.debug(tweepy_user)
             if isinstance(tweepy_user, TweepyUser):
                 return True
-        except TweepError:
+        except TweepError as e:
+            logger.error(e)
             return False
 
     def decline_follow_request(self, community):

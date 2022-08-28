@@ -6,6 +6,7 @@ billiard==3.6.4.0
 redis==3.5.3
 django-redis==5.0.0
 tweepy==3.10.0
+git+https://github.com/jeromecc/mytweepy.git@9beb1b5e0ea92318455a31c7d01028a4cfab986f
 configparser==3.7.3
 unidecode==1.0.23
 psycopg2-binary==2.9.3

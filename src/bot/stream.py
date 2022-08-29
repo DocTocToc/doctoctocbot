@@ -51,7 +51,7 @@ def main(community: Optional[str] = None):
     except:
         return
     try:
-        api = get_api(screen_name, backend=True)
+        api = get_api(username=screen_name)
     except:
         return
     track_list = []

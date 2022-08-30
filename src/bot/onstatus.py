@@ -7,6 +7,7 @@ from bot.doctoctocbot import (
     create_tree_except_rt
 )
 from bot.lib.statusdb import Addstatus
+from bot.addstatusdj import addstatus
 from bot.tweepy_api import get_api
 from conversation.models import Tweetdj
 from conversation.models import Hashtag
@@ -69,14 +70,15 @@ def triage_status(status_id, community):
         tweetdj = Tweetdj.objects.get(statusid=status_id)
         sjson = tweetdj.json
     except Tweetdj.DoesNotExist:
-        status = get_status(status_id, community)
-        if not status:
-            status = get_status_communities(status_id, community)
-        if not status:
+        try:
+            bot_username=community.account.username
+        except:
+            bot_username=None
+        tweetdj = addstatus(status_id, bot_username=bot_username)
+        if tweetdj:
+            sjson = tweetdj.json
+        else:
             return
-        db = Addstatus(status._json)
-        db.addtweetdj()
-        sjson = status._json
     hrh = has_retweet_hashtag(sjson)
     if hrh:
         logger.info(
@@ -84,8 +86,8 @@ def triage_status(status_id, community):
             sjson["id"],
             sjson["full_text"]
         )
-        community_retweet(sjson["id"], sjson["user"]["id"], hrh)
-        
+        community_retweet(status_id, sjson["user"]["id"], hrh)
+
 def search_triage(community: Community):
     hashtags = list(
         Retweet.objects

@@ -45,6 +45,10 @@ def addstatus(statusid, bot_username=None):
             logger.error(f"We could not get status {statusid}")
         return
     db.addtweetdj()
+    try:
+        return Tweetdj.objects.get(statusid=statusid)
+    except Tweetdj.DoesNotExist:
+        return
 
 def addstatus_if_not_exist(statusid):
     if statusid is None:

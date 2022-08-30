@@ -85,12 +85,7 @@ def triage_status(status_id, community):
         tweetdj = addstatus(status_id, bot_username=bot_username)
         hrh = has_retweet_hashtag(tweetdj.json)
     if hrh:
-        logger.info(
-            "Sending status %s: %s to function community_retweet()",
-            sjson["id"],
-            sjson["full_text"]
-        )
-        community_retweet(status_id, sjson["user"]["id"], hrh)
+        community_retweet(status_id, tweetdj.json["user"]["id"], hrh)
 
 def search_triage(community: Community):
     hashtags = list(

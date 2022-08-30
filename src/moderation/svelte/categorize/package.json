@@ -19,5 +19,7 @@
     "sirv-cli": "^1.0.14",
     "svelte": "^3.46.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dayjs": "^1.11.4"
+  }
 }

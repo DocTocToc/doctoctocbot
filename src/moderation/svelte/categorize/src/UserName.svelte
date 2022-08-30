@@ -2,6 +2,12 @@
 	import { onMount } from "svelte";
 	import CreateSocialUser from "./CreateSocialUser.svelte";
 	import HealthCareProvider from "./HealthCareProvider.svelte";
+	import dayjs from 'dayjs';
+	import customParseFormat from 'dayjs/plugin/customParseFormat';
+	import relativeTime from 'dayjs/plugin/relativeTime';
+	import 'dayjs/locale/fr'
+	dayjs.extend(customParseFormat)
+	dayjs.extend(relativeTime)
 	let input = "";
 	let screenName = "";
 	let apiPath = "/moderation/api/socialuser/";
@@ -25,6 +31,13 @@
 	function toHRDate(isoDateTimeString) {
 		const date = new Date(isoDateTimeString);
 		return date.toDateString();
+	}
+
+	function durationFromNow(twitterDateTimeString) {
+
+		//Twitter date time format: "Thu Jun 05 19:56:42 +0000 2014"
+		let dateTime = dayjs(twitterDateTimeString, "[ddd] MMM DD HH:mm:ss [zz] YYYY");
+		return dateTime.fromNow()
 	}
 
 	async function fetchApi(sn) {
@@ -91,6 +104,11 @@
 							.screen_name}
 					</li>
 					<li>Twitter name: {socialuser.profile.json.name}</li>
+					<li>Account created {durationFromNow(socialuser.profile.json.created_at)}</li>
+					<li>{socialuser.profile.json.description}</li>
+					<li>location: {socialuser.profile.json.location}</li>
+					<li>statuses count: {socialuser.profile.json.statuses_count}</li>
+					<li>favourites count: {socialuser.profile.json.favourites_count}</li>					
 					<li>
 						category
 						<ul>

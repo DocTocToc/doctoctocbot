@@ -216,10 +216,3 @@ def statuses_lookup(statusid):
         return statuses
     elif len(statuses) == 1:
         return statuses[0]
-
-def verify_credentials(api, username, backend):
-    try:
-        r = api.verify_credentials()
-        logger.info(f"Authentication info for {username} (backend: {backend}): {r}")
-    except:
-        logger.error(f"Error during authentication of {username} (backend: {backend})")

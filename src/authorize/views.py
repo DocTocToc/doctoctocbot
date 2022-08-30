@@ -115,8 +115,3 @@ def Callback(request):
         return redirect(reverse("authorize:success"))
     else:
         return redirect(reverse("authorize:request"))
-
-
-            
-        
-    

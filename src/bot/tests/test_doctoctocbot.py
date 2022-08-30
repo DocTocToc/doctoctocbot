@@ -49,11 +49,7 @@ class IsFollowerTestCase(TestCase):
             twitter_consumer_secret = get_random_string(100),
             twitter_access_token = get_random_string(100),
             twitter_access_token_secret = get_random_string(100),
-            active = True,
-            backend_twitter_consumer_key = get_random_string(100),
-            backend_twitter_consumer_secret = get_random_string(100),
-            backend_twitter_access_token = get_random_string(100),
-            backend_twitter_access_token_secret = get_random_string(100),        
+            active = True,    
         )
         account2 = Account.objects.create(
             userid = 2,
@@ -62,11 +58,7 @@ class IsFollowerTestCase(TestCase):
             twitter_consumer_secret = get_random_string(100),
             twitter_access_token = get_random_string(100),
             twitter_access_token_secret = get_random_string(100),
-            active = True,
-            backend_twitter_consumer_key = get_random_string(100),
-            backend_twitter_consumer_secret = get_random_string(100),
-            backend_twitter_access_token = get_random_string(100),
-            backend_twitter_access_token_secret = get_random_string(100),        
+            active = True,     
         )
         Community.objects.create(
             name = "community1",

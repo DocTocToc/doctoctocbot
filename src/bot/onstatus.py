@@ -67,13 +67,13 @@ def triage(json: dict, community: str):
 
 def triage_status(status_id, community):
     try:
+        bot_username=community.account.username
+    except:
+        bot_username=None
+    try:
         tweetdj = Tweetdj.objects.get(statusid=status_id)
         sjson = tweetdj.json
     except Tweetdj.DoesNotExist:
-        try:
-            bot_username=community.account.username
-        except:
-            bot_username=None
         tweetdj = addstatus(status_id, bot_username=bot_username)
         if tweetdj:
             sjson = tweetdj.json

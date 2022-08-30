@@ -58,7 +58,7 @@ def handle_tweet_investment(
     community = project.community
     bot_screen_name = community.account.username
     domain_name = community.site.domain
-    api = get_api(bot_screen_name, backend=True)    
+    api = get_api(username=bot_screen_name)    
     if public:
         status = (
             "Merci à {display_name} pour sa participation "

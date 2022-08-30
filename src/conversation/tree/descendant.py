@@ -49,10 +49,7 @@ class ReplyCrawler(object):
     
     def __init__(self, community):
         self.community = community
-        self.api = get_community_twitter_tweepy_api(
-            self.community,
-            backend=False
-        )
+        self.api = get_community_twitter_tweepy_api(self.community)
         #self.root_id = root_id
         #self.q = queue.PriorityQueue(maxsize=0)
         #self.since_id = root_id

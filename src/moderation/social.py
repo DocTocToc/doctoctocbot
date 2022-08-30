@@ -360,7 +360,7 @@ def pie_plot(dct):
     return f
 
 def get_dm_media_id(file, bot_screen_name):
-    api = get_api(username=bot_screen_name, backend=True)
+    api = get_api(username=bot_screen_name)
     logger.debug(api)
     try:
         res = api.media_upload(file.name, media_category="dm_image")

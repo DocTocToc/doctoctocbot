@@ -24,10 +24,7 @@ logger = logging.getLogger(__name__)
 #tweepy.error.TweepError: [{'code': 136, 'message': 'You have been blocked from the author of this tweet.'}]
 
 def addstatus(statusid, bot_username=None):
-    API = get_api(
-            username=bot_username,
-            backend=True,
-    )
+    API = get_api(username=bot_username)
     try:
         status = API.get_status(statusid, tweet_mode='extended')
     except AttributeError:

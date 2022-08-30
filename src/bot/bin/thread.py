@@ -182,10 +182,7 @@ def question_api(start_status_id: int) -> bool:
     except:
         return
     logger.debug(f'bot_username: {bot_username}')
-    api = get_api(
-        username=bot_username,
-        backend=True
-    )
+    api = get_api(username=bot_username)
     root_tweetdj = get_root_status(
         start_tweetdj,
         bot_username=bot_username,

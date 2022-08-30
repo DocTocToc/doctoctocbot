@@ -2,7 +2,7 @@ import logging
 
 from community.models import Community
 from bot.bin.friendship import create_friendship_members
-
+from bot.onstatus import search_triage
 from celery import shared_task
 
 logger = logging.getLogger(__name__)
@@ -26,3 +26,12 @@ def handle_follow_member_community(community: str):
     except Community.DoesNotExist:
         return
     create_friendship_members(community)
+    
+    
+@shared_task
+def handle_search_triage(community: str):
+    try:
+        community = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    search_triage(community)

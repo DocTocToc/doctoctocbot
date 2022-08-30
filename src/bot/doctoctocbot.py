@@ -27,7 +27,7 @@ from django.conf import settings
 from bot.addstatusdj import addstatus
 from moderation.models import SocialUser, Category
 from moderation.social import update_social_ids
-from community.models import Community, Retweet
+from community.models import Community, Retweet, Trust
 from conversation.models import Hashtag, Tweetdj, Retweeted
 from .tasks import handle_retweetroot, handle_question
 from bot.tweepy_api import get_api
@@ -149,15 +149,20 @@ def is_following_rules_json(status, userid, dct):
     """
     Does this status follow the structural rules?
     """
+    logger.debug(f'{is_follower(userid, dct["_bot_screen_name"])=}')
     if dct["_require_follower"] and not is_follower(userid, dct["_bot_screen_name"]):
         return False
+    logger.debug(f'{isrt(status)=}')
     if isrt(status) and not dct["_allow_retweet"]:
         return False
+    logger.debug(f'{isquote(status)=}')
     if isquote(status) and not dct["_allow_quote"]:
         return False
+    logger.debug(f'{isreply(status)=}')
     if isreply(status):
         handle_retweetroot.apply_async(args=(status['id'],))
         return False
+    logger.debug(f'{isquestion(status)=}')
     if dct["_require_question"] and not isquestion(status):
         logger.debug(f"status['id']: {status['id']}")
         handle_question.apply_async(args=(status['id'],), countdown=30, expires=900) 
@@ -336,11 +341,16 @@ def community_retweet(
             continue
         category = Category.objects.get(pk=dct["_category"])
         logger.debug(f"category:{category}")
-        trusted_community_qs = community.trust.filter(category=category)
+        trusted_community_qs = Trust.objects.filter(
+            from_community=community,
+            category=category,
+            authorized=True
+            ).values_list("to_community__id", flat=True)
+        logger.debug(trusted_community_qs)
         trusted_community_lst = list(trusted_community_qs)
         logger.debug(f"trusted_community_lst:{trusted_community_lst}")
         # if community forgot to trust itself:
-        trusted_community_lst.append(community)
+        trusted_community_lst.append(community.id)
         logger.debug(f"trusted_community_lst:{trusted_community_lst}")
         
         trust = False
@@ -351,10 +361,13 @@ def community_retweet(
         )
         logger.debug(f"crs_lst:{crs_lst}")
         for crs in crs_lst:
-            if crs.community in trusted_community_lst:
+            if crs.community.id in trusted_community_lst:
                 trust = True
-        
+        logger.debug(f'{trust=}')
         if trust:
+            logger.debug(f'{skip_rules=}')
+            logger.debug(f'{is_following_rules(statusid, userid, dct)=}')
+            logger.debug(f'{statusid=} {userid=} {dct=}')
             if skip_rules or is_following_rules(statusid, userid, dct):
                 rt(statusid, dct, community)
 
@@ -403,7 +416,7 @@ def rt(statusid, dct, community):
                 res = None
             if res:
                 set_retweeted_by(statusid, community)
-                create_update_retweeted(statusid, community, res._json)
+                #create_update_retweeted(statusid, community, res._json)
         if dct["_favorite"]:
             try:
                 res = Client.like(statusid, user_auth=False)

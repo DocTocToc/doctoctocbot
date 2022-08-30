@@ -15,10 +15,7 @@ def getuser(user_id: int, bot_screen_name=None):
         return
     if not isinstance(user_id, int):
         return
-    api = get_api(
-        username=bot_screen_name,
-        backend=True,
-    )
+    api = get_api(username=bot_screen_name)
     if not api:
         return
     res = None

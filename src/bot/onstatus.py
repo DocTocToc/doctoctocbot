@@ -11,13 +11,15 @@ from bot.tweepy_api import get_api
 from conversation.models import Tweetdj
 from conversation.models import Hashtag
 from community.models import Community
+from bot.tasks import handle_triage_status
+from community.models import Community, Retweet
 
 logger = logging.getLogger(__name__)
 
 
 def get_status(statusid: int, community: Community):
     username = community.account.username
-    api = get_api(username=username, backend=True)
+    api = get_api(username=username)
     if not api:
         return
     try:
@@ -72,6 +74,8 @@ def triage_status(status_id, community):
             status = get_status_communities(status_id, community)
         if not status:
             return
+        db = Addstatus(status._json)
+        db.addtweetdj()
         sjson = status._json
     hrh = has_retweet_hashtag(sjson)
     if hrh:
@@ -81,3 +85,30 @@ def triage_status(status_id, community):
             sjson["full_text"]
         )
         community_retweet(sjson["id"], sjson["user"]["id"], hrh)
+        
+def search_triage(community: Community):
+    hashtags = list(
+        Retweet.objects
+        .filter(community=community)
+        .order_by('hashtag')
+        .values_list("hashtag__hashtag", flat=True)
+        .distinct()
+    )
+    hashtags = [f'#{h}' for h in hashtags]
+    Client = get_api(username=community.account.username, oauth2=True)
+    search_string = " OR ".join(hashtags)
+    logger.debug("search_string: %s" % (search_string))
+    tweets = Client.search_recent_tweets(
+        search_string,
+        max_results=100,
+    )
+    data, _includes, _errors, _meta = tweets
+    logger.debug(f'{data=}')
+    logger.debug(f'{_includes=}')
+    logger.debug(f'{_errors=}')
+    logger.debug(f'{_meta=}')
+    for tweet in data:
+        logger.debug(f'{tweet.id} {tweet.text}')
+        handle_triage_status.apply_async(
+            kwargs={"status_id": tweet.id, "community": community.name}
+        )

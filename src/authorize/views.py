@@ -20,7 +20,7 @@ def is_twitter_auth(user):
     return bool(user.social_auth.filter(provider='twitter'))
 
 def verify_account_credentials(screen_name):
-    api = get_api(username=screen_name, backend=True)
+    api = get_api(username=screen_name)
     try:
         return api.verify_credentials()
     except tweepy.TweepError:
@@ -35,6 +35,8 @@ class Request(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(Request, self).get_context_data(*args, **kwargs)
         user = self.request.user
+        app_name = self.kwargs['app_name']
+        context["app_name"] = app_name
         if is_twitter_auth(user):
             uid = user.social_auth.get(provider="twitter").uid
             try:
@@ -68,7 +70,7 @@ class Request(TemplateView):
                 context["redirect_url"] = redirect_url
                 self.request.session['request_token'] = auth.request_token['oauth_token']
             except tweepy.TweepError:
-                print('Error! Failed to get request token.')
+                logger.debug(f'Error! Failed to get request token for {app_name}.')
                 context["redirect_url"] = None
                 context["error"] = True
         return context
@@ -109,10 +111,6 @@ def Callback(request):
         account.twitter_consumer_secret = settings.TWITTER_APP_CONSUMER_SECRET
         account.twitter_access_token = auth.access_token
         account.twitter_access_token_secret = auth.access_token_secret
-        account.backend_twitter_consumer_key = settings.TWITTER_APP_CONSUMER_KEY
-        account.backend_twitter_consumer_secret = settings.TWITTER_APP_CONSUMER_SECRET
-        account.backend_twitter_access_token = auth.access_token
-        account.backend_twitter_access_token_secret = auth.access_token_secret
         account.save()
         return redirect(reverse("authorize:success"))
     else:

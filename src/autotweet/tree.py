@@ -155,7 +155,7 @@ def record_replies(statusids, community, rc):
     if new_id_arr.size == 0:
         return
     id_lst = list(new_id_arr)
-    api = get_community_twitter_tweepy_api(community, backend=False)
+    api = get_community_twitter_tweepy_api(community)
     while id_lst:
         batch = id_lst[:98]
         del id_lst[0:98]

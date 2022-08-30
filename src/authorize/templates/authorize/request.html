@@ -21,12 +21,12 @@
 
 {% endblock head_meta %}
 
-{% block title %}{% trans "Authorization request" %}{% endblock title %}
+{% block title %}{% trans "Authorization request for" %} {{ app_name }} {% endblock title %}
 
 {% block content %}
 
 <p>
-In order to use our community bot service, you need to authorize our Twitter app.
+In order to use our community bot service, you need to authorize our {{ app_name }} Twitter app.
 </p>
 
 {% if 'twitter' in backends.not_associated %}

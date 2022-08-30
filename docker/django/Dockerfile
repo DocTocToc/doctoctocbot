@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     gdal-bin \
     libolm-dev \
     cython3 \
+    gdb \
  && rm -rf /var/lib/apt/lists/*
  
 RUN echo "Europe/Paris" > /etc/timezone && \

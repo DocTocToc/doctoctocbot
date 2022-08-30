@@ -28,7 +28,7 @@ def notify_dm(
     logger.debug(
        f"{statusid}, {socialuser}, {tweetsubscription}"    
     )
-    api=get_api(username="doctoctocbot2", backend=True)
+    api=get_api(username="doctoctocbot2")
     try:
         screen_name = json["user"]["screen_name"]
     except:

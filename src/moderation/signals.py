@@ -147,7 +147,9 @@ def add_category_from_taxonomy(sender, instance, created, **kwargs):
 
     def add_usercategoryrelationship(hcpt, tc):
         social_user = get_socialuser_from_human(hcpt.healthcareprovider.human)
+        logger.debug(f'{social_user=}')
         moderator = get_socialuser_from_human(hcpt.creator)
+        logger.debug(f'{moderator=}')
         if not social_user or not moderator:
             return
         try:

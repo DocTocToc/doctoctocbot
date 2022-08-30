@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand, CommandError
 from moderation.profile import create_twitter_social_user_and_profile
 from moderation.models import SocialUser, Category, UserCategoryRelationship
 from community.models import Community
-from bot.tweepy_api import get_api
 from tweepy.error import TweepError
 from typing import List
 from django.db.utils import DatabaseError

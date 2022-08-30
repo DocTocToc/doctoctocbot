@@ -360,18 +360,18 @@ class Category(CategoryBase):
             "or private (for internal use)?"
         )
     )
-    
+
     objects = CategoryManager()
 
     def __str__(self):
         return self.name
-    
+
     def twitter_screen_name(self):
         communities =  self.community.all()
         if not communities:
             return
         return communities[0].account.username
-    
+
     def twitter_id_list(self):
         """ Return list of Twitter user ids for this category
         """
@@ -447,7 +447,7 @@ class UserCategoryRelationship(models.Model):
                 f"mod:{screen_name} ,"
                 f"com:{self.community}")
 
-    
+
     class Meta:
         unique_together = ("social_user", "moderator", "category", "community")
         get_latest_by = "created"

@@ -102,10 +102,7 @@ class Follow():
         return followed_dict
 
     def get_api(self):
-        return get_api(
-            username=self.socialuser.screen_name_tag(),
-            backend=True
-        )
+        return get_api(username=self.socialuser.screen_name_tag())
 
     def get_community(self):
         try:

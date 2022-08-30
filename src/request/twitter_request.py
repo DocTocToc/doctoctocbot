@@ -51,7 +51,7 @@ def message_requestor(queue):
         requestor_screen_name,
         bot_username, 
     )
-    api = tweepy_api(username=helper_username, backend=True)
+    api = tweepy_api(username=helper_username)
     try:
         api.update_status(helper_message)
     except TweepError as e:

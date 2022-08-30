@@ -44,7 +44,7 @@ def request_dm(queue):
     text = community.twitter_request_dm_text
     if not text:
         return
-    api = get_community_twitter_tweepy_api(community, backend=True)
+    api = get_community_twitter_tweepy_api(community)
     try:
         rd = RequestDm.objects.create(queue=queue)
     except DatabaseError:

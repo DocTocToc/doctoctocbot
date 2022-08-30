@@ -60,7 +60,7 @@ def activate_language(community):
         return
     activate(language)
     
-def get_community_twitter_tweepy_api(community, backend=False):
+def get_community_twitter_tweepy_api(community):
     if not community:
         return
     if not isinstance(community, Community):
@@ -69,7 +69,7 @@ def get_community_twitter_tweepy_api(community, backend=False):
         bot_screen_name = community.account.username
     except AttributeError:
         return
-    return get_api(bot_screen_name, backend)
+    return get_api(username=bot_screen_name)
     
 def get_community_bot_socialuser(community: Community) -> Optional[SocialUser]:
     if not community:

@@ -93,10 +93,7 @@ class Unfollow():
         return unfollowed_dict
 
     def get_api(self):
-        return get_api(
-            username=self.socialuser.screen_name_tag(),
-            backend=True
-        )
+        return get_api(username=self.socialuser.screen_name_tag())
 
     def random_sample(self):
         if self.sample_size > len(self.candidates) or self.sample_size < 0:

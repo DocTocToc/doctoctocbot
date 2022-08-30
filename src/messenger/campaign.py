@@ -53,10 +53,7 @@ class CampaignManager:
             return 100
 
     def get_api(self):
-        return get_api(
-            username=self.campaign.account.screen_name_tag(),
-            backend=True,
-        )
+        return get_api(username=self.campaign.account.screen_name_tag())
 
     def datetime_ok(self):
         start = self.campaign.start

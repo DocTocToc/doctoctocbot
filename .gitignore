@@ -18,6 +18,7 @@ docstest
 error.log
 info.log
 debug.log
+src/cysignals_crash_logs/
 
 # eclipse
 .project

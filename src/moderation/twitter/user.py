@@ -49,10 +49,7 @@ class TwitterUser:
                 f"Given parameter {community} is not a Community object"
             )
             return
-        api = get_community_twitter_tweepy_api(
-            community = community,
-            backend=True
-        )
+        api = get_community_twitter_tweepy_api(community)
         try:
             tweepy_user = api.create_friendship(user_id=self.id)
             logger.debug(tweepy_user)
@@ -63,10 +60,7 @@ class TwitterUser:
             return False
 
     def decline_follow_request(self, community):
-        api = get_community_twitter_tweepy_api(
-            community = community,
-            backend=True
-        )
+        api = get_community_twitter_tweepy_api(community)
         resp = api.create_block(user_id=self.id)
         logger.debug(resp)
         time.sleep(5)

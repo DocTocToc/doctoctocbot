@@ -105,7 +105,7 @@ def get_api_2(username=None):
             logger.debug(f'AccessToken object: {at}')
         except AccessToken.DoesNotExist:
             return
-
+        logger.debug(f'{list(at.app.scopes.all().values_list("scope", flat=True))=}')
         oauth2_user_handler = mytweepy.OAuth2UserHandler(
             client_id=at.app.client_id,
             redirect_uri=at.app.redirect_uri,

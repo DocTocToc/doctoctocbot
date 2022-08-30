@@ -117,7 +117,7 @@ def create_friendship_members(
     )
     if not to_add_id:
         return
-    api = get_api(username=bot_screen_name, backend=True)
+    api = get_api(username=bot_screen_name)
     success_screen_name = []
     success_count = 0
     failure_screen_name = []
@@ -193,7 +193,7 @@ def create_friendship_members(
 def create_friendship(userid, community: Community):
     if not community or not isinstance(community, Community):
         return
-    api = get_community_twitter_tweepy_api(community, backend=True)
+    api = get_community_twitter_tweepy_api(community)
     if not api:
         return
     try:

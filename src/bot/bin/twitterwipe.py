@@ -19,7 +19,7 @@ class TwitterWipe():
         self.retweets = retweets
         self.tweets = tweets
         self.delete_timestamps = self.get_delete_timestamps()
-        self.api = get_api(self.username, backend=True)
+        self.api = get_api(username=self.username)
 
     def confirm(self, default=None):
         result = input(

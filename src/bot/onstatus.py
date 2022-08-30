@@ -79,7 +79,11 @@ def triage_status(status_id, community):
             sjson = tweetdj.json
         else:
             return
-    hrh = has_retweet_hashtag(sjson)
+    try:
+        hrh = has_retweet_hashtag(sjson)
+    except TypeError:
+        tweetdj = addstatus(status_id, bot_username=bot_username)
+        hrh = has_retweet_hashtag(tweetdj.json)
     if hrh:
         logger.info(
             "Sending status %s: %s to function community_retweet()",

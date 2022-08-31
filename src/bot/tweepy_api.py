@@ -123,7 +123,7 @@ def get_api_2(username=None):
             access_token = access_token_dict["access_token"]
         else:
             access_token = at.token["access_token"]
-        return mytweepy.Client(access_token)
+        return mytweepy.Client(access_token, wait_on_rate_limit=True)
 
 def get_oauth2userhandler(app):
     try:

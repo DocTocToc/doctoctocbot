@@ -2,6 +2,7 @@ import uuid
 import logging
 import random
 import os
+import ast
 from typing import Optional, List
 from dm.models import DirectMessage
 from moderation.models import (

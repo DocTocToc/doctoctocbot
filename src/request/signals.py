@@ -9,7 +9,6 @@ from moderation.models import Category
 from moderation.models import Queue as ModerationQueue
 from moderation.twitter.user import TwitterUser
 from community.helpers import activate_language
-from request.twitter_request import message_requestor
 from request.tasks import (
     handle_accept_follower_twitter,
     handle_decline_follower_twitter,
@@ -63,15 +62,6 @@ def dm_admin(sender, instance, created, **kwargs):
                 screen_name=screen_name
             )
             logger.debug(dm)
-
-@receiver(post_save, sender=RequestQueue)
-def message_requestor_slot(sender, instance, created, **kwargs):
-    if (
-        created
-        and (instance.state == RequestQueue.PENDING)
-        and (instance.id == instance.identity)
-    ):
-        message_requestor(instance)
 
 @receiver(post_save, sender=RequestQueue)
 def create_moderation_queue(sender, instance, created, **kwargs):

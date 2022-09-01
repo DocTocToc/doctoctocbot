@@ -119,10 +119,10 @@ class Command(BaseCommand):
         api=get_api(username=community.account.username)
         self.stdout.write(
             self.style.SUCCESS(
-                f'New followers of {bot_su.screen_name_tag()} '
+                f'{arrivals_qs.count()} new follower(s) of {bot_su.screen_name_tag()} '
                 f'since {days} day(s) ago:\n'
                 f'{display_socialusers(arrivals_qs, api, check_user=False) or None}\n'
-                f'Users who unfollowed {bot_su.screen_name_tag()} '
+                f'{departures_qs.count()} user(s) unfollowed {bot_su.screen_name_tag()} '
                 f'since {days} day(s) ago:\n'
                 f'{display_socialusers(departures_qs, api, check_user=True) or None}\n'
             )

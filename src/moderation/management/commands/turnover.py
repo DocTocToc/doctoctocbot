@@ -31,7 +31,7 @@ def display_socialusers(qs, api, check_user=False):
             try:
                 api.get_user(screen_name)
             except TweepError as e:
-                _str+= f': {e[0]["message"]}'
+                _str+= f': {e.args[0][0]["message"]}'
         _str+='\n'
     return _str
 

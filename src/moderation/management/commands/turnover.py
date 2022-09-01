@@ -17,12 +17,23 @@ from moderation.models import (
 from community.models import Community
 from bot.tweepy_api import get_api
 from moderation.social import update_social_ids
+from tweepy import TweepError
 
 logger = logging.getLogger(__name__)
 
 
-def display_socialusers(qs):
-    return " ".join([f'@{su.screen_name_tag()}' for su in qs])
+def display_socialusers(qs, api, check_user=False):
+    _str = ""
+    for su in qs:
+        screen_name = su.screen_name_tag()
+        _str+=f'@{screen_name}'
+        if check_user:
+            try:
+                api.get_user(screen_name)
+            except TweepError as e:
+                _str+= f': {e[0]["message"]}'
+        _str+='\n'
+    return _str
 
 class Command(BaseCommand):
     help = "Display followers' departures and arrivals"
@@ -105,13 +116,14 @@ class Command(BaseCommand):
         logger.debug(arrivals_qs)
         departures_qs = SocialUser.objects.filter(user_id__in=departures)
         logger.debug(departures_qs)
+        api=get_api(username=community.account.username)
         self.stdout.write(
             self.style.SUCCESS(
                 f'New followers of {bot_su.screen_name_tag()} '
                 f'since {days} day(s) ago:\n'
-                f'{display_socialusers(arrivals_qs) or None}\n'
+                f'{display_socialusers(arrivals_qs, api, check_user=False) or None}\n'
                 f'Users who unfollowed {bot_su.screen_name_tag()} '
                 f'since {days} day(s) ago:\n'
-                f'{display_socialusers(departures_qs) or None}\n'
+                f'{display_socialusers(departures_qs, api, check_user=True) or None}\n'
             )
         )

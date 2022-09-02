@@ -8,7 +8,7 @@ from bot.doctoctocbot import (
 )
 from bot.lib.statusdb import Addstatus
 from bot.addstatusdj import addstatus
-from bot.tweepy_api import get_api
+from bot.tweepy_api import get_api, get_v1_v2
 from conversation.models import Tweetdj
 from conversation.models import Hashtag
 from community.models import Community
@@ -96,20 +96,32 @@ def search_triage(community: Community):
         .distinct()
     )
     hashtags = [f'#{h}' for h in hashtags]
-    Client = get_api(username=community.account.username)
     search_string = " OR ".join(hashtags)
     logger.debug("search_string: %s" % (search_string))
-    tweets = Client.search_recent_tweets(
-        search_string,
-        max_results=100,
-    )
-    data, _includes, _errors, _meta = tweets
-    logger.debug(f'{data=}')
-    logger.debug(f'{_includes=}')
-    logger.debug(f'{_errors=}')
-    logger.debug(f'{_meta=}')
-    for tweet in data:
-        logger.debug(f'{tweet.id} {tweet.text}')
-        handle_triage_status.apply_async(
-            kwargs={"status_id": tweet.id, "community": community.name}
+    v1, v2 = get_v1_v2()
+    if community.account.app.api == v1:
+        api = get_api(username=community.account.username, mt=True)
+        tweets = api.search_tweets(
+            search_string,
+            count=100,
+            result_type="recent",
         )
+        for tweet in tweets:
+            logger.debug(f'{tweet.id} {tweet.text}')
+            handle_triage_status.apply_async(
+                kwargs={"status_id": tweet.id, "community": community.name}
+            )
+    elif community.account.app.api == v2:
+        Client = get_api(username=community.account.username)
+        tweets = Client.search_recent_tweets(
+            search_string,
+            max_results=100,
+        )
+        data, _includes, _errors, _meta = tweets
+        for tweet in data:
+            logger.debug(f'{tweet.id} {tweet.text}')
+            handle_triage_status.apply_async(
+                kwargs={"status_id": tweet.id, "community": community.name}
+            )
+        else:
+            return

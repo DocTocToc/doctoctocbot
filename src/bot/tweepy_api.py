@@ -258,3 +258,12 @@ def statuses_lookup(statusid):
         return statuses
     elif len(statuses) == 1:
         return statuses[0]
+
+def get_v1_v2():
+    try:
+        v1 = TwitterAPI.objects.get(name="standard v1.1")
+        v2 = TwitterAPI.objects.get(name="v2")
+        return v1, v2
+    except TwitterAPI.DoesNotExist as e:
+        logger.error(f'{e}: create TwitterAPI records. ')
+        return None, None

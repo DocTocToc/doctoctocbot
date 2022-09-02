@@ -359,7 +359,7 @@ def handle_create_twitter_socialuser(
         )
         return
     try:
-        tweepy_user = get_api().get_user(screen_name=screen_name)
+        tweepy_user = api.get_user(screen_name=screen_name)
     except TweepError as e:
         logger.error('Tweepy error "%s' % e)
     except AttributeError as e:

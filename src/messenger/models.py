@@ -1,6 +1,6 @@
 import logging
 from django.db import models
-from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.postgres.fields import IntegerRangeField, ArrayField
 from moderation.models import SocialUser, Category
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
@@ -292,6 +292,11 @@ class Receipt(models.Model):
         help_text = _('Error message recorded if the message was not successfully sent.'),
         null=True,
         blank=True,  
+    )
+    error_codes = ArrayField(
+        models.PositiveIntegerField(),
+        null=True,
+        blank=True,
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)

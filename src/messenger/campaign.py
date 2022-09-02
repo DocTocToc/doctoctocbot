@@ -5,7 +5,7 @@ import datetime
 import re
 
 from constance import config
-from tweepy import TweepError
+from mytweepy.errors import HTTPException
 
 from django.db.models import Q
 from django.utils.formats import date_format
@@ -53,7 +53,10 @@ class CampaignManager:
             return 100
 
     def get_api(self):
-        return get_api(username=self.campaign.account.screen_name_tag())
+        return get_api(
+            username=self.campaign.account.screen_name_tag(),
+            mt=True
+        )
 
     def datetime_ok(self):
         start = self.campaign.start
@@ -465,18 +468,14 @@ class MessageManager:
             receipt.event_id=res.id
             receipt.save()
             return True
-        except TweepError as e:
-            logger.error(f"addstatus: Tweepy error: {e}")
-            try:
-                error_code =  e.args[0][0]['code']
-            except:
-                error_code = 0
-            receipt.error = error_code
+        except HTTPException as e:
+            errors =  e.api_codes
+            logger.error(f"addstatus: Tweepy error: {errors}")
+            receipt.error = errors
+            receipt.error_codes = e.api_codes
             receipt.save()
-            if error_code in [420, 429, 88, 226]:
+            if any(x in [420, 429, 88, 226, 261] for x in e.api_codes):
                 return False
-
-
 
 
 class StatusManager:

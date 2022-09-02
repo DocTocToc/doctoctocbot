@@ -161,6 +161,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         'user',
         'event_id',
         'error',
+        'error_codes',
         'created',
     )
     search_fields = (
@@ -179,6 +180,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         'user',
         'event_id',
         'error',
+        'error_codes',
         'created',
         'updated',
     )
@@ -188,6 +190,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         'user',
         'event_id',
         'error',
+        'error_codes',
         'created',
         'updated',
     )

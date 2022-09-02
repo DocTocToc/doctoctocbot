@@ -38,6 +38,7 @@ class Community(models.Model):
         Site,
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         related_name="community",
     )
     trust = models.ManyToManyField(

@@ -363,7 +363,7 @@ def get_dm_media_id(file, bot_screen_name):
     api = get_api(username=bot_screen_name)
     logger.debug(api)
     try:
-        res = api.media_upload(file.name, media_category="dm_image")
+        res = api.media_upload(file.name)
         file.close()
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
@@ -380,8 +380,7 @@ def get_dm_media_id(file, bot_screen_name):
         return res.media_id
     except AttributeError as e:
         logger.error(f"AttributeError: {e}")
-    
-    
+
 def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
     activate_language(community)
     logger.debug("Inside send_graph_dm()")
@@ -395,7 +394,6 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
         file = pie_plot(_graph)
     except:
         file = None
-
     if not file:
         logger.debug("file is Falsy")
         try:
@@ -411,18 +409,6 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
                 file = open(normalavatar.path, 'rb')
             except:
                 file = None
-    if file:
-        media_id = get_dm_media_id(file, bot_screen_name)
-        logger.debug(f"media_id: {media_id}")
-        if media_id:
-            attachment = {
-                "type": "media",
-                "media": {
-                    "id": media_id
-                }
-            }
-    else:
-        attachment = None
     if text:
         text = " " + text
     dm_text = (
@@ -432,14 +418,24 @@ def send_graph_dm(user_id, dest_user_id, bot_screen_name, text, community):
             txt=text
         )
     )
-    res = senddm(
-        dm_text,
-        user_id=dest_user_id,
-        screen_name=bot_screen_name,
-        attachment=attachment
-    )
+    if file:
+        media_id = get_dm_media_id(file, bot_screen_name)
+        logger.debug(f"media_id: {media_id}")
+        res = senddm(
+            text=dm_text,
+            user_id=dest_user_id,
+            bot_screen_name=bot_screen_name,
+            attachment_type="media",
+            attachment_media_id=media_id
+        )   
+    else:
+        res = senddm(
+            text=dm_text,
+            user_id=dest_user_id,
+            bot_screen_name=bot_screen_name
+        )
     logger.debug(f"res: {res}")
     return res
-        
+
 def order_dict(dct, reverse=False):
     return OrderedDict(sorted(dct.items(), key=operator.itemgetter(1), reverse=reverse))

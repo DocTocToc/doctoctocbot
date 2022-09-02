@@ -1,5 +1,6 @@
 import uuid
 import logging
+import traceback
 import random
 import os
 import ast
@@ -360,20 +361,22 @@ def sendmoderationdm(mod_mi):
             mod_mi.queue.community
         )
         logger.debug(f"graph: {res}")
-        handle_twitter_dm_response(
-            res,
-            mod_mi.moderator.id,
-            mod_mi.queue.community.id
-        )
+        try:
+            handle_twitter_dm_response(
+                res,
+                mod_mi.moderator.id,
+                mod_mi.queue.community.id
+            )
+        except Exception as e:
+            logging.error(f'{traceback.format_exc()} \n {e}')
     # verification DM
     res = senddm(
-        dm_txt,
+        text=dm_txt,
         user_id=mod_mi.moderator.user_id,
-        screen_name=mod_mi.queue.community.account.username,
-        return_json=True,
-        quick_reply=qr
+        bot_screen_name=mod_mi.queue.community.account.username,
+        quick_reply_options=qr
     )
-    logger.info(f"dm:{res}")
+    logger.debug(f"verification dm: {res}")
     handle_twitter_dm_response(
         res,
         mod_mi.moderator.id,
@@ -457,9 +460,9 @@ def viral_moderation(socialuser_id, cached=True):
                     msg = ucr.community.viral_moderation_message
                     if msg:
                         res = senddm(
-                            msg,
+                            text=msg,
                             user_id=ucr.social_user.user_id,
-                            screen_name=ucr.community.account.username,
+                            bot_screen_name=ucr.community.account.username,
                         )
                         handle_twitter_dm_response(
                             res,
@@ -501,10 +504,6 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
                 moderator_mi.save()
 
 def quickreply(moderation_instance):
-    qr = {
-           "type": "options",
-           "options": []
-          }
     options = []
     option = {
                 "label": "?",
@@ -546,6 +545,5 @@ def quickreply(moderation_instance):
         opt["metadata"] = f"moderation{moderation_instance.id}{cm.name}"
         opt["description"] = cm.description
         options.append(opt)
-    qr["options"] = options
-    logger.debug(f"{qr=}")
-    return qr
+    logger.debug(f"{options=}")
+    return options

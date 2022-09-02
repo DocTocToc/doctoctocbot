@@ -59,7 +59,7 @@ def dm_admin(sender, instance, created, **kwargs):
             dm = senddm(
                 text=text,
                 user_id=dev.user_id,
-                screen_name=screen_name
+                bot_screen_name=screen_name
             )
             logger.debug(dm)
 

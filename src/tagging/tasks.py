@@ -113,17 +113,14 @@ def tag_dm_text(process):
 
 def send_tag_dm(process, user_id):
     logger.info(f"process.processor.id: {process.processor.id}")
-
     response = senddm(
-        tag_dm_text(process),
+        text=tag_dm_text(process),
         user_id=user_id,
-        screen_name=process.queue.community.account.username,
-        return_json=True,
-        quick_reply=quickreply(process.id)
+        bot_screen_name=process.queue.community.account.username,
+        quick_reply_options=quickreply(process.id)
     )
     logger.info(response)
     return response
-
 
 @shared_task(bind=True)
 def send_tag_request(self, process_id, user_id):

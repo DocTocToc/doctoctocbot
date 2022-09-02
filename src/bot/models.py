@@ -49,6 +49,13 @@ class Account(models.Model):
         null=True,
         help_text = "Session cookies for Selenium"
     )
+    app = models.ForeignKey(
+        'bot.TwitterApp',
+        on_delete = models.PROTECT,
+        null=True,
+        blank=True,
+    )
+
     objects = AccountManager()
 
     def __str__(self):
@@ -118,7 +125,8 @@ class TwitterApp(models.Model):
         on_delete = models.PROTECT,
     )
     scopes = models.ManyToManyField(
-        'bot.TwitterScopes'
+        'bot.TwitterScopes',
+        blank=True,
     )
 
     objects = TwitterAppManager()

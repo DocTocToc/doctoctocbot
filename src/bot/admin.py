@@ -13,6 +13,7 @@ class AccountAdmin(admin.ModelAdmin):
         'userid',
         'username',
         'socialuser',
+        'app',
         'password_hidden',
         'email',
         'phone',
@@ -29,6 +30,7 @@ class AccountAdmin(admin.ModelAdmin):
         'userid',
         'username',
         'socialuser',
+        'app',
         'password',
         'email',
         'phone',
@@ -68,7 +70,8 @@ class TwitterAppAdmin(admin.ModelAdmin):
     list_display = (
         'app_id',
         'name',
-        'description',    
+        'description',
+        'api',
     )
 
 

@@ -27,7 +27,7 @@ from moderation.social import update_social_ids
 from moderation.dm import sendmoderationdm
 from community.models import Retweet
 from community.models import Community
-from dm.api import senddm_tweepy
+from dm.api import senddm
 from optin.models import Option, OptIn
 from constance import config
 from moderation.profile import (
@@ -81,10 +81,10 @@ def warn_senior_moderator(user_id, status_id, community):
     logger.debug(f"{senior_moderator=}")
     if not senior_moderator:
         return
-    res = senddm_tweepy(
-        dm_txt,
-        senior_moderator.socialuser.user_id,
-        screen_name=community.account.username
+    res = senddm(
+        text=dm_txt,
+        user_id=senior_moderator.socialuser.user_id,
+        bot_screen_name=community.account.username
     )
     logger.debug(f"{res=}")
 

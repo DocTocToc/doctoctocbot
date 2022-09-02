@@ -3,11 +3,13 @@
 
 import logging
 import tweepy
+from tweepy import TweepError
 import mytweepy
+from mytweepy import TweepyException
 import time
 import random
 from datetime import datetime
-from bot.models import Account, AccessToken, TwitterApp
+from bot.models import Account, AccessToken, TwitterApp, TwitterAPI
 
 from django.conf import settings
 
@@ -16,7 +18,7 @@ from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
 
-def getAuth1(username=None):
+def getAuth1(username, mt):
     "get Tweepy OAuthHandler authentication object"
     if username:
         try:
@@ -24,12 +26,12 @@ def getAuth1(username=None):
             logger.debug(f'{account=}')
         except Account.DoesNotExist:
             return getSocialDjangoAuth(username)
-        auth = oauth1(account)
+        auth = oauth1(account, mt)
     else:
         auth = getRandomAuth1()
     return auth
 
-def getRandomAuth1():
+def getRandomAuth1(mt):
     """Get a status through the account of another community
     Try to get a status through another account if the bot of a community was
     blocked by the author of the status.
@@ -37,27 +39,45 @@ def getRandomAuth1():
     accounts = list(Account.objects.all())
     random.shuffle(accounts)
     for account in accounts:
-        auth = oauth1(account)
+        auth = oauth1(account, mt)
         if auth:
             return auth
 
-def oauth1(account):
-    try:
-        auth = tweepy.OAuthHandler(
-            account.twitter_consumer_key,
-            account.twitter_consumer_secret
-        )
-    except tweepy.TweepError as e:
-        logger.error(e)
-        return
-    try:
-        auth.set_access_token(
-            account.twitter_access_token,
-            account.twitter_access_token_secret
-        )
-    except tweepy.TweepError as e:
-        logger.error(e)
-        return
+def oauth1(account, mt):
+    if mt:
+        try:
+            auth = mytweepy.OAuthHandler(
+                account.twitter_consumer_key,
+                account.twitter_consumer_secret
+            )
+        except TweepyException as e:
+            logger.error(e)
+            return
+        try:
+            auth.set_access_token(
+                account.twitter_access_token,
+                account.twitter_access_token_secret
+            )
+        except TweepyException as e:
+            logger.error(e)
+            return
+    else:
+        try:
+            auth = tweepy.OAuthHandler(
+                account.twitter_consumer_key,
+                account.twitter_consumer_secret
+            )
+        except tweepy.TweepError as e:
+            logger.error(e)
+            return
+        try:
+            auth.set_access_token(
+                account.twitter_access_token,
+                account.twitter_access_token_secret
+            )
+        except tweepy.TweepError as e:
+            logger.error(e)
+            return
     return auth
 
 def getSocialDjangoAuth(username):
@@ -85,13 +105,26 @@ def getSocialDjangoAuth(username):
     )
     return auth
 
-def get_api(username=None, oauth2=False):
-    if oauth2:
-        return get_api_2(username=username)
+def get_api(username=None, mt=False):
+    try:
+        account = Account.objects.get(username=username)
+    except Account.DoesNotExist:
+        return getSocialDjangoAuth(username)
+    try:
+        v1 = TwitterAPI.objects.get(name="standard v1.1")
+        v2 = TwitterAPI.objects.get(name="v2")
+    except TwitterAPI.DoesNotExist as e:
+        logger.error(f'{e}: create TwitterAPI records. ')
+        return
+    if account.app.api == v1:
+        return get_api_1(username, mt)
+    elif account.app.api == v2:
+        return get_api_2(username)
     else:
-        return get_api_1(username=username)
+        logger.error(f'{account} is not linked to an app using API v1 or v2. ')
+        return
 
-def get_api_2(username=None):
+def get_api_2(username):
     if username:
         try:
             account = Account.objects.get(username=username)
@@ -171,18 +204,27 @@ def oauth2userhandler_fetch_token(username, oauth2userhandler, url):
     access_token.token = access_token_dict
     access_token.save()
 
-def get_api_1(username=None):
-    auth = getAuth1(username)
+def get_api_1(username, mt):
+    auth = getAuth1(username, mt)
     if not auth:
         return
-    try:
-        return tweepy.API(
-            auth,
-            wait_on_rate_limit=True,
-            wait_on_rate_limit_notify=True
-        )
-    except tweepy.TweepError as e:
-        logger.error(e)
+    if mt:
+        try:
+            return mytweepy.API(
+                auth,
+                wait_on_rate_limit=True,
+            )
+        except TweepyException as e:
+            logger.error(e)
+    else:
+        try:
+            return tweepy.API(
+                auth,
+                wait_on_rate_limit=True,
+                wait_on_rate_limit_notify=True
+            )
+        except tweepy.TweepError as e:
+            logger.error(e)
 
 def statuses_lookup(statusid):
     """Return a Tweepy Status object or a list of Tweepy Status objects.

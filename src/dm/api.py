@@ -3,11 +3,13 @@ from dm.pythontwitter import twitter
 from bot.models import Account
 import logging
 import typing
-from bot.tweepy_api import get_api as get_tweepy_api
+from bot.tweepy_api import get_api
 from dm.models import DirectMessage
 
 from django.db.models import Q
 import tweepy
+import mytweepy
+from mytweepy import TweepyException
 from tweepy import TweepError
 from django.conf import settings
 
@@ -44,7 +46,7 @@ def getapi(__screen_name: typing.Optional[str]=None):
 
 def getdm(bot_screen_name, bot_user_id: int):
     count=50
-    api = get_tweepy_api(username=bot_screen_name)
+    api = get_api(username=bot_screen_name)
     if not api:
         return
     dm_id_lst = list(
@@ -65,19 +67,19 @@ def getdm(bot_screen_name, bot_user_id: int):
 def senddm_tweepy(
         text,
         recipient_id,
-        quick_reply_type=None,
+        quick_reply_options=None,
         attachment_type=None,
         attachment_media_id=None,
         screen_name=None
     ):
-    api = get_tweepy_api(screen_name)
+    api = get_api(username=screen_name, mt=True)
     if not api:
         return
     try:
         response = api.send_direct_message(
             recipient_id,
             text,
-            quick_reply_type=quick_reply_type,
+            quick_reply_options=quick_reply_options,
             attachment_type=attachment_type,
             attachment_media_id=attachment_media_id,
         )
@@ -88,46 +90,27 @@ def senddm_tweepy(
         return e
 
 def senddm(
-        text,
+        text=None,
         user_id=None,
-        return_json=True,
-        quick_reply=None,
-        attachment=None,
-        screen_name=None,
+        quick_reply_options=None,
+        attachment_type=None,
+        attachment_media_id=None,
+        bot_screen_name=None
     ):
-    api_ = getapi(screen_name)
-    if not api_:
+    api = get_api(username=bot_screen_name, mt=True)
+    if not api:
+        logger.error("api is None")
         return
     try:
-        response = api_.PostDirectMessage(
+        response = api.send_direct_message(
             text=text,
-            user_id=user_id,
-            return_json=True,
-            quick_reply=quick_reply,
-            attachment=attachment,
+            recipient_id=user_id,
+            quick_reply_options=quick_reply_options,
+            attachment_type=attachment_type,
+            attachment_media_id=attachment_media_id
         )
-    except twitter.error.TwitterError as e:
+        logger.debug(f'{response=}')
+    except TweepyException as e:
         logger.error("message_create event (DM) error: %s", e)
-        return
-    try:
-        response["event"]["created_timestamp"]
-    except KeyError:
-        """
-        {'errors': [{'code': 349, 'message': 'You cannot send messages to this user.'}]}
-        """
-        try:
-            error_msg = json.dumps(response)
-        except:
-            error_msg = "Unknown message_create event (DM) error"
-        logger.error(error_msg)
-        return error_msg
-
-    userid = response["event"]["message_create"]["target"]["recipient_id"]
-    txt = response["event"]["message_create"]["message_data"]["text"]
-    if screen_name:
-        account = f"@{screen_name}"
-    else:
-        account =  "default account"
-    msg = f"Sending DM '{txt}' to user_id {userid} from {account} was successful"
-    logger.info(msg)
+        response = e.args[0][0]
     return response

@@ -96,7 +96,8 @@ class CreateTwitterSocialUser(APIView):
             return bad_request(request)
         domain = request.site.domain
         community = get_community(request)
+        bot_screen_name = community.account.username
         handle_create_twitter_socialuser(
-            screen_name, username, domain, community
+            screen_name, username, domain, bot_screen_name
         )
         return Response(status=200)

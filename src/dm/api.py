@@ -111,7 +111,6 @@ def senddm(
         )
         logger.debug(f'{response=}')
         return response._json
-    except TweepyException as e:
-        logger.error("message_create event (DM) error: %s", e)
-        logger.debug(e.args[0])
-        return e.args[0]
+    except mytweepy.errors.HTTPException as e:
+        logger.error("message_create event (DM) error: %s", e.api_errors)
+        return e.api_errors

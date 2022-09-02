@@ -128,8 +128,11 @@ def send_tag_request(self, process_id, user_id):
     if process_mi.queue.socialmedia.name == "twitter":
         response = send_tag_dm(process_mi, user_id)
         try:
-            response["event"]["created_timestamp"]
-        except KeyError:
+            response["id"]
+        except (KeyError, TypeError):
+            logger.error(
+                f'Error: tag request DM for {process_id=} {user_id=} failed'
+            )
             self.retry(countdown= 2 ** self.request.retries)
 
 @shared_task            

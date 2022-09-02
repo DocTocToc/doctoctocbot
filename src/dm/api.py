@@ -110,7 +110,8 @@ def senddm(
             attachment_media_id=attachment_media_id
         )
         logger.debug(f'{response=}')
+        return response._json
     except TweepyException as e:
         logger.error("message_create event (DM) error: %s", e)
-        response = e.args[0][0]
-    return response
+        logger.debug(e.args[0])
+        return e.args[0]

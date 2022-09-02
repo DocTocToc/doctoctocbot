@@ -347,11 +347,12 @@ def handle_update_twitter_followers_profiles(community: str):
 def handle_create_twitter_socialuser(
         screen_name: str,
         username: str,
-        domain: str
+        domain: str,
+        community: Community,
     ):
     if not screen_name:
         return
-    api = get_api()
+    api = get_api(username=community.account.username)
     if not api:
         logger.error(
             f'Could not get functional API.'

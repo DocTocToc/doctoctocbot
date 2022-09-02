@@ -14,6 +14,7 @@ from rest_framework import viewsets
 from rest_framework.exceptions import bad_request, server_error
 from dry_rest_permissions.generics import DRYPermissions
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
+from community.helpers import get_community
 
 class ModeratorFilterBackend(DRYPermissionFiltersBase):
     action_routing = True
@@ -94,5 +95,8 @@ class CreateTwitterSocialUser(APIView):
         except:
             return bad_request(request)
         domain = request.site.domain
-        handle_create_twitter_socialuser(screen_name, username, domain)
+        community = get_community(request)
+        handle_create_twitter_socialuser(
+            screen_name, username, domain, community
+        )
         return Response(status=200)

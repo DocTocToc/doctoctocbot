@@ -96,7 +96,7 @@ def search_triage(community: Community):
         .distinct()
     )
     hashtags = [f'#{h}' for h in hashtags]
-    Client = get_api(username=community.account.username, oauth2=True)
+    Client = get_api(username=community.account.username)
     search_string = " OR ".join(hashtags)
     logger.debug("search_string: %s" % (search_string))
     tweets = Client.search_recent_tweets(

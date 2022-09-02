@@ -46,10 +46,6 @@ def quickreply(process_id):
     category_lst = Category.objects.filter(community=process.queue.community)
     if not category_lst:
         return
-    qr = {
-           "type": "options",
-           "options": []
-          }
     options = []
     option = {
                 "label": "?",
@@ -58,15 +54,14 @@ def quickreply(process_id):
              }
     for cat in category_lst:
         opt = dict(option)
-        hash = lambda: "#" if cat.hashtag else ""
-        opt["label"] = f"{hash()}{cat.tag}"
+        _hash = lambda: "#" if cat.hashtag else ""
+        opt["label"] = f"{_hash()}{cat.tag}"
         opt["description"] = cat.summary or cat.tag
         opt["metadata"] = f"{CATEGORY_TAG}{process.id}{cat.tag}"
         options.append(opt)
 
-    qr["options"] = options
-    logger.debug(f"qr: {qr}")
-    return qr
+    logger.debug(f"qr: {options=}")
+    return options
 
 
 
@@ -129,11 +124,10 @@ def send_tag_request(self, process_id, user_id):
         response = send_tag_dm(process_mi, user_id)
         try:
             response["id"]
-        except (KeyError, TypeError):
+        except (KeyError, TypeError) as _e:
             logger.error(
-                f'Error: tag request DM for {process_id=} {user_id=} failed'
+                f'tag request DM for {process_id=} {user_id=} failed: {response}'
             )
-            self.retry(countdown= 2 ** self.request.retries)
 
 @shared_task            
 def handle_create_tag_queue(statusid, socialmedia_id, community_id):

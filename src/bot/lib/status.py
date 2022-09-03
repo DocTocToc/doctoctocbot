@@ -32,6 +32,7 @@ def api_switch_get_status(
     """
     for username in (
         Account.objects
+        .filter(active=True)
         .exclude(username=exclude)
         .values_list("username", flat=True)
         ):

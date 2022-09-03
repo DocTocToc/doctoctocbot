@@ -16,7 +16,7 @@ from moderation.models import (
     ModerationOptIn,
     Moderator,
 )
-from community.models import CommunityCategoryRelationship
+from community.models import CommunityCategoryRelationship, Community
 from optin.models import Option, OptIn
 from bot.tasks import handle_triage_status
 from django.db import transaction, DatabaseError
@@ -478,30 +478,50 @@ def viral_moderation(socialuser_id, cached=True):
 
 def handle_twitter_dm_response(res, moderator_su_id, community_id):
     """ treat DM errors
-    if error is one ot those
+    if error is one of those
     {"errors": [{"code": 326, "message": "You are sending a Direct Message to users that do not follow you."}]}
     {"errors": [{"code": 349, "message": "You cannot send messages to this user."}]}
     {"errors": [{"code": 150, "message": "You cannot send messages to users who are not following you."}]}
+    {'code': 108, 'message': 'Cannot find specified user.'}
     """
     if not res:
         return
-    if not isinstance(res, dict):
-        res = ast.literal_eval(res)
-    if not "errors" in res.keys():
-        return
-    for error in res["errors"]:
-        if error.get("code") in [150, 326, 349]:
-            moderator_mi = (
-                Moderator.objects
+    deactivate: bool = False
+    for error in res:
+        if error.get("code") in [150, 326, 349, 108]:
+            deactivate = True
+    if deactivate:
+        moderator_mi = (
+            Moderator.objects
                 .filter(
                     socialuser__id = moderator_su_id,
                     community__id = community_id
                 ).first()
+        )
+        if moderator_mi:
+            moderator_mi.active = False
+            moderator_mi.public = False
+            moderator_mi.save()
+        senior_moderator_qs = Moderator.objects.filter(
+            community__id = community_id,
+            active=True,
+            senior=True,
+        )
+        text = _(
+            'An error occurred when we tried to send a moderation DM to '
+            '@{}: {}'
+            ).format(
+                moderator_mi.socialuser.screen_name_tag(),
+                res
             )
-            if moderator_mi:
-                moderator_mi.active = False
-                moderator_mi.public = False
-                moderator_mi.save()
+        community=Community.objects.get(id=community_id)
+        bot_screen_name=community.account.username
+        for moderator in senior_moderator_qs:
+            senddm(
+                text=text,
+                user_id=moderator.socialuser.user_id,
+                bot_screen_name=bot_screen_name
+            )
 
 def quickreply(moderation_instance):
     options = []

@@ -28,16 +28,18 @@ from django.db.utils import DatabaseError
 logger = logging.getLogger(__name__)
 
 @shared_task
-def handle_retweetroot(statusid: int):
+def handle_retweetroot(statusid: int, bot_screen_name: str):
     from .bin.thread import retweetroot
-    retweetroot(statusid)
-    
+    retweetroot(statusid,bot_screen_name)
+
 @shared_task
-def handle_question(statusid: int):
+def handle_question(statusid: int, bot_screen_name: str):
     from bot.bin.thread import question_api
     for i in range(1,8):
-        logger.info(f"handle_question statusid: {statusid}, loop: {i}")
-        ok = question_api(statusid)
+        logger.info(
+            f"handle_question {statusid=} {bot_screen_name=}, loop: {i}"
+        )
+        ok = question_api(statusid, bot_screen_name)
         if ok:
             break
         else:

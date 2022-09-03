@@ -160,12 +160,16 @@ def is_following_rules_json(status, userid, dct):
         return False
     logger.debug(f'{isreply(status)=}')
     if isreply(status):
-        handle_retweetroot.apply_async(args=(status['id'],))
+        handle_retweetroot.apply_async(args=(status['id'],dct["_bot_screen_name"],))
         return False
     logger.debug(f'{isquestion(status)=}')
     if dct["_require_question"] and not isquestion(status):
         logger.debug(f"status['id']: {status['id']}")
-        handle_question.apply_async(args=(status['id'],), countdown=30, expires=900) 
+        handle_question.apply_async(
+            args=(status['id'],dct["_bot_screen_name"],),
+            countdown=30,
+            expires=900,
+        )
         return False
     return True
 

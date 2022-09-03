@@ -25,7 +25,7 @@ from ..doctoctocbot import (
 
 logger = logging.getLogger(__name__)
 
-def retweetroot(statusid: int):
+def retweetroot(statusid: int, bot_screen_name: str):
     """
     Starting from the status with statusid, analyze nodes towards root to
     determine if the root status should be retweeted.
@@ -72,7 +72,7 @@ def retweetroot(statusid: int):
                     )
                     break
             else:
-                handle_question.apply_async(args=(statusid,), countdown=30, expires=900)
+                handle_question.apply_async(args=(statusid,bot_screen_name,), countdown=30, expires=900)
                 break
         current_mi = parent_mi
     return
@@ -160,7 +160,7 @@ def add_leaf(node_id, parent_id):
     except DatabaseError as e:
         logger.debug(f" Database error: {e}")
 
-def question_api(start_status_id: int) -> bool:
+def question_api(start_status_id: int, bot_screen_name: str) -> bool:
     try:
         start_tweetdj = Tweetdj.objects.get(statusid=start_status_id)
     except Tweetdj.DoesNotExist:
@@ -172,26 +172,16 @@ def question_api(start_status_id: int) -> bool:
         return
     userid = socialuser.user_id
     logger.debug(f'userid: {userid}')
-    community = socialuser.community()
-    logger.debug(f'community: {community}')
-    if not community:
-        return
-    community = community[0]
-    try:
-        bot_username = community.account.username
-    except:
-        return
-    logger.debug(f'bot_username: {bot_username}')
-    api = get_api(username=bot_username)
+    api = get_api(username=bot_screen_name)
     root_tweetdj = get_root_status(
         start_tweetdj,
-        bot_username=bot_username,
+        bot_username=bot_screen_name,
     )
     if not root_tweetdj:
         return
     tree_has_q_m: bool = tree_has_question_mark(
         start_tweetdj,
-        bot_username=bot_username
+        bot_username=bot_screen_name
     )
     hrh = tree_hrh(start_tweetdj)
     if tree_has_q_m and hrh: 
@@ -224,7 +214,7 @@ def question_api(start_status_id: int) -> bool:
         if reply_id in descendants_id_lst:
             status_id = status._json["id"]
             add_leaf(status_id, reply_id)
-            tweetdj = getorcreate(status_id, bot_username=bot_username)
+            tweetdj = getorcreate(status_id, bot_username=bot_screen_name)
             if not tweetdj:
                 continue
             hrh = tree_hrh(tweetdj)

@@ -28,6 +28,7 @@ from moderation.profile import recent_twitter_screen_name
 from community.helpers import site_url, activate_language
 from django.template.defaultfilters import date as _date
 from moderation.profile import create_update_profile_twitter
+from moderation.tasks import create_profiles
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,10 @@ class CampaignManager:
         bot_follower_id = Follower.objects.filter(user=bot_su).latest().id_list
         logger.debug(f'{bot_follower_id=}')
         qs = SocialUser.objects.filter(user_id__in=bot_follower_id)
+        noprofile_ids = list(
+            qs.filter(profile__isnull=True).values_list('user_id', flat=True)
+        )
+        create_profiles(noprofile_ids)
         logger.debug(f'no filter: {qs=} count={qs.count()=}')
         logger.debug(f'{self.campaign.restrict_by_category=}')
         if self.campaign.restrict_by_category is not None:
@@ -571,12 +576,11 @@ class StatusManager:
             status_log.statusid=status.id
             status_log.save()
             return True
-        except TweepError as e:
+        except HTTPException as e:
             logger.error(f"Tweepy error: {e}")
             try:
-                error_code =  e.args[0][0]['code']
+                status_log.error = ",".join(str(x) for x in e.api_codes)
             except:
-                error_code = 0
-            status_log.error = error_code
+                status_log.error = ""
             status_log.save()
             return False

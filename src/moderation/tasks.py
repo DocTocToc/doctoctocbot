@@ -64,7 +64,6 @@ def handle_create_all_profiles():
         profile__isnull=True
     ).values_list('user_id', flat=True)
     user_id_request_lst = []
-
     for user_id in user_id_lst:
         try:
             tweetdj_mi = Tweetdj.objects.filter(
@@ -80,14 +79,16 @@ def handle_create_all_profiles():
         except AttributeError:
             continue
         twitterprofile(userjson)
-
     if user_id_request_lst:
-        for user_id_lst in trim_grouper(user_id_request_lst, 100):
-            user_jsn_lst = getuser_lst(user_id_lst)
-            if not user_jsn_lst:
-                continue
-            for user_jsn in user_jsn_lst:
-                twitterprofile(user_jsn)
+        create_profiles(user_id_request_lst)
+
+def create_profiles(user_ids: list[int]):
+    for user_id_lst in trim_grouper(user_ids, 100):
+        user_jsn_lst = getuser_lst(user_id_lst)
+        if not user_jsn_lst:
+            continue
+        for user_jsn in user_jsn_lst:
+            twitterprofile(user_jsn)
 
 @shared_task
 def handle_check_all_profile_pictures():

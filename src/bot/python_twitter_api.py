@@ -9,7 +9,6 @@ from bot.models import Account
 
 logger = logging.getLogger(__name__)
 
-
 def get_api(username=None):
     "get Python-Twitter API object"
     if username:

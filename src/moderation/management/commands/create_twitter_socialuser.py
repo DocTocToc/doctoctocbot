@@ -7,6 +7,7 @@ from community.models import Community
 from moderation.models import SocialUser, Category, UserCategoryRelationship
 from bot.tweepy_api import get_api
 from tweepy.error import TweepError
+from bot.account import random_bot_username
 from typing import List
 from moderation.social import get_socialuser_from_screen_name
 
@@ -62,7 +63,7 @@ class Command(BaseCommand):
             return
 
     def process_screen_name(self, screen_name: str):
-        api = get_api()
+        api = get_api(username=random_bot_username())
         if not api:
             self.stdout.write(
                 self.style.ERROR(
@@ -71,7 +72,7 @@ class Command(BaseCommand):
             )
             return
         try:
-            tweepy_user = get_api().get_user(screen_name=screen_name)
+            tweepy_user = api.get_user(screen_name=screen_name)
         except TweepError as e:
             raise CommandError('Tweepy error "%s' % e)
         except AttributeError as e:

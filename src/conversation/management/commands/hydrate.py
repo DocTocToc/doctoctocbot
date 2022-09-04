@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from bot.tweepy_api import get_api
 from conversation.models import Tweetdj
 from bot.lib.statusdb import Addstatus
+from bot.account import random_bot_username
 from tweepy import TweepError
 import logging
 
@@ -17,7 +18,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         truncated_count_start = truncated_count()
-        api = get_api()
+        api = get_api(username=random_bot_username())
         if not api:
             self.stdout.write(self.style.ERROR("Invalid Twitter API"))
             return

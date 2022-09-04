@@ -2,10 +2,9 @@ import logging
 from django.urls import reverse
 from django.template import Template, Context
 
-from bot.tweepy_api import get_api as tweepy_api
-from bot.python_twitter_api import get_api as twitter_api
+from bot.tweepy_api import get_api
 from community.helpers import site_url
-from tweepy.error import TweepError
+from mytweepy.errors import HTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -14,12 +13,12 @@ def get_incoming_friendship(community):
         screen_name=community.account.username
     except:
         return
-    api = twitter_api(username=screen_name)
+    api = get_api(username=screen_name, mt=True)
     try:
-        return api.IncomingFriendship()
+        return api.incoming_friendships()
     except AttributeError:
         return
-    except TweepError as e:
-        logger.error(f'{e}')
+    except HTTPException as e:
+        logger.error(f'{e.api_errors=} {e.api_messages=}')
     except Exception as e:
         logger.error(f'{e}')

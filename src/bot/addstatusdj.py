@@ -16,12 +16,46 @@ from conversation.models import Tweetdj
 
 from .lib.statusdb import Addstatus
 from bot.tweepy_api import get_api
-from bot.tweepy_api import statuses_lookup
 from bot.lib.status import api_switch_get_status
+from bot.account import random_bot_username
 
 logger = logging.getLogger(__name__)
 
 #tweepy.error.TweepError: [{'code': 136, 'message': 'You have been blocked from the author of this tweet.'}]
+
+def statuses_lookup(statusid):
+    """
+    Return a Tweepy Status object or a list of Tweepy Status objects.
+    statusid -- int or List of int representing the statusid of the tweet object
+    """
+    if statusid is None:
+        return
+    elif type(statusid) is int:
+        sid_lst = [statusid]
+    else:
+        sid_lst = statusid
+    statuses = []
+    size = len(sid_lst)
+    while size > 0:
+        ids = sid_lst[:100]
+        del sid_lst[:100]
+        size -= 100
+        username = random_bot_username()
+        API = get_api(username=username)
+        try:
+            s_lst = API.statuses_lookup(
+                ids,
+                include_entities=True,
+                tweet_mode='extended'
+            )
+        except tweepy.TweepError as e:
+            logger.debug("Tweepy error: %s", e)
+            continue
+        statuses.append(s_lst)
+    if len(statuses) > 1:
+        return statuses
+    elif len(statuses) == 1:
+        return statuses[0]
 
 def addstatus(statusid, bot_username=None):
     API = get_api(username=bot_username)

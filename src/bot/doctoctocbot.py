@@ -54,10 +54,10 @@ class HasRetweetHashtag(object):
         self.hashtag_lst = []
         if data:
             self.add(data)
-        
+
     def __bool__(self):
         return bool(len(self.hashtag_lst))
-    
+
     def add(self, data):
         if isinstance(data, str):
             ht = data.lower()
@@ -72,7 +72,7 @@ class HasRetweetHashtag(object):
         else:
             return
         self.add_hashtag_mi()
-        
+
     def add_hashtag_mi(self):
         try:
             for hashtag_mi in Hashtag.objects.filter(hashtag__in=self.hashtag_lst):
@@ -201,8 +201,6 @@ def okbadlist( status ):
     wordbadlist = set((u"remplacant",u"RT",u"remplaçant"))
     logger.debug("Does text contain bad words? %s", any(word in status['full_text'].split() for word in wordbadlist))
     return not any(word in status['full_text'].split() for word in wordbadlist)
-
-
 
 def is_follower(userid, bot_screen_name):
     try:
@@ -383,7 +381,6 @@ def create_tree_except_rt(statusid):
     if not tweetdj.retweetedstatus and not tweetdj.parentid:
         create_tree(statusid)
 
-
 def rt(statusid, dct, community):
     logger.info(
         f"Retweeting status: {statusid}\n"
@@ -495,53 +492,3 @@ def set_retweeted_by(statusid: int, community):
     except Tweetdj.DoesNotExist:
         return
     tweetdj.retweeted_by.add(su)
-
-def get_search_string():
-    keyword_list = settings.KEYWORD_RETWEET_LIST
-    search_string = " OR ".join ( keyword_list )
-    search_string = search_string + u" -filter:retweets"
-    logger.debug("search_string: %s" % (search_string))
-    return search_string
-
-def last_id_file():
-    hashedHashtag = hashlib.md5(get_search_string().encode('ascii')).hexdigest()
-    last_id_filename = "last_id_hashtag_%s" % hashedHashtag
-    rt_bot_path = os.path.dirname(os.path.abspath(__file__))
-    last_id_file = os.path.join(rt_bot_path, last_id_filename)
-    return last_id_file 
-
-def save_point():
-    # retrieve last savepoint if available
-    pass
-    """
-    try:
-        with open(last_id_file(), "r") as f:
-            savepoint = f.read()
-    except IOError:
-        savepoint = ""
-        logger.debug("No savepoint found. Bot is now searching for results")
-
-    return savepoint
-    """
-    
-def timeline_iterator():    
-    # Tweet language (empty = all languages)
-    tweetLanguage = settings.TWEET_LANGUAGE
-    
-    api = get_api()
-    if not api:
-        return   
-    return tweepy.Cursor(api.search,
-                         q=get_search_string(),
-                         lang=tweetLanguage,
-                         tweet_mode='extended').items(settings.NUMBER_OF_RT)
-
-
-def main():
-    from .onstatus import triage 
-    timelineIterator = timeline_iterator()
-    for tweet in timelineIterator:
-        triage(tweet.id)
-
-if __name__ == '__main__':
-    main()

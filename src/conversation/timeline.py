@@ -12,6 +12,7 @@ from conversation.models import TwitterUserTimeline
 
 from django.db.utils import DatabaseError
 from django.db import transaction
+from bot.account import random_bot_username
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,12 @@ logger = logging.getLogger(__name__)
 def user_id_list_timeline(user_id_list: List):
     if not user_id_list:
         return
-    api = get_api()
+    username = random_bot_username()
+    try:
+        api = get_api(username=username)
+    except TypeError as e:
+        logger.error(f'{username=} {e}')
+        return
     for userid in user_id_list:
         try:
             get_user_timeline(userid, api)

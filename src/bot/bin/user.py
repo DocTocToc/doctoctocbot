@@ -4,9 +4,9 @@
 import tweepy
 import logging
 from typing import List
-import random
 from bot.tweepy_api import get_api
 from bot.models import Account
+from bot.account import random_bot_username
 logger = logging.getLogger(__name__)
 
 def getuser(user_id: int, bot_screen_name=None):
@@ -38,13 +38,12 @@ def getuser_lst(user_id_lst: List[int]):
         return
     if not all(isinstance(n, int) for n in user_id_lst):
         return
-    usernames = list(
-        Account.objects \
-        .filter(active=True) \
-        .values_list("username", flat=True)
-    )
-    username = random.choice(usernames)
-    api = get_api(username=username)
+    username = random_bot_username()
+    try:
+        api = get_api(username=username)
+    except TypeError as e:
+        logger.error(f'{username=} {e}')
+        return
     try:
         users = api.lookup_users(user_id_lst)
     except tweepy.error.TweepError as e:

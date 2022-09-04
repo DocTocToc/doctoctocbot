@@ -159,7 +159,9 @@ def backoff(community, uid):
 @shared_task
 def handle_incoming_friendship():
     logger.debug("in")
-    for community in Community.objects.all():
+    for community in Community.objects.filter(
+        active=True, account__protected=True
+        ):
         try:
             bot_screen_name = community.account.username
         except:

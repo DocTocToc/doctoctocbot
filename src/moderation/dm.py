@@ -486,6 +486,8 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
     """
     if not res:
         return
+    if res["id"]:
+        return
     deactivate: bool = False
     for error in res:
         if error.get("code") in [150, 326, 349, 108]:

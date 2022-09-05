@@ -20,11 +20,11 @@ def update_request_queue(community: Community):
     """
     ifs = get_incoming_friendship(community)
     followers = update_social_ids(
-        user = community.account.userid,
+        user = community.account.socialuser,
         cached = False,
         bot_screen_name = community.account.username,
         relationship = 'followers'
-        )
+    )
     for q in Queue.objects.current.filter(state=Queue.PENDING):
         if q.uid in followers:
             qc = q.clone()

@@ -128,7 +128,6 @@ def update_social_ids(
         pass
     if ok and si:
         return si.id_list
-
     if followers:
         usersids = _followersids(
             su.user_id,
@@ -172,7 +171,7 @@ def record_friendsids(su, usersids):
 
 def _followersids(user_id, bot_screen_name=None, api=None):
     if not api:
-        api = get_api(bot_screen_name)
+        api = get_api(username=bot_screen_name)
     followers_ids = []
     try:
         for page in tweepy.Cursor(
@@ -188,11 +187,11 @@ def _followersids(user_id, bot_screen_name=None, api=None):
     except TweepError as e:
         logger.error("Tweepy Error: %s", e)
     except AttributeError as e:
-        logger.error(f"Attribute Error ({api =}): {e}")
+        logger.error(f"Attribute Error ({api=}): {e}")
 
 def _friendsids(user_id, bot_screen_name=None, api=None):
     if not api:
-        api = get_api(bot_screen_name)
+        api = get_api(username=bot_screen_name)
     friends_ids = []
     try:
         for page in tweepy.Cursor(

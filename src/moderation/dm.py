@@ -486,7 +486,7 @@ def handle_twitter_dm_response(res, moderator_su_id, community_id):
     """
     if not res:
         return
-    if res["id"]:
+    if isinstance(res, dict) and res["id"]:
         return
     deactivate: bool = False
     for error in res:

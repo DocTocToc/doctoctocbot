@@ -102,6 +102,7 @@ class CampaignManager:
         )
         recipient_qs = self.get_recipients()
         logger.debug(f'{recipient_qs=} count={recipient_qs.count()}')
+        self.campaign.recipients.clear()
         ThroughModel = Campaign.recipients.through
         ThroughModel.objects.bulk_create(
             [ThroughModel(socialuser_id=su.id, campaign_id=self.campaign.id) for su in recipient_qs],
@@ -474,11 +475,13 @@ class MessageManager:
             receipt.save()
             return True
         except HTTPException as e:
-            errors =  e.api_codes
-            logger.error(f"addstatus: Tweepy error: {errors}")
-            receipt.error = errors
+            logger.error(f"addstatus: Tweepy error: {e.api_errors}")
+            receipt.error = e.api_messages
             receipt.error_codes = e.api_codes
             receipt.save()
+            if 108 in e.api_codes:
+                self.campaign.recipients.remove(self.recipient)
+                self.campaign.save()
             if any(x in [420, 429, 88, 226, 261] for x in e.api_codes):
                 return False
 

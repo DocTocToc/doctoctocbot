@@ -102,14 +102,3 @@ def addstatus_if_not_exist(statusid):
         if hasattr(status, '_json'):
             db = Addstatus(status._json)
             db.addtweetdj()
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "statusid",
-        help="add a tweet with the given statusid to Django database",
-        type=int
-    )
-    args = parser.parse_args()
-    statusid = args.statusid
-    addstatus(statusid)

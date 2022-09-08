@@ -210,7 +210,7 @@ def count_replies(statusid):
         return
     return root.get_descendant_count()
     
-def count_replies_from_others(statusid):
+def count_replies_from_others(statusid, bot_username):
     from bot.addstatusdj import addstatus_if_not_exist, addstatus
     
     try:
@@ -223,7 +223,7 @@ def count_replies_from_others(statusid):
     try:
         root_tweetdj_mi = Tweetdj.objects.get(statusid=statusid)
     except Tweetdj.DoesNotExist:
-        addstatus(statusid)
+        addstatus(statusid, bot_username=bot_username)
         root_tweetdj_mi = Tweetdj.objects.get(statusid=statusid)
     root_userid = root_tweetdj_mi.userid
     
@@ -282,7 +282,11 @@ def help_statusid_lst(hourdelta, community):
     tweet_sid_lst = last_retweeted_statusid_lst(hourdelta, community)
     qs = Treedj.objects.filter(statusid__in=tweet_sid_lst)
     qs = [mi for mi in qs if mi.is_root_node()]
-    help_lst = [(mi.statusid, count_replies_from_others(mi.statusid)) for mi in qs]
+    bot_username = community.account.username
+    help_lst = [
+        (mi.statusid, count_replies_from_others(mi.statusid, bot_username))
+        for mi in qs
+    ]
     help_lst = sorted(help_lst, key=lambda x: x[1])
     return [t[0] for t in help_lst]
 

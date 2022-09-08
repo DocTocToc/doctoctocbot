@@ -88,8 +88,8 @@ def has_retweet_hashtag(status):
     hashtags = hashtag_list(status)
     return HasRetweetHashtag(hashtags)
 
-def tree_hrh(tweetdj, hrh=None) -> HasRetweetHashtag:
-    def getorcreate(statusid: int) -> Tweetdj:  
+def tree_hrh(tweetdj, hrh=None, bot_username=None) -> HasRetweetHashtag:
+    def getorcreate(statusid: int, bot_username) -> Tweetdj:
         # Is status in database? If not, add it.
         if statusid is None:
             logger.debug("statusid is None.")
@@ -97,7 +97,7 @@ def tree_hrh(tweetdj, hrh=None) -> HasRetweetHashtag:
         try:
             return Tweetdj.objects.get(pk=statusid)
         except Tweetdj.DoesNotExist:
-            addstatus(statusid)
+            addstatus(statusid, bot_username=bot_username)
             try:
                 return Tweetdj.objects.get(pk=statusid)
             except Tweetdj.DoesNotExist:
@@ -110,8 +110,8 @@ def tree_hrh(tweetdj, hrh=None) -> HasRetweetHashtag:
         return HasRetweetHashtag()
     if not tweetdj.parentid:
         return hrh
-    parent: Tweetdj = getorcreate(tweetdj.parentid)
-    return tree_hrh(parent, hrh)
+    parent: Tweetdj = getorcreate(tweetdj.parentid, bot_username)
+    return tree_hrh(parent, hrh=hrh, bot_username=bot_username)
 
 def isreply( status ):
     "is status in reply to screen name or status or user?"

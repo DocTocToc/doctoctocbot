@@ -33,7 +33,7 @@ def retweetroot(statusid: int, bot_screen_name: str):
     contain a question mark
     """
     logger.debug(type(statusid))
-    status_mi: Tweetdj = getorcreate(statusid)
+    status_mi: Tweetdj = getorcreate(statusid, bot_username=bot_screen_name)
     logger.debug(status_mi.json['full_text'])
     logger.debug(status_mi.json['in_reply_to_status_id'])
     logger.debug(status_mi.parentid)
@@ -160,7 +160,7 @@ def add_leaf(node_id, parent_id):
     except DatabaseError as e:
         logger.debug(f" Database error: {e}")
 
-def question_api(start_status_id: int, bot_screen_name: str) -> bool:
+def question_api(start_status_id: int, bot_username: str) -> bool:
     try:
         start_tweetdj = Tweetdj.objects.get(statusid=start_status_id)
     except Tweetdj.DoesNotExist:
@@ -172,18 +172,18 @@ def question_api(start_status_id: int, bot_screen_name: str) -> bool:
         return
     userid = socialuser.user_id
     logger.debug(f'userid: {userid}')
-    api = get_api(username=bot_screen_name)
+    api = get_api(username=bot_username)
     root_tweetdj = get_root_status(
         start_tweetdj,
-        bot_username=bot_screen_name,
+        bot_username=bot_username,
     )
     if not root_tweetdj:
         return
     tree_has_q_m: bool = tree_has_question_mark(
         start_tweetdj,
-        bot_username=bot_screen_name
+        bot_username=bot_username
     )
-    hrh = tree_hrh(start_tweetdj)
+    hrh = tree_hrh(start_tweetdj, bot_username=bot_username)
     if tree_has_q_m and hrh: 
         community_retweet(root_tweetdj.statusid, userid, hrh, skip_rules=True)
         return True
@@ -214,10 +214,10 @@ def question_api(start_status_id: int, bot_screen_name: str) -> bool:
         if reply_id in descendants_id_lst:
             status_id = status._json["id"]
             add_leaf(status_id, reply_id)
-            tweetdj = getorcreate(status_id, bot_username=bot_screen_name)
+            tweetdj = getorcreate(status_id, bot_username=bot_username)
             if not tweetdj:
                 continue
-            hrh = tree_hrh(tweetdj)
+            hrh = tree_hrh(tweetdj, bot_username=bot_username)
             logger.debug(f'hrh: {hrh}')
             q = tree_has_question_mark(tweetdj)
             logger.debug(f'q:{q}')

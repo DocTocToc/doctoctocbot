@@ -80,7 +80,7 @@ class ReplyCrawler(object):
             return status.json["user"]["screen_name"]
         except Tweetdj.DoesNotExist:
             logger.debug(f"Tweet {status_id} is not present in database.")
-            addstatus(status_id, self.community.account.username)
+            addstatus(status_id, bot_username=self.community.account.username)
             if Tweetdj.objects.filter(statusid=status_id).exists():
                 return self.get_screen_name(status_id)
         except TypeError:

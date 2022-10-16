@@ -27,8 +27,6 @@ class NetworkView(APIView):
 
     @method_decorator(cache_page(60*10))
     def get(self, request):
-        logger.debug(request.site)
         network = Network.objects.filter(site=request.site).first()
-        logger.debug(f'{network}')
         data = NetworkSerializer(network).data
         return Response({'network': data})

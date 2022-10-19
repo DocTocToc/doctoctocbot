@@ -54,7 +54,10 @@ def triage(json: dict, community: str):
     logger.debug(f'extended status: {sjson["user"]["screen_name"]} {sjson["full_text"]}')
 
     dbstatus = Addstatus(sjson)
-    dbstatus.addtweetdj()
+    tweetdj, created = dbstatus.addtweetdj()
+    # handle non hydrated Tweetdj objects with null json field
+    if tweetdj and not created and not tweetdj.json:
+        dbstatus.addtweetdj(update=True)
     dbstatus.add_image()
     hrh = has_retweet_hashtag(sjson)
     logger.debug(f"2° has_retweet_hashtag(sjson): {bool(hrh)}")

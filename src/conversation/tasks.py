@@ -37,10 +37,6 @@ def handle_allnormalize():
     allnormalize()
 
 @shared_task
-def handle_update_trees(hourdelta):
-    update_trees(hourdelta)
-
-@shared_task
 def handle_addsocialuser():
     for instance in Tweetdj.objects.all():
         addsocialuser(instance)

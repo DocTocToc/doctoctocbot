@@ -186,6 +186,7 @@ class TweetdjAdmin(admin.ModelAdmin):
         'quoted_by_screen_name',
         'qt_by_count',
         'status_text',
+        'deleted',
     )
     readonly_fields = (
         'statusid',

@@ -251,7 +251,7 @@ if DEBUG:
 
 MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    #'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -333,7 +333,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = config('LANGUAGE_CODE_1', default='en')
 
 LANGUAGES = [
     ('en', _('English')),

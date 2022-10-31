@@ -3,6 +3,7 @@ from doctocnet.settings import *
 SITE_ID = config('SITE_ID_6', cast=int, default=6)
 ROOT_URLCONF = config('ROOT_URLCONF_6', default='doctocnet.urls')
 LOG_FILE = os.path.join(DJANGO_LOG_DIR, f"django{SITE_ID}.log")
+LANGUAGE_CODE = config('LANGUAGE_CODE_6', default='en')
 
 DICT_CONFIG = {
     "version": 1,

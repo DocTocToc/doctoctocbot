@@ -94,10 +94,10 @@ class CreationFollowerChartData(APIView):
         members = category.twitter_id_list()
         logger.debug(f'{len(members)=}')
         try:
-            followers = Follower.objects.filter(user__id=user_id).latest('id').id_list
+            followers = Follower.objects.filter(user__user_id=user_id).latest('id').id_list
         except Follower.DoesNotExist:
             followers = []
-        logger.debug(f'{len(followers)}')
+        logger.debug(f'{len(followers)=}')
         count = len([e for e in members if e in followers])
         if count:
             cache.set(f'follower_count_{user_id}_{category.name}', count, TTL)
@@ -125,10 +125,12 @@ class CreationFollowerChartData(APIView):
         member_userid_lst = get_userid_lst(request,lang=tli)
         if settings.DEBUG:
             member_userid_lst=member_userid_lst[:]
+        """
         try:
             member_userid_lst.remove(user_id)
         except ValueError:
             pass
+        """
         bot_id = get_bot_id(request)
         if bot_id:
             data_bot = CreationFollowerChartData.get_data([bot_id])

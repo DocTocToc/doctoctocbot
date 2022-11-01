@@ -17,6 +17,8 @@ from community.helpers import get_community
 from community.models import CommunityCategoryRelationship
 from django.core.cache import cache
 from conversation.models import TwitterLanguageIdentifier
+from django.conf import settings
+from constance import config
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +54,10 @@ class CreationFollowerChartData(APIView):
 
     @staticmethod
     def follower_count(user_id, category=None):
-        TTL=30
+        if settings.DEBUG:
+            TTL=30
+        else:
+            TTL=config.creation_follower_follower_count_ttl
         if category:
             cache_key=f'follower_count_{user_id}_{category.name}'
         else:
@@ -87,10 +92,12 @@ class CreationFollowerChartData(APIView):
                     count = 0
                 return count
         members = category.twitter_id_list()
+        logger.debug(f'{len(members)=}')
         try:
             followers = Follower.objects.filter(user__id=user_id).latest('id').id_list
         except Follower.DoesNotExist:
             followers = []
+        logger.debug(f'{len(followers)}')
         count = len([e for e in members if e in followers])
         if count:
             cache.set(f'follower_count_{user_id}_{category.name}', count, TTL)
@@ -98,17 +105,26 @@ class CreationFollowerChartData(APIView):
 
     @staticmethod
     def datasets(request):
+        if settings.DEBUG:
+            TTL=30
+        else:
+            TTL=config.creation_follower_datasets_ttl
         community=get_community(request)
+        cache_key=f'datasets_{community.name}'
+        datasets = cache.get(cache_key)
+        if datasets:
+            return datasets
         try:
             tli = TwitterLanguageIdentifier.objects.get(tag=community.language)
         except TwitterLanguageIdentifier.DoesNotExist:
             tli=None
-        dataset = []
+        datasets = []
         user_id = get_user_id(request)
         if user_id:
             data_user = CreationFollowerChartData.get_data([user_id])
-            
-        member_userid_lst = get_userid_lst(request,lang=tli)[:100]
+        member_userid_lst = get_userid_lst(request,lang=tli)
+        if settings.DEBUG:
+            member_userid_lst=member_userid_lst[:]
         try:
             member_userid_lst.remove(user_id)
         except ValueError:
@@ -123,7 +139,7 @@ class CreationFollowerChartData(APIView):
                 'data': data_bot,
                 'pointRadius': 7
             }
-            dataset.append(dataset_bot)
+            datasets.append(dataset_bot)
         data_all = CreationFollowerChartData.get_data(member_userid_lst)
         dataset_all = {
             'label': _('All followers'),
@@ -131,7 +147,7 @@ class CreationFollowerChartData(APIView):
             'borderColor': 'grey',# webcolors.name_to_rgb('grey'),
             'data': data_all,
         }
-        dataset.append(dataset_all)
+        datasets.append(dataset_all)
         dataset_user = {
             'label': _('You'),
             'backgroundColor': rgb_to_rgba("red", alpha=0.5),
@@ -139,7 +155,7 @@ class CreationFollowerChartData(APIView):
             'data': data_user,
             'pointRadius': 7
         }
-        dataset.append(dataset_user)
+        datasets.append(dataset_user)
         cats: [dict] = [
             {"cat_obj":ccr.category, "cat_color":ccr.color} for ccr
             in CommunityCategoryRelationship.objects.filter(
@@ -167,8 +183,9 @@ class CreationFollowerChartData(APIView):
                     else True
                 )
             }
-            dataset.append(cat_data_set)
-        return dataset
+            datasets.append(cat_data_set)
+        cache.set(cache_key,datasets,TTL)
+        return datasets
 
     @staticmethod
     def get_data(userid_lst, category=None):

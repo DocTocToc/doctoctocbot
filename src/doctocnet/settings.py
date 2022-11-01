@@ -857,6 +857,14 @@ CONSTANCE_CONFIG = {
         3600,
         "soft time limit for bot follow task"
     ),
+    "creation_follower_follower_count_ttl": (
+        300,
+        "follower count cache TTL"    
+    ),
+    "creation_follower_datasets_ttl": (
+        300,
+        "datasets cache TTL"    
+    )
 }
 
 MESSENGER_DM_LIMIT = 15

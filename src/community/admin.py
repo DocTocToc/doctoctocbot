@@ -3,6 +3,7 @@ from modeltranslation.admin import TranslationAdmin
 from reversion.admin import VersionAdmin
 from durationwidget.widgets import TimeDurationWidget
 from django.db import models
+from django.utils.safestring import mark_safe
 
 from community.models import (
     Community,
@@ -28,11 +29,28 @@ class CooperationInline(admin.TabularInline):
     model = Cooperation
     extra = 5
     fk_name = 'from_community'
-    
+
+
 class CategoryInline(admin.TabularInline):
     model = CommunityCategoryRelationship
     extra = 5
     fk_name = 'community'
+    fields = (
+        'category',
+        'quickreply',
+        'quickreply_self',
+        'socialgraph',
+        'do_not_follow',
+        'follower_chart',
+        'color',
+        'color_display',
+    )
+    readonly_fields = ('color_display', )
+
+    def color_display(self, obj):
+        return mark_safe(
+            '<span style="color: {0};">{0}</span>'.format(obj.color),
+        )
 
 
 class CommunityAdmin(admin.ModelAdmin):

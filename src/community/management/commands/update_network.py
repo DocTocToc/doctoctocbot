@@ -85,7 +85,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         community_name = options["community"]
         category_name = options["category"]
-        cache = options["cache"]
+        cache = options["cache"] or 7
 
         try:
             community = Community.objects.get(name=community_name)

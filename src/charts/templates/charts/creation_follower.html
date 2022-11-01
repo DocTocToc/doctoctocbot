@@ -1,4 +1,6 @@
 {% extends 'charts/base_category.html' %}
+{% load i18n %}
+{% translate "This is the title" as the_title %}
 <script>
 {% block jquery %}
 var changeScaleTypePlugin = {
@@ -59,18 +61,25 @@ window.chartColors = {
       var myChart = new Chart(ctx, {
           type: 'scatter',
           data: {
-        	  labels: data.labels,
-              datasets: [
+        	  //labels: data.labels,
+        	  datasets: data.datasets
+              /*datasets: [
             	  {
-                      label: 'Twitter users verified by @doctoctocbot (physician, pharmacist, midwife)',
+                      label: 'All followers',
                       backgroundColor: color(window.chartColors.grey).alpha(0.6).rgbString(),
                       borderColor: window.chartColors.grey,
-                      data: data.data,
+                      data: data.data_all,
+                  },
+            	  {
+                      label: 'Physicians',
+                      backgroundColor: color(window.chartColors.grey).alpha(0.6).rgbString(),
+                      borderColor: window.chartColors.blue,
+                      data: data.data_physician,
                   },
                   {
                       label: 'bot',
                       backgroundColor: 'blue',
-                      borderColor: window.chartColors.blue,
+                      borderColor: window.chartColors.orange,
       			      pointRadius: 6,
                       data: data.data_bot
                   },
@@ -81,12 +90,16 @@ window.chartColors = {
           			  pointRadius: 6,
                       data: data.data_user
                   }
-              ]
+              ]*/
           },
           options: {
                changeScale: true,
                //maxRankDifference: 3,
                plugins: {
+            	   title: {
+                       display: true,
+                       text: data.title
+                   },
         	       tooltip: {
         	             callbacks: {
         	                 label: function(context) {

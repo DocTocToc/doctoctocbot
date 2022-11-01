@@ -401,6 +401,10 @@ class CommunityCategoryRelationship(models.Model):
         default=False,
         help_text="Bot should not follow SocialUsers from this category"
     )
+    follower_chart = models.BooleanField(
+        default=False,
+        help_text="Add this category to the follower chart"
+    )
     color = models.CharField(
         max_length=20,
         null=True,

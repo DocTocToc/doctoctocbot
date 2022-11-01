@@ -24,11 +24,12 @@ def get_user_id(request):
         return
     return su.user_id
 
-def get_userid_lst(request):
+def get_userid_lst(request, lang=None):
     community = get_community(request)
     categories = community.membership.all()
+    qs = UserCategoryRelationship.objects.filter(category__in = categories)
+    if lang:
+        qs = qs.filter(social_user__language=lang)
     return list(
-        UserCategoryRelationship.objects.filter(
-            category__in = categories
-        ).values_list('social_user__user_id', flat=True)
+        qs.values_list('social_user__user_id', flat=True)
     )

@@ -3,6 +3,7 @@
 
 import logging
 import tweepy
+from itertools import cycle
 from tweepy import TweepError
 import mytweepy
 from mytweepy import TweepyException
@@ -17,6 +18,12 @@ from social_django.models import UserSocialAuth
 from django.contrib.auth import get_user_model
 
 logger = logging.getLogger(__name__)
+
+def gen_api():
+    qs = Account.objects.filter(active=True)
+    api_lst = [get_api(account.username) for account in qs]
+    for i in cycle(api_lst):
+        yield i
 
 def getAuth1(username, mt):
     "get Tweepy OAuthHandler authentication object"

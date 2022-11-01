@@ -76,3 +76,4 @@ whatthelang
 django-mptt
 langcodes[data]
 flower
+webcolors

@@ -18,6 +18,7 @@ from conversation.utils import update_trees
 from moderation.models import addsocialuser, Category
 from community.models import Community
 from conversation.timeline import community_timeline, user_id_list_timeline
+from bot.tweepy_api import gen_api
 
 logger = logging.getLogger(__name__)
 
@@ -152,12 +153,6 @@ def handle_image(url, filename):
 def handle_update_truncated_statuses(n):
     from bot.lib.statusdb import Addstatus
     from itertools import cycle
-
-    def gen_api():
-        qs = Account.objects.filter(active=True)
-        api_lst = [get_api(account.username) for account in qs]
-        for i in cycle(api_lst):
-            yield i
 
     def gen():
         lst =  [1,2]

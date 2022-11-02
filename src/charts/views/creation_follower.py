@@ -169,18 +169,20 @@ class CreationFollowerChartData(APIView):
 
     def get_pointStyle(self)->[str]:
         lst=["circle"]*len(self.twitteruserid_list)
-        try:
-            bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
-            lst.pop(bot_idx)
-            lst.insert(bot_idx, "triangle")
-        except ValueError:
-            pass
-        try:
-            user_idx=self.twitteruserid_list.index(self.twitteruserid)
-            lst.pop(user_idx)
-            lst.insert(user_idx, "rect")
-        except ValueError:
-            pass
+        if self.bot_twitteruserid:
+            try:
+                bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+                lst.pop(bot_idx)
+                lst.insert(bot_idx, "triangle")
+            except ValueError:
+                pass
+        if self.twitteruserid:
+            try:
+                user_idx=self.twitteruserid_list.index(self.twitteruserid)
+                lst.pop(user_idx)
+                lst.insert(user_idx, "rect")
+            except ValueError:
+                pass
         return lst
     
     def get_pointRadius(self)->[int]:
@@ -188,18 +190,20 @@ class CreationFollowerChartData(APIView):
         bot_rad=12
         user_rad=12
         lst=[def_rad]*len(self.twitteruserid_list)
-        try:
-            bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
-            lst.pop(bot_idx)
-            lst.insert(bot_idx, bot_rad)
-        except ValueError:
-            pass
-        try:
-            user_idx=self.twitteruserid_list.index(self.twitteruserid)
-            lst.pop(user_idx)
-            lst.insert(user_idx, user_rad)
-        except ValueError:
-            pass
+        if self.bot_twitteruserid:
+            try:
+                bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+                lst.pop(bot_idx)
+                lst.insert(bot_idx, bot_rad)
+            except ValueError:
+                pass
+        if self.twitteruserid:
+            try:
+                user_idx=self.twitteruserid_list.index(self.twitteruserid)
+                lst.pop(user_idx)
+                lst.insert(user_idx, user_rad)
+            except ValueError:
+                pass
         return lst
 
     def get_data(self, category=None):
@@ -253,7 +257,11 @@ class CreationFollowerChartData(APIView):
         self.twitteruserid = get_twitter_user_id(request)
         self.bot_twitteruserid = get_bot_id(request)
         self.twitteruserid_list=self.get_twitteruserid_list()
-        if self.bot_twitteruserid:
+        if (
+            self.bot_twitteruserid
+            and
+            (self.bot_twitteruserid not in self.twitteruserid_list)
+        ):
             self.twitteruserid_list.append(self.bot_twitteruserid)
         if (
             self.twitteruserid

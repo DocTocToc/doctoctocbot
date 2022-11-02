@@ -173,13 +173,13 @@ class CreationFollowerChartData(APIView):
             bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
             lst.pop(bot_idx)
             lst.insert(bot_idx, "triangle")
-        except:
+        except ValueError:
             pass
         try:
             user_idx=self.twitteruserid_list.index(self.twitteruserid)
             lst.pop(user_idx)
             lst.insert(user_idx, "rect")
-        except:
+        except ValueError:
             pass
         return lst
     
@@ -192,13 +192,13 @@ class CreationFollowerChartData(APIView):
             bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
             lst.pop(bot_idx)
             lst.insert(bot_idx, bot_rad)
-        except:
+        except ValueError:
             pass
         try:
             user_idx=self.twitteruserid_list.index(self.twitteruserid)
             lst.pop(user_idx)
             lst.insert(user_idx, user_rad)
-        except:
+        except ValueError:
             pass
         return lst
 

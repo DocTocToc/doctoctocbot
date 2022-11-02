@@ -227,13 +227,22 @@ class CreationFollowerChartData(APIView):
         return data
 
     def get(self, request, format=None):
+        if not request.user.is_authenticated:
+            res = {
+                "title": _(
+                    "You must be authenticted to see this chart."
+                ),
+                "datasets": []
+            }
+            return Response(res)
         self.request=request
         logger.debug(self.request)
         self.community=get_community(request)
         self.twitteruserid = get_twitter_user_id(request)
         self.bot_twitteruserid = get_bot_id(request)
         self.twitteruserid_list=self.get_twitteruserid_list()
-        self.twitteruserid_list.append(self.bot_twitteruserid)
+        if self.bot_twitteruserid:
+            self.twitteruserid_list.append(self.bot_twitteruserid)
         if not self.twitteruserid in self.twitteruserid_list:
             self.twitteruserid_list.append(self.twitteruserid)
         self.twitteruserid_list.sort()

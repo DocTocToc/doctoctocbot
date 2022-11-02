@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from moderation.models import SocialUser, SocialMedia, Follower
 from django.shortcuts import render
 from rest_framework.views import APIView
-from charts.utils import get_userid_lst, get_user_id, get_bot_id
+from charts.utils import get_userid_lst, get_twitter_user_id, get_bot_id
 from bot.lib.datetime import get_datetime_tz_from_twitter_str
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -48,14 +48,26 @@ class CreationFollowerChartView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, 'charts/creation_follower.html')
 
-    
+
 class CreationFollowerChartData(APIView):
     permission_classes = [IsAuthenticated]
 
-    @staticmethod
-    def follower_count(user_id, category=None):
+    def get_twitteruserid_list(self)->[int]:
+        try:
+            tli = TwitterLanguageIdentifier.objects.get(
+                tag=self.community.language
+            )
+        except TwitterLanguageIdentifier.DoesNotExist:
+            tli=None
+        logger.debug(f'in get_twitteruserid_list: {self.request=}')
+        twitteruserid_list = get_userid_lst(self.request,lang=tli)
         if settings.DEBUG:
-            TTL=30
+            twitteruserid_list=twitteruserid_list[:]
+        return twitteruserid_list
+
+    def follower_count(self, user_id, category=None):
+        if settings.DEBUG:
+            TTL=300
         else:
             TTL=config.creation_follower_follower_count_ttl
         if category:
@@ -65,7 +77,6 @@ class CreationFollowerChartData(APIView):
         count=cache.get(cache_key)
         if not count is None:
             return count
-        #api_gen = gen_api()
         if not category:
             try:
                 count = len(
@@ -75,93 +86,62 @@ class CreationFollowerChartData(APIView):
                     .id_list
                 )
                 if count:
-                    cache.set(f'follower_count_{user_id}_all', count, TTL)
+                    cache.set(
+                        f'follower_count_{user_id}_all',
+                        count,
+                        TTL
+                    )
                 return count
             except Follower.DoesNotExist:
-                """
-                api=next(api_gen)
-                update_social_ids(
-                    user_id,
-                    relationship='followers',
-                    api=api
-                )
-                """
                 try:
-                    count = SocialUser.objects.get(user_id=user_id).profile.json["followers_count"]
+                    count = (
+                        SocialUser.objects.get(user_id=user_id)
+                        .profile.json["followers_count"]
+                    )
                 except:
                     count = 0
                 return count
         members = category.twitter_id_list()
-        logger.debug(f'{len(members)=}')
         try:
-            followers = Follower.objects.filter(user__user_id=user_id).latest('id').id_list
+            followers = (
+                Follower.objects
+                .filter(user__user_id=user_id)
+                .latest('id').id_list
+            )
         except Follower.DoesNotExist:
             followers = []
-        logger.debug(f'{len(followers)=}')
         count = len([e for e in members if e in followers])
         if count:
-            cache.set(f'follower_count_{user_id}_{category.name}', count, TTL)
+            cache.set(
+                f'follower_count_{user_id}_{category.name}',
+                count,
+                TTL
+            )
         return count
 
-    @staticmethod
-    def datasets(request):
+    def datasets(self):
         if settings.DEBUG:
             TTL=30
         else:
             TTL=config.creation_follower_datasets_ttl
-        community=get_community(request)
-        cache_key=f'datasets_{community.name}'
+        cache_key=f'datasets_{self.community.name}'
         datasets = cache.get(cache_key)
         if datasets:
             return datasets
-        try:
-            tli = TwitterLanguageIdentifier.objects.get(tag=community.language)
-        except TwitterLanguageIdentifier.DoesNotExist:
-            tli=None
         datasets = []
-        user_id = get_user_id(request)
-        if user_id:
-            data_user = CreationFollowerChartData.get_data([user_id])
-        member_userid_lst = get_userid_lst(request,lang=tli)
-        if settings.DEBUG:
-            member_userid_lst=member_userid_lst[:]
-        """
-        try:
-            member_userid_lst.remove(user_id)
-        except ValueError:
-            pass
-        """
-        bot_id = get_bot_id(request)
-        if bot_id:
-            data_bot = CreationFollowerChartData.get_data([bot_id])
-            dataset_bot = {
-                'label': _('Bot'),
-                'backgroundColor': rgb_to_rgba("blue", alpha=0.5),
-                'borderColor': 'blue',
-                'data': data_bot,
-                'pointRadius': 7
-            }
-            datasets.append(dataset_bot)
-        data_all = CreationFollowerChartData.get_data(member_userid_lst)
         dataset_all = {
             'label': _('All followers'),
-            'backgroundColor': rgb_to_rgba("grey", alpha=0.5),
-            'borderColor': 'grey',# webcolors.name_to_rgb('grey'),
-            'data': data_all,
+            'backgroundColor': rgb_to_rgba("grey", alpha=0.4),
+            'borderColor': 'grey',
+            'data': self.get_data(),
+            'pointRadius': self.get_pointRadius(),
+            'pointStyle': self.get_pointStyle()
         }
         datasets.append(dataset_all)
-        dataset_user = {
-            'label': _('You'),
-            'backgroundColor': rgb_to_rgba("red", alpha=0.5),
-            'borderColor': 'red',
-            'data': data_user,
-            'pointRadius': 7
-        }
-        datasets.append(dataset_user)
         cats: [dict] = [
             {"cat_obj":ccr.category, "cat_color":ccr.color} for ccr
             in CommunityCategoryRelationship.objects.filter(
-                community=community,
+                community=self.community,
                 follower_chart=True,
             )
         ]
@@ -171,26 +151,46 @@ class CreationFollowerChartData(APIView):
             color = cat["cat_color"]
             category=cat["cat_obj"]
             logger.debug(f'{category=}')
-            data = CreationFollowerChartData.get_data(
-                member_userid_lst,
-                category=category
-            )
             cat_data_set = {
                 'label': label,
-                'backgroundColor': color,
+                'backgroundColor': rgb_to_rgba(color, alpha=0.4),
                 'borderColor': color,
-                'data': data,
+                'data': self.get_data(category=category),
                 'hidden':  (
-                    False if (category in community.membership.all())
+                    False if (category in self.community.membership.all())
                     else True
-                )
+                ),
+                'pointRadius': self.get_pointRadius(),
+                'pointStyle': self.get_pointStyle()
             }
             datasets.append(cat_data_set)
         cache.set(cache_key,datasets,TTL)
         return datasets
 
-    @staticmethod
-    def get_data(userid_lst, category=None):
+    def get_pointStyle(self)->[str]:
+        bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+        user_idx=self.twitteruserid_list.index(self.twitteruserid)
+        lst=["circle"]*len(self.twitteruserid_list)
+        lst.pop(bot_idx)
+        lst.insert(bot_idx, "triangle")
+        lst.pop(user_idx)
+        lst.insert(user_idx, "rect")
+        return lst
+    
+    def get_pointRadius(self)->[int]:
+        def_rad=3
+        bot_rad=12
+        user_rad=12
+        bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+        user_idx=self.twitteruserid_list.index(self.twitteruserid)
+        lst=[def_rad]*len(self.twitteruserid_list)
+        lst.pop(bot_idx)
+        lst.insert(bot_idx, bot_rad)
+        lst.pop(user_idx)
+        lst.insert(user_idx, user_rad)
+        return lst
+
+    def get_data(self, category=None):
         try:
             socmed = SocialMedia.objects.get(name="twitter")
         except SocialMedia.DoesNotExist:
@@ -198,7 +198,7 @@ class CreationFollowerChartData(APIView):
         data = list(
             SocialUser.objects
             .filter(
-                user_id__in=userid_lst,
+                user_id__in=self.twitteruserid_list,
                 social_media=socmed,
             )
             .values(
@@ -220,51 +220,32 @@ class CreationFollowerChartData(APIView):
             python_datetime = get_datetime_tz_from_twitter_str(twitter_datetime)
             dct["x"] = python_datetime.date().isoformat()
             user_id = dct.pop("profile__json__id")
-            dct["y"] = CreationFollowerChartData.follower_count(
-                user_id,
-                category=category,
-            )
+            dct["y"] = self.follower_count(user_id, category=category)
             dct["id"] = user_id
             dct["screen_name"] = dct.pop("profile__json__screen_name")
             data.insert(i, dct)
         return data
 
     def get(self, request, format=None):
-        datasets = CreationFollowerChartData.datasets(request)
-        """
-        res = {
-            "data_all": None,
-            "data_bot": None,
-            "data_user": None,
-        }
-
-        user_id = get_user_id(request)
-        if user_id:
-            data = CreationFollowerChartData.get_data([user_id])
-            res["data_user"] = data
-
-        member_userid_lst = get_userid_lst(request)
-        try:
-            member_userid_lst.remove(user_id)
-        except ValueError:
-            pass
-        data_all = CreationFollowerChartData.get_data(member_userid_lst)
-        res["data_all"] = data_all
-
-        bot_id = get_bot_id(request)
-        if bot_id:
-            data = CreationFollowerChartData.get_data([bot_id])
-            res["data_bot"] = data
-        """
-
+        self.request=request
+        logger.debug(self.request)
+        self.community=get_community(request)
+        self.twitteruserid = get_twitter_user_id(request)
+        self.bot_twitteruserid = get_bot_id(request)
+        self.twitteruserid_list=self.get_twitteruserid_list()
+        self.twitteruserid_list.append(self.bot_twitteruserid)
+        if not self.twitteruserid in self.twitteruserid_list:
+            self.twitteruserid_list.append(self.twitteruserid)
+        self.twitteruserid_list.sort()
+        datasets = self.datasets()
         for dct in datasets:
             logger.debug(
-                f'{type(dct)=}\n{len(dct)}\n{dct["data"][:10]}\n\n'
+                f'{type(dct)=}\n{len(dct)}\n{dct["data"][:20]}\n\n'
             )
         res = {
             "title": _(
                 "Follower count (total and by category) vs. creation date of "
-                "the account."
+                "the account. [■ is you, ▲ is the bot]"
             ),
             "datasets": datasets
         }

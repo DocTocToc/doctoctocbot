@@ -13,7 +13,7 @@ def get_bot_id(request):
     bot_su = get_community_bot_socialuser(community)
     return bot_su.user_id
 
-def get_user_id(request):
+def get_twitter_user_id(request):
     logger.debug(f'{request.user=}')
     if not request.user.is_authenticated:
         return
@@ -30,6 +30,6 @@ def get_userid_lst(request, lang=None):
     qs = UserCategoryRelationship.objects.filter(category__in = categories)
     if lang:
         qs = qs.filter(social_user__language=lang)
-    return list(
-        qs.values_list('social_user__user_id', flat=True)
-    )
+    lst = list(qs.values_list('social_user__user_id', flat=True))
+    lst.sort()
+    return lst

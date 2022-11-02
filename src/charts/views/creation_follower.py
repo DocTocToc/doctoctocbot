@@ -67,7 +67,7 @@ class CreationFollowerChartData(APIView):
 
     def follower_count(self, user_id, category=None):
         if settings.DEBUG:
-            TTL=300
+            TTL=600
         else:
             TTL=config.creation_follower_follower_count_ttl
         if category:
@@ -121,32 +121,25 @@ class CreationFollowerChartData(APIView):
 
     def datasets(self):
         if settings.DEBUG:
-            TTL=30
+            TTL=600
         else:
             TTL=config.creation_follower_datasets_ttl
-        cache_key=f'datasets_{self.community.name}'
+        cache_key=f'datasets_{self.community.name}_{self.twitteruserid}'
         datasets = cache.get(cache_key)
         if datasets:
             return datasets
         datasets = []
         dataset_all = {
             'label': _('All followers'),
-            'backgroundColor': rgb_to_rgba("grey", alpha=0.4),
+            'backgroundColor': rgb_to_rgba("grey", alpha=0.2),
             'borderColor': 'grey',
             'data': self.get_data(),
             'pointRadius': self.get_pointRadius(),
             'pointStyle': self.get_pointStyle()
         }
         datasets.append(dataset_all)
-        cats: [dict] = [
-            {"cat_obj":ccr.category, "cat_color":ccr.color} for ccr
-            in CommunityCategoryRelationship.objects.filter(
-                community=self.community,
-                follower_chart=True,
-            )
-        ]
-        logger.debug(f'{cats=}')
-        for cat in cats:
+
+        for cat in self.cats:
             label = cat["cat_obj"].label
             color = cat["cat_color"]
             category=cat["cat_obj"]
@@ -252,8 +245,14 @@ class CreationFollowerChartData(APIView):
             }
             return Response(res)
         self.request=request
-        logger.debug(self.request)
         self.community=get_community(request)
+        self.cats: [dict] = [
+            {"cat_obj":ccr.category, "cat_color":ccr.color} for ccr
+            in CommunityCategoryRelationship.objects.filter(
+                community=self.community,
+                follower_chart=True,
+            )
+        ]
         self.twitteruserid = get_twitter_user_id(request)
         self.bot_twitteruserid = get_bot_id(request)
         self.twitteruserid_list=self.get_twitteruserid_list()
@@ -275,10 +274,33 @@ class CreationFollowerChartData(APIView):
             logger.debug(
                 f'{type(dct)=}\n{len(dct)}\n{dct["data"][:20]}\n\n'
             )
+        try:
+            bot_username = SocialUser.objects.get(
+                user_id=self.bot_twitteruserid
+            ).screen_name_tag()
+        except:
+            bot_username = _("the bot")
+        categories = (
+            ", ".join([cat["cat_obj"].label for cat in self.cats])
+        )
+        or_string = _("or") + " "
+        members = or_string.join(
+            [cat.label for cat in self.community.membership.all()]
+        )
         res = {
             "title": _(
                 "Follower count (total and by category) vs. creation date of "
-                "the account. [■ is you, ▲ is the bot]"
+                "the account. ■ is you, ▲ is {bot}."
+            ).format(bot=f'@{bot_username}'),
+            "subtitle": _(
+                "Click on categories (All followers, {categories}) to display "
+                "or hide data. tldr; if the triangle is higher than the square"
+                " for the category {members}, you should follow {bot}"
+                .format(
+                    categories=categories,
+                    members=members,
+                    bot=f'@{bot_username}'
+                ),
             ),
             "datasets": datasets
         }

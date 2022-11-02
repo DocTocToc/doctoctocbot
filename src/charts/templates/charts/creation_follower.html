@@ -39,71 +39,57 @@ var changeScaleTypePlugin = {
 		    }
 		}
 };
-
-window.chartColors = {
-    red: 'rgb(255, 99, 132)',
-    orange: 'rgb(255, 159, 64)',
-    yellow: 'rgb(255, 205, 86)',
-    green: 'rgb(75, 192, 192)',
-    blue: 'rgb(54, 162, 235)',
-    purple: 'rgb(153, 102, 255)',
-    grey: 'rgb(201, 203, 207)'
-};
   var endpoint = "{% url 'charts:creation-follower-data' %}"
   var twitter0 = new Date(2006, 3, 21);
   var today = new Date();
+
+  Chart.defaults.plugins.legend.onHover = function() { 
+	   document.body.style.cursor = 'pointer'; 
+	};
+
+  Chart.defaults.plugins.legend.onLeave = function() { 
+	   document.body.style.cursor = 'unset'; 
+	};
+  
   $.ajax({
     method: "GET",
     url: endpoint,
     success: function(data){
       var ctx = document.getElementById("myChart").getContext('2d');
-      var color = Chart.helpers.color;
       var myChart = new Chart(ctx, {
           type: 'scatter',
           data: {
-        	  //labels: data.labels,
         	  datasets: data.datasets
-              /*datasets: [
-            	  {
-                      label: 'All followers',
-                      backgroundColor: color(window.chartColors.grey).alpha(0.6).rgbString(),
-                      borderColor: window.chartColors.grey,
-                      data: data.data_all,
-                  },
-            	  {
-                      label: 'Physicians',
-                      backgroundColor: color(window.chartColors.grey).alpha(0.6).rgbString(),
-                      borderColor: window.chartColors.blue,
-                      data: data.data_physician,
-                  },
-                  {
-                      label: 'bot',
-                      backgroundColor: 'blue',
-                      borderColor: window.chartColors.orange,
-      			      pointRadius: 6,
-                      data: data.data_bot
-                  },
-                  {
-                      label: 'You',
-                      backgroundColor: 'red',
-                      borderColor: window.chartColors.red,
-          			  pointRadius: 6,
-                      data: data.data_user
-                  }
-              ]*/
           },
           options: {
                changeScale: true,
-               //maxRankDifference: 3,
+               // maxRankDifference: 3,
+               interaction: {
+                   mode: 'index'
+               },
                plugins: {
             	   title: {
                        display: true,
                        text: data.title
                    },
+                   subtitle: {
+                       display: true,
+                       text: data.subtitle,
+                       color: 'blue',
+                       //font: {
+                       //size: 12,
+                       //family: 'tahoma',
+                       //weight: 'normal',
+                       //style: 'italic'
+                       //},*/
+                       padding: {
+                         bottom: 10
+                       }
+                   },
         	       tooltip: {
         	             callbacks: {
         	                 label: function(context) {
-        	                     //var label = context.dataset.label;
+        	                     // var label = context.dataset.label;
         	                     return context.raw.screen_name + " | " + context.raw.x + " | " + context.parsed.y;
         	                 }
         	             }

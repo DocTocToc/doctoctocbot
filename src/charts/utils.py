@@ -27,7 +27,11 @@ def get_twitter_user_id(request):
 def get_userid_lst(request, lang=None):
     community = get_community(request)
     categories = community.membership.all()
-    qs = UserCategoryRelationship.objects.filter(category__in = categories)
+    qs = (
+        UserCategoryRelationship.objects
+        .filter(category__in = categories)
+        .distinct()
+    )
     if lang:
         qs = qs.filter(social_user__language=lang)
     lst = list(qs.values_list('social_user__user_id', flat=True))

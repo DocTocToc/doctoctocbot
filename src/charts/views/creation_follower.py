@@ -168,26 +168,38 @@ class CreationFollowerChartData(APIView):
         return datasets
 
     def get_pointStyle(self)->[str]:
-        bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
-        user_idx=self.twitteruserid_list.index(self.twitteruserid)
         lst=["circle"]*len(self.twitteruserid_list)
-        lst.pop(bot_idx)
-        lst.insert(bot_idx, "triangle")
-        lst.pop(user_idx)
-        lst.insert(user_idx, "rect")
+        try:
+            bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+            lst.pop(bot_idx)
+            lst.insert(bot_idx, "triangle")
+        except:
+            pass
+        try:
+            user_idx=self.twitteruserid_list.index(self.twitteruserid)
+            lst.pop(user_idx)
+            lst.insert(user_idx, "rect")
+        except:
+            pass
         return lst
     
     def get_pointRadius(self)->[int]:
         def_rad=3
         bot_rad=12
         user_rad=12
-        bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
-        user_idx=self.twitteruserid_list.index(self.twitteruserid)
         lst=[def_rad]*len(self.twitteruserid_list)
-        lst.pop(bot_idx)
-        lst.insert(bot_idx, bot_rad)
-        lst.pop(user_idx)
-        lst.insert(user_idx, user_rad)
+        try:
+            bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+            lst.pop(bot_idx)
+            lst.insert(bot_idx, bot_rad)
+        except:
+            pass
+        try:
+            user_idx=self.twitteruserid_list.index(self.twitteruserid)
+            lst.pop(user_idx)
+            lst.insert(user_idx, user_rad)
+        except:
+            pass
         return lst
 
     def get_data(self, category=None):

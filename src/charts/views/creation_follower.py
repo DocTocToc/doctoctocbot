@@ -243,7 +243,11 @@ class CreationFollowerChartData(APIView):
         self.twitteruserid_list=self.get_twitteruserid_list()
         if self.bot_twitteruserid:
             self.twitteruserid_list.append(self.bot_twitteruserid)
-        if not self.twitteruserid in self.twitteruserid_list:
+        if (
+            self.twitteruserid
+            and
+            (not self.twitteruserid in self.twitteruserid_list)
+        ):
             self.twitteruserid_list.append(self.twitteruserid)
         self.twitteruserid_list.sort()
         datasets = self.datasets()

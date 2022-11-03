@@ -19,22 +19,14 @@ from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django.utils.translation import gettext_lazy as _
 from django.conf.urls.i18n import i18n_patterns
-# wagtail start
-#from wagtail.admin import urls as wagtailadmin_urls
-#from wagtail.documents import urls as wagtaildocs_urls
-#from wagtail.core import urls as wagtail_urls
-# wagtail stop
 from ajax_select import urls as ajax_select_urls
 from doctocnet.views import media_access
 
 app_name = 'doctocnet'
 
-urlpatterns = i18n_patterns(
-    path('admin/', admin.site.urls),
-)
-
-urlpatterns += [
+urlpatterns = [
     re_path(r'^media/(?P<path>.*)', media_access, name='media'),
+    path('admin/', admin.site.urls),
     path('silver/', include('silver.urls')),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),

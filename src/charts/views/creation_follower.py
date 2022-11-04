@@ -118,7 +118,7 @@ class CreationFollowerChartData(APIView):
 
     def get_dataset(self, category=None, label=None, color=None):
         if settings.DEBUG:
-            TTL=6
+            TTL=600
         else:
             TTL=config.creation_follower_datasets_ttl
         if category:
@@ -155,7 +155,7 @@ class CreationFollowerChartData(APIView):
 
     def datasets(self):
         if settings.DEBUG:
-            TTL=6
+            TTL=60
         else:
             TTL=config.creation_follower_datasets_ttl
         cache_key=f'datasets_{self.community.name}_{self.twitteruserid}'
@@ -232,9 +232,9 @@ class CreationFollowerChartData(APIView):
         return _list
 
     def get_pointRadius(self)->[int]:
-        def_rad=3
-        bot_rad=14
-        user_rad=15
+        def_rad=config.creation_follower_default_radius
+        bot_rad=config.creation_follower_bot_radius
+        user_rad=config.creation_follower_user_radius
         _list = self.tuid_list_user_bot()
         lst=[def_rad]*len(_list)
         if self.bot_twitteruserid:

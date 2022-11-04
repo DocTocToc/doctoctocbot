@@ -864,6 +864,18 @@ CONSTANCE_CONFIG = {
     "creation_follower_datasets_ttl": (
         300,
         "datasets cache TTL"    
+    ),
+    "creation_follower_default_radius": (
+        2,
+        "default data point scatter plot symbol radius"    
+    ),
+    "creation_follower_bot_radius": (
+        12,
+        "bot data point scatter plot symbol radius"    
+    ),
+    "creation_follower_user_radius": (
+        12,
+        "user data point scatter plot symbol radius"    
     )
 }
 

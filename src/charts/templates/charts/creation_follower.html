@@ -93,7 +93,18 @@ var changeScaleTypePlugin = {
         	                     return context.raw.screen_name + " | " + context.raw.x + " | " + context.parsed.y;
         	                 }
         	             }
-        	      }
+        	      },
+        	      zoom: {
+        	          zoom: {
+        	            wheel: {
+        	              enabled: true,
+        	            },
+        	            pinch: {
+        	              enabled: true
+        	            },
+        	            mode: 'xy',
+        	          }
+        	        }
                },
               reponsive: true,
               scales: {

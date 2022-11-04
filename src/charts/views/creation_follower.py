@@ -59,7 +59,6 @@ class CreationFollowerChartData(APIView):
             )
         except TwitterLanguageIdentifier.DoesNotExist:
             tli=None
-        logger.debug(f'in get_twitteruserid_list: {self.request=}')
         twitteruserid_list = get_userid_lst(self.request,lang=tli)
         if settings.DEBUG:
             twitteruserid_list=twitteruserid_list[:]
@@ -67,7 +66,7 @@ class CreationFollowerChartData(APIView):
 
     def follower_count(self, user_id, category=None):
         if settings.DEBUG:
-            TTL=600
+            TTL=900
         else:
             TTL=config.creation_follower_follower_count_ttl
         if category:
@@ -119,9 +118,46 @@ class CreationFollowerChartData(APIView):
             )
         return count
 
+    def get_dataset(self, category=None, label=None, color=None):
+        if settings.DEBUG:
+            TTL=900
+        else:
+            TTL=config.creation_follower_datasets_ttl
+        if category:
+            cache_key=f'dataset_{self.community.name}_{category.name}'
+        else:
+            cache_key=f'dataset_{self.community.name}_all'
+        dataset = cache.get(cache_key)
+        if dataset:
+            return dataset
+        if category:
+            label=label
+            hidden = (
+                False if (category in self.community.membership.all())
+                else True
+            )
+            backgroundColor=rgb_to_rgba(color, alpha=0.4)
+            borderColor= color
+        else:
+            label=_('All followers')
+            hidden=True
+            backgroundColor= rgb_to_rgba("grey", alpha=0.2)
+            borderColor='grey'
+        dataset = {
+            'label': label,
+            'backgroundColor': backgroundColor,
+            'borderColor': borderColor,
+            'data': self.get_data(category=category),
+            'hidden': hidden,
+            'pointRadius': None,
+            'pointStyle': None,
+        }
+        cache.set(cache_key,dataset,TTL)
+        return dataset
+
     def datasets(self):
         if settings.DEBUG:
-            TTL=600
+            TTL=900
         else:
             TTL=config.creation_follower_datasets_ttl
         cache_key=f'datasets_{self.community.name}_{self.twitteruserid}'
@@ -129,34 +165,31 @@ class CreationFollowerChartData(APIView):
         if datasets:
             return datasets
         datasets = []
-        dataset_all = {
-            'label': _('All followers'),
-            'backgroundColor': rgb_to_rgba("grey", alpha=0.2),
-            'borderColor': 'grey',
-            'data': self.get_data(),
-            'pointRadius': self.get_pointRadius(),
-            'pointStyle': self.get_pointStyle()
-        }
+        dataset_all = self.get_dataset()
+        if self.twitteruserid not in self.twitteruserid_list:
+            user_data_point=self.get_data(tuid=self.twitteruserid)
+            dataset_all["data"].append(user_data_point)
+        dataset_all['pointRadius']=self.get_pointRadius()
+        dataset_all['pointStyle']=self.get_pointStyle()
         datasets.append(dataset_all)
-
         for cat in self.cats:
             label = cat["cat_obj"].label
             color = cat["cat_color"]
             category=cat["cat_obj"]
-            logger.debug(f'{category=}')
-            cat_data_set = {
-                'label': label,
-                'backgroundColor': rgb_to_rgba(color, alpha=0.4),
-                'borderColor': color,
-                'data': self.get_data(category=category),
-                'hidden':  (
-                    False if (category in self.community.membership.all())
-                    else True
-                ),
-                'pointRadius': self.get_pointRadius(),
-                'pointStyle': self.get_pointStyle()
-            }
-            datasets.append(cat_data_set)
+            dataset = self.get_dataset(
+                category=category,
+                label=label,
+                color=color
+            )
+            if self.twitteruserid not in self.twitteruserid_list:
+                user_data_point=self.get_data(
+                    tuid=self.twitteruserid,
+                    category=category
+                )
+                dataset["data"].append(user_data_point)
+            dataset['pointRadius']=self.get_pointRadius()
+            dataset['pointStyle']=self.get_pointStyle()
+            datasets.append(dataset)
         cache.set(cache_key,datasets,TTL)
         return datasets
 
@@ -177,7 +210,7 @@ class CreationFollowerChartData(APIView):
             except ValueError:
                 pass
         return lst
-    
+
     def get_pointRadius(self)->[int]:
         def_rad=3
         bot_rad=12
@@ -199,7 +232,11 @@ class CreationFollowerChartData(APIView):
                 pass
         return lst
 
-    def get_data(self, category=None):
+    def get_data(self, tuid=None, category=None):
+        if tuid:
+            tuid_list=[tuid]
+        else:
+            tuid_list=self.twitteruserid_list
         try:
             socmed = SocialMedia.objects.get(name="twitter")
         except SocialMedia.DoesNotExist:
@@ -207,7 +244,7 @@ class CreationFollowerChartData(APIView):
         data = list(
             SocialUser.objects
             .filter(
-                user_id__in=self.twitteruserid_list,
+                user_id__in=tuid_list,
                 social_media=socmed,
             )
             .values(
@@ -217,7 +254,6 @@ class CreationFollowerChartData(APIView):
                 "profile__json__id",)
 
         )
-        logger.debug(f'{len(data)=}')
         for i in range(len(data)):
             try:
                 dct = data.pop(i)
@@ -270,10 +306,6 @@ class CreationFollowerChartData(APIView):
             self.twitteruserid_list.append(self.twitteruserid)
         self.twitteruserid_list.sort()
         datasets = self.datasets()
-        for dct in datasets:
-            logger.debug(
-                f'{type(dct)=}\n{len(dct)}\n{dct["data"][:20]}\n\n'
-            )
         try:
             bot_username = SocialUser.objects.get(
                 user_id=self.bot_twitteruserid
@@ -304,6 +336,4 @@ class CreationFollowerChartData(APIView):
             ),
             "datasets": datasets
         }
-        logger.debug(f'{type(res)=}')
-        logger.debug(f'{len(res)=}')
         return Response(res)

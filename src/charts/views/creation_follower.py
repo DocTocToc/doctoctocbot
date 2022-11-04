@@ -118,7 +118,7 @@ class CreationFollowerChartData(APIView):
 
     def get_dataset(self, category=None, label=None, color=None):
         if settings.DEBUG:
-            TTL=600
+            TTL=6
         else:
             TTL=config.creation_follower_datasets_ttl
         if category:
@@ -164,12 +164,14 @@ class CreationFollowerChartData(APIView):
             return datasets
         datasets = []
         dataset_all = self.get_dataset()
-        if self.twitteruserid not in self.twitteruserid_list:
+        if not (self.twitteruserid in self.twitteruserid_list):
             user_data_point=self.get_data(tuid=self.twitteruserid)
-            dataset_all["data"].append(user_data_point)
-        if self.bot_twitteruserid not in self.twitteruserid_list:
+            dataset_all["data"].extend(user_data_point)
+        if not (self.bot_twitteruserid in self.twitteruserid_list):
             bot_data_point=self.get_data(tuid=self.bot_twitteruserid)
-            dataset_all["data"].append(bot_data_point)
+            dataset_all["data"].extend(bot_data_point)
+        logger.debug(f'{dataset_all["data"]} {type(dataset_all["data"])}')
+        dataset_all["data"].sort(key=lambda x: x["id"])
         dataset_all['pointRadius']=self.get_pointRadius()
         dataset_all['pointStyle']=self.get_pointStyle()
         datasets.append(dataset_all)
@@ -182,18 +184,19 @@ class CreationFollowerChartData(APIView):
                 label=label,
                 color=color
             )
-            if self.twitteruserid not in self.twitteruserid_list:
+            if not (self.twitteruserid in self.twitteruserid_list):
                 user_data_point=self.get_data(
                     tuid=self.twitteruserid,
                     category=category
                 )
-                dataset["data"].append(user_data_point)
-            if self.bot_twitteruserid not in self.twitteruserid_list:
+                dataset["data"].extend(user_data_point)
+            if not (self.bot_twitteruserid in self.twitteruserid_list):
                 bot_data_point=self.get_data(
                     tuid=self.bot_twitteruserid,
                     category=category
                 )
-                dataset["data"].append(bot_data_point)
+                dataset["data"].extend(bot_data_point)
+            dataset["data"].sort(key=lambda x: x["id"])
             dataset['pointRadius']=self.get_pointRadius()
             dataset['pointStyle']=self.get_pointStyle()
             datasets.append(dataset)
@@ -221,9 +224,9 @@ class CreationFollowerChartData(APIView):
 
     def tuid_list_user_bot(self):
         _list = self.twitteruserid_list
-        if (self.bot_twitteruserid and self.bot_twitteruserid not in _list):
+        if (self.bot_twitteruserid and not (self.bot_twitteruserid in _list)):
             _list.append(self.bot_twitteruserid)
-        if (self.twitteruserid and not self.twitteruserid in _list):
+        if (self.twitteruserid and not (self.twitteruserid in _list)):
             _list.append(self.twitteruserid)
         _list.sort()
         return _list

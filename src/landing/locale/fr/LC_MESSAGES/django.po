@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-21 18:06+0100\n"
+"POT-Creation-Date: 2022-11-04 04:59+0100\n"
 "PO-Revision-Date: 2022-02-21 20:13+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -475,7 +475,7 @@ msgstr "Modération"
 msgid "Change your password."
 msgstr "Changer votre mot de passe."
 
-#: landing/templates/landing/user/billing.html:29
+#: landing/templates/landing/user/billing.html:28
 msgid "Edit the form"
 msgstr "Éditer le formulaire"
 

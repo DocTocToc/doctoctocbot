@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-21 18:11+0100\n"
+"POT-Creation-Date: 2022-11-04 04:59+0100\n"
 "PO-Revision-Date: 2022-02-21 19:38+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,34 +18,81 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: conversation/admin.py:57
+#: conversation/admin.py:58
 msgid "Category"
 msgstr "Catégorie"
 
-#: conversation/admin.py:82
+#: conversation/admin.py:83
 msgid "Language"
 msgstr "Langue"
 
-#: conversation/admin.py:107
+#: conversation/admin.py:108
 msgid "retweeted by"
 msgstr "retweeté par"
 
-#: conversation/models.py:24
+#: conversation/admin.py:128
+msgid "Status text"
+msgstr ""
+
+#: conversation/admin.py:137
+msgid "True"
+msgstr ""
+
+#: conversation/admin.py:138
+msgid "False"
+msgstr ""
+
+#: conversation/models.py:25
 msgid "Object id"
 msgstr "ID de l'objet"
 
-#: conversation/templates/conversation/search.html:23
+#: conversation/templates/conversation/search.html:24
 msgid "Home"
 msgstr ""
 
-#: conversation/templates/conversation/search.html:34
+#: conversation/templates/conversation/search.html:35
 msgid "Search"
 msgstr ""
 
-#: conversation/templates/conversation/search.html:45
+#: conversation/templates/conversation/search.html:46
+#: conversation/templates/conversation/search.html:55
 msgid "French"
 msgstr ""
 
-#: conversation/templates/conversation/search.html:49
+#: conversation/templates/conversation/search.html:50
+#: conversation/templates/conversation/search.html:55
 msgid "English"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:55
+msgid "or"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:61
+#, python-format
+msgid ""
+"\n"
+"    %(counter)s result\n"
+"    "
+msgid_plural ""
+"\n"
+"    %(counter)s results\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: conversation/templates/conversation/search.html:89
+msgid "first"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:91
+msgid "previous"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:99
+msgid "next"
+msgstr ""
+
+#: conversation/templates/conversation/search.html:101
+msgid "last"
 msgstr ""

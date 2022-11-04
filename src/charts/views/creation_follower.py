@@ -66,7 +66,7 @@ class CreationFollowerChartData(APIView):
 
     def follower_count(self, user_id, category=None):
         if settings.DEBUG:
-            TTL=900
+            TTL=1000
         else:
             TTL=config.creation_follower_follower_count_ttl
         if category:
@@ -84,12 +84,11 @@ class CreationFollowerChartData(APIView):
                     .latest('id')
                     .id_list
                 )
-                if count:
-                    cache.set(
-                        f'follower_count_{user_id}_all',
-                        count,
-                        TTL
-                    )
+                cache.set(
+                    f'follower_count_{user_id}_all',
+                    count,
+                    TTL
+                )
                 return count
             except Follower.DoesNotExist:
                 try:
@@ -110,17 +109,16 @@ class CreationFollowerChartData(APIView):
         except Follower.DoesNotExist:
             followers = []
         count = len([e for e in members if e in followers])
-        if count:
-            cache.set(
-                f'follower_count_{user_id}_{category.name}',
-                count,
-                TTL
-            )
+        cache.set(
+            f'follower_count_{user_id}_{category.name}',
+            count,
+            TTL
+        )
         return count
 
     def get_dataset(self, category=None, label=None, color=None):
         if settings.DEBUG:
-            TTL=900
+            TTL=1#000
         else:
             TTL=config.creation_follower_datasets_ttl
         if category:
@@ -157,7 +155,7 @@ class CreationFollowerChartData(APIView):
 
     def datasets(self):
         if settings.DEBUG:
-            TTL=900
+            TTL=1#000
         else:
             TTL=config.creation_follower_datasets_ttl
         cache_key=f'datasets_{self.community.name}_{self.twitteruserid}'
@@ -275,7 +273,7 @@ class CreationFollowerChartData(APIView):
         if not request.user.is_authenticated:
             res = {
                 "title": _(
-                    "You must be authenticted to see this chart."
+                    "You must be authenticated to see this chart."
                 ),
                 "datasets": []
             }
@@ -328,12 +326,11 @@ class CreationFollowerChartData(APIView):
                 "Click on categories (All followers, {categories}) to display "
                 "or hide data. tldr; if the triangle is higher than the square"
                 " for the category {members}, you should follow {bot}"
-                .format(
+                ).format(
                     categories=categories,
                     members=members,
                     bot=f'@{bot_username}'
                 ),
-            ),
             "datasets": datasets
         }
         return Response(res)

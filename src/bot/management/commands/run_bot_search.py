@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Run bot search with API v2 and retweet
+    help = 'Run bot search with API v2 and retweet'
 
     def add_arguments(self, parser):
         parser.add_argument('community', type=str)

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-21 18:11+0100\n"
-"PO-Revision-Date: 2020-02-01 00:29+0100\n"
+"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"PO-Revision-Date: 2022-11-04 07:08+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.4.2\n"
+
+#: charts/templates/charts/creation_follower.html:3
+msgid "This is the title"
+msgstr "Quel est le titre"
 
 #: charts/templates/charts/daily.html:3
 msgid "Daily tweets"
@@ -34,6 +38,42 @@ msgstr "Tweets hebdomadaires"
 msgid "Yearly tweets"
 msgstr "Tweets annuels"
 
+#: charts/views/creation_follower.py:142
+msgid "All followers"
+msgstr "Tous les abonnés"
+
+#: charts/views/creation_follower.py:278
+msgid "You must be authenticated to see this chart."
+msgstr "Vous devez être connecté pour voir ce graphique."
+
+#: charts/views/creation_follower.py:314
+msgid "the bot"
+msgstr "le bot"
+
+#: charts/views/creation_follower.py:318 charts/views/question.py:102
+msgid "or"
+msgstr "ou"
+
+#: charts/views/creation_follower.py:324
+#, python-brace-format
+msgid ""
+"Follower count (total and by category) vs. creation date of the account. ■ "
+"is you, ▲ is {bot}."
+msgstr ""
+"Nombre d'abonnés (total et par catégorie) selon la date de création du "
+"compte. ■: vous, ▲: {bot}."
+
+#: charts/views/creation_follower.py:328
+#, python-brace-format
+msgid ""
+"Click on categories (All followers, {categories}) to display or hide data. "
+"tldr; if the triangle is higher than the square for the category {members}, "
+"you should follow {bot}"
+msgstr ""
+"Cliquer sur les catégories (Tous les abonnés, {categories}) pour afficher ou "
+"cacher les données. tldr; si le triangle est plus haut que le carré pour la "
+"catégorie {members}, vous devriez vous abonner à {bot}"
+
 #: charts/views/question.py:45
 msgid "by"
 msgstr "par"
@@ -46,10 +86,6 @@ msgstr "Nombre de questions par {period} ({categories_str})"
 #: charts/views/question.py:77
 msgid "Number of tweets"
 msgstr "Nombre de tweets"
-
-#: charts/views/question.py:102
-msgid "or"
-msgstr "ou"
 
 #: charts/views/question.py:103
 msgid "and"

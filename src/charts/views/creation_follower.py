@@ -66,7 +66,7 @@ class CreationFollowerChartData(APIView):
 
     def follower_count(self, user_id, category=None):
         if settings.DEBUG:
-            TTL=1000
+            TTL=600
         else:
             TTL=config.creation_follower_follower_count_ttl
         if category:
@@ -118,7 +118,7 @@ class CreationFollowerChartData(APIView):
 
     def get_dataset(self, category=None, label=None, color=None):
         if settings.DEBUG:
-            TTL=1#000
+            TTL=600
         else:
             TTL=config.creation_follower_datasets_ttl
         if category:
@@ -155,7 +155,7 @@ class CreationFollowerChartData(APIView):
 
     def datasets(self):
         if settings.DEBUG:
-            TTL=1#000
+            TTL=6
         else:
             TTL=config.creation_follower_datasets_ttl
         cache_key=f'datasets_{self.community.name}_{self.twitteruserid}'
@@ -167,6 +167,9 @@ class CreationFollowerChartData(APIView):
         if self.twitteruserid not in self.twitteruserid_list:
             user_data_point=self.get_data(tuid=self.twitteruserid)
             dataset_all["data"].append(user_data_point)
+        if self.bot_twitteruserid not in self.twitteruserid_list:
+            bot_data_point=self.get_data(tuid=self.bot_twitteruserid)
+            dataset_all["data"].append(bot_data_point)
         dataset_all['pointRadius']=self.get_pointRadius()
         dataset_all['pointStyle']=self.get_pointStyle()
         datasets.append(dataset_all)
@@ -185,6 +188,12 @@ class CreationFollowerChartData(APIView):
                     category=category
                 )
                 dataset["data"].append(user_data_point)
+            if self.bot_twitteruserid not in self.twitteruserid_list:
+                bot_data_point=self.get_data(
+                    tuid=self.bot_twitteruserid,
+                    category=category
+                )
+                dataset["data"].append(bot_data_point)
             dataset['pointRadius']=self.get_pointRadius()
             dataset['pointStyle']=self.get_pointStyle()
             datasets.append(dataset)
@@ -192,38 +201,49 @@ class CreationFollowerChartData(APIView):
         return datasets
 
     def get_pointStyle(self)->[str]:
-        lst=["circle"]*len(self.twitteruserid_list)
+        _list = self.tuid_list_user_bot()
+        lst=["circle"]*len(_list)
         if self.bot_twitteruserid:
             try:
-                bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+                bot_idx=_list.index(self.bot_twitteruserid)
                 lst.pop(bot_idx)
                 lst.insert(bot_idx, "triangle")
             except ValueError:
                 pass
         if self.twitteruserid:
             try:
-                user_idx=self.twitteruserid_list.index(self.twitteruserid)
+                user_idx=_list.index(self.twitteruserid)
                 lst.pop(user_idx)
                 lst.insert(user_idx, "rect")
             except ValueError:
                 pass
         return lst
 
+    def tuid_list_user_bot(self):
+        _list = self.twitteruserid_list
+        if (self.bot_twitteruserid and self.bot_twitteruserid not in _list):
+            _list.append(self.bot_twitteruserid)
+        if (self.twitteruserid and not self.twitteruserid in _list):
+            _list.append(self.twitteruserid)
+        _list.sort()
+        return _list
+
     def get_pointRadius(self)->[int]:
         def_rad=3
-        bot_rad=12
-        user_rad=12
-        lst=[def_rad]*len(self.twitteruserid_list)
+        bot_rad=14
+        user_rad=15
+        _list = self.tuid_list_user_bot()
+        lst=[def_rad]*len(_list)
         if self.bot_twitteruserid:
             try:
-                bot_idx=self.twitteruserid_list.index(self.bot_twitteruserid)
+                bot_idx=_list.index(self.bot_twitteruserid)
                 lst.pop(bot_idx)
                 lst.insert(bot_idx, bot_rad)
             except ValueError:
                 pass
         if self.twitteruserid:
             try:
-                user_idx=self.twitteruserid_list.index(self.twitteruserid)
+                user_idx=_list.index(self.twitteruserid)
                 lst.pop(user_idx)
                 lst.insert(user_idx, user_rad)
             except ValueError:
@@ -290,18 +310,6 @@ class CreationFollowerChartData(APIView):
         self.twitteruserid = get_twitter_user_id(request)
         self.bot_twitteruserid = get_bot_id(request)
         self.twitteruserid_list=self.get_twitteruserid_list()
-        if (
-            self.bot_twitteruserid
-            and
-            (self.bot_twitteruserid not in self.twitteruserid_list)
-        ):
-            self.twitteruserid_list.append(self.bot_twitteruserid)
-        if (
-            self.twitteruserid
-            and
-            (not self.twitteruserid in self.twitteruserid_list)
-        ):
-            self.twitteruserid_list.append(self.twitteruserid)
         self.twitteruserid_list.sort()
         datasets = self.datasets()
         try:

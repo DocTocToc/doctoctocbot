@@ -14,6 +14,7 @@ from bot.models import Account
 from common.twitter import status_url_from_id
 from django.db.models.aggregates import Sum, Count
 from moderation.admin_tags import screen_name_link_su_pk
+from djangoql.admin import DjangoQLSearchMixin
 
 from versions.admin import VersionedAdmin
 
@@ -145,7 +146,7 @@ class StatusTextFilter(admin.SimpleListFilter):
         return queryset.filter(status_text__isnull = value)
 
 
-class TweetdjAdmin(admin.ModelAdmin):
+class TweetdjAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
     list_per_page = config.conversation__admin__tweetdj_list_per_page
     list_display = (
         'statusid',

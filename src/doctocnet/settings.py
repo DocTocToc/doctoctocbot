@@ -236,6 +236,7 @@ INSTALLED_APPS = [
     'silver',
     'textareacounter',
     'twttr',
+    'djangoql',
 ]
 
 if DEBUG:

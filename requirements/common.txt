@@ -77,3 +77,4 @@ django-mptt
 langcodes[data]
 flower
 webcolors
+djangoql

@@ -43,6 +43,8 @@ class TweetdjViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        if not self.request.user.is_superuser:
+            qs = qs.exclude(deleted=True)
         api_access = get_api_access(self.request)
         logger.debug(f'{api_access=}')
         qs = self.filter_by_type(qs, api_access)

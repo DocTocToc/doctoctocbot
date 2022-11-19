@@ -29,6 +29,7 @@ from community.helpers import site_url, activate_language
 from django.template.defaultfilters import date as _date
 from moderation.profile import create_update_profile_twitter
 from moderation.tasks import create_profiles
+from mastodon.models import MastodonInvitation
 
 logger = logging.getLogger(__name__)
 
@@ -331,6 +332,7 @@ class MessageManager:
             retweeted_by=self.sender,
             socialuser=self.recipient
         )
+        self.abort=False
 
     def is_message_sent(self):
         if self.has_valid_receipt():
@@ -431,6 +433,22 @@ class MessageManager:
         else:
             return ", ".join(dt_str[:-1]) + " & " + dt_str[-1]
 
+    def mastodon_invite_url(self)-> str:
+        su = self.recipient
+        community = self.sender.account.community
+        mastodon_user = community.mastodon_account
+        mi = MastodonInvitation.objects.filter(
+            socialuser=None,
+            autofollow=mastodon_user
+        ).first()
+        if mi:
+            mi.socialuser=su
+            mi.save()
+            domain_name = mastodon_user.acct.split("@")[1]
+            return f'https://{domain_name}/invite/{mi.uid}'
+        else:
+            self.abort=True
+
     def _format(self):
         try:
             screen_name = self.recipient.screen_name_tag()
@@ -450,11 +468,14 @@ class MessageManager:
             'first_retweet_date' : self.first_retweet_date(),
             'site_url' : self.site_url(),
             'investment_date': self.investment_date(),
+            'mastodon_invite_url': self.mastodon_invite_url()
         }
         return self.message.content.format(**d)
 
     def create(self):
         self.text=self._format()
+        if self.abort:
+            return
         if self.is_message_sent():
             return
         try:

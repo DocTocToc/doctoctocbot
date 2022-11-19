@@ -63,6 +63,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'name',
         'active',
         'account',
+        'mastodon_account',
         'helper',
         'created',
         'site',
@@ -79,11 +80,15 @@ class CommunityAdmin(admin.ModelAdmin):
         'twitter_request_dm',
         'blog',
     )
-    raw_id_fields = ('twitter_creator',)
+    raw_id_fields = (
+        'twitter_creator',
+        'mastodon_account',    
+    )
     fields = (
         'name',
         'active',
         'account',
+        'mastodon_account',
         'helper',
         'helper_message',
         'hashtag',

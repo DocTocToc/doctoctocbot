@@ -237,6 +237,7 @@ INSTALLED_APPS = [
     'textareacounter',
     'twttr',
     'djangoql',
+    'mastodon',
 ]
 
 if DEBUG:

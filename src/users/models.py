@@ -1,15 +1,25 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from moderation.models import Entity
 
 from moderation.models import SocialUser
 
 
 class User(AbstractUser):
-    socialuser = models.ForeignKey(SocialUser,
-                                   blank=True,
-                                   null=True,
-                                   default=None,
-                                   on_delete=models.CASCADE,)
+    socialuser = models.ForeignKey(
+        SocialUser,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
+    entity = models.ForeignKey(
+        Entity,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.PROTECT,
+    )
     
     def __str__(self):
         return f'{self.id} - {self.username}'

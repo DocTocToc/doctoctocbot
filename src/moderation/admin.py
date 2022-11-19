@@ -13,6 +13,7 @@ from rangefilter.filter import DateRangeFilter
 from conversation.models import Tweetdj
 from bot.models import Account
 from moderation.models import (
+    Entity,
     SocialUser,
     Human,
     UserCategoryRelationship,
@@ -31,12 +32,14 @@ from moderation.models import (
     ModerationOptIn,
     Prospect,
     Filter,
+    MastodonUser,
 )
 from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag
 
 from community.models import Community
-from moderation.admin_tags import admin_tag_category
+from moderation.admin_tags import admin_tag_category, screen_name_link_su_pk
+from users.admin_tags import admin_tag_user_link
 from common.list_filter import by_null_filter
 from moderation.admin_tags import m2m_field_tag
 from modeltranslation.admin import TranslationAdmin
@@ -44,6 +47,43 @@ from django.contrib import auth
 from durationwidget.widgets import TimeDurationWidget
 
 logger = logging.getLogger(__name__)
+
+@admin.register(Entity)
+class EntityAdmin(admin.ModelAdmin):
+    search_fields=['id',]
+    list_display=(
+        'id',
+        'socialusers_tag',
+        'djangousers_tag',
+    )
+    fields =(
+        'id',
+        'socialusers_tag',
+        'djangousers_tag',
+    )
+    readonly_fields =(
+        'id',
+        'socialusers_tag',
+        'djangousers_tag',
+    )
+
+    def socialusers_tag(self, obj):
+        return mark_safe(
+            "<br>".join(
+                [screen_name_link_su_pk(su.id)
+                 for su in obj.socialuser_set.all()]
+            )
+        )
+    socialusers_tag.short_description='Social users'
+
+    def djangousers_tag(self, obj):
+        return mark_safe(
+            "<br>".join(
+                [admin_tag_user_link(du.id)
+                 for du in obj.user_set.all()]
+            )
+        )
+    djangousers_tag.short_description='Django users'
 
 
 def tweetdj_link(self, obj):
@@ -198,6 +238,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
         'id',
+        'entity',
         'user_id',
         'mini_image_tag',
         'screen_name_tag',
@@ -215,6 +256,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'updated',
     )
     fields = (
+        'entity',
         'screen_name_tag',
         'social_media',
         'socialmedia_tag',
@@ -262,7 +304,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'social_media',
         'language',
     )
-
+    autocomplete_fields = ['entity']
     def get_queryset(self, request):
         qs = super(SocialUserAdmin, self).get_queryset(request)
         self.request = request
@@ -991,6 +1033,14 @@ class UserCategoryRelationshipAdmin(admin.ModelAdmin):
         'category',
         'community',
     )
+
+
+@admin.register(MastodonUser)
+class MastodonUserAdmin(admin.ModelAdmin):
+    list_display = [
+        'acct',
+        'entity',
+    ]
 
 
 admin.site.register(Category, CategoryAdmin)

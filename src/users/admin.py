@@ -31,6 +31,7 @@ class CustomUserAdmin(UserAdmin):
         'last_login',
         'has_social_auth',
         'social_auth_link_tag',
+        'entity',
     )
     readonly_fields = (
         'date_joined',
@@ -56,6 +57,10 @@ class CustomUserAdmin(UserAdmin):
         ),
         ('Social User', {
             'fields': ('socialuser',)
+            }
+        ),
+        ('Entity', {
+            'fields': ('entity',)
             }
         ),
         ('Social auth', {

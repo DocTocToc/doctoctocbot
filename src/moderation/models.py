@@ -164,7 +164,43 @@ class Human(models.Model):
     def __str__(self):
         su = self.socialuser.all().first()
         user = self.djangouser.all().first()
-        return f"{self.pk} || {su} || {user}"
+        return f"Human {self.pk} || {su} || {user}"
+
+
+class Entity(models.Model):
+    created =  models.DateTimeField(auto_now_add=True)
+    updated =  models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        socialusers = [str(su) for su in self.socialuser_set.all()]
+        djangousers = [str(user) for user in self.user_set.all()]
+        mastodonusers = [str(user) for user in self.mastodonuser_set.all()]
+        return (
+            "Entity "
+            f"{self.pk}."
+            f"{(' su: ' + ', '.join(socialusers)) if socialusers else ''}"
+            f"{(' mu: ' + ', '.join(mastodonusers)) if mastodonusers else ''}"
+            f"{(' du: ' + ', '.join(djangousers)) if djangousers else ''}"
+        )
+    
+    class Meta:
+        verbose_name_plural = "Entities"
+
+
+class MastodonUser(models.Model):
+    acct = models.CharField(
+        max_length=284,
+        unique=True
+    )
+    entity = models.ForeignKey(
+        'Entity',
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return f'MastodonUser {self.acct}'
 
 
 class SocialUser(models.Model):
@@ -198,6 +234,13 @@ class SocialUser(models.Model):
         blank=True,
         help_text="default language as a TwitterLanguageIdentifier object",
     )
+    entity = models.ForeignKey(
+        Entity,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.PROTECT,
+    )
     created =  models.DateTimeField(auto_now_add=True, null=True)
     updated =  models.DateTimeField(auto_now=True, null=True)
 
@@ -205,9 +248,9 @@ class SocialUser(models.Model):
 
     def __str__(self):
         try:
-            return f'{self.pk} | {self.screen_name_tag()} | {self.user_id}'
+            return f'SocialUser {self.pk} | {self.screen_name_tag()} | {self.user_id}'
         except Profile.DoesNotExist:
-            return str("%i | %i | %s " % (self.pk, self.user_id, self.social_media))
+            return str("SocialUser %i | %i | %s " % (self.pk, self.user_id, self.social_media))
 
     def normal_image_tag(self):
         return mark_safe('<img src="%s"/>' % (self.profile.normalavatar.url))

@@ -27,6 +27,13 @@ class Community(models.Model):
         on_delete=models.CASCADE,
         related_name='community',
     )
+    mastodon_account = models.OneToOneField(
+        'moderation.MastodonUser',
+        on_delete=models.PROTECT,
+        related_name='community',
+        blank=True,
+        null=True,
+    )
     hashtag = models.ManyToManyField('conversation.Hashtag')
     membership = models.ManyToManyField(
         'moderation.Category',

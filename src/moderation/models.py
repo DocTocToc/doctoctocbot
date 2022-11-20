@@ -479,6 +479,10 @@ class UserCategoryRelationship(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
+    active = models.BooleanField(
+        default=True,
+        help_text="Is this UserCategoryRelationship active?"
+    )
 
     def __str__(self):
         if self.moderator:

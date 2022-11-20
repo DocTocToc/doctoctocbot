@@ -1,8 +1,10 @@
 """ Link Mastodon and Twitter users """
 
 import logging
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from mastodon.models import MastodonInvitation
+from django.db import  DatabaseError
 from moderation.models import MastodonUser, SocialUser, Entity
 from typing import List
 from moderation.social import get_socialuser_from_screen_name
@@ -31,8 +33,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         acct: str =  options['mastodon']
         twitter_username: str =  options['twitter']
+        twitter_username = twitter_username.lower()
+        if '@' not in acct:
+            if settings.MASTODON_DOMAIN:
+                acct+=f'@{settings.MASTODON_DOMAIN}'
         try:
-            su = SocialUser.objects.get(profile__json__screen_name=twitter_username)
+            su = SocialUser.objects.get(
+                profile__json__screen_name__iexact=twitter_username
+            )
         except SocialUser.DoesNotExist:
             raise CommandError(
                 'Twitter SocialUser with username "%s" does not exist' % twitter_username
@@ -44,9 +52,25 @@ class Command(BaseCommand):
         try:
             mu=MastodonUser.objects.get(acct=acct)
         except MastodonUser.DoesNotExist:
-            raise CommandError(
-                'MastodonUser with acct "%s" does not exist' % acct
+            self.stdout.write(
+                self.style.WARNING(
+                    'MastodonUser with acct "%s" does not exist' % acct
+                )
             )
+            answer = input(
+                f'Do you want to create MastodonUser "{acct}" ? (Y or N)'
+            )
+            if answer in ["Y", "y" "Yes", "yes"]:
+                try:
+                    mu=MastodonUser.objects.create(acct=acct)
+                except DatabaseError as e:
+                    raise CommandError(
+                        f'Database error during new MastodonUser creation: {e}'
+                    )
+            else:
+                raise CommandError(
+                    f'Deal with it!'
+                )
         if mu.entity and su.entity:
             if mu.entity == su.entity:
                 self.stdout.write(

@@ -1028,10 +1028,12 @@ class UserCategoryRelationshipAdmin(admin.ModelAdmin):
         'community',
         'created',
         'updated',
+        'active',
     ]
     list_filter = (
         'category',
         'community',
+        'active',
     )
 
 

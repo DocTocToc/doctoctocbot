@@ -910,3 +910,7 @@ WEBPUSH_SETTINGS = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#MASTODON
+# default Mastodon server domain
+MASTODON_DOMAIN=config('MASTODON_DOMAIN', default='')

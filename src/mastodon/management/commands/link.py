@@ -34,6 +34,8 @@ class Command(BaseCommand):
         acct: str =  options['mastodon']
         twitter_username: str =  options['twitter']
         twitter_username = twitter_username.lower()
+        if acct.find('@') == 0:
+            acct = acct[1:]
         if '@' not in acct:
             if settings.MASTODON_DOMAIN:
                 acct+=f'@{settings.MASTODON_DOMAIN}'
@@ -60,7 +62,7 @@ class Command(BaseCommand):
             answer = input(
                 f'Do you want to create MastodonUser "{acct}" ? (Y or N)'
             )
-            if answer in ["Y", "y" "Yes", "yes"]:
+            if answer in ["Y", "y", "Yes", "yes"]:
                 try:
                     mu=MastodonUser.objects.create(acct=acct)
                 except DatabaseError as e:
@@ -92,7 +94,7 @@ class Command(BaseCommand):
             su.entity=mu.entity
             su.save()
             self.stdout.write(
-                    self.style.WARNING(
+                    self.style.SUCCESS(
                         f'{mu} and {su} are now linked by the same entity {su.entity}'
                     )
                 )
@@ -101,7 +103,7 @@ class Command(BaseCommand):
             mu.entity=su.entity
             mu.save()
             self.stdout.write(
-                    self.style.WARNING(
+                    self.style.SUCCESS(
                         f'{mu} and {su} are now linked by the same entity {mu.entity}'
                     )
                 )
@@ -118,7 +120,7 @@ class Command(BaseCommand):
             mu.entity=entity
             mu.save()
             self.stdout.write(
-                self.style.WARNING(
+                self.style.SUCCESS(
                     f'{mu} and {su} are now linked by the same entity {mu.entity}'
                 )
             )

@@ -27,6 +27,7 @@ from conversation.models import Tweetdj
 from optin.models import Option
 from conversation.models import TwitterLanguageIdentifier
 from django.db.models import Count
+from django.contrib.postgres.indexes import GinIndex
 
 logger = logging.getLogger(__name__)
 
@@ -614,6 +615,15 @@ class Profile(models.Model):
         except (TypeError, KeyError) as e:
             logger.error(e)
             return
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                name='json_index_gin',
+                fields=['json'],
+                opclasses=['jsonb_path_ops']
+            )
+        ]
 
 
 class Queue(Versionable):

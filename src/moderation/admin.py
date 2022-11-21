@@ -293,7 +293,9 @@ class SocialUserAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'user_id',
-        'profile__json',
+        'profile__json__name',
+        'profile__json__screen_name',
+        'profile__json__description',
     )
     list_filter = (
         'category__name',
@@ -582,8 +584,12 @@ class ProfileAdmin(admin.ModelAdmin):
     )
     fields = ('id', 'mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
     readonly_fields = ('id', 'mini_image_tag', 'screen_name_tag', 'name_tag', 'socialuser_link', 'json', 'updated', 'normalavatar', 'biggeravatar', 'miniavatar',)
-    search_fields = ('json',)
-    
+    search_fields = (
+        'profile__json__name',
+        'profile__json__screen_name',
+        'profile__json__description',
+    )
+
     def socialuser_link(self, obj):
         try:
             su = SocialUser.objects.get(pk=obj.socialuser.pk)

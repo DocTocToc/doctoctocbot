@@ -10,7 +10,7 @@ from hcp.models import (
 )
 from modeltranslation.admin import TranslationAdmin
 from moderation.models import Human, SocialUser
-from moderation.admin_tags import socialmedia_account
+from moderation.admin_tags import socialmedia_account, entity
 
 logger = logging.getLogger(__name__)
 
@@ -108,31 +108,43 @@ class TaxonomyAdmin(TranslationAdmin):
 
 class HealthCareProviderAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
+        'entity_tag',
         'human',
         'somed_account_tag',
         'taxonomy_tag',
         'created',
         'updated',
+        'entity',
     )
     fields = (
+        'id',
+        'entity_tag',
+        'entity',
         'human',
         'created',
         'updated',
     )
     readonly_fields = (
+        'id',
+        'entity_tag',
         'created',
         'updated',
     )
     search_fields = (
-        #'human__socialuser',
         'taxonomy__code',
         'taxonomy__classification_en',
         'taxonomy__specialization_en',
     )
     inlines = (HealthCareProviderTaxonomyInline,)
 
-    autocomplete_fields = ['human']
+    autocomplete_fields = ['human', 'entity']
 
+    def entity_tag(self, obj):
+        return entity(obj.entity)
+
+    entity_tag.short_description = 'Entity'
+    entity_tag.admin_order_field = 'entity'
 
     def taxonomy_tag(self, obj):
         return " | ".join( [str(taxonomy) for taxonomy in obj.taxonomy.all()] )

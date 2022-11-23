@@ -51,6 +51,7 @@ from moderation.admin_tags import m2m_field_tag
 from modeltranslation.admin import TranslationAdmin
 from django.contrib import auth
 from durationwidget.widgets import TimeDurationWidget
+from hcp.admin_tags import healthcareprovider_link
 
 logger = logging.getLogger(__name__)
 
@@ -59,22 +60,28 @@ class EntityAdmin(admin.ModelAdmin):
     search_fields=['id',]
     list_display=(
         'id',
+        'hcp_tag',
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
     )
     fields =(
         'id',
+        'hcp_tag',
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
     )
     readonly_fields =(
         'id',
+        'hcp_tag',
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
     )
+    def hcp_tag(self, obj):
+        return healthcareprovider_link(obj.healthcareprovider)
+    hcp_tag.short_description= "HealthCareProvider"
 
     def socialusers_tag(self, obj):
         return mark_safe(

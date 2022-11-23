@@ -16,6 +16,7 @@ from moderation.models import (
     Category,
     Moderator,
     Human,
+    Entity,
     get_default_socialmedia,
 )
 
@@ -90,21 +91,15 @@ def create_update_socialuser_profile(sender, instance, created, **kwargs):
 """
 
 @receiver(post_save, sender=SocialUser)
-def create_human(sender, instance, created, **kwargs):
+def create_entity(sender, instance, created, **kwargs):
     if created:
         try:
-            human = Human.objects.get(socialuser=instance)
-        except Human.DoesNotExist:
-            try:
-                human = Human()
-                human.save()
-                human.socialuser.add(instance)
-                human.save()
-            except:
-                logger.error(
-                    f'Database error occured while creating Human object for '
-                    f'{instance}.'
-                )
+            entity = Entity.objects.create()
+        except DatabaseError as e:
+            logger.error(f'Database error: {e}')
+            return
+        instance.entity = entity
+        instance.save()
 
 """
 @receiver(post_save, sender=Moderation)   

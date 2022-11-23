@@ -29,3 +29,18 @@ def taxonomy_tag(su: SocialUser):
         return mark_safe(
             "".join(tag_lst)
         )
+
+def healthcareprovider_link(hcp):
+    """ Return HealthCareProvider admin link tag from HealthCareProvider object
+    """
+    taxonomies = hcp.taxonomy.all()
+    if taxonomies:
+        tags=[]
+        for t in taxonomies:
+            tags.append(t.specialization or t.classification)
+        return mark_safe(
+            '<a href="{link}">{content}</a>'.format(
+                link = reverse("admin:hcp_healthcareprovider_change", args=(hcp.pk,)),
+                content = f'🧑‍⚕️{", ".join(tags)}'
+            )
+        )

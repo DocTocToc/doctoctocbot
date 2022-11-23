@@ -34,6 +34,12 @@ class HealthCareProvider(models.Model):
        'moderation.Human',
        on_delete=models.CASCADE,
     )
+    entity = models.OneToOneField(
+       'moderation.Entity',
+       on_delete=models.PROTECT,
+       blank=True,
+       null=True,
+    )
     taxonomy = models.ManyToManyField(
         Taxonomy,
         through='HealthCareProviderTaxonomy',

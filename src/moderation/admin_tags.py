@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.utils.safestring import SafeString
 from users.admin_tags import admin_tag_user_link
+from hcp.admin_tags import healthcareprovider_link
 
 def admin_tag_category(su: SocialUser):
     category_lst = ["<ul>"]
@@ -52,7 +53,7 @@ def screen_name_link_su(su):
         return mark_safe(
             '<a href="{link}">{tag}</a>'.format(
                 link = reverse("admin:moderation_socialuser_change", args=(su.pk,)),
-                tag = f'{su.screen_name_tag()}{emoji}'
+                tag = f'{emoji}{su.screen_name_tag()}'
             )
         )
 
@@ -67,7 +68,7 @@ def acct_link_mu(mu):
         return mark_safe(
             '<a href="{link}">{tag}</a>'.format(
                 link = reverse("admin:moderation_mastodonuser_change", args=(mu.pk,)),
-                tag = f'{mu.acct}{emoji}'
+                tag = f'{emoji}{mu.acct}'
             )
         )
 
@@ -106,7 +107,6 @@ def m2m_field_tag(m2m_field):
         )
     )
 
-
 def entity(e: Entity):
     if e:
         socialusers = [
@@ -117,6 +117,8 @@ def entity(e: Entity):
         ]
         mastodonusers = [
             acct_link_mu(mu) for mu in e.mastodonuser_set.all()]
+        hcp = (f"<br>{healthcareprovider_link(e.healthcareprovider)}"
+            if e.healthcareprovider else '') 
         entity_link = (
             '<a href="{link}">Entity {eid}</a>'.format(
                 link=reverse("admin:moderation_entity_change",
@@ -126,7 +128,8 @@ def entity(e: Entity):
         )
         return mark_safe(
             f"{entity_link}"
-            f"{('<br>su: ' + ', '.join(socialusers)) if socialusers else ''}"
-            f"{('<br>mu: ' + ', '.join(mastodonusers)) if mastodonusers else ''}"
-            f"{('<br>du: ' + ', '.join(djangousers)) if djangousers else ''}"
+            f"{('<br>' + ', '.join(socialusers)) if socialusers else ''}"
+            f"{('<br>' + ', '.join(mastodonusers)) if mastodonusers else ''}"
+            f"{('<br>' + ', '.join(djangousers)) if djangousers else ''}"
+            f"{hcp}"
         )

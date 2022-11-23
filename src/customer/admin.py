@@ -21,7 +21,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def user_link(self, obj):
         try:
-            return admin_tag_user_link(obj.user.pk)
+            return admin_tag_user_link(obj.user)
         except AttributeError:
             return
     

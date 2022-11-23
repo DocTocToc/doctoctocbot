@@ -13,7 +13,7 @@ from moderation.models import SocialUser
 from bot.models import Account
 from common.twitter import status_url_from_id
 from django.db.models.aggregates import Sum, Count
-from moderation.admin_tags import screen_name_link_su_pk
+from moderation.admin_tags import screen_name_link_su
 from djangoql.admin import DjangoQLSearchMixin
 
 from versions.admin import VersionedAdmin
@@ -265,7 +265,7 @@ class TweetdjAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
     def retweeted_by_screen_name(self, obj):
         rtby_lst = []
         for rtby in obj.retweeted_by.all():
-            snt = screen_name_link_su_pk(rtby.pk)
+            snt = screen_name_link_su(rtby)
             if snt:
                 rtby_lst.append(snt)
         return mark_safe(
@@ -277,7 +277,7 @@ class TweetdjAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
     def quoted_by_screen_name(self, obj):
         qtby_lst = []
         for qtby in obj.quoted_by.all():
-            snt = screen_name_link_su_pk(qtby.pk)
+            snt = screen_name_link_su(qtby)
             if snt:
                 qtby_lst.append(snt)
         return mark_safe(

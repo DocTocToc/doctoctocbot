@@ -9,8 +9,9 @@ from dm.models import DirectMessage
 
 from moderation.admin_tags import (
     admin_tag_social_user_img,
-    admin_tag_screen_name_link
+    screen_name_link_su
 )
+from moderation.models import SocialUser
 from django.utils.safestring import mark_safe
 from constance import config
 
@@ -195,12 +196,20 @@ class DirectMessageAdmin(admin.ModelAdmin):
     to_img_tag.short_description = "To"
     
     def from_screen_name_tag(self, obj):
-        return admin_tag_screen_name_link(obj.sender_id)
+        try:
+            su=SocialUser.objects.get(obj.sender_id)
+        except SocialUser.DoesNotExist:
+            return
+        return screen_name_link_su(su)
 
     from_screen_name_tag.short_description = "From"
     
     def to_screen_name_tag(self, obj):
-        return admin_tag_screen_name_link(obj.recipient_id)
+        try:
+            su=SocialUser.objects.get(obj.recipient_id)
+        except SocialUser.DoesNotExist:
+            return
+        return screen_name_link_su(su)
 
     to_screen_name_tag.short_description = "To"
     

@@ -8,7 +8,7 @@ from moderation.models import SocialUser, UserCategoryRelationship
 from request.models import Queue, RequestStatus
 from moderation.admin_tags import (
     admin_tag_category,
-    admin_tag_screen_name_link
+    screen_name_link_su
 )
 from django.templatetags.static import static
 from django.db.models import F
@@ -88,7 +88,7 @@ class QueueAdmin(VersionedAdmin):
     state_tag.short_description = 'STATE'
 
     def screen_name_link(self, obj):
-        return admin_tag_screen_name_link(obj.uid)
+        return screen_name_link_su(obj)
 
     screen_name_link.short_description = 'Screen name'
 

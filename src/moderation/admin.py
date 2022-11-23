@@ -38,7 +38,13 @@ from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag
 
 from community.models import Community
-from moderation.admin_tags import admin_tag_category, screen_name_link_su_pk
+from moderation.admin_tags import (
+    admin_tag_category,
+    screen_name_link_su,
+    acct_link_mu,
+    webfinger,
+    entity,
+)
 from users.admin_tags import admin_tag_user_link
 from common.list_filter import by_null_filter
 from moderation.admin_tags import m2m_field_tag
@@ -55,22 +61,25 @@ class EntityAdmin(admin.ModelAdmin):
         'id',
         'socialusers_tag',
         'djangousers_tag',
+        'mastodonusers_tag',
     )
     fields =(
         'id',
         'socialusers_tag',
         'djangousers_tag',
+        'mastodonusers_tag',
     )
     readonly_fields =(
         'id',
         'socialusers_tag',
         'djangousers_tag',
+        'mastodonusers_tag',
     )
 
     def socialusers_tag(self, obj):
         return mark_safe(
             "<br>".join(
-                [screen_name_link_su_pk(su.id)
+                [screen_name_link_su(su)
                  for su in obj.socialuser_set.all()]
             )
         )
@@ -79,11 +88,20 @@ class EntityAdmin(admin.ModelAdmin):
     def djangousers_tag(self, obj):
         return mark_safe(
             "<br>".join(
-                [admin_tag_user_link(du.id)
+                [admin_tag_user_link(du)
                  for du in obj.user_set.all()]
             )
         )
     djangousers_tag.short_description='Django users'
+
+    def mastodonusers_tag(self, obj):
+        return mark_safe(
+            "<br>".join(
+                [acct_link_mu(mu)
+                for mu in obj.mastodonuser_set.all()]
+            )
+        )
+    mastodonusers_tag.short_description='Mastodon users'
 
 
 def tweetdj_link(self, obj):
@@ -238,7 +256,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     inlines = (UserRelationshipInline,)
     list_display = (
         'id',
-        'entity',
+        'entity_tag',
         'user_id',
         'mini_image_tag',
         'screen_name_tag',
@@ -254,6 +272,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'language',
         'created',
         'updated',
+        'entity',
     )
     fields = (
         'entity',
@@ -327,6 +346,12 @@ class SocialUserAdmin(admin.ModelAdmin):
         for relation in obj.categoryrelationships.all():
             cat_mod_lst.append((relation.category.name, relation.moderator.screen_name_tag(),))
         return cat_mod_lst
+
+    def entity_tag(self, obj):
+        return entity(obj.entity)
+
+    entity_tag.short_description = 'Entity'
+    entity_tag.admin_order_field = 'entity'
 
     def profile_link(self, obj):
         try:
@@ -1047,8 +1072,27 @@ class UserCategoryRelationshipAdmin(admin.ModelAdmin):
 class MastodonUserAdmin(admin.ModelAdmin):
     list_display = [
         'acct',
+        'webfinger_tag',
+        'entity_tag',
         'entity',
     ]
+    fields = [
+        'acct',
+        'webfinger_tag',
+        'entity',
+    ]
+    readonly_fields = [
+        'webfinger_tag'
+    ]
+    def webfinger_tag(self, obj):
+        return webfinger(obj)
+    webfinger_tag.short_description = 'Webfinger'
+
+    def entity_tag(self, obj):
+        return entity(obj.entity)
+
+    entity_tag.short_description = 'Entity'
+    entity_tag.admin_order_field = 'entity'
 
 
 admin.site.register(Category, CategoryAdmin)

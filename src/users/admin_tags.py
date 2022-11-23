@@ -4,16 +4,13 @@ from django.urls import reverse
 
 User = get_user_model()
 
-def admin_tag_user_link(pk):
-    """ Return Django User html link tag from pk
+def admin_tag_user_link(du: User):
+    """ Return Django User admin html link tag from User object
     """
-    try:
-        user = User.objects.get(pk=pk)
+    if du:
         return mark_safe(
             '<a href="{link}">{tag}</a>'.format(
-                link = reverse("admin:users_user_change", args=(user.pk,)),
-                tag = user.username
+                link = reverse("admin:users_user_change", args=(du.pk,)),
+                tag = du.username
             )
         )
-    except User.DoesNotExist:
-        return

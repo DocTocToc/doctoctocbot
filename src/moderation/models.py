@@ -173,7 +173,7 @@ class Entity(models.Model):
     updated =  models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        socialusers = [su.screen_name_tag() for su in self.socialuser_set.all()]
+        socialusers = [su.screen_name_tag() or '' for su in self.socialuser_set.all()]
         djangousers = [user.username for user in self.user_set.all()]
         mastodonusers = [mu.acct for mu in self.mastodonuser_set.all()]
         return (

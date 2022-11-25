@@ -27,12 +27,14 @@ class Taxonomy(models.Model):
     class Meta:
         ordering = ('grouping', 'classification', 'specialization',)
         verbose_name_plural = "Taxonomy"
-        
+
 
 class HealthCareProvider(models.Model):
     human = models.OneToOneField(
-       'moderation.Human',
-       on_delete=models.CASCADE,
+        'moderation.Human',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     entity = models.OneToOneField(
        'moderation.Entity',
@@ -51,7 +53,7 @@ class HealthCareProvider(models.Model):
     )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"{self.entity or self.human}"
 

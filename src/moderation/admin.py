@@ -35,7 +35,7 @@ from moderation.models import (
     MastodonUser,
 )
 from hcp.models import HealthCareProvider
-from hcp.admin_tags import taxonomy_tag
+from hcp.admin_tags import taxonomy_tag, hcp_admin_link
 
 from community.models import Community
 from moderation.admin_tags import (
@@ -427,22 +427,11 @@ class SocialUserAdmin(admin.ModelAdmin):
     category_tag.short_description = 'Category'
 
     def hcp_admin(self, obj):
-        entity = obj.entity
-        if not entity:
-            return "Add an Entity to this SocialUser."
-        try:
-            hcp = HealthCareProvider.objects.filter(entity=entity).first()
-        except HealthCareProvider.DoesNotExist:
-            hcp=None
-        if hcp:
-            url = reverse("admin:hcp_healthcareprovider_change", args=(hcp.id,))
-            txt = "hcp change"
+        if obj.entity:
+            return hcp_admin_link(obj.entity)
         else:
-            url = f"/admin/hcp/healthcareprovider/add/?entity={entity.id}"
-            txt = "hcp add"
-        return mark_safe(
-            f'<a href="{url}">{txt}</a>'
-        ) 
+            return f"Add entity to {obj}"
+
     hcp_admin.short_description = "hcp admin"
 
     def hcp_taxonomy_tag(self, obj):
@@ -1095,10 +1084,14 @@ class MastodonUserAdmin(admin.ModelAdmin):
     fields = [
         'acct',
         'webfinger_tag',
+        'entity_tag',
+        'hcp_admin',
         'entity',
     ]
     readonly_fields = [
-        'webfinger_tag'
+        'webfinger_tag',
+        'entity_tag',
+        'hcp_admin',
     ]
     search_fields = (
         'acct',
@@ -1113,6 +1106,12 @@ class MastodonUserAdmin(admin.ModelAdmin):
 
     entity_tag.short_description = 'Entity'
     entity_tag.admin_order_field = 'entity'
+
+    def hcp_admin(self, obj):
+        if obj.entity:
+            return hcp_admin_link(obj.entity)
+        else:
+            return f"Add entity to {obj}"
 
 
 admin.site.register(Category, CategoryAdmin)

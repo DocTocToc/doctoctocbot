@@ -1,4 +1,5 @@
 from moderation.models import SocialUser
+from hcp.models import HealthCareProvider
 
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -44,3 +45,20 @@ def healthcareprovider_link(hcp):
                 content = f'🧑‍⚕️{", ".join(tags)}'
             )
         )
+
+def hcp_admin_link(entity):
+    if not entity:
+        return "Add an Entity to this SocialUser."
+    try:
+        hcp = HealthCareProvider.objects.filter(entity=entity).first()
+    except HealthCareProvider.DoesNotExist:
+        hcp=None
+    if hcp:
+        url = reverse("admin:hcp_healthcareprovider_change", args=(hcp.id,))
+        txt = "hcp change"
+    else:
+        url = f"/admin/hcp/healthcareprovider/add/?entity={entity.id}"
+        txt = "hcp add"
+    return mark_safe(
+        f'<a href="{url}">{txt}</a>'
+    ) 

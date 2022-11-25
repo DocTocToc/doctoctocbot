@@ -1,6 +1,5 @@
 import logging
-from django.db.utils import DatabaseError
-from django.db import transaction, IntegrityError
+from django.db import transaction, IntegrityError, DatabaseError
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
@@ -134,17 +133,24 @@ def accept_follower(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=HealthCareProviderTaxonomy)
 def add_category_from_taxonomy(sender, instance, created, **kwargs):
-    def get_socialuser_from_human(human: Human):
-        return human.socialuser.filter(
-            social_media=get_default_socialmedia(),
-            active=True
-        ).first()
+    def get_socialuser_from_entity(entity: Entity):
+        try:
+            su = entity.socialuser_set.filter(
+                social_media__id=get_default_socialmedia()
+            ).first()
+            return su
+        except:
+            return
 
     def add_usercategoryrelationship(hcpt, tc):
-        social_user = get_socialuser_from_human(hcpt.healthcareprovider.human)
-        logger.debug(f'{social_user=}')
-        moderator = get_socialuser_from_human(hcpt.creator)
-        logger.debug(f'{moderator=}')
+        entity = hcpt.healthcareprovider.entity
+        creator = hcpt.creator_entity
+        social_user = None
+        moderator = None
+        if entity:
+            social_user = get_socialuser_from_entity(entity)
+        if creator:
+            moderator = get_socialuser_from_entity(creator)
         if not social_user or not moderator:
             return
         try:
@@ -155,7 +161,7 @@ def add_category_from_taxonomy(sender, instance, created, **kwargs):
                     category=tc.category,
                     community=tc.community,
                 )
-        except IntegrityError as e:
+        except DatabaseError as e:
             logger.error(e)
 
     taxonomy = instance.taxonomy

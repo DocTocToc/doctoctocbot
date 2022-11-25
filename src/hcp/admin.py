@@ -9,8 +9,9 @@ from hcp.models import (
     TaxonomyCategory
 )
 from modeltranslation.admin import TranslationAdmin
-from moderation.models import Entity, SocialUser
-from moderation.admin_tags import socialmedia_account, entity
+from moderation.models import Entity, SocialUser, MastodonUser
+from moderation.admin_tags import socialmedia_account, entity, webfinger
+from django.utils.safestring import mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -96,25 +97,30 @@ class TaxonomyAdmin(TranslationAdmin):
 class HealthCareProviderAdmin(admin.ModelAdmin):
     list_display = (
         'id',
+        'taxonomy_tag',
         'entity_tag',
         'human',
-        'somed_account_tag',
-        'taxonomy_tag',
+        'twitter_account_tag',
+        'mastodon_account_tag',
         'created',
         'updated',
         'entity',
     )
     fields = (
         'id',
+        'taxonomy_tag',
         'entity_tag',
         'entity',
         'human',
+        'mastodon_account_tag',
         'created',
         'updated',
     )
     readonly_fields = (
         'id',
+        'taxonomy_tag',
         'entity_tag',
+        'mastodon_account_tag',
         'created',
         'updated',
     )
@@ -138,16 +144,41 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
 
     taxonomy_tag.short_description = 'Taxonomy'
     
-    def somed_account_tag(self, obj):
-        su_id_lst = [su.id for su in obj.human.socialuser.all()]
+    def twitter_account_tag(self, obj):
+        su_ids = []
+        if obj.human:
+            su_ids.extend([su.id for su in obj.human.socialuser.all()])
+        if obj.entity:
+            try:
+                su_ids.extend([su.id for su in obj.entity.socialuser.all()])
+            except AttributeError:
+                pass
         try:
-            su = SocialUser.objects.filter(id__in=su_id_lst).latest()
+            su_qs = SocialUser.objects.filter(id__in=su_ids)
         except SocialUser.DoesNotExist:
             return
-        return socialmedia_account(su)
+        return mark_safe(
+            ", ".join(socialmedia_account(su) for su in su_qs)
+        )
     
-    somed_account_tag.short_description = 'SoMed'
+    twitter_account_tag.short_description = 'Twitter'
 
+    def mastodon_account_tag(self, obj):
+        accts = []
+        if obj.entity:
+            try:
+                accts.extend([mu.acct for mu in obj.entity.mastodonuser_set.all()])
+            except AttributeError:
+                pass
+        try:
+            mu_qs = MastodonUser.objects.filter(acct__in=accts)
+        except MastodonUser.DoesNotExist:
+            return
+        return mark_safe(
+            ", ".join(webfinger(mu) for mu in mu_qs)
+        )
+
+    mastodon_account_tag.short_description = 'Mastodon'
 
 
 class TaxonomyCategoryAdmin(admin.ModelAdmin):

@@ -163,9 +163,14 @@ class Human(models.Model):
     updated =  models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        socialusers = [su.screen_name_tag() or '' for su in self.socialuser.all()]
+        djangousers = [user.username for user in self.djangouser.all()]
         su = self.socialuser.all().first()
-        user = self.djangouser.all().first()
-        return f"Human {self.pk} || {su} || {user}"
+        return (
+            f"Human {self.pk}."
+            f"{(' su: ' + ', '.join(socialusers)) if socialusers else ''}"
+            f"{(' du: ' + ', '.join(djangousers)) if djangousers else ''}"
+        )
 
 
 class Entity(models.Model):

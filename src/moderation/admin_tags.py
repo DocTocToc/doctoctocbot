@@ -81,8 +81,9 @@ def webfinger(mu: MastodonUser) -> SafeString:
     except:
         return
     return mark_safe(
-        '<a href="{link}">👉</a>'.format(
-                link = f"https://{host}/users/{username}"
+        '<a href="{link}">👉@{username}</a>'.format(
+                link = f"https://{host}/users/{username}",
+                username = username
             )
         )
 
@@ -94,9 +95,14 @@ def socialmedia_account(su: SocialUser):
     if not emoji:
         emoji = su.social_media.name
     if su.social_media.name == "twitter":
+        screen_name = su.screen_name_tag()
+        if screen_name:
+            screen_name_tag = f'@{screen_name}'
+        else:
+            screen_name_tag = ''
         href = f"https://twitter.com/intent/user?user_id={su.user_id}"
         return mark_safe(
-            f'<a href="{href}">{emoji}@{su.screen_name_tag()}</a>'
+            f'<a href="{href}">{emoji}{screen_name_tag}</a>'
         )
     else:
         return emoji

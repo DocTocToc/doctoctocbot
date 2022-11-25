@@ -9,7 +9,7 @@ from hcp.models import (
     TaxonomyCategory
 )
 from modeltranslation.admin import TranslationAdmin
-from moderation.models import Human, SocialUser
+from moderation.models import Entity, SocialUser
 from moderation.admin_tags import socialmedia_account, entity
 
 logger = logging.getLogger(__name__)
@@ -20,27 +20,30 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
     fk_name = 'healthcareprovider'
     readonly_fields = ['healthcareprovider', 'created', 'updated',]
     autocomplete_fields = ['healthcareprovider', 'taxonomy',]
-
+    raw_id_fields = (
+        'creator',
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "creator":
-            creator_ids = []
+        if db_field.name == "creator_entity":
+            creator_entity_ids = []
             try:
                 hcp_id: int = int(request.resolver_match.kwargs['object_id'])
             except (AttributeError, KeyError):
                 try:
-                    human_id: str =request.GET.get('human')
+                    entity_id: str =request.GET.get('entity')
                 except (AttributeError, KeyError):
                     pass
                 else:
-                    creator_ids.append(int(human_id))
+                    if entity_id:
+                        creator_entity_ids.append(int(entity_id))
             else:
                 try:
-                    creator_ids.extend(
+                    creator_entity_ids.extend(
                         list(
                             HealthCareProviderTaxonomy.objects \
                             .filter(healthcareprovider__id=hcp_id) \
-                            .values_list("creator__id", flat=True)
+                            .values_list("creator_entity__id", flat=True)
                         )
                     )
                 except TypeError:
@@ -48,33 +51,17 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
                 # append Human id of HealthCareProvider for self moderation
                 try:
                     hcp = HealthCareProvider.objects.get(id=hcp_id)
-                    creator_ids.append(hcp.human.id)
+                    creator_entity_ids.append(hcp.entity.id)
                 except HealthCareProvider.DoesNotExist:
                     pass
-            if request.user.socialuser:
-                creator_ids.extend(
-                    request.user.socialuser.human_set.values_list(
-                        "id",
-                        flat=True
-                    )
-                )
-            kwargs["queryset"] = Human.objects.filter(
-                    id__in=creator_ids
+            try:
+                creator_entity_ids.append(request.user.socialuser.entity.id)
+            except:
+                pass
+            kwargs["queryset"] = Entity.objects.filter(
+                id__in=creator_entity_ids
                 )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-class HealthCareProviderInline(admin.TabularInline):
-    model = HealthCareProviderTaxonomy
-    extra = 10
-    fk_name = 'healthcareprovider'
-    raw_id_fields = ("healthcareprovider",)
-    readonly_fields = (
-        'healthcareprovider',
-        'created',
-        'updated',
-    )
-    autocomplete_fields = ['taxonomy', 'creator',]
 
 
 class TaxonomyAdmin(TranslationAdmin):
@@ -181,6 +168,13 @@ class TaxonomyCategoryAdmin(admin.ModelAdmin):
         'classification',
         'specialization',
         'category',
+    )
+
+@admin.register(HealthCareProviderTaxonomy)
+class HealthCareProviderCategory(admin.ModelAdmin):
+    raw_id_fields = (
+        'creator',
+        'creator_entity',
     )
 
 

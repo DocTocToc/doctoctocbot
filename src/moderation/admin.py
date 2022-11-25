@@ -57,7 +57,11 @@ logger = logging.getLogger(__name__)
 
 @admin.register(Entity)
 class EntityAdmin(admin.ModelAdmin):
-    search_fields=['id',]
+    search_fields=[
+        'id',
+        'socialuser__profile__json__screen_name',
+        'mastodonuser__acct',
+    ]
     list_display=(
         'id',
         'hcp_tag',
@@ -79,6 +83,7 @@ class EntityAdmin(admin.ModelAdmin):
         'djangousers_tag',
         'mastodonusers_tag',
     )
+
     def hcp_tag(self, obj):
         return healthcareprovider_link(obj.healthcareprovider)
     hcp_tag.short_description= "HealthCareProvider"
@@ -322,6 +327,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'profile__json__name',
         'profile__json__screen_name',
         'profile__json__description',
+        'entity__mastodonuser__acct',
     )
     list_filter = (
         'category__name',
@@ -421,21 +427,24 @@ class SocialUserAdmin(admin.ModelAdmin):
     category_tag.short_description = 'Category'
 
     def hcp_admin(self, obj):
-        human = obj.human_set.first()
-        if not human:
-            return
-        hcp = HealthCareProvider.objects.filter(human=human).first()
+        entity = obj.entity
+        if not entity:
+            return "Add an Entity to this SocialUser."
+        try:
+            hcp = HealthCareProvider.objects.filter(entity=entity).first()
+        except HealthCareProvider.DoesNotExist:
+            hcp=None
         if hcp:
             url = reverse("admin:hcp_healthcareprovider_change", args=(hcp.id,))
             txt = "hcp change"
         else:
-            url = f"/admin/hcp/healthcareprovider/add/?human={human.id}"
+            url = f"/admin/hcp/healthcareprovider/add/?entity={entity.id}"
             txt = "hcp add"
         return mark_safe(
             f'<a href="{url}">{txt}</a>'
         ) 
     hcp_admin.short_description = "hcp admin"
-    
+
     def hcp_taxonomy_tag(self, obj):
         return taxonomy_tag(obj)
 
@@ -1091,6 +1100,10 @@ class MastodonUserAdmin(admin.ModelAdmin):
     readonly_fields = [
         'webfinger_tag'
     ]
+    search_fields = (
+        'acct',
+        'entity__socialuser__profile__json__screen_name',
+    )
     def webfinger_tag(self, obj):
         return webfinger(obj)
     webfinger_tag.short_description = 'Webfinger'

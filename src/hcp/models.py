@@ -53,7 +53,7 @@ class HealthCareProvider(models.Model):
     updated =  models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.human}"
+        return f"{self.entity or self.human}"
 
 
 class HealthCareProviderTaxonomy(models.Model):
@@ -72,14 +72,22 @@ class HealthCareProviderTaxonomy(models.Model):
         blank=True,
         null=True,
     )
+    creator_entity = models.ForeignKey(
+        'moderation.Entity',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     created =  models.DateTimeField(auto_now_add=True)
     updated =  models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return (
+            f"{self.id} "
             f"hcp: {self.healthcareprovider} ,"
             f"taxonomy: {self.taxonomy} ,"
             f"creator: {self.creator} ,"
+            f"creator_entity: {self.creator_entity} ,"
             f"create: {self.created} ,"
             f"update: {self.updated}."
         )

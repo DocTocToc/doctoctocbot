@@ -4,6 +4,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.utils.safestring import SafeString
+from django.core.exceptions import ObjectDoesNotExist
 from users.admin_tags import admin_tag_user_link
 from hcp.admin_tags import healthcareprovider_link
 
@@ -117,8 +118,10 @@ def entity(e: Entity):
         ]
         mastodonusers = [
             acct_link_mu(mu) for mu in e.mastodonuser_set.all()]
-        hcp = (f"<br>{healthcareprovider_link(e.healthcareprovider)}"
-            if e.healthcareprovider else '') 
+        try:
+            hcp = f"<br>{healthcareprovider_link(e.healthcareprovider)}"
+        except ObjectDoesNotExist:
+            hcp = ''
         entity_link = (
             '<a href="{link}">Entity {eid}</a>'.format(
                 link=reverse("admin:moderation_entity_change",

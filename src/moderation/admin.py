@@ -1093,6 +1093,9 @@ class MastodonUserAdmin(admin.ModelAdmin):
         'entity_tag',
         'hcp_admin',
     ]
+    autocomplete_fields = [
+        'entity',
+    ]
     search_fields = (
         'acct',
         'entity__socialuser__profile__json__screen_name',

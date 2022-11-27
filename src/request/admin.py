@@ -88,7 +88,7 @@ class QueueAdmin(VersionedAdmin):
     state_tag.short_description = 'STATE'
 
     def screen_name_link(self, obj):
-        return screen_name_link_su(obj)
+        return screen_name_link_su(obj.socialuser)
 
     screen_name_link.short_description = 'Screen name'
 

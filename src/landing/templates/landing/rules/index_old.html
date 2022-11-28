@@ -6,7 +6,7 @@
 {% load moderator %}
 
 {% block head_meta %}
-{% bot_screen_name_arobase as screen_name %}
+{% twitter_bot_username_arobase as screen_name %}
 {% with twitter_site=screen_name twitter_creator="@MedecineLibre" og_url=request.build_absolute_uri og_title="Lois de la robotique" og_description="Fonctionnement du bot." og_image="https://upload.wikimedia.org/wikipedia/en/8/8e/I_Robot_-_Runaround.jpg" %}
 {{ block.super }}
 {% include "doctocnet/twitter_opengraph.html" %}
@@ -15,7 +15,7 @@
 
 {% block content %}
 
-<h1>{% block title %} Fonctionnement de {% bot_screen_name_arobase %} {% endblock title %}</h1>
+<h1>{% block title %} Fonctionnement de @{% twitter_bot_username %} {% endblock title %}</h1>
 
 {% include "landing/rules/content.html" %}
 

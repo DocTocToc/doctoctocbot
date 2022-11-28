@@ -8,7 +8,7 @@
 {% block head_meta %}
 {% trans "Categories" as categories %}
 {% trans "Description of categories." as description %}
-{% bot_screen_name_arobase as bot %}
+{% twitter_bot_username_arobase as bot %}
 {% static "landing/images/mind_palace.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}

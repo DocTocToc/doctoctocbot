@@ -14,7 +14,7 @@
 {% static "landing/images/magna_carta.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
-{% bot_screen_name as bot %}
+{% twitter_bot_username as bot %}
 {% trans "User Charter: Good Practice Guidelines" as title %}
 {% with "@"|add:bot|add:" "|add:title as og_title %}
 {% trans "Please read those guidelines before you start interacting with members of our community." as og_description %}

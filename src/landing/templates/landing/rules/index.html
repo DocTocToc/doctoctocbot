@@ -14,7 +14,7 @@
 {% static "landing/images/rules.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
-{% bot_screen_name as bot %}
+{% twitter_bot_username as bot %}
 {% trans "Rules of" as title %}
 {% with title|add:" @"|add:bot as og_title %}
 {% trans "These are the rules followed by the bot." as og_description %}

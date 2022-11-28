@@ -14,7 +14,7 @@
 {% static "landing/images/antiracism.jpg" as og_image_static %}
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image %}
 {% with request.build_absolute_uri as og_url %}
-{% bot_screen_name as bot %}
+{% twitter_bot_username as bot %}
 {% trans "Against racism and discriminations" as og_title %}
 {% trans "Charter against racism and discriminations" as og_description %}
 {{ block.super }}

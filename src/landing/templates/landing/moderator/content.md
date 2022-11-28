@@ -98,7 +98,7 @@ Notez que les personnes qui suivent beaucoup de médecins mais qui ne sont pas s
 ## Je passe
 Un bouton "Je passe" sera ajouté. Utilisez le pour indiquer que vous ne pensez pas avoir de temps à consacrer à cette modération dans l'heure qui suit. Nous transmettrons à un autre modérateur.
 
-En attendant merci d'écrire "Je passe". Les DM Twitter ont une fonctionnalité anti-spam peu connnue: si votre interlocuteur envoie 5 messages et que vous ne répondez pas, il ne peut plus envoyer de message supplémentaire tant que vous n'avez pas répondu. Il suffit d'envoyer au moins 1 caractère ou 1 emoji au hasard, n'importe lequel, mais il faut 1 réponse, sinon {% bot_screen_name %} ne peut plus vous envoyer de modération et la modération reste en suspens. Merci.
+En attendant merci d'écrire "Je passe". Les DM Twitter ont une fonctionnalité anti-spam peu connnue: si votre interlocuteur envoie 5 messages et que vous ne répondez pas, il ne peut plus envoyer de message supplémentaire tant que vous n'avez pas répondu. Il suffit d'envoyer au moins 1 caractère ou 1 emoji au hasard, n'importe lequel, mais il faut 1 réponse, sinon {% twitter_bot_username %} ne peut plus vous envoyer de modération et la modération reste en suspens. Merci.
 
 ## Pause
 

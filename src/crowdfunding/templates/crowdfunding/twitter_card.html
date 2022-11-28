@@ -3,8 +3,8 @@
 {% load landing_links %}
 
 {% static "doctocnet/piggy-bank-bot-2.jpg" as og_image_static %}
-{% bot_screen_name_arobase as bot %} 
-{% with "🤖 Financement "|add:bot as og_title %} 
+{% twitter_bot_username as bot %} 
+{% with "🤖 Financement @"|add:bot as og_title %} 
 {% with request.scheme|add:"://"|add:request.get_host|add:og_image_static as og_image_url %}
 {% with og_description="Pour qu'il continue à exister et à progresser, financez votre bot d'entraide indépendant et sans publicité!" og_image=og_image_url %}
 

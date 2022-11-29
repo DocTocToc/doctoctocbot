@@ -4,7 +4,7 @@ from bot.tasks import handle_on_status
 
 logger = logging.getLogger(__name__)
 
-def retweet_recent(track_list: str, community: str, api):
+def retweet_recent(track_list: list[str], community: str, api):
     logger.debug(
         f'retweet_recent({track_list=}, {community=}, {api=})'
     )

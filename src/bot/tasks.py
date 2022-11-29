@@ -22,7 +22,6 @@ from django.core.management.base import BaseCommand, CommandError
 from moderation.profile import create_twitter_social_user_and_profile
 from moderation.models import SocialUser, Category, UserCategoryRelationship
 from tweepy.error import TweepError
-from typing import List
 from django.db.utils import DatabaseError
 
 logger = logging.getLogger(__name__)
@@ -45,13 +44,7 @@ def handle_question(statusid: int, bot_screen_name: str):
         else:
             time.sleep(30*2**i)
 
-@shared_task
-def handle_on_status(json: dict, community: str):
-    from bot.onstatus import triage
-    logger.info(
-        f"handling status {status_json_log(json)} for community {community}"
-    )
-    triage(json=json, community=community)
+
 
 @shared_task
 def handle_triage_status(status_id: int, community: str):
@@ -240,3 +233,41 @@ def unfollow(
         )
         return unfollow.process()
 
+@shared_task()
+def search(community: Optional[str] = None):
+    from bot.tweepy_api import get_api
+    from bot.bin.search import retweet_recent
+
+    if not community:
+        return
+    try:
+        community_mi = Community.objects.get(name=community)
+    except Community.DoesNotExist:
+        return
+    try:
+        username = community_mi.account.username
+    except:
+        return
+    try:
+        api = get_api(username=username)
+    except:
+        return
+    track_list = []
+    try:
+        hashtags = Community.objects.get(name=community).hashtag.all()
+    except Community.DoesNotExist:
+        return
+    if not hashtags:
+        return
+    for hashtag in hashtags:
+        track_list.append(f"#{hashtag}")
+    # search for and process recent tweets containing this community's hashtags
+    retweet_recent(track_list, community, api)
+
+@shared_task
+def handle_on_status(json: dict, community: str):
+    from bot.onstatus import triage
+    logger.info(
+        f"handling status {status_json_log(json)} for community {community}"
+    )
+    triage(json=json, community=community)

@@ -204,9 +204,32 @@ class MastodonUser(models.Model):
         blank=True,
         null=True,
     )
+    created =  models.DateTimeField(auto_now_add=True, null=True)
+    updated =  models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return f'MastodonUser {self.acct}'
+
+
+class LinkedInUser(models.Model):
+    lid = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    entity = models.ForeignKey(
+        'Entity',
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
+    created =  models.DateTimeField(auto_now_add=True, null=True)
+    updated =  models.DateTimeField(auto_now=True, null=True)
+
+    def __str__(self):
+        return f'LinkedInUser {self.lid}'
+
+    class Meta:
+        verbose_name_plural = "LinkedIn users"
 
 
 class SocialUser(models.Model):

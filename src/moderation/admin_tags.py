@@ -1,5 +1,4 @@
 from moderation.models import SocialUser, MastodonUser, SocialMedia, Entity
-
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import reverse
@@ -7,6 +6,7 @@ from django.utils.safestring import SafeString
 from django.core.exceptions import ObjectDoesNotExist
 from users.admin_tags import admin_tag_user_link
 from hcp.admin_tags import healthcareprovider_link
+from linkedin.admin_tags import linkedin_link
 
 def admin_tag_category(su: SocialUser):
     category_lst = ["<ul>"]
@@ -123,7 +123,11 @@ def entity(e: Entity):
             admin_tag_user_link(user) for user in e.user_set.all()
         ]
         mastodonusers = [
-            acct_link_mu(mu) for mu in e.mastodonuser_set.all()]
+            acct_link_mu(mu) for mu in e.mastodonuser_set.all()
+        ]
+        linkedinusers = [
+            linkedin_link(liu) for liu in e.linkedinuser_set.all()
+        ]
         try:
             hcp = f"<br>{healthcareprovider_link(e.healthcareprovider)}"
         except ObjectDoesNotExist:
@@ -140,5 +144,7 @@ def entity(e: Entity):
             f"{('<br>' + ', '.join(socialusers)) if socialusers else ''}"
             f"{('<br>' + ', '.join(mastodonusers)) if mastodonusers else ''}"
             f"{('<br>' + ', '.join(djangousers)) if djangousers else ''}"
+            f"{('<br>' + ', '.join(linkedinusers)) if linkedinusers else ''}"
             f"{hcp}"
+
         )

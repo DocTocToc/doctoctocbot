@@ -33,9 +33,11 @@ from moderation.models import (
     Prospect,
     Filter,
     MastodonUser,
+    LinkedInUser,
 )
 from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag, hcp_admin_link
+from linkedin.admin_tags import linkedin_link
 
 from community.models import Community
 from moderation.admin_tags import (
@@ -68,6 +70,7 @@ class EntityAdmin(admin.ModelAdmin):
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
+        'linkedinusers_tag',
     )
     fields =(
         'id',
@@ -75,6 +78,7 @@ class EntityAdmin(admin.ModelAdmin):
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
+        'linkedinusers_tag',
     )
     readonly_fields =(
         'id',
@@ -82,6 +86,7 @@ class EntityAdmin(admin.ModelAdmin):
         'socialusers_tag',
         'djangousers_tag',
         'mastodonusers_tag',
+        'linkedinusers_tag',
     )
 
     def hcp_tag(self, obj):
@@ -114,6 +119,15 @@ class EntityAdmin(admin.ModelAdmin):
             )
         )
     mastodonusers_tag.short_description='Mastodon users'
+
+    def linkedinusers_tag(self, obj):
+        return mark_safe(
+            "<br>".join(
+                [linkedin_link(liu)
+                for liu in obj.linkedinuser_set.all()]
+            )
+        )
+    linkedinusers_tag.short_description='LinkedIn users'
 
 
 def tweetdj_link(self, obj):
@@ -1080,6 +1094,8 @@ class MastodonUserAdmin(admin.ModelAdmin):
         'webfinger_tag',
         'entity_tag',
         'entity',
+        'created',
+        'updated',
     ]
     fields = [
         'acct',
@@ -1087,11 +1103,15 @@ class MastodonUserAdmin(admin.ModelAdmin):
         'entity_tag',
         'hcp_admin',
         'entity',
+        'created',
+        'updated',
     ]
     readonly_fields = [
         'webfinger_tag',
         'entity_tag',
         'hcp_admin',
+        'created',
+        'updated',
     ]
     autocomplete_fields = [
         'entity',
@@ -1103,6 +1123,57 @@ class MastodonUserAdmin(admin.ModelAdmin):
     def webfinger_tag(self, obj):
         return webfinger(obj)
     webfinger_tag.short_description = 'Webfinger'
+
+    def entity_tag(self, obj):
+        return entity(obj.entity)
+
+    entity_tag.short_description = 'Entity'
+    entity_tag.admin_order_field = 'entity'
+
+    def hcp_admin(self, obj):
+        if obj.entity:
+            return hcp_admin_link(obj.entity)
+        else:
+            return f"Add entity to {obj}"
+
+
+@admin.register(LinkedInUser)
+class LinkedInUserAdmin(admin.ModelAdmin):
+    list_display = [
+        'lid',
+        'url_tag',
+        'entity_tag',
+        'entity',
+        'created',
+        'updated',
+    ]
+    fields = [
+        'lid',
+        'url_tag',
+        'entity_tag',
+        'hcp_admin',
+        'entity',
+        'created',
+        'updated',
+    ]
+    readonly_fields = [
+        'url_tag',
+        'entity_tag',
+        'hcp_admin',
+        'created',
+        'updated',
+    ]
+    autocomplete_fields = [
+        'entity',
+    ]
+    search_fields = (
+        'acct',
+        'entity__socialuser__profile__json__screen_name',
+    )
+
+    def url_tag(self, obj):
+        return linkedin_link(obj)
+    url_tag.short_description = 'url'
 
     def entity_tag(self, obj):
         return entity(obj.entity)

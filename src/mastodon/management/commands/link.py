@@ -29,8 +29,15 @@ class Command(BaseCommand):
             type=str,
             help="Twitter username"
         )
+        parser.add_argument(
+            "-suid",
+            "--socialuserid",
+            type=int,
+            help="SocialUser id"
+        )
 
     def handle(self, *args, **options):
+        suid: int = options['socialuserid']
         acct: str =  options['mastodon']
         twitter_username: str =  options['twitter']
         twitter_username = twitter_username.lower()
@@ -39,18 +46,26 @@ class Command(BaseCommand):
         if '@' not in acct:
             if settings.MASTODON_DOMAIN:
                 acct+=f'@{settings.MASTODON_DOMAIN}'
-        try:
-            su = SocialUser.objects.get(
-                profile__json__screen_name__iexact=twitter_username
+        if suid:
+            try:
+                su = SocialUser.objects.get(user_id=suid)
+            except SocialUser.DoesNotExist:
+                raise CommandError(
+                'SocialUser with user_id "%s" does not exist' % suid
             )
-        except SocialUser.DoesNotExist:
-            raise CommandError(
-                'Twitter SocialUser with username "%s" does not exist' % twitter_username
-            )
-        except SocialUser.MultipleObjectsReturned:
-            raise CommandError(
-                'More than one Twitter SocialUser with username "%s"' % twitter_username
-            )
+        else:
+            try:
+                su = SocialUser.objects.get(
+                    profile__json__screen_name__iexact=twitter_username
+                )
+            except SocialUser.DoesNotExist:
+                raise CommandError(
+                    'Twitter SocialUser with username "%s" does not exist' % twitter_username
+                )
+            except SocialUser.MultipleObjectsReturned:
+                raise CommandError(
+                    'More than one Twitter SocialUser with username "%s"' % twitter_username
+                )
         try:
             mu=MastodonUser.objects.get(acct=acct)
         except MastodonUser.DoesNotExist:

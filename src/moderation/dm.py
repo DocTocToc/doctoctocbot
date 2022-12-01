@@ -30,6 +30,7 @@ from community.helpers import (
 )
 from conversation.utils import screen_name
 from messenger.format import FormatManager
+from moderation.social import update_social_ids
 
 logger = logging.getLogger(__name__)
 

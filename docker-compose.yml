@@ -226,10 +226,6 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  chrome:
-    image: selenium/standalone-chrome:3.14
-    privileged: true
-    shm_size: 1g
   tree_search:
     env_file:
       - .env

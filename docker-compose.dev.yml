@@ -101,5 +101,3 @@ services:
     image: dtn_dev
     restart: on-failure
     profiles: ["tree_search"]
-  chrome:
-    profiles: ["chrome"]

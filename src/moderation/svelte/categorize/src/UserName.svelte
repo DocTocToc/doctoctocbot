@@ -74,6 +74,14 @@
 		}
 
 	}
+	function getEntityId(socialuser) {
+		try {
+		    return socialuser.entity.id
+		} catch(err) {
+            return null
+		}
+
+	}
 </script>
 
 <form action="" method="get" on:submit|preventDefault={onClickFetchApi(input)}>
@@ -145,7 +153,7 @@
 					<li>
 						Health Care Provider <HealthCareProvider
 							humanId={getHumanId(socialuser)}
-							entityId={socialuser.entity?.id}
+							entityId={getEntityId(socialuser)}
 						/>
 					</li>
 				</ul>

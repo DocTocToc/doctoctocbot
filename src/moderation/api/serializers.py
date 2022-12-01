@@ -96,6 +96,7 @@ class SocialUserSerializer(serializers.ModelSerializer):
             'active',
             'profile',
             'human',
+            'entity',
             'categoryrelationships',
         )
         depth=1

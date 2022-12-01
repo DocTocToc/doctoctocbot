@@ -32,7 +32,8 @@ class HealthCareProviderViewSet(viewsets.ReadOnlyModelViewSet):
     #    'human__id',        
     #)
     filterset_fields = [
-        'human__id'        
+        'human__id',
+        'entity__id',      
     ]
     if settings.DEBUG :
         permission_classes = [

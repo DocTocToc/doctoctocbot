@@ -1,4 +1,9 @@
-from moderation.models import SocialUser, Moderator, Category
+from moderation.models import (
+    SocialUser,
+    MastodonUser,
+    Moderator,
+    Category,
+)
 from moderation.api import serializers
 from moderation.tasks import handle_create_twitter_socialuser
 
@@ -101,3 +106,26 @@ class CreateTwitterSocialUser(APIView):
             screen_name, username, domain, bot_screen_name
         )
         return Response(status=200)
+
+
+class MastodonUserViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = MastodonUser.objects.all()
+    serializer_class = serializers.MastodonUserSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        '=id',
+        '=acct',
+        
+    ]
+    if settings.DEBUG :
+        permission_classes = [
+            permissions.AllowAny
+        ]
+    else:
+        permission_classes = [
+            permissions.IsAdminUser
+        ]

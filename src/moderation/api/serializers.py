@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from moderation.models import (
     SocialUser,
+    MastodonUser,
     Moderator,
     Profile,
     Category,
@@ -100,8 +101,14 @@ class SocialUserSerializer(serializers.ModelSerializer):
         depth=1
 
 
-
-
+class MastodonUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MastodonUser
+        fields = (
+            'id',
+            'acct',
+        )
+        depth=1
 
 
 class ModeratorSerializer(serializers.ModelSerializer):
@@ -109,5 +116,3 @@ class ModeratorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Moderator
         fields = ('socialuser', 'active', 'public',)
-
-

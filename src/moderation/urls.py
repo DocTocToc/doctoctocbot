@@ -10,7 +10,7 @@ app_name = 'moderation'
 router = routers.DefaultRouter()
 router.register(r'moderators', apiviews.ModeratorViewSet)
 router.register(r'socialuser', apiviews.SocialUserViewSet)
-
+router.register(r'mastodonuser', apiviews.MastodonUserViewSet)
 
 urlpatterns = [
     path(

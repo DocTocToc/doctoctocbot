@@ -49,10 +49,13 @@ class HealthCareProviderTaxonomyInline(admin.TabularInline):
                     )
                 except TypeError:
                     pass
-                # append Human id of HealthCareProvider for self moderation
+                # append Entity id of HealthCareProvider for self moderation
                 try:
                     hcp = HealthCareProvider.objects.get(id=hcp_id)
-                    creator_entity_ids.append(hcp.entity.id)
+                    try:
+                        creator_entity_ids.append(hcp.entity.id)
+                    except:
+                        pass 
                 except HealthCareProvider.DoesNotExist:
                     pass
             try:
@@ -134,6 +137,8 @@ class HealthCareProviderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['human', 'entity']
 
     def entity_tag(self, obj):
+        if not obj.entity:
+            return "⚠️ No entity"
         return entity(obj.entity)
 
     entity_tag.short_description = 'Entity'

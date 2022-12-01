@@ -9,6 +9,7 @@ class HealthCareProviderSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'human',
+            'entity',
             'taxonomy',
             'created',
             'updated',

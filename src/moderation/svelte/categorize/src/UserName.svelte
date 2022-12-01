@@ -66,6 +66,14 @@
 			}
 		}
     );*/
+	function getHumanId(socialuser) {
+		try {
+		    return socialuser.human[0].id
+		} catch(err) {
+            return null
+		}
+
+	}
 </script>
 
 <form action="" method="get" on:submit|preventDefault={onClickFetchApi(input)}>
@@ -136,7 +144,8 @@
 					</li>
 					<li>
 						Health Care Provider <HealthCareProvider
-							bind:humanId={socialuser.human[0].id}
+							humanId={getHumanId(socialuser)}
+							entityId={socialuser.entity?.id}
 						/>
 					</li>
 				</ul>

@@ -293,18 +293,12 @@ class SocialUser(models.Model):
 
     def screen_name_tag(self):
         try:
-            _json = self.profile.json
-        except (Profile.DoesNotExist, AttributeError) as e:
+            return self.profile.json["screen_name"]
+        except:
             return
-        if not _json:
-            return
-        if isinstance(_json, str):
-            logger.debug("_json is string")
-            _json = json.loads(_json)
-        return _json.get("screen_name", None)
-    
+
     screen_name_tag.short_description = 'Screen name'
-    
+
     def name_tag(self):
         try:
             return self.profile.json.get("name", None)

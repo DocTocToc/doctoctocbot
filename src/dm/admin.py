@@ -15,6 +15,7 @@ from moderation.models import SocialUser
 from django.utils.safestring import mark_safe
 from constance import config
 
+
 class ToAccount(admin.SimpleListFilter):
     title = 'To Account'
     parameter_name = 'to_account'
@@ -89,6 +90,7 @@ class IsQuickReplyQuestion(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(DirectMessage)
 class DirectMessageAdmin(admin.ModelAdmin):
     list_per_page = config.dm__admin__direct_message_list_per_page
     list_display = (
@@ -197,7 +199,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     
     def from_screen_name_tag(self, obj):
         try:
-            su=SocialUser.objects.get(obj.sender_id)
+            su=SocialUser.objects.get(user_id=obj.sender_id)
         except SocialUser.DoesNotExist:
             return
         return screen_name_link_su(su)
@@ -206,7 +208,7 @@ class DirectMessageAdmin(admin.ModelAdmin):
     
     def to_screen_name_tag(self, obj):
         try:
-            su=SocialUser.objects.get(obj.recipient_id)
+            su=SocialUser.objects.get(user_id=obj.recipient_id)
         except SocialUser.DoesNotExist:
             return
         return screen_name_link_su(su)
@@ -227,5 +229,3 @@ class DirectMessageAdmin(admin.ModelAdmin):
             f'<a href="{href}">{text}</a>'
         )
     dm_link_tag.short_description = "DM"
-
-admin.site.register(DirectMessage, DirectMessageAdmin)

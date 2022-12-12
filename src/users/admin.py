@@ -82,7 +82,10 @@ class CustomUserAdmin(UserAdmin):
             }
          ),
     )
-    autocomplete_fields = ['socialuser']
+    autocomplete_fields = [
+        'socialuser',
+        'entity'
+    ]
     search_fields = (
         'email',
         'username',

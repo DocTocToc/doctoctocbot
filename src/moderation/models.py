@@ -903,6 +903,48 @@ class Friend(models.Model):
         return "friends of %s " % name
 
 
+class MastodonFollower(models.Model):
+    user = models.ForeignKey(
+        MastodonUser,
+        on_delete=models.CASCADE
+    )
+    id_list = ArrayField(
+        models.PositiveIntegerField(),
+        null=True,
+        blank=True
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        get_latest_by = 'created'
+
+
+    def __str__(self):
+        return "<MastodonFollower %s>" % self.user.acct
+
+
+class MastodonFriend(models.Model):
+    user = models.ForeignKey(
+        MastodonUser,
+        on_delete=models.CASCADE
+    )
+    id_list = ArrayField(
+        models.PositiveIntegerField(),
+        null=True,
+        blank=True
+        )
+    created = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        get_latest_by = 'created'
+
+
+    def __str__(self):
+        return "<MastodonFriend %s>" % self.user.acct
+
+
 class Moderator(models.Model):
     socialuser = models.ForeignKey(
         'moderation.SocialUser',

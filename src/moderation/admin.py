@@ -34,6 +34,8 @@ from moderation.models import (
     Filter,
     MastodonUser,
     LinkedInUser,
+    MastodonFollower,
+    MastodonFriend,
 )
 from hcp.models import HealthCareProvider
 from hcp.admin_tags import taxonomy_tag, hcp_admin_link
@@ -1186,6 +1188,80 @@ class LinkedInUserAdmin(admin.ModelAdmin):
             return hcp_admin_link(obj.entity)
         else:
             return f"Add entity to {obj}"
+
+
+@admin.register(MastodonFollower)
+class MastodonFollowerAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'id_list',
+        'created',
+    ]
+    fields = [
+        'user',
+        'id_list',
+        'acct_list_tag',
+    ]
+    readonly_fields = [
+        'user',
+        'id_list',
+        'acct_list_tag',
+        'created',
+    ]
+
+    search_fields = (
+        'user__acct',
+    )
+
+    def acct_list_tag(self, obj):
+        accts = []
+        for pk in obj.id_list:
+            try:
+                accts.append(
+                    MastodonUser.objects.get(pk=pk).acct
+                )
+            except MastodonUser.DoesNotExist:
+                pass
+        return ", ".join(accts)
+
+    acct_list_tag.short_description = 'acct'
+
+
+@admin.register(MastodonFriend)
+class MastodonFriendAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'id_list',
+        'created',
+    ]
+    fields = [
+        'user',
+        'id_list',
+        'acct_list_tag',
+    ]
+    readonly_fields = [
+        'user',
+        'id_list',
+        'acct_list_tag',
+        'created',
+    ]
+
+    search_fields = (
+        'user__acct',
+    )
+
+    def acct_list_tag(self, obj):
+        accts = []
+        for pk in obj.id_list:
+            try:
+                accts.append(
+                    MastodonUser.objects.get(pk=pk).acct
+                )
+            except MastodonUser.DoesNotExist:
+                pass
+        return ", ".join(accts)
+
+    acct_list_tag.short_description = 'acct'
 
 
 admin.site.register(Category, CategoryAdmin)

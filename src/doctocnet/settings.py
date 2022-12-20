@@ -237,7 +237,8 @@ INSTALLED_APPS = [
     'textareacounter',
     'twttr',
     'djangoql',
-    'mastodon',
+    'fediverse',
+    'django_rename_app',
 ]
 
 if DEBUG:

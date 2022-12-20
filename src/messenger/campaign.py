@@ -29,7 +29,7 @@ from community.helpers import site_url, activate_language
 from django.template.defaultfilters import date as _date
 from moderation.profile import create_update_profile_twitter
 from moderation.tasks import create_profiles
-from mastodon.models import MastodonInvitation
+from fediverse.models import MastodonInvitation
 
 logger = logging.getLogger(__name__)
 

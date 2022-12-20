@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('moderation', '0088_mastodonuser'),
-        ('mastodon', '0002_mastodoninvitation_autofollow'),
+        ('fediverse', '0002_mastodoninvitation_autofollow'),
     ]
 
     operations = [

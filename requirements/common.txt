@@ -78,3 +78,5 @@ langcodes[data]
 flower
 webcolors
 djangoql
+Mastodon.py
+django-rename-app

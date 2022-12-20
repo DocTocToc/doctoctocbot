@@ -3,7 +3,7 @@
 import logging
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from mastodon.models import MastodonInvitation
+from fediverse.models import MastodonInvitation
 from django.db import  DatabaseError
 from moderation.models import MastodonUser, SocialUser, Entity
 from typing import List

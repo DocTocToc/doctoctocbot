@@ -3,7 +3,7 @@ import logging
 from django import template
 from django.utils.safestring import mark_safe
 from django.contrib.sites.shortcuts import get_current_site
-from mastodon.helpers import webfinger_url
+from fediverse.helpers import webfinger_url
 from community.helpers import get_community
 
 logger = logging.getLogger(__name__)

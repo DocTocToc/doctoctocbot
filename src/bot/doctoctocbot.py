@@ -260,7 +260,8 @@ def create_update_retweeted(statusid, community, retweet_status):
 
 def community_retweet(
         statusid: int,
-        userid: int, hrh: HasRetweetHashtag,
+        userid: int,
+        hrh: HasRetweetHashtag,
         skip_rules=False
     ):
     logger.debug("Inside community_retweet()")

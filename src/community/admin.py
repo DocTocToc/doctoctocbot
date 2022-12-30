@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 from community.models import (
     Community,
     Retweet,
+    Reblog,
     Trust,
     Cooperation,
     CommunityCategoryRelationship,
@@ -64,6 +65,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'active',
         'account',
         'mastodon_account',
+        'mastodon_access',
         'helper',
         'created',
         'site',
@@ -89,6 +91,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'active',
         'account',
         'mastodon_account',
+        'mastodon_access',
         'helper',
         'helper_message',
         'hashtag',
@@ -134,6 +137,24 @@ class RetweetAdmin(admin.ModelAdmin):
         'category',
         'retweet',
         'favorite',  
+    )
+    list_filter = (
+        'community',
+        'hashtag',
+        'category',
+    )
+
+
+@admin.register(Reblog)
+class ReblogAdmin(admin.ModelAdmin):
+    list_display = (
+        'community',
+        'hashtag',
+        'category',
+        'reblog',
+        'favourite',
+        'require_follower',
+        'require_following',
     )
     list_filter = (
         'community',

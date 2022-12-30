@@ -198,6 +198,7 @@ class MastodonUser(models.Model):
         max_length=284,
         unique=True
     )
+    local_id = models.BigIntegerField(null=True)
     entity = models.ForeignKey(
         'Entity',
         on_delete=models.PROTECT,
@@ -909,7 +910,7 @@ class MastodonFollower(models.Model):
         on_delete=models.CASCADE
     )
     id_list = ArrayField(
-        models.PositiveIntegerField(),
+        models.PositiveBigIntegerField(),
         null=True,
         blank=True
     )
@@ -930,7 +931,7 @@ class MastodonFriend(models.Model):
         on_delete=models.CASCADE
     )
     id_list = ArrayField(
-        models.PositiveIntegerField(),
+        models.PositiveBigIntegerField(),
         null=True,
         blank=True
         )

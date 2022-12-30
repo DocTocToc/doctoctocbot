@@ -102,35 +102,63 @@ services:
   flower:
     image: dtn_dev
     profiles: ["celery"]
-  stream_1:
+  twitter_stream_1:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_2:
+  twitter_stream_2:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_3:
+  twitter_stream_3:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_4:
+  twitter_stream_4:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_5:
+  twitter_stream_5:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_6:
+  twitter_stream_6:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
-  stream_7:
+  twitter_stream_7:
     image: dtn_dev
-    restart: on-failure:1
+    restart: on-failure
     profiles: ["stream"]
   tree_search:
     image: dtn_dev
     restart: on-failure
     profiles: ["tree_search"]
+  mastodon_stream_1:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_2:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_3:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_4:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_5:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_6:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]
+  mastodon_stream_7:
+    image: dtn_dev
+    restart: on-failure
+    profiles: ["stream"]

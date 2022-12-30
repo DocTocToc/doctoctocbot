@@ -175,27 +175,48 @@ services:
     image: dtn_prod
   flower:
     image: dtn_prod
-  stream_1:
+  twitter_stream_1:
     image: dtn_prod
     restart: always
-  stream_2:
+  twitter_stream_2:
     image: dtn_prod
     restart: always
-  stream_3:
+  twitter_stream_3:
     image: dtn_prod
     restart: always
-  stream_4:
+  twitter_stream_4:
     image: dtn_prod
     restart: always
-  stream_5:
+  twitter_stream_5:
     image: dtn_prod
     restart: always
-  stream_6:
+  twitter_stream_6:
     image: dtn_prod
     restart: always
-  stream_7:
+  twitter_stream_7:
     image: dtn_prod
     restart: always
   tree_search:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_1:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_2:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_3:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_4:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_5:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_6:
+    image: dtn_prod
+    restart: always
+  mastodon_stream_7:
     image: dtn_prod
     restart: always

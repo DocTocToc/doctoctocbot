@@ -114,7 +114,7 @@ services:
     depends_on:
       - redis
     working_dir: /code/src
-  stream_1:
+  twitter_stream_1:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_1 --settings=settings"
@@ -130,7 +130,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_2:
+  twitter_stream_2:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_2 --settings=settings"
@@ -146,7 +146,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_3:
+  twitter_stream_3:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_3 --settings=settings"
@@ -162,7 +162,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_4:
+  twitter_stream_4:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_4 --settings=settings"
@@ -178,7 +178,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_5:
+  twitter_stream_5:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_5 --settings=settings"
@@ -194,7 +194,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_6:
+  twitter_stream_6:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_6 --settings=settings"
@@ -210,7 +210,7 @@ services:
       - database
       - celery_retweet_worker
     working_dir: /code/src
-  stream_7:
+  twitter_stream_7:
     env_file:
       - .env
     command: bash -c "python manage.py run_bot_stream $STREAM_7 --settings=settings"
@@ -240,4 +240,116 @@ services:
     depends_on:
       - redis
       - database
+    working_dir: /code/src
+  mastodon_stream_1:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_1} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_2:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_2} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_3:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_3} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_4:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_4} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_5:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_5} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_6:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_6} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
+    working_dir: /code/src
+  mastodon_stream_7:
+    env_file:
+      - .env
+    command: bash -c "python manage.py multi_hashtag_stream ${MASTODON_STREAM_7} --settings=settings"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+      - database
+      - celery_retweet_worker
     working_dir: /code/src

@@ -6,6 +6,8 @@ from django.utils.log import DEFAULT_LOGGING
 from decouple import AutoConfig, Csv
 from pathlib import Path
 
+MASTODON_STREAM_COMMUNITY = os.environ.get("COMMUNITY")
+
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING) 
 
@@ -94,6 +96,10 @@ logging_dict["loggers"] = {
             "level": LOG_LEVEL,
         },
         "bot.doctoctocbot": {
+            "handlers": ["console", "console_debug_false"],
+            "level": LOG_LEVEL,
+        },
+        "fediverse.tasks": {
             "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },

@@ -1093,6 +1093,7 @@ class UserCategoryRelationshipAdmin(admin.ModelAdmin):
 class MastodonUserAdmin(admin.ModelAdmin):
     list_display = [
         'acct',
+        'local_id',
         'webfinger_tag',
         'entity_tag',
         'entity',
@@ -1101,6 +1102,7 @@ class MastodonUserAdmin(admin.ModelAdmin):
     ]
     fields = [
         'acct',
+        'local_id',
         'webfinger_tag',
         'entity_tag',
         'hcp_admin',
@@ -1109,6 +1111,7 @@ class MastodonUserAdmin(admin.ModelAdmin):
         'updated',
     ]
     readonly_fields = [
+        'local_id',
         'webfinger_tag',
         'entity_tag',
         'hcp_admin',

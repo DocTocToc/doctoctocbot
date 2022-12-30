@@ -34,6 +34,12 @@ class Community(models.Model):
         blank=True,
         null=True,
     )
+    mastodon_access = models.OneToOneField(
+        'fediverse.MastodonAccess',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     hashtag = models.ManyToManyField('conversation.Hashtag')
     membership = models.ManyToManyField(
         'moderation.Category',
@@ -255,11 +261,44 @@ class Retweet(models.Model):
     require_question = models.BooleanField(default=True)
     allow_retweet = models.BooleanField(default=False)
     allow_quote = models.BooleanField(default=False)
-    require_follower = models.BooleanField(default=True)
+    require_follower = models.BooleanField(default=False)
+    require_friend = models.BooleanField(default=False)
 
 
     def __str__(self):
         return "{} - {} - {} : {}".format(self.community, self.hashtag, self.category, self.retweet)
+
+
+    class Meta:
+        unique_together = ("community", "hashtag", "category")
+
+
+class Reblog(models.Model):
+    community = models.ForeignKey(
+        'Community',
+        on_delete=models.CASCADE
+    )
+    hashtag = models.ForeignKey(
+        'conversation.Hashtag',
+        on_delete=models.CASCADE
+    )
+    category = models.ForeignKey(
+        'moderation.Category',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    reblog = models.BooleanField(default=False)
+    favourite = models.BooleanField(default=False)
+    bookmark = models.BooleanField(default=False)
+    moderation = models.BooleanField(default=False)
+    require_question = models.BooleanField(default=False)
+    allow_reblogged = models.BooleanField(default=False)
+    require_follower = models.BooleanField(default=False)
+    require_following = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "<{} - {} - {}>".format(self.community, self.hashtag, self.category)
 
 
     class Meta:

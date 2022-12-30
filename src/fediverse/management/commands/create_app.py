@@ -88,17 +88,18 @@ class Command(BaseCommand):
             )
             raise CommandError()
         try:
-            app = MastodonApp.create(
+            app = MastodonApp.objects.create(
                 client_name=self.client_name,
                 client_id=self.client_id,
                 client_secret=self.client_secret,
                 api_base_url=self.api_base_url,
                 redirect_uris=self.redirect_uris,
-                website=self.website
+                website=self.website,
             )
+            app.scopes.add(*scopes)
             self.stdout.write(
                 self.style.SUCCESS(
-                    'App %s successfully recorded: %s' % self.client_name, app
+                    'App %s successfully recorded: %s' % (self.client_name, app)
                 )
             )
         except DatabaseError as e:

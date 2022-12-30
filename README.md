@@ -108,5 +108,5 @@ To [@natolh](https://twitter.com/natolh) for his technical advice and pull reque
 
 ## Contact
 * [Start a private conversation with @doctoctocbot](https://twitter.com/messages/compose?recipient_id=881706502939185152)
-* Contact the main developer Jérome Pinguet on Mastodon [@medecinelibre@mastodon.medica.im](https://mastodon.medica.im/@medecinelibre) or [@MedecineLibre](https://twitter.com/MedecineLibre)
+* Contact the main developer Jérome Pinguet on Mastodon [@medecinelibre@mastodon.medica.im](https://mastodon.medica.im/@medecinelibre) or Twitter [@MedecineLibre](https://twitter.com/MedecineLibre)
 * Use our GnuPG encrypted [contact form](https://doctoctoc.net/contact)

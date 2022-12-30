@@ -201,22 +201,22 @@ services:
     restart: always
   mastodon_stream_1:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_2:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_3:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_4:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_5:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_6:
     image: dtn_prod
-    restart: always
+    restart: on-failure
   mastodon_stream_7:
     image: dtn_prod
-    restart: always
+    restart: on-failure

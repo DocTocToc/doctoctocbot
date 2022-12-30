@@ -84,16 +84,6 @@ Python & Django version
 * Python version 3.10
 * Django version 3.2
 
-Dependencies:
--------------
-See requirements folder.
-
-pip install -r requirements/common.txt
-pip install -r requirements/staging.txt
-pip install -r requirements/development.txt
-```
-
-
 How to start:
 -------------
 

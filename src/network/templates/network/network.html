@@ -163,6 +163,7 @@ body {
                 </thead>
                 <tbody>
                   {% for community in network.community %}
+                  {% if community.mastodon_account %}
                   <tr>
                     {#<th scope="row">{{forloop.counter}}</th>#}
                     <td>{{ community.name }}</td>
@@ -176,6 +177,7 @@ body {
                     </td>
                     <td class="text-end">{{community.mastodon_account.followers_count}}</td>
                   </tr>
+                  {% endif %}
                   {% endfor %}
                 </tbody>
                 <tfoot>

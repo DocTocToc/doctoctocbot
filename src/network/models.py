@@ -37,6 +37,9 @@ class Network(models.Model):
     def twitter_followers_count(self):
         return sum([c.account.socialuser.twitter_followers_count() for c in self.community.all()])
 
+    def mastodon_followers_count(self):
+        return sum([c.mastodon_account.followers_count() for c in self.community.all()])
+
 
 class NetworkCommunity(models.Model):
     network = models.ForeignKey(

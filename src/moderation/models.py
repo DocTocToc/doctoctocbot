@@ -28,6 +28,7 @@ from optin.models import Option
 from conversation.models import TwitterLanguageIdentifier
 from django.db.models import Count
 from django.contrib.postgres.indexes import GinIndex
+from fediverse.helpers import webfinger_url
 
 logger = logging.getLogger(__name__)
 
@@ -210,6 +211,17 @@ class MastodonUser(models.Model):
 
     def __str__(self):
         return f'MastodonUser {self.acct}'
+
+    def followers_count(self):
+        try:
+            return len(self.mastodonfollower_set.latest().id_list)
+        except MastodonFollower.DoesNotExist as e:
+            logger.error(f'{e}')
+        except Exception as e:
+            logger.error(f'{e}')
+
+    def webfinger_url(self):
+        return webfinger_url(self.acct)
 
 
 class LinkedInUser(models.Model):

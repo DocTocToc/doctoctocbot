@@ -5,7 +5,7 @@ from network.models import (
     Network,
 )
 from community.models import Community, Retweet
-from moderation.models import SocialUser
+from moderation.models import SocialUser, MastodonUser
 from bot.models import Account
 from choice.utils import room_url
 from constance import config
@@ -14,9 +14,17 @@ from urllib.parse import quote
 logger = logging.getLogger(__name__)
 
 
+class MastodonUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MastodonUser
+        fields = (
+            'acct',
+            'followers_count',
+        )
+
 
 class SocialUserSerializer(serializers.ModelSerializer):
-    #twitter_followers_count = serializers.SerializerMethodField()
 
     class Meta:
         model = SocialUser
@@ -24,9 +32,6 @@ class SocialUserSerializer(serializers.ModelSerializer):
             'screen_name_tag',
             'twitter_followers_count',
         )
-        
-    #def get_twitter_followers_count(self, instance):
-    #    return instance.twitter_followers_count()
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -46,6 +51,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class CommunitySerializer(serializers.ModelSerializer):
     account = AccountSerializer(read_only=True)
+    mastodon_account = MastodonUserSerializer(read_only=True)
+
     hashtag = serializers.SerializerMethodField()
 
     def get_hashtag(self, community):
@@ -61,6 +68,7 @@ class CommunitySerializer(serializers.ModelSerializer):
             'id',
             'name',
             'account',
+            'mastodon_account',
             'hashtag',
             'membership',
             'created',
@@ -88,5 +96,6 @@ class NetworkSerializer(serializers.ModelSerializer):
             'community',
             'twitter_account',
             'twitter_followers_count',
+            'mastodon_followers_count',
         )
         depth = 4

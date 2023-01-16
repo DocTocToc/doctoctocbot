@@ -29,15 +29,17 @@ body {
           <li class="nav-item"><a class="nav-link"
             href="#scrollspyHeading0">{% trans "Network" %}</a></li>
           <li class="nav-item"><a class="nav-link"
-            href="#scrollspyHeading1">Bots</a></li>
+            href="#scrollspyHeading1">Twitter bots</a></li>
+            <li class="nav-item"><a class="nav-link"
+              href="#scrollspyHeading2">Mastodon bots</a></li>
           <li class="nav-item"><a class="nav-link"
-            href="#scrollspyHeading2">Web</a></li>
+            href="#scrollspyHeading3">Web</a></li>
           <li class="nav-item"><a class="nav-link"
-            href="#scrollspyHeading3">Forum</a></li>
+            href="#scrollspyHeading4">Forum</a></li>
           <li class="nav-item"><a class="nav-link"
-            href="#scrollspyHeading4">Messenger</a></li>
+            href="#scrollspyHeading5">Messenger</a></li>
           <li class="nav-item"><a class="nav-link"
-            href="#scrollspyHeading5">Blog</a></li>
+            href="#scrollspyHeading6">Blog</a></li>
           <li class="nav-item"><a class="nav-link"
             href="https://twitter.com/{{ network.twitter_account.username }}"><i
               class="fab fa-twitter"></i></a></li>
@@ -141,6 +143,54 @@ body {
         <div id="scrollspyHeading2">
           <div class="card">
             <div class="card-body">
+              <h4 class="card-title">{% trans "Mastodon bots" %}</h4>
+              <p class="card-text">
+                Nos bots Mastodon diffusent vos questions à leurs
+                {{network.mastodon_followers_count }}
+                abonnés. Mode d'emploi: créer un compte sur notre serveur Mastodon <a href="https://mastodon.medica.im">mastodon.medica.im</a> puis abonnez-vous au bot de votre
+                communauté. Rédigez votre question dans un toot en n'oubliant
+                pas d'ajouter le bon hashtag et un point d'interrogation.
+              </p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    {#<th scope="col">#</th>#}
+                    <th scope="col">{% trans "Community" %}</th>
+                    <th scope="col">Mastodon</th>
+                    <th scope="col">Hashtag</th>
+                    <th scope="col" class="text-end">{%trans "Followers"%}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for community in network.community %}
+                  <tr>
+                    {#<th scope="row">{{forloop.counter}}</th>#}
+                    <td>{{ community.name }}</td>
+                    <td><a
+                      href="{{ community.mastodon_account.webfinger_url }}">
+                      @{{community.mastodon_account.acct}}</a></td>
+                    <td>
+                    {% for hashtag in community.hashtag.all %}
+                    #{{hashtag }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    </td>
+                    <td class="text-end">{{community.mastodon_account.followers_count}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="3" class="text-end"></th>
+                    <th colspan="1" class="text-end">Total: {{network.mastodon_followers_count}}</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="scrollspyHeading3">
+          <div class="card">
+            <div class="card-body">
               <h4 class="card-title">{% trans "Websites" %}</h4>
               <p class="card-text">Chaque communauté a son site web où sont
                 archivées les questions et où vous retrouvez vos réglages,
@@ -166,7 +216,7 @@ body {
             </div>
           </div>
         </div>
-        <div id="scrollspyHeading3">
+        <div id="scrollspyHeading4">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Forum</h4>
@@ -178,7 +228,7 @@ body {
             </div>
           </div>
         </div>
-        <div id="scrollspyHeading4">
+        <div id="scrollspyHeading5">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Messenger</h4>
@@ -191,7 +241,7 @@ body {
             </div>
           </div>
         </div>
-        <div id="scrollspyHeading5">
+        <div id="scrollspyHeading6">
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">Blog</h4>

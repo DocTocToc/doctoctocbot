@@ -7,6 +7,7 @@ import re
 from constance import config
 from mytweepy.errors import HTTPException
 
+from django.db.utils import DatabaseError
 from django.db.models import Q
 from django.utils.formats import date_format
 from django.utils import timezone
@@ -256,6 +257,7 @@ class CampaignManager:
     def send(self):
         messages = self.campaign.messages.all()
         api = self.get_api()
+        logger.debug(f'{api=}')
         if not api:
             return
         for recipient in self.campaign.recipients.all():
@@ -388,6 +390,8 @@ class MessageManager:
             activate_language(community)
 
     def first_retweet_date(self) -> str:
+        if 'first_retweet_date' not in self.message.content:
+            return
         self.activate_language()
         try:
             community = self.campaign.account.account.community
@@ -406,6 +410,8 @@ class MessageManager:
         return site_url(community)
 
     def investment_date(self) -> str:
+        if 'investment_date' not in self.message.content:
+            return
         self.activate_language()
         projects : list[Project] = [
             cf.project for cf in self.campaign.crowdfunding.all()
@@ -434,6 +440,9 @@ class MessageManager:
             return ", ".join(dt_str[:-1]) + " & " + dt_str[-1]
 
     def mastodon_invite_url(self)-> str:
+        if 'mastodon_invite_url' not in self.message.content:
+            logger.debug("message does not contain 'mastodon_invite_url'")
+            return
         su = self.recipient
         community = self.sender.account.community
         mastodon_user = community.mastodon_account
@@ -474,9 +483,12 @@ class MessageManager:
 
     def create(self):
         self.text=self._format()
+        logger.debug(f'{self.text=}')
         if self.abort:
+            logger.debug(f'{self.abort=}')
             return
         if self.is_message_sent():
+            logger.debug(f'{self.is_message_sent()=}')
             return
         try:
             receipt = Receipt.objects.create(
@@ -484,7 +496,9 @@ class MessageManager:
                 message=self.message,
                 user=self.recipient
             )
-        except:
+            logger.debug(f'{receipt=}')
+        except DatabaseError as e:
+            logger.error(e)
             return
         try:
             res = self.api.send_direct_message(

@@ -20,7 +20,7 @@ services:
       - ${GNUPGHOME}:${GNUPGHOME}
       - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     ports:
-      - "8081:80"
+      - "8091:80"
     depends_on:
       - database
       - redis
@@ -40,7 +40,7 @@ services:
       - ${GNUPGHOME}:${GNUPGHOME}
       - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     ports:
-      - "8082:80"
+      - "8092:80"
     depends_on:
       - database
       - redis
@@ -60,7 +60,7 @@ services:
       - ${GNUPGHOME}:${GNUPGHOME}
       - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     ports:
-      - "8083:80"
+      - "8093:80"
     depends_on:
       - database
       - redis
@@ -81,7 +81,7 @@ services:
       - ${GNUPGHOME}:${GNUPGHOME}
       - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
     ports:
-      - "8084:80"
+      - "8094:80"
     depends_on:
       - database
       - redis

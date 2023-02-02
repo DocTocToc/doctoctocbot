@@ -58,6 +58,16 @@ def screen_name_link_su(su):
             )
         )
 
+def entity_link(pk):
+    """ Return Entity html link tag from Entity id
+    """
+    return mark_safe(
+        '<a href="{link}">{tag}</a>'.format(
+            link = reverse("admin:moderation_entity_change", args=(pk,)),
+                tag = f'🔗 Entity {pk}'
+        )
+    )
+
 def acct_link_mu(mu):
     """ Return MastodonUser screen name html link tag from MastodonUser object
     """

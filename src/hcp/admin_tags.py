@@ -1,9 +1,13 @@
 from moderation.models import SocialUser
-from hcp.models import HealthCareProvider
+from hcp.models import HealthCareProvider, Taxonomy
 
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+
+import logging
+
+logger=logging.getLogger(__name__)
 
 def taxonomy_tag(su: SocialUser):
     def get_tag(taxonomy):
@@ -12,14 +16,27 @@ def taxonomy_tag(su: SocialUser):
     if su is None:
         return
     human = su.human_set.first()
+    logger.debug(f'{human=}')
+    entity = su.entity
+    logger.debug(f'{entity=}')
+    taxonomy_lst: list[Taxonomy] = []
     try:
-        taxonomy_lst = human.healthcareprovider.taxonomy.all()
+        entities = entity.healthcareprovider.taxonomy.all()
+        logger.debug(entities)
+        taxonomy_lst.extend(entities)
     except AttributeError:
-        return
+        pass
+    try:
+        entities=human.healthcareprovider.taxonomy.all()
+        logger.debug(entities)
+        taxonomy_lst.extend(entities)
+    except AttributeError:
+        pass
+    logger.debug(f'{taxonomy_lst=}')
     if not taxonomy_lst:
         return
     if len(taxonomy_lst)==1:
-        return get_tag(taxonomy_lst.first())
+        return get_tag(taxonomy_lst[0])
     else:
         tag_lst = ["<ul>"]
         for taxonomy in taxonomy_lst:

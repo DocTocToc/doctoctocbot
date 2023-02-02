@@ -51,7 +51,7 @@ from moderation.admin_tags import (
 )
 from users.admin_tags import admin_tag_user_link
 from common.list_filter import by_null_filter
-from moderation.admin_tags import m2m_field_tag
+from moderation.admin_tags import m2m_field_tag, entity_link
 from modeltranslation.admin import TranslationAdmin
 from django.contrib import auth
 from durationwidget.widgets import TimeDurationWidget
@@ -304,6 +304,7 @@ class SocialUserAdmin(admin.ModelAdmin):
     )
     fields = (
         'entity',
+        'entity_tag',
         'screen_name_tag',
         'social_media',
         'socialmedia_tag',
@@ -323,6 +324,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'updated',
     )
     readonly_fields = (
+        'entity_tag',
         'screen_name_tag',
         'socialmedia_tag',
         'normal_image_tag',
@@ -394,6 +396,14 @@ class SocialUserAdmin(admin.ModelAdmin):
             return "🚫"
 
     profile_link.short_description = 'Profile'
+
+    def entity_link_tag(self, obj):
+        try:
+            return entity_link(obj.entity.pk)
+        except AttributeError:
+            return "∅"
+
+    entity_link_tag.short_description = 'Entity 🔗'
 
     def follow_request_tag(self, obj):
         # return HTML link that will not be escaped

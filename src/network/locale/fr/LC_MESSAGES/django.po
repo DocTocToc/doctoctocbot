@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2021-10-22 05:10+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,32 +20,38 @@ msgstr ""
 
 #: network/templates/network/network.html:27
 #: network/templates/network/network.html:30
-#: network/templates/network/network.html:52
+#: network/templates/network/network.html:54
 msgid "Network"
 msgstr "Réseau"
 
-#: network/templates/network/network.html:61
-#: network/templates/network/network.html:108
-#: network/templates/network/network.html:152
+#: network/templates/network/network.html:63
+#: network/templates/network/network.html:110
+#: network/templates/network/network.html:158
+#: network/templates/network/network.html:204
 msgid "Community"
 msgstr "Communauté"
 
-#: network/templates/network/network.html:62
+#: network/templates/network/network.html:64
 msgid "Members"
 msgstr "Membres"
 
-#: network/templates/network/network.html:94
+#: network/templates/network/network.html:96
 msgid "Twitter bots"
 msgstr "Robots Twitter"
 
-#: network/templates/network/network.html:111
+#: network/templates/network/network.html:113
+#: network/templates/network/network.html:161
 msgid "Followers"
 msgstr "Abonnés"
 
-#: network/templates/network/network.html:144
+#: network/templates/network/network.html:146
+msgid "Mastodon bots"
+msgstr ""
+
+#: network/templates/network/network.html:196
 msgid "Websites"
 msgstr "Sites web"
 
-#: network/templates/network/network.html:153
+#: network/templates/network/network.html:205
 msgid "Website"
 msgstr "Site web"

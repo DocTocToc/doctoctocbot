@@ -76,6 +76,9 @@ services:
   celery-beat:
     image: dtn_dev
     profiles: ["celery"]
+  flower:
+    image: dtn_dev
+    profiles: ["celery"]
   stream_1:
     image: dtn_dev
     restart: on-failure:1

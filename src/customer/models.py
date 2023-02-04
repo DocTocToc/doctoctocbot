@@ -1,12 +1,15 @@
 import uuid
-from decimal import *
-
+from decimal import Decimal
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 
 from common.international import countries, currencies
+
+def default_language():
+    return settings.LANGUAGE_CODE
 
 
 class Customer(models.Model):
@@ -79,6 +82,12 @@ class Customer(models.Model):
         null = True,
         help_text=_("ZIP code"),
         verbose_name=_("ZIP code"),
+    )
+    language = models.CharField(
+        max_length=35,
+        help_text=_("Language"),
+        verbose_name=_("Language"),
+        default=default_language,
     )
 
     def __str__(self):

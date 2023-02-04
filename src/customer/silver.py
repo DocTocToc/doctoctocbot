@@ -7,6 +7,7 @@ from silver.models.documents.invoice import Invoice as SilverInvoice
 from crowdfunding.models import ProjectInvestment
 from customer.models import Customer
 from django.db import DatabaseError, IntegrityError
+from django.core.exceptions import ValidationError
 
 import psycopg2
 
@@ -19,6 +20,7 @@ def create_customer_and_draft_invoice(instance):
             doctocnet_customer, _created = Customer.objects.get_or_create(
                 user = instance.user,
             )
+            logger.debug(f'{doctocnet_customer=} {_created=}')
         except DatabaseError:
             return
         try:
@@ -68,8 +70,9 @@ def create_customer_and_draft_invoice(instance):
                     provider=silver_provider,
                     number=cardinality,
                 )
+                logger.debug(f'{silver_invoice=}')
                 break
-            except IntegrityError as e:
+            except (IntegrityError, ValidationError) as e:
                 logger.error(
                     f"SilverInvoice with {silver_customer=} {silver_provider=} "
                     f"{cardinality=}:\n{e}"
@@ -80,14 +83,18 @@ def create_customer_and_draft_invoice(instance):
                         provider=silver_provider,
                         number=cardinality,
                     )
-                    break
                     logger.warn(
                         f"{e} \n Silver invoice with {silver_customer=} "
                         f"{silver_provider=} {cardinality=}  already existed: "
                         f"{silver_invoice=}"
                     )
+                    if not ProjectInvestment.objects.filter(
+                        silver_invoice__id=silver_invoice.id
+                    ):
+                        break
                 except SilverInvoice.DoesNotExist:
-                    cardinality+=1
+                    pass
+            cardinality+=1
         instance.invoice = silver_invoice.id
         instance.silver_invoice = silver_invoice
         instance.save()

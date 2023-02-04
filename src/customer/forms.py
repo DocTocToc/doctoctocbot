@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 
@@ -10,7 +11,6 @@ from bootstrap_modal_forms.forms import BSModalForm, BSModalModelForm
 
 
 class CustomerReadOnlyForm(forms.Form):
-
     id = forms.CharField(
         disabled=True,
         widget=forms.HiddenInput(),
@@ -73,7 +73,11 @@ class CustomerReadOnlyForm(forms.Form):
         max_length=32,
         disabled=True,
     )
-    
+    language = forms.ChoiceField(
+        widget=forms.Select,
+        choices=settings.LANGUAGES
+    )
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
@@ -100,6 +104,7 @@ class CustomerReadOnlyForm(forms.Form):
         self.fields['city'].initial=customer.city
         #self.fields['state'].initial=customer.state
         self.fields['zip_code'].initial=customer.zip_code
+        self.fields['language'].initial=customer.language
 
 
 class CustomerModelForm(BSModalModelForm):

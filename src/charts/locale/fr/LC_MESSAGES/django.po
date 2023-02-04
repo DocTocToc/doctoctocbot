@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2022-11-04 07:08+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,23 +38,23 @@ msgstr "Tweets hebdomadaires"
 msgid "Yearly tweets"
 msgstr "Tweets annuels"
 
-#: charts/views/creation_follower.py:142
+#: charts/views/creation_follower.py:140
 msgid "All followers"
 msgstr "Tous les abonnés"
 
-#: charts/views/creation_follower.py:278
+#: charts/views/creation_follower.py:299
 msgid "You must be authenticated to see this chart."
 msgstr "Vous devez être connecté pour voir ce graphique."
 
-#: charts/views/creation_follower.py:314
+#: charts/views/creation_follower.py:323
 msgid "the bot"
 msgstr "le bot"
 
-#: charts/views/creation_follower.py:318 charts/views/question.py:102
+#: charts/views/creation_follower.py:327 charts/views/question.py:102
 msgid "or"
 msgstr "ou"
 
-#: charts/views/creation_follower.py:324
+#: charts/views/creation_follower.py:333
 #, python-brace-format
 msgid ""
 "Follower count (total and by category) vs. creation date of the account. ■ "
@@ -63,7 +63,7 @@ msgstr ""
 "Nombre d'abonnés (total et par catégorie) selon la date de création du "
 "compte. ■: vous, ▲: {bot}."
 
-#: charts/views/creation_follower.py:328
+#: charts/views/creation_follower.py:337
 #, python-brace-format
 msgid ""
 "Click on categories (All followers, {categories}) to display or hide data. "

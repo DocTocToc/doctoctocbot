@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2022-01-17 19:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: moderation/admin.py:366
+#: moderation/admin.py:466
 msgid "Specialty"
 msgstr "Spécialité"
 
-#: moderation/admin.py:770
+#: moderation/admin.py:874
 msgid "Count"
 msgstr "Compte"
 
-#: moderation/dm.py:316
+#: moderation/dm.py:317
 #, python-brace-format
 msgid ""
 "\n"
@@ -35,7 +35,7 @@ msgstr ""
 "\n"
 " Tweet: https://twitter.com/{screen_name}/status/{status_id}"
 
-#: moderation/dm.py:344
+#: moderation/dm.py:345
 #, python-brace-format
 msgid ""
 "Please help us verify this user: @{screen_name} \n"
@@ -51,12 +51,12 @@ msgstr ""
 "Merci de choisir la catégorie la plus appropriée en appuyant sur un des "
 "boutons ci-dessous. {status_str}"
 
-#: moderation/dm.py:360
+#: moderation/dm.py:361
 msgid "You will soon receive a verification request for this user."
 msgstr ""
 "Vous allez bientôt recevoir une demande de vérification pour ce compte."
 
-#: moderation/dm.py:513
+#: moderation/dm.py:514
 msgid "An error occurred when we tried to send a moderation DM to @{}: {}"
 msgstr ""
 
@@ -87,39 +87,39 @@ msgstr ""
 "vous souhaitez malgré tout rejoindre cette communauté, merci de nous dire "
 "pourquoi et nous examinerons votre demande."
 
-#: moderation/models.py:580
+#: moderation/models.py:672
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: moderation/models.py:581
+#: moderation/models.py:673
 msgid "Senior"
 msgstr "Senior"
 
-#: moderation/models.py:582
+#: moderation/models.py:674
 msgid "Developer"
 msgstr "Développeur"
 
-#: moderation/models.py:583
+#: moderation/models.py:675
 msgid "Follower"
 msgstr "Abonné"
 
-#: moderation/models.py:584
+#: moderation/models.py:676
 msgid "Self"
 msgstr ""
 
-#: moderation/models.py:585
+#: moderation/models.py:677
 msgid "On hold"
 msgstr "En attente"
 
-#: moderation/models.py:927
+#: moderation/models.py:1061
 msgid "Warn"
 msgstr "Avertir"
 
-#: moderation/models.py:928
+#: moderation/models.py:1062
 msgid "Moderate"
 msgstr "Modérer"
 
-#: moderation/models.py:929
+#: moderation/models.py:1063
 msgid "Ban"
 msgstr "Exclure"
 

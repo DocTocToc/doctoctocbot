@@ -14,10 +14,10 @@ mpl_logger.setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-CONFIG_DIR = Path(BASE_DIR + "/..")
-config = AutoConfig(search_path = CONFIG_DIR)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_DIR)
+#CONFIG_DIR = Path(BASE_DIR + "/..")
+config = AutoConfig(search_path = BASE_DIR)
 
 SITE_ID = config('SITE_ID_1', cast=int, default=1)
 
@@ -260,7 +260,7 @@ if DEBUG:
 
 MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -351,10 +351,11 @@ LANGUAGES = [
 # Model Translation
 MODELTRANSLATION_FALLBACK_LANGUAGES = {'default': ('en', 'fr'), 'fr': ('en',)}
 
-LOCALE_PATHS = [
+LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
     os.path.join(BASE_DIR, 'templates/locale'),
-]
+)
+print(LOCALE_PATHS)
 # use this locale to sort localized strings, default to 'en_US.UTF-8'
 # you have to generate the locales you will use on your GNU/Linux server:
 # $ locale-gen fr_FR.UTF-8

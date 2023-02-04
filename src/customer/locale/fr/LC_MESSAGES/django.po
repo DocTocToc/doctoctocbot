@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2019-12-18 16:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,15 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: customer/forms.py:19 customer/models.py:30 customer/models.py:31
+#: customer/forms.py:19 customer/models.py:33 customer/models.py:34
 msgid "First name"
 msgstr "Prénom"
 
-#: customer/forms.py:24 customer/models.py:35 customer/models.py:36
+#: customer/forms.py:24 customer/models.py:38 customer/models.py:39
 msgid "Last name"
 msgstr "Nom"
 
-#: customer/forms.py:29 customer/models.py:41 customer/models.py:42
+#: customer/forms.py:29 customer/models.py:44 customer/models.py:45
 msgid "Company"
 msgstr "Entreprise"
 
@@ -42,45 +42,49 @@ msgstr "(Sélectionner le pays)"
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: customer/forms.py:54 customer/models.py:47 customer/models.py:48
+#: customer/forms.py:54 customer/models.py:50 customer/models.py:51
 msgid "Email"
 msgstr "Courriel"
 
-#: customer/forms.py:59 customer/models.py:69 customer/models.py:70
+#: customer/forms.py:59 customer/models.py:72 customer/models.py:73
 msgid "City"
 msgstr "Ville"
 
-#: customer/forms.py:72 customer/models.py:80 customer/models.py:81
+#: customer/forms.py:72 customer/models.py:83 customer/models.py:84
 msgid "ZIP code"
 msgstr "Code postal"
 
-#: customer/forms.py:91 customer/models.py:64 customer/models.py:65
+#: customer/forms.py:95 customer/models.py:67 customer/models.py:68
 msgid "Country"
 msgstr "Pays"
 
-#: customer/models.py:18
+#: customer/models.py:21
 msgid "Id of corresponding Silver Customer record."
 msgstr "Id de l'enregistrement Silver Customer correspondant."
 
-#: customer/models.py:25
+#: customer/models.py:28
 msgid "Django user"
 msgstr "Utilisateur Django"
 
-#: customer/models.py:26
+#: customer/models.py:29
 msgid "User"
 msgstr "Utilisateur"
 
-#: customer/models.py:52 customer/models.py:53
+#: customer/models.py:55 customer/models.py:56
 msgid "Address Line 1"
 msgstr "Adresse Ligne 1"
 
-#: customer/models.py:58 customer/models.py:59
+#: customer/models.py:61 customer/models.py:62
 msgid "Address Line 2 (optional)"
 msgstr "Adresse Ligne 2 (optionnelle)"
 
-#: customer/models.py:75 customer/models.py:76
+#: customer/models.py:78 customer/models.py:79
 msgid "State"
 msgstr "Région"
+
+#: customer/models.py:88 customer/models.py:89
+msgid "Language"
+msgstr ""
 
 #: customer/templates/customer/update_customer.html:6
 msgid "Add your billing data"

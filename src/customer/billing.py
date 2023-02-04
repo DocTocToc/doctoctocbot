@@ -31,8 +31,10 @@ def get_product_code_silver_id(product_code: str):
 
 def create_silver_invoice(_uuid):
     #Create an invoice for corresponding ProjectInvestment
+    logger.debug(f'{_uuid}')
     try:
         pi = ProjectInvestment.objects.get(uuid=_uuid)
+        logger.debug(f'{pi=}')
     except ProjectInvestment.DoesNotExist:
         return
     customer_instance = Customer.objects.filter(user=pi.user).first()

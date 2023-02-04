@@ -1,6 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
+from django.utils.translation import activate
 from silver.models import BillingDocumentBase
+from customer.models import Customer
 from silver.models.documents.invoice import Invoice
 from celery import shared_task
 from celery_once import QueueOnce
@@ -17,7 +19,16 @@ PDF_GENERATION_TIME_LIMIT = getattr(
 @shared_task(base=QueueOnce, once={'graceful': True},
              time_limit=PDF_GENERATION_TIME_LIMIT)
 def generate_pdf(document_id, document_type):
-    document = BillingDocumentBase.objects.get(id=document_id, kind=document_type)
+    document = BillingDocumentBase.objects.get(
+        id=document_id,
+        kind=document_type
+    )
+    try:
+        customer = Customer.objects.get(silver_id=document.customer.id)
+        logger.debug(f'{customer.language=}')
+        activate(customer.language)
+    except Customer.DoesNotExist:
+        pass
     document.generate_pdf()
     invoice = Invoice.objects.get(id=document_id)
     logger.debug("invoice.pdf: {invoice.pdf}")

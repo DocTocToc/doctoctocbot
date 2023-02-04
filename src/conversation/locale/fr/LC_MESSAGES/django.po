@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2022-02-21 19:38+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,27 +18,27 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.4.2\n"
 
-#: conversation/admin.py:58
+#: conversation/admin.py:59
 msgid "Category"
 msgstr "Catégorie"
 
-#: conversation/admin.py:83
+#: conversation/admin.py:84
 msgid "Language"
 msgstr "Langue"
 
-#: conversation/admin.py:108
+#: conversation/admin.py:109
 msgid "retweeted by"
 msgstr "retweeté par"
 
-#: conversation/admin.py:128
+#: conversation/admin.py:129
 msgid "Status text"
 msgstr ""
 
-#: conversation/admin.py:137
+#: conversation/admin.py:138
 msgid "True"
 msgstr ""
 
-#: conversation/admin.py:138
+#: conversation/admin.py:139
 msgid "False"
 msgstr ""
 

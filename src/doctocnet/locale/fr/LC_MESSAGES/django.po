@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-04 04:59+0100\n"
+"POT-Creation-Date: 2023-02-04 01:59+0100\n"
 "PO-Revision-Date: 2021-04-21 21:09+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: doctocnet/settings.py:339
+#: doctocnet/settings.py:348
 msgid "English"
 msgstr "Anglais"
 
-#: doctocnet/settings.py:340
+#: doctocnet/settings.py:349
 msgid "French"
 msgstr "Français"
 
@@ -130,27 +130,27 @@ msgstr "Financeurs"
 msgid "Sign in with Twitter"
 msgstr "Se connecter avec Twitter"
 
-#: doctocnet/templates/doctocnet/navbar.html:99
+#: doctocnet/templates/doctocnet/navbar.html:110
 msgid "Discussion"
 msgstr "Discussion"
 
-#: doctocnet/templates/doctocnet/navbar.html:114
+#: doctocnet/templates/doctocnet/navbar.html:125
 msgid "Messenger"
 msgstr "Messenger"
 
-#: doctocnet/templates/doctocnet/navbar.html:117
+#: doctocnet/templates/doctocnet/navbar.html:128
 msgid "Get"
 msgstr "Obtenir"
 
-#: doctocnet/templates/doctocnet/navbar.html:118
+#: doctocnet/templates/doctocnet/navbar.html:129
 msgid "Why"
 msgstr "Pourquoi"
 
-#: doctocnet/templates/doctocnet/navbar.html:119
+#: doctocnet/templates/doctocnet/navbar.html:130
 msgid "Help"
 msgstr "Aide"
 
-#: doctocnet/templates/doctocnet/navbar.html:120
+#: doctocnet/templates/doctocnet/navbar.html:131
 msgid "Terms"
 msgstr "Conditions"
 

@@ -49,8 +49,12 @@ class Command(BaseCommand):
             return
         su_lst = []
         for hcp in hcp_qs:
-            su = hcp.human.socialuser.last()
-            if not su.active.filter(active=False):
+            try:
+                su = hcp.human.socialuser.last()
+                if not su.active.filter(active=False):
+                    su_lst.append(su)
+            except AttributeError:
+                su = hcp.entity.socialuser_set.last()
                 su_lst.append(su)
         su_lst = list(filter(None, su_lst))
         if not friend:

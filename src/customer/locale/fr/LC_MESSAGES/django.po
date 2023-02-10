@@ -84,7 +84,7 @@ msgstr "Région"
 
 #: customer/models.py:88 customer/models.py:89
 msgid "Language"
-msgstr ""
+msgstr "Langage"
 
 #: customer/templates/customer/update_customer.html:6
 msgid "Add your billing data"

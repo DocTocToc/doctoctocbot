@@ -22,30 +22,33 @@ class TootProcessor:
 
     def triage(self):
         if not self.has_reblog_hashtag():
-            return (
-                f"{self.toot} has no reblog hashtag ({self.hashtags})"
-            )
+            msg = f"{self.toot} has no reblog hashtag ({self.hashtags})"
+            logger.info(msg)
+            return msg
+
         if Reblog.objects.filter(
             community=self.community,
             hashtag__in=self.hashtags,
             require_follower=True
         ).exists() and not self.is_follower():
-            return (
-                f"No reblog: {self.toot.user} does not follow {self.bot}"
-            )
+            msg = f"No reblog: {self.toot.user} does not follow {self.bot}"
+            logger.info(msg)
+            return msg
 
         if Reblog.objects.filter(
             community=self.community,
             hashtag__in=self.hashtags,
             require_following=True
         ).exists() and not self.is_friend():
-            return (
-                f"No reblog: {self.toot.user} is not a friend of {self.bot}"
-            )
+            msg = f"No reblog: {self.toot.user} is not a friend of {self.bot}"
+            logger.info(msg)
+            return msg
         return self.reblog()
 
     def reblog(self):
-        self.api.status_reblog(self.toot.db_id, "private")
+        logger.info(f'Reblogging toot {self.toot.db_id}')
+        res = self.api.status_reblog(self.toot.db_id, "private")
+        logger.info(f'Reblogged: {res}')
 
     def is_follower(self):
         record_followers(self.bot, self.community.mastodon_access)

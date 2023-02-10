@@ -1,11 +1,15 @@
 {% load static %}
 {% load landing_tags %}
 {% load landing_links %}
+<div class="alert alert-info" role="alert">
+  Liste des réalisations passées, récurrentes ou à venir.
+</div>
 <div class="container-fluid bg-2 text-left">
   <h4>
   Moteur de recherche
-  <span class="badge badge-info">24h</span>
-  <span class="badge badge-pill badge-primary">1440€</span>
+  <div class="progress w-25 my-2">
+  <div class="progress-bar bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+  </div>
   </h4>
   <details>
   <summary>
@@ -24,9 +28,27 @@
 </div>
 <div class="container-fluid bg-1 text-left">
   <h4>
+  Télé-expertise
+  <div class="progress w-25 my-2">
+  <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+  </div>
+  </h4>
+  <details>
+  <summary>
+  <b>En option, transformer une réponse en télé-expertise officielle sans gêner l'entraide bénévole.</b>
+  </summary>
+  <p>L'entraide désintéressée et confraternelle est au coeur des échanges {% hashtag_lst_and %}.
+  Si le professionnel qui a posé la question et le professionnel qui a répondu bénévolement ont tous deux coché
+  l'option télé-expertise, le bot leur proposera de transformer leur échange informel
+  en télé-expertise officielle sécurisée et privée. Pour ne pas nuire à l'entraide collective, la possibilité
+  d'une TLE ne sera offerte qu'après une réponse classique publique et anonyme. La TLE pourra compléter
+  l'entraide communautaire et nos riches discussions cliniques collectives mais elle ne doit pas les supplanter.
+  </p>
+  </details>
+</div>
+<div class="container-fluid bg-2 text-left">
+  <h4>
   Question anonyme
-    <span class="badge badge-info">16h</span>
-    <span class="badge badge-pill badge-primary">800€</span>
   </h4>
   <details>
   <summary>
@@ -50,11 +72,9 @@
    </details>
 </div>
 
-<div class="container-fluid bg-2 text-left">
+<div class="container-fluid bg-1 text-left">
   <h4>
   Relayer les comptes protégés
-  <span class="badge badge-info">7h</span>
-  <span class="badge badge-pill badge-primary">420€</span>
   </h4>
   <details>
   <summary>
@@ -71,15 +91,14 @@
   </details>
 </div>
 
-<div class="container-fluid bg-1 text-left">
+<div class="container-fluid bg-2 text-left">
   <h4>
   Booster une question
-  <span class="badge badge-info">5h</span>
-  <span class="badge badge-pill badge-primary">300€</span></h4>
+  </h4>
   <details>
   <summary>
   <b>Démocratiser l'accès à l'entraide: que vous ayez 20 ou 20k followers,
-  le bot rediffusera votre question jusqu'à ce que vous obteniez 1 réponse.</b>
+  le bot rediffusera votre question jusqu'à ce que vous obteniez une réponse.</b>
   </summary>
   <p>
   Les questions n'ayant obtenu aucune réponse ou un faible nombre de réponses
@@ -91,11 +110,9 @@
   </details>
 </div>
 
-<div class="container-fluid bg-2 text-left"> 
+<div class="container-fluid bg-1 text-left">
   <h4>
   Recherche scientifique & thèse
-  <span class="badge badge-info">20h</span>
-  <span class="badge badge-pill badge-primary">1200€</span>
   </h4>
   <details>
   <summary>
@@ -123,10 +140,9 @@
   </p>
   </details>
 </div>
-<div class="container-fluid bg-1 text-left">
+<div class="container-fluid bg-2 text-left">
   <h4>
   Hébergement bot {% bot_link_text %} & site {% site_link_text %}
-  <span class="badge badge-pill badge-primary">600€</span>
   </h4>
   <details>
   <summary>
@@ -144,18 +160,14 @@
   Les applications web du site s'adaptent à chaque visiteur
   connecté, calculent des données et affichent des pages personnalisées.
   Nos serveurs sont gourmands en mémoire et en bande passante.
-  Le coût total actuel est d'environ 50€ par mois. Le coût exact sera publié chaque
-  mois.
-  Il pourrait augmenter en fonction de la popularité du hashtag et du site.
+  Le coût total actuel est d'environ 100€ par mois.
   Merci de nous aider à payer les factures!
   </p>
   </details>
 </div>
-<div class="container-fluid bg-2 text-left">
+<div class="container-fluid bg-1 text-left">
   <h4>
   Suivi d'une question {% hashtag_lst_or %}
-  <span class="badge badge-info">4h</span>
-  <span class="badge badge-pill badge-primary">240€</span>
   </h4>
   <details>
   <summary>
@@ -178,11 +190,9 @@
   </p>
   </details>
 </div>
-<div class="container-fluid bg-1 text-left">
+<div class="container-fluid bg-2 text-left">
   <h4>
   Maintenance du code et des serveurs
-  <span class="badge badge-info">52h</span>
-  <span class="badge badge-pill badge-primary">3120€</span>
   </h4>
   <details>
   <summary>
@@ -208,10 +218,8 @@
 <div class="container-fluid bg-1 text-left" id="project-moderation">
   <h4>
   Modération collective
-  <span class="badge badge-info">40h</span>
-  <span class="badge badge-pill badge-primary">2400€</span>
   <div class="progress w-25 my-2">
-  <div class="progress-bar bg-info" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
+  <div class="progress-bar bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
   </div>
   </h4>
   <details>

@@ -64,7 +64,7 @@ class TootDb:
             return MastodonUser.objects.create(acct=acct)
 
     def get_hashtag(self):
-        tags = [tag["name"] for tag in self.status["tags"]]
+        tags = [tag["name"].lower() for tag in self.status["tags"]]
         hashtag = []
         for tag in tags:
             try:

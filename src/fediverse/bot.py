@@ -47,7 +47,7 @@ class TootProcessor:
 
     def reblog(self):
         logger.info(f'Reblogging toot {self.toot.db_id}')
-        res = self.api.status_reblog(self.toot.db_id, "private")
+        res = self.api.status_reblog(self.toot.db_id, visibility="private")
         logger.info(f'Reblogged: {res}')
 
     def is_follower(self):

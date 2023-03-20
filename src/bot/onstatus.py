@@ -39,7 +39,6 @@ def get_status_communities(statusid, community):
             return status
 
 def triage(json: dict, community: str):
-    # get community or communities managing the hashtags
     try:
         community = Community.objects.get(name=community)
     except Community.DoesNotExist:
@@ -51,8 +50,14 @@ def triage(json: dict, community: str):
         logger.warn(f'We could not get status {json["id"]}.')
         return
     sjson = status._json
-    logger.debug(f'extended status: {sjson["user"]["screen_name"]} {sjson["full_text"]}')
-
+    logger.info(
+        f'triage:\n'
+        f'id: {sjson["id"]}\n'
+        f'username: {sjson["user"]}\n'
+        f'screen name: {sjson["screen_name"]}\n'
+        f'text: {sjson["full_text"]}\n'
+        f'community: {community}'
+    )
     dbstatus = Addstatus(sjson)
     tweetdj, created = dbstatus.addtweetdj()
     # handle non hydrated Tweetdj objects with null json field
@@ -60,12 +65,19 @@ def triage(json: dict, community: str):
         dbstatus.addtweetdj(update=True)
     dbstatus.add_image()
     hrh = has_retweet_hashtag(sjson)
-    logger.debug(f"2° has_retweet_hashtag(sjson): {bool(hrh)}")
-    logger.debug(f"4° not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}")
-
+    logger.info(
+        f'status {sjson["id"]} has_retweet_hashtag(sjson): {bool(hrh)}'
+    )
+    logger.info(
+        f'status {sjson["id"]} '
+        f"not ('retweeted_status' in sjson): {not ('retweeted_status' in sjson)}"
+    )
     userid = sjson['user']['id']
     if hrh:
-        create_tree_except_rt(status.id)
+        try:
+            create_tree_except_rt(status.id)
+        except:
+            logger.error(f'error creating tree for status {status.id}')
         community_retweet(status.id, userid, hrh)
 
 def triage_status(status_id, community):

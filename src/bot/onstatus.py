@@ -14,6 +14,7 @@ from conversation.models import Hashtag
 from community.models import Community
 from bot.tasks import handle_triage_status
 from community.models import Community, Retweet
+from bot.lib.status import status_json_log
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +53,7 @@ def triage(json: dict, community: str):
     sjson = status._json
     logger.info(
         f'triage:\n'
-        f'id: {sjson["id"]}\n'
-        f'screen name: {sjson["user"]["screen_name"]}\n'
-        f'text: {sjson["text"]}\n'
+        f'id: {status_json_log(sjson)}'
         f'community: {community}'
     )
     dbstatus = Addstatus(sjson)

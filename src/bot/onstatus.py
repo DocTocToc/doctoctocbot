@@ -53,9 +53,8 @@ def triage(json: dict, community: str):
     logger.info(
         f'triage:\n'
         f'id: {sjson["id"]}\n'
-        f'username: {sjson["user"]}\n'
-        f'screen name: {sjson["screen_name"]}\n'
-        f'text: {sjson["full_text"]}\n'
+        f'screen name: {sjson["user"]["screen_name"]}\n'
+        f'text: {sjson["text"]}\n'
         f'community: {community}'
     )
     dbstatus = Addstatus(sjson)

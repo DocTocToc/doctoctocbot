@@ -60,7 +60,7 @@ def statuses_lookup(statusid):
 def addstatus(statusid, bot_username=None):
     API = get_api(username=bot_username)
     try:
-        status = API.get_status(statusid, tweet_mode='extended')
+        status = API.get_status(statusid, include_entities=True)
     except AttributeError:
         return
     except tweepy.error.TweepError as e:

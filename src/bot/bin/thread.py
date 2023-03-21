@@ -52,7 +52,7 @@ def retweetroot(statusid: int, bot_screen_name: str):
             current_mi.parentid,
             bot_username=bot_screen_name
         )
-        if parent_mi is None:
+        if not parent_mi:
             break
         if not hasquestionmark:
             hasquestionmark = isquestion(parent_mi.json)
@@ -125,18 +125,18 @@ def add_root_to_tree(statusid):
 def getorcreate(statusid: int, bot_username=None) -> Tweetdj:
     # Is status in database? If not, add it.
     if statusid is None:
-        return None
+        return
     try:
-        return Tweetdj.objects.get(pk=statusid)
+        return Tweetdj.objects.get(statusid=statusid)
     except Tweetdj.DoesNotExist:
         addstatus(
             statusid,
             bot_username=bot_username
         )
         try:
-            return Tweetdj.objects.get(pk=statusid)
+            return Tweetdj.objects.get(statusid=statusid)
         except Tweetdj.DoesNotExist:
-            return None
+            return
 
 def has_questionmark(tweet: tweet_parser.Tweet) -> bool:
     return '?' in tweet.bodytext

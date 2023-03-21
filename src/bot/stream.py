@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class StdOutListener(StreamListener):
 
     def on_status(self, status):
-        logger.info("%s", status_json_log(status._json))
+        logger.info(f'on_status: {status_json_log(status._json)}')
         handle_on_status.apply_async(
             kwargs={"json": status._json, "community": self.community},
             ignore_result=True

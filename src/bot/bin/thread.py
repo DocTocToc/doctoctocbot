@@ -48,7 +48,10 @@ def retweetroot(statusid: int, bot_screen_name: str):
     current_mi: Tweetdj = status_mi
 
     while True:    
-        parent_mi = getorcreate(current_mi.parentid)
+        parent_mi = getorcreate(
+            current_mi.parentid,
+            bot_username=bot_screen_name
+        )
         if parent_mi is None:
             break
         if not hasquestionmark:
@@ -72,7 +75,11 @@ def retweetroot(statusid: int, bot_screen_name: str):
                     )
                     break
             else:
-                handle_question.apply_async(args=(statusid,bot_screen_name,), countdown=30, expires=900)
+                handle_question.apply_async(
+                    args=(statusid,bot_screen_name,),
+                    countdown=30,
+                    expires=900
+                )
                 break
         current_mi = parent_mi
     return

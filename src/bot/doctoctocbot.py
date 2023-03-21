@@ -113,7 +113,7 @@ def tree_hrh(tweetdj, hrh=None, bot_username=None) -> HasRetweetHashtag:
     parent: Tweetdj = getorcreate(tweetdj.parentid, bot_username)
     return tree_hrh(parent, hrh=hrh, bot_username=bot_username)
 
-def isreply( status ):
+def isreply(status):
     "is status in reply to screen name or status or user?"
     logger.debug("in_reply_to_screen_name? %s" , status['in_reply_to_screen_name'])
     logger.debug("in_reply_to_status_id_str? %s" , status['in_reply_to_status_id_str'])
@@ -128,7 +128,7 @@ def isreply( status ):
     logger.debug(log)
     return isreply
 
-def isquestion ( status ):
+def isquestion(status):
     "Does this status text contain a question mark?"
     if 'extended_tweet' in status:
         status = status['extended_tweet']
@@ -179,12 +179,12 @@ def isrt(status):
     logger.debug("is this status a retweet? %s" , isrt)
     return isrt
 
-def isquote( status ):
+def isquote(status):
     " is this a quoted status?"
     logger.debug("is this status a quoted status? %s" , status['is_quote_status'])
     return status['is_quote_status']
 
-def isknown( status ):
+def isknown(status):
     user_id = status['user']['id']
     try:
         social_user = SocialUser.objects.get(user_id=user_id)
@@ -194,7 +194,7 @@ def isknown( status ):
     logger.info(f"user {user_id} isknown: {isknown}")
     return isknown
 
-def okbadlist( status ):
+def okbadlist(status):
     "filter bad words"
     if 'extended_tweet' in status:
         status = status['extended_tweet']

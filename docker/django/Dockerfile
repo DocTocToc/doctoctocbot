@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-pygraphviz \
     libgraphviz-dev \
     build-essential \
+    python3-dev \
     libgl1-mesa-glx \
     libgtk-3-dev \
     libdbus-glib-1-2 \
@@ -38,7 +39,7 @@ ENV LC_ALL fr_FR.UTF-8
 
 ADD ./requirements /code/requirements
 RUN pip install pip --upgrade
-RUN pip install Cython --install-option="--no-cython-compile"
+RUN pip install Cython
 RUN pip install -r /code/requirements/common.txt
 
 RUN mkdir /var/log/celery && touch /var/log/celery/celery.log

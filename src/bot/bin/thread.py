@@ -32,7 +32,6 @@ def retweetroot(statusid: int, bot_screen_name: str):
     Retweet only if all nodes leading to root have the same author and if they
     contain a question mark
     """
-    logger.debug(type(statusid))
     status_mi: Tweetdj = getorcreate(statusid, bot_username=bot_screen_name)
     logger.debug(status_mi.json['full_text'])
     logger.debug(status_mi.json['in_reply_to_status_id'])
@@ -52,6 +51,7 @@ def retweetroot(statusid: int, bot_screen_name: str):
             current_mi.parentid,
             bot_username=bot_screen_name
         )
+        logger.info(f'{parent_mi=}')
         if not parent_mi:
             break
         if not hasquestionmark:

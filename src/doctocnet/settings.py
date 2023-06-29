@@ -385,7 +385,7 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/user/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.twitter.TwitterOAuth2',
     #'social_core.backends.github.GithubOAuth2',
     #'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -581,8 +581,8 @@ TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
 SOCIAL_AUTH_TWITTER_SCREEN_NAME = config('BOT_SCREEN_NAME')
-SOCIAL_AUTH_TWITTER_KEY = config('TWITTER_CONSUMER_KEY')
-SOCIAL_AUTH_TWITTER_SECRET = config('TWITTER_CONSUMER_SECRET')
+SOCIAL_AUTH_TWITTER_OAUTH2_KEY = config('SOCIAL_AUTH_TWITTER_OAUTH2_KEY')
+SOCIAL_AUTH_TWITTER_OAUTH2_SECRET = config('SOCIAL_AUTH_TWITTER_OAUTH2_SECRET')
 
 # gpgcontact
 GNUPGHOME = config('GNUPGHOME')

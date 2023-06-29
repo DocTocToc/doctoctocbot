@@ -385,7 +385,7 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/user/'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.twitter.TwitterOAuth2',
+    'social_core.backends.twitter_oauth2.TwitterOAuth2',
     #'social_core.backends.github.GithubOAuth2',
     #'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',

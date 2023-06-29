@@ -16,7 +16,7 @@
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
       <div class="card-body">
         {% community_text "sign_in" %}
-        {% if "twitter" in backends.not_associated %}
+        {% if "twitter-oauth2" in backends.not_associated %}
         <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}" class="card-link btn btn-outline-primary">
         <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
         </a>

@@ -1,6 +1,6 @@
 {% load static %}
 {% load landing_tags %}
-{% if 'twitter' in backends.not_associated %}
+{% if 'twitter-oauth2' in backends.not_associated %}
 <div class="container-fluid">
   <p><strong>Vous avez un compte Twitter? C'est la méthode la plus simple et la plus rapide pour créer votre compte!
     Merci de vous authentifier en cliquant ici: ▶️<a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">

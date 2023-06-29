@@ -29,7 +29,7 @@
 In order to use our community bot service, you need to authorize our {{ app_name }} Twitter app.
 </p>
 
-{% if 'twitter' in backends.not_associated %}
+{% if 'twitter-oauth2' in backends.not_associated %}
 <div class="container-fluid">
   <p><strong>First, please connect with the Twitter account that you want to turn into a bot: ▶️<a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">
       <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">

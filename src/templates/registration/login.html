@@ -14,7 +14,7 @@
   {% endif %}
 {% endif %}
 
-{% if "twitter" in backends.not_associated %}
+{% if "twitter-oauth2" in backends.not_associated %}
 <div class="card">
   <div class="card-header">
     {% trans 'Twitter' %}
@@ -28,11 +28,10 @@ After you click the button, you will land on a twitter.com page.
 There, you will be asked to enter your Twitter credentials.
 Then, you will be redirected here.
 We CANNOT know your Twitter password.
-Do you think @jack would let us have it?
 {% endblocktranslate %}
       </p>
     <a href="{% url 'social:begin' 'twitter' %}?next={{ request.GET.next|urlencode }}">
-    <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
+    <img border="0" alt="{% trans 'Sign in with Twitter' %}" src="{% static 'doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png' %}" width="158" height="28">
     </a>
   </div>
 </div>

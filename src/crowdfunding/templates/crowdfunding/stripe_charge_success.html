@@ -4,7 +4,7 @@
 <h2>La transaction est réussie!</h2>
 <p>Merci d'avoir investi {{ request.session.amount }}€ dans votre réseau social professionnel libre et indépendant.</p>
 
-{% if 'twitter' in backends.not_associated and not user.is_authenticated %}
+{% if 'twitter-oauth2' in backends.not_associated and not user.is_authenticated %}
 <p>N'oubliez pas de valider votre inscription au site en cliquant le lien dans le mail que nous venons de vous envoyer.
 C'est indispensable pour éditer votre facture. Merci.</p>
 {% endif %}

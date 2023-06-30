@@ -56,7 +56,7 @@
         Only verified Twitter users are allowed to use our secure messenger.
         {% endblocktrans %}
         </p>
-        <a href="{% url 'social:begin' 'twitter' %}?next={% url 'cas_login'|urlencode %}">
+        <a href="{% url 'social:begin' 'twitter-oauth2' %}?next={% url 'cas_login'|urlencode %}">
         <img class="border border-primary rounded p-0 m-0" alt="{% trans 'Sign in with Twitter' %}" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}">
         </a>
       {% endif %}

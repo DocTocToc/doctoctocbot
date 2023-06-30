@@ -9,7 +9,7 @@
   {% if twitter_login %}
     <p>Connected as <a href="https://twitter.com/{{ twitter_login.extra_data.access_token.screen_name }}/" target="_blank">@{{ twitter_login.extra_data.access_token.screen_name }}</a></p>
     {% if can_disconnect %}
-      <form method="post" action="{% url 'social:disconnect' 'twitter' %}">
+      <form method="post" action="{% url 'social:disconnect' 'twitter-oauth2' %}">
         {% csrf_token %}
         <button type="submit">Disconnect from Twitter</button>
       </form>
@@ -18,7 +18,7 @@
       <p style="color: red">You must <a href="{% url 'users:password' %}">define a password</a> for your account before disconnecting from Twitter.</p>
     {% endif %}
   {% else %}
-    <a href="{% url 'social:begin' 'twitter' %}">Connect to Twitter</a>
+    <a href="{% url 'social:begin' 'twitter-oauth2' %}">Connect to Twitter</a>
   {% endif %}
 <!--
   <h3>GitHub</h3>

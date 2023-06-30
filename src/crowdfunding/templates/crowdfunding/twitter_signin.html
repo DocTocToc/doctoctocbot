@@ -3,7 +3,7 @@
 {% if 'twitter-oauth2' in backends.not_associated %}
 <div class="container-fluid">
   <p><strong>Vous avez un compte Twitter? C'est la méthode la plus simple et la plus rapide pour créer votre compte!
-    Merci de vous authentifier en cliquant ici: ▶️<a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">
+    Merci de vous authentifier en cliquant ici: ▶️<a href="{% url 'social:begin' 'twitter-oauth2' %}?next={% url 'crowdfunding:start' %}">
       <img border="0" alt="Sign in with Twitter" src="{% static "doctocnet/sign_in_with_twitter_button/sign-in-with-twitter-gray.png" %}" width="158" height="28">
     </a>◀️</strong><p>
   {% if not user.is_authenticated %}
@@ -17,7 +17,7 @@
   <p>Si vous n'êtes pas authentifié·e, veuillez simplement choisir un nom d'utilisateur et indiquer votre email.
   Un compte sera créé automatiquement pour que vous puissiez obtenir votre facture dans votre espace utilisateur.
   Nous vous enverrons un mail de confirmation.
-  <p><small>⚠️Les noms d'utilisateurs Twitter connus sont réservés à l'<a href="{% url 'social:begin' 'twitter' %}?next={% url 'crowdfunding:start' %}">authentification via Twitter</a>.</small></p>
+  <p><small>⚠️Les noms d'utilisateurs Twitter connus sont réservés à l'<a href="{% url 'social:begin' 'twitter-oauth2' %}?next={% url 'crowdfunding:start' %}">authentification via Twitter</a>.</small></p>
   {% endif %}
 </div>
 {% endif %}

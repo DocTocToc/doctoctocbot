@@ -24,7 +24,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8081:80"
+      - "${PORT_GUNICORN_1}:80"
   django_2:
     restart: always
     env_file:
@@ -44,7 +44,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8082:80"
+      - "${PORT_GUNICORN_2}:80"
   django_3:
     restart: always
     env_file:
@@ -64,7 +64,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8083:80"
+      - "${PORT_GUNICORN_3}:80"
   django_4:
     restart: always
     env_file:
@@ -84,7 +84,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8084:80"
+      - "${PORT_GUNICORN_4}:80"
   django_5:
     restart: always
     env_file:
@@ -124,7 +124,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8086:80"
+      - "${PORT_GUNICORN_6}:80"
   django_7:
     restart: always
     env_file:
@@ -144,7 +144,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8087:80"
+      - "${PORT_GUNICORN_7}:80"
   django_8:
     restart: always
     env_file:
@@ -164,7 +164,7 @@ services:
       - redis
     working_dir: /code/src
     ports:
-      - "8088:80"
+      - "${PORT_GUNICORN_8}:80"
   mastodon_stream_1:
     image: dtn_prod
     restart: on-failure:3

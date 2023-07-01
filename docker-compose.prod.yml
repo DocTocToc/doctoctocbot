@@ -175,30 +175,6 @@ services:
     image: dtn_prod
   flower:
     image: dtn_prod
-  twitter_stream_1:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_2:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_3:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_4:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_5:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_6:
-    image: dtn_prod
-    restart: on-failure:3
-  twitter_stream_7:
-    image: dtn_prod
-    restart: on-failure:3
-  tree_search:
-    image: dtn_prod
-    restart: on-failure:3
   mastodon_stream_1:
     image: dtn_prod
     restart: on-failure:3

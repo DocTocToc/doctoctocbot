@@ -165,16 +165,6 @@ services:
     working_dir: /code/src
     ports:
       - "8088:80"
-  celery_retweet_worker:
-    image: dtn_prod
-  celery_tree_worker:
-    image: dtn_prod
-  celery_celery_worker:
-    image: dtn_prod
-  celery-beat:
-    image: dtn_prod
-  flower:
-    image: dtn_prod
   mastodon_stream_1:
     image: dtn_prod
     restart: on-failure:3

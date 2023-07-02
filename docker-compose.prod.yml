@@ -45,6 +45,7 @@ services:
     working_dir: /code/src
     ports:
       - "${PORT_GUNICORN_2}:80"
+    profiles: ["full"]
   django_3:
     restart: always
     env_file:
@@ -65,6 +66,7 @@ services:
     working_dir: /code/src
     ports:
       - "${PORT_GUNICORN_3}:80"
+    profiles: ["full"]
   django_4:
     restart: always
     env_file:
@@ -85,6 +87,7 @@ services:
     working_dir: /code/src
     ports:
       - "${PORT_GUNICORN_4}:80"
+    profiles: ["full"]
   django_5:
     restart: always
     env_file:
@@ -105,6 +108,7 @@ services:
     working_dir: /code/src
     ports:
       - "8085:80"
+    profiles: ["full"]
   django_6:
     restart: always
     env_file:
@@ -125,6 +129,7 @@ services:
     working_dir: /code/src
     ports:
       - "${PORT_GUNICORN_6}:80"
+    profiles: ["full"]
   django_7:
     restart: always
     env_file:
@@ -145,6 +150,7 @@ services:
     working_dir: /code/src
     ports:
       - "${PORT_GUNICORN_7}:80"
+    profiles: ["full"]
   mastodon_stream_1:
     image: dtn_prod
     restart: on-failure:3

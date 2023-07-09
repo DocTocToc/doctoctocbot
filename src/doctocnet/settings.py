@@ -390,7 +390,7 @@ AUTHENTICATION_BACKENDS = (
     #'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
-
+"""
 SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -409,6 +409,7 @@ SOCIAL_AUTH_TWITTER_PIPELINE = (
     'social_core.pipeline.user.user_details',
     'users.social_auth.add_email_if_not_exist',
 )
+"""
 MEDIA_ROOT = config('MEDIA_ROOT')
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
@@ -580,9 +581,16 @@ TWITTER_APP_CONSUMER_KEY = config('TWITTER_APP_CONSUMER_KEY')
 TWITTER_APP_CONSUMER_SECRET = config('TWITTER_APP_CONSUMER_SECRET')
 
 # Twitter key (social-auth-app-django)
-SOCIAL_AUTH_TWITTER_SCREEN_NAME = config('BOT_SCREEN_NAME')
+
 SOCIAL_AUTH_TWITTER_OAUTH2_KEY = config('SOCIAL_AUTH_TWITTER_OAUTH2_KEY')
 SOCIAL_AUTH_TWITTER_OAUTH2_SECRET = config('SOCIAL_AUTH_TWITTER_OAUTH2_SECRET')
+SOCIAL_AUTH_TWITTER_OAUTH2_PKCE_CODE_CHALLENGE_METHOD = config(
+    'SOCIAL_AUTH_TWITTER_OAUTH2_PKCE_CODE_CHALLENGE_METHOD',
+    default='s256'
+)
+#SOCIAL_AUTH_TWITTER_KEY = config('SOCIAL_AUTH_TWITTER_KEY')
+#SOCIAL_AUTH_TWITTER_SECRET = config('SOCIAL_AUTH_TWITTER_SECRET')
+
 
 # gpgcontact
 GNUPGHOME = config('GNUPGHOME')

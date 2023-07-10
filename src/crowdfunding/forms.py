@@ -4,8 +4,8 @@ from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-
+from crispy_forms.bootstrap import PrependedText
+from crispy_forms.layout import Submit, Layout, Div, MultiField
 from .models import ProjectInvestment
 from registration.forms import RegistrationFormPasswordlessCaseInsensitiveSocial as RegistrationForm
 
@@ -26,6 +26,9 @@ class CrowdfundingHomeAuthenticatedForm(forms.Form):
         self.helper.label_class = 'col-md-8'
         self.helper.field_class = 'col-md-8'
         self.helper.add_input(Submit('submit', _('Submit')))
+        #self.helper.layout = Layout(
+        #    PrependedText('twitter_username', '@')
+        #)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -69,7 +72,13 @@ class CrowdfundingHomeAuthenticatedForm(forms.Form):
         label=_('Email'),
         required=True
     )
-    
+
+    twitter_username = forms.CharField(
+        label=_('Twitter username'),
+        max_length=15,
+        required=False,
+    )
+
     public = forms.TypedChoiceField(
         label=_('Do you want to appear on the donor list?'),
         coerce=lambda x: x == 'True',
@@ -91,6 +100,14 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
         self.helper.label_class = 'col-md-8'
         self.helper.field_class = 'col-md-8'
         self.helper.add_input(Submit('submit', _('Submit')))
+        self.helper.layout = Layout(
+            'custom_amount',
+            'preset_amount',
+            'username',
+            'email',
+            PrependedText('twitter_username', '@'),
+            'public',
+        )
         
     custom_amount = forms.IntegerField(
         label=_('Custom amount'),
@@ -104,6 +121,12 @@ class CrowdfundingHomeDjangoUserForm(RegistrationForm):
         max_value=1000,
         min_value=1,
         required=False
+    )
+    
+    twitter_username = forms.CharField(
+        label=_('Twitter username'),
+        max_length=15,
+        required=False,
     )
 
     public = forms.TypedChoiceField(

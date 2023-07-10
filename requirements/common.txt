@@ -21,7 +21,8 @@ lxml
 beautifulsoup4==4.7.1
 djangorestframework
 django-filter
-django-crispy-forms== 1.14.0
+crispy-bootstrap4
+django-crispy-forms==2.0
 requests
 django-registration
 django-countries

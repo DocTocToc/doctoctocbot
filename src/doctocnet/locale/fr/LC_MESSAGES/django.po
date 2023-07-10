@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-04 01:59+0100\n"
+"POT-Creation-Date: 2023-07-10 05:06+0200\n"
 "PO-Revision-Date: 2021-04-21 21:09+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -126,37 +126,36 @@ msgstr "Progression"
 msgid "Funders"
 msgstr "Financeurs"
 
-#: doctocnet/templates/doctocnet/navbar.html:79
-msgid "Sign in with Twitter"
-msgstr "Se connecter avec Twitter"
-
-#: doctocnet/templates/doctocnet/navbar.html:110
+#: doctocnet/templates/doctocnet/navbar.html:92
 msgid "Discussion"
 msgstr "Discussion"
 
-#: doctocnet/templates/doctocnet/navbar.html:125
+#: doctocnet/templates/doctocnet/navbar.html:107
 msgid "Messenger"
 msgstr "Messenger"
 
-#: doctocnet/templates/doctocnet/navbar.html:128
+#: doctocnet/templates/doctocnet/navbar.html:110
 msgid "Get"
 msgstr "Obtenir"
 
-#: doctocnet/templates/doctocnet/navbar.html:129
+#: doctocnet/templates/doctocnet/navbar.html:111
 msgid "Why"
 msgstr "Pourquoi"
 
-#: doctocnet/templates/doctocnet/navbar.html:130
+#: doctocnet/templates/doctocnet/navbar.html:112
 msgid "Help"
 msgstr "Aide"
 
-#: doctocnet/templates/doctocnet/navbar.html:131
+#: doctocnet/templates/doctocnet/navbar.html:113
 msgid "Terms"
 msgstr "Conditions"
 
 #: doctocnet/views.py:40 doctocnet/views.py:53
 msgid "Not authorized to access this media."
 msgstr "Vous n'êtes pas autorisé à accéder à ce document."
+
+#~ msgid "Sign in with Twitter"
+#~ msgstr "Se connecter avec Twitter"
 
 #~ msgid "Blog"
 #~ msgstr "Blog"

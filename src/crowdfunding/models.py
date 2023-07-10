@@ -71,6 +71,7 @@ class ProjectInvestment(models.Model):
     )
     name = models.CharField(max_length=191, blank=True)
     email = models.EmailField(blank=True)
+    twitter_username = models.CharField(max_length=15, blank=True)
     pledged = models.DecimalField(max_digits=6, decimal_places=2)
     paid = models.BooleanField(default=False)
     datetime = models.DateTimeField(auto_now_add=True)

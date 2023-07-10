@@ -190,6 +190,7 @@ INSTALLED_APPS = [
     'display',
     'timeline',
     'crispy_forms',
+    'crispy_bootstrap4',
     'crowdfunding',
     'registration',
     'django_countries',

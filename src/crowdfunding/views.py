@@ -170,6 +170,10 @@ class InvestViewDjango(BaseRegistrationView):
         self.request.session['public'] = public
         pi.public = public
         
+        twitter_username = form.cleaned_data.get('twitter_username')
+        self.request.session['twitter_username'] = twitter_username
+        pi.twitter_username = twitter_username
+        
         User = get_user_model()
         
         try: 

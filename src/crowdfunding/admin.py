@@ -41,6 +41,7 @@ class ProjectInvestmentAdmin(admin.ModelAdmin):
         'socialuser_tag',
         'name',
         'email',
+        'twitter_username',
         'pledged',
         'paid',
         'datetime',

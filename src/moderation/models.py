@@ -199,7 +199,10 @@ class MastodonUser(models.Model):
         max_length=284,
         unique=True
     )
-    local_id = models.BigIntegerField(null=True)
+    local_id = models.BigIntegerField(
+        null=True,
+        unique=True,
+    )
     entity = models.ForeignKey(
         'Entity',
         on_delete=models.PROTECT,

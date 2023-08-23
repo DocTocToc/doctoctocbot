@@ -56,6 +56,10 @@ class TootDb:
 
     def get_user(self):
         acct=self.status["account"]["acct"]
+        if not '@' in acct:
+            domain = settings.MASTODON_DOMAIN
+            if domain:
+                acct = f'{acct}@{domain}'
         try:
             return MastodonUser.objects.get(
                 acct=acct

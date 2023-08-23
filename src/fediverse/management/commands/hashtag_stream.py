@@ -4,7 +4,8 @@ from django.core.management.base import BaseCommand, CommandError
 from community.models import Community, Reblog
 from fediverse.api import get_mastodon_api
 from fediverse.statusdb import TootDb
-from fediverse.tasks import handle_triage_toot
+from fediverse.tasks import handle_triage_toot, handle_warn_toot
+from fediverse.utils import warn
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ class HashtagListener(StreamListener):
         tdb = TootDb(status)
         toot = tdb.add()
         logger.debug(toot)
+        warn(toot.pk, self.community)
         handle_triage_toot.apply_async(
             args=(toot.pk, self.community,)
         )

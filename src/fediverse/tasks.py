@@ -1,20 +1,18 @@
 import logging
 from celery import shared_task
 from community.models import Community
-from fediverse.bot import TootProcessor
 from fediverse.social import record_friends, record_followers
+from fediverse.utils import triage, warn
 
 logger = logging.getLogger(__name__)
 
 @shared_task
+def handle_warn_toot(pk: int, community: str):
+    warn(pk, community)
+
+@shared_task
 def handle_triage_toot(pk: int, community: str):
-    try:
-        community = Community.objects.get(name=community)
-    except Community.DoesNotExist:
-        return
-    tp=TootProcessor(pk, community)
-    res = tp.triage()
-    logger.debug(res)
+    triage(pk, community)
 
 @shared_task
 def handle_mastodon_all_communities_friends():

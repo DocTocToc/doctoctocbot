@@ -121,6 +121,7 @@ class CommunityAdmin(admin.ModelAdmin):
         'blog',
         'members_friends_cache',
         'twitter_creator',
+        'admins',
     )
     readonly_fields = (
         'created',

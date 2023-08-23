@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 def webfinger_url(acct):
     try:
         username, host = acct.split('@')

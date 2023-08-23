@@ -228,6 +228,11 @@ class Community(models.Model):
         null=True,
         blank=True,
     )
+    admins = models.ManyToManyField(
+        'moderation.Entity',
+        related_name='admin_of_communities',
+        blank=True,
+    )
 
     objects = CommunityManager()
 

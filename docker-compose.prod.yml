@@ -172,3 +172,12 @@ services:
   mastodon_stream_7:
     image: dtn_prod
     restart: on-failure:3
+  celery_worker:
+    image: dtn_dev
+    profiles: ["celery"]
+  celery-beat:
+    image: dtn_dev
+    profiles: ["celery"]
+  flower:
+    image: dtn_dev
+    profiles: ["celery"]

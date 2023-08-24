@@ -436,12 +436,12 @@ CELERY_TASK_TIME_LIMIT = config(
 )
 CELERY_LOG_FILE = config('CELERY_LOG_FILE')
 
-CELERY_TASK_ROUTES = {
-    'bot.tasks.handle_on_status': {'queue': 'retweet'},
-    'moderation.tasks.handle_twitter_followers': {'queue': 'retweet'},
-    'moderation.tasks.handle_twitter_friends': {'queue': 'retweet'},
-    'autotweet.tasks.handle_get_all_replies': {'queue': 'tree'},
-}
+#CELERY_TASK_ROUTES = {
+#    'bot.tasks.handle_on_status': {'queue': 'retweet'},
+#    'moderation.tasks.handle_twitter_followers': {'queue': 'retweet'},
+#    'moderation.tasks.handle_twitter_friends': {'queue': 'retweet'},
+#    'autotweet.tasks.handle_get_all_replies': {'queue': 'tree'},
+#}
 
 ONCE = {
   'backend': 'celery_once.backends.Redis',

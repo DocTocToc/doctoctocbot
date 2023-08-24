@@ -124,3 +124,55 @@ services:
       - redis
       - database
     working_dir: /code/src
+  celery_worker:
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "celery --app=${CELERY_APP} worker --hostname=%h --concurrency=${CELERY_CONCURRENCY} -n %n --loglevel=${CELERYD_LOG_LEVEL} --logfile=${CELERYD_LOG_FILE}"
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+    working_dir: /code/src
+  celery-beat:
+    restart: always
+    env_file:
+      - .env
+    command: celery -A ${PROJECT} beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - database
+      - redis
+      - celery_worker
+    working_dir: /code/src
+  flower:
+    restart: always
+    env_file:
+      - .env
+    command: celery -A ${PROJECT} flower --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}
+    environment:
+      - CELERY_BROKER_URL=redis://${REDIS_HOST}:${REDIS_PORT}/0
+      - FLOWER_PORT=8888
+    ports:
+      - 8888:8888
+    volumes:
+      - ./src:/code/src
+      - ${STATIC_ROOT}:${STATIC_ROOT}
+      - ${MEDIA_ROOT}:${MEDIA_ROOT}
+      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
+      - ${celery_base_dir}:${celery_base_dir}
+      - ${DJANGO_LOG_DIR}:${DJANGO_LOG_DIR}
+    depends_on:
+      - redis
+    working_dir: /code/src

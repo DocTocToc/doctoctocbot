@@ -14,7 +14,7 @@ https://github.com/python-social-auth/social-core/archive/master.tar.gz
 social-auth-app-django
 git+https://github.com/DocTocToc/cleanerversion.git@django32 #update
 pillow
-Celery==5.2.7
+Celery
 python-decouple
 dj-database-url
 lxml

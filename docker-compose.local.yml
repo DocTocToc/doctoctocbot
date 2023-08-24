@@ -93,7 +93,7 @@ services:
   celery_tree_worker:
     image: dtn_dev
     profiles: ["celery"]
-  celery_celery_worker:
+  celery_worker:
     image: dtn_dev
     profiles: ["celery"]
   celery-beat:

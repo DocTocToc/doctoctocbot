@@ -43,3 +43,6 @@ def create_celery_logger_handler(logger, propagate):
     logger.addHandler(celery_handler)
     logger.logLevel = settings.LOG_LEVEL
     logger.propagate = propagate
+
+if __name__ == '__main__':
+    app.start()

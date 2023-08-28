@@ -173,11 +173,11 @@ services:
     image: dtn_prod
     restart: on-failure:3
   celery_worker:
-    image: dtn_dev
+    image: dtn_prod
     profiles: ["celery"]
   celery-beat:
-    image: dtn_dev
+    image: dtn_prod
     profiles: ["celery"]
   flower:
-    image: dtn_dev
+    image: dtn_prod
     profiles: ["celery"]

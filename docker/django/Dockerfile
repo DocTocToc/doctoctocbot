@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libgraphviz-dev \
     build-essential \
     python3-dev \
+    libpq-dev \
     libgl1-mesa-glx \
     libgtk-3-dev \
     libdbus-glib-1-2 \

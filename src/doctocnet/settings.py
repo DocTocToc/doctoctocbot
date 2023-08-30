@@ -435,6 +435,7 @@ CELERY_TASK_TIME_LIMIT = config(
     default = 1750,
 )
 CELERY_LOG_FILE = config('CELERY_LOG_FILE')
+worker_pool_restarts=True
 
 #CELERY_TASK_ROUTES = {
 #    'bot.tasks.handle_on_status': {'queue': 'retweet'},

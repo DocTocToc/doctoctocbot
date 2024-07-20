@@ -237,7 +237,7 @@ INSTALLED_APPS = [
     'webpush',
     'network',
     'fontawesomefree',
-#    'silver',
+    'silver',
     'textareacounter',
     'twttr',
     'djangoql',

@@ -30,6 +30,7 @@ django-sendmail-backend
 python-gnupg
 stripe>=2.48.0,<3.0
 matplotlib
+
 numpy
 dry-rest-permissions
 django-celery-beat
@@ -42,7 +43,7 @@ django-markdownify
 django-bootstrap-modal-forms==2.2.0
 pycountry
 simplejson
-git+https://github.com/DocTocToc/silver.git@0850c91abbf894b06e968c1762b4a12aa8528378 #FKA django-silver
+#git+https://github.com/DocTocToc/silver.git@feb40aa86954e8947836818122897babb95cfb9b #FKA django-silver
 celery_once
 python-twitter
 ipaddress
@@ -74,7 +75,6 @@ django-webpush
 fontawesomefree
 humanize
 reportlab==3.6.6
-whatthelang
 django-mptt
 langcodes[data]
 flower

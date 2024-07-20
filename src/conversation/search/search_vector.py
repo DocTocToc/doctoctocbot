@@ -9,7 +9,6 @@ from conversation.tasks import handle_text_search_vector
 from django.contrib.postgres.search import SearchVector
 from django.db.models import Value
 from moderation.models import addsocialuser
-from whatthelang import WhatTheLang
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,6 @@ class TextSearchVector():
     ok_lang = ["en", "fr"]
     all_entities = ["media", "urls", "user_mentions", "symbols", "hashtags"]
     entities = ["media", "urls", "user_mentions", "symbols"]
-    wtl = WhatTheLang()
     try:
         simple_dict = PostgresqlDictionary.objects.get(cfgname="simple")
     except PostgresqlDictionary.DoesNotExist:
@@ -130,14 +128,6 @@ class TextSearchVector():
         except (TypeError, KeyError) as e:
             logger.debug(f'{self.tweetdj}: {e}')
             return
-        if tag in TextSearchVector.ok_lang:
-            return tag
-        try:
-            tag = TextSearchVector.wtl.predict_lang(self.text)
-        except ValueError as e:
-            logger.error(e)
-            tag = None
-        logger.debug(f'\nwtl{tag=}')
         if tag in TextSearchVector.ok_lang:
             return tag
         tag = self.get_lang_socialuser()

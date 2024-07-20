@@ -1,95 +1,14 @@
-{% extends "doctocnet/base.html" %}
-{% load i18n %}
-{% load static %}
-{% load landing_tags %}
-{% load opengraph_tags %}
+<!DOCTYPE html>
+<html lang="fr">
 
-{% block head_meta %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🤖 doctoctoc.net</title>
+</head>
 
-{% block head_css %}
-{{ block.super }}
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/svelte-material-ui@6.0.0-beta.14/bare.min.css"
-/>
-<link
-rel="stylesheet"
-href="https://fonts.googleapis.com/icon?family=Material+Icons"
-/>
-<!-- Roboto -->
-<link
-rel="stylesheet"
-href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"
-/>
-<!-- Roboto Mono -->
-<link
-rel="stylesheet"
-href="https://fonts.googleapis.com/css?family=Roboto+Mono"
-/>
-<link rel='stylesheet' href='{% static "conversation/scroll/build/bundle.css" %}'>
-<link rel='stylesheet' href='{% static "conversation/scroll/build/global.css" %}'>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-<style>
-.panel-title {
-  position: relative;
-}
-.panel-title::after {
-  content: "\f107";
-  top: -2px;
-  right: 0px;
-  position: absolute;
-  font-family: "FontAwesome"
-}
-.panel-title[aria-expanded="true"]::after {
-  content: "\f106";
-}
-.panel-heading-full.panel-heading {
-  padding: 0;
-}
-.panel-heading-full .panel-title {
-  padding: 10px 15px;
-}
-.panel-heading-full .panel-title::after {
-  top: 10px;
-  right: 15px;
-}
-</style>
-{% endblock head_css %}
+<body>
+  <h1>🤖 Le réseau d'entraide doctoctoc.net revient bientôt!</h1>
+</body>
 
-{{ block.super }}
-<!-- opengraph -->
-{% opengraph %}
-
-{% block style %}
-  <style>
-  </style>
-{{ block.super }}  
-{% endblock style %}
-
-{% block head_javascript %}
-{{ block.super }}  
-{% endblock head_javascript %}
-
-{% endblock head_meta %}
-
-{% block title %}{% trans "Home" %}{% endblock title %}
-
-{% block content %}
-
-  <!-- div class="container my-1"-->
-  {% include "landing/funding.html" %}
-  {% if not user.is_authenticated %}
-    {% include "landing/sign_in.html" %}
-  {% endif %}
-    <!--  div class="container"-->
-    <!--  div class="row"-->
-     {% get_current_language as LANGUAGE_CODE %}
-     <!-- outside display cache {% now "jS F Y H:i:s" %} -->
-     <!-- LANGUAGE_CODE: {{ LANGUAGE_CODE }} -->
-     <!-- inside display cache {% now "jS F Y H:i:s" %} -->
-     <!-- TTL: {{ display_cache }} -->
-     <main></main>
-     <script type="text/javascript" src="{% static "conversation/scroll/build/bundle.js" %}"></script>
-
-  <!--/div-->
-{% endblock content %}
+</html>

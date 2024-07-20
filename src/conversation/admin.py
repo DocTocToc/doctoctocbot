@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from rangefilter.filter import DateTimeRangeFilter
+from rangefilter.filters import DateTimeRangeFilterBuilder
 from moderation.models import Category, SocialUser
 import logging
 from multiprocessing import Pool
@@ -211,7 +211,7 @@ class TweetdjAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
         'status_text',
     )
     list_filter = (
-        ('created_at', DateTimeRangeFilter),
+        ('created_at', DateTimeRangeFilterBuilder()),
         'quotedstatus',
         'retweetedstatus',
         'deleted',

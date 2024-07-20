@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from common.international import currencies
 from django.contrib.sites.models import Site
-from silver.models import Invoice
+#from silver.models import Invoice
 
 
 class ProjectManager(models.Manager):

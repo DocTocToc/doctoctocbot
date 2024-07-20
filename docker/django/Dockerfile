@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye AS prod
+FROM python:3.10.14-bookworm AS prod
 
 ENV PYTHONUNBUFFERED 1
 ENV DOCKER_CONTAINER 1
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     cython3 \
     python3-dbg \
     gdb \
-    postgresql-client-13 \
+    postgresql-client \
  && rm -rf /var/lib/apt/lists/*
  
 RUN echo "Europe/Paris" > /etc/timezone && \

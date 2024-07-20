@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.forms import TextInput, Textarea
 from django.db import models
-from rangefilter.filter import DateRangeFilter
+from rangefilter.filters import DateRangeFilterBuilder
 from conversation.models import Tweetdj
 from bot.models import Account
 from moderation.models import (
@@ -856,7 +856,7 @@ class FollowerAdmin(admin.ModelAdmin):
         'count_tag',
     )
     list_filter = (
-        ('created', DateRangeFilter),
+        ('created', DateRangeFilterBuilder()),
     )
     search_fields = (
         'user__user_id',
@@ -953,8 +953,8 @@ class DoNotRetweetAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'current',
-        ('start', DateRangeFilter),
-        ('stop', DateRangeFilter),
+        ('start', DateRangeFilterBuilder()),
+        ('stop', DateRangeFilterBuilder()),
         'action',
     )
 

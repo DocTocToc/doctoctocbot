@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   django_1:
     restart: always
@@ -24,46 +22,6 @@ services:
       - database
       - redis
     working_dir: /code/src
-  django_2:
-    restart: always
-    env_file:
-      - .env
-    image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings2 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
-    volumes:
-      - ./src:/code/src
-      - ${STATIC_ROOT}:${STATIC_ROOT}
-      - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
-      - ${GUNICORN_LOG}:${GUNICORN_LOG}
-      - ${GNUPGHOME}:${GNUPGHOME}
-    ports:
-      - "8082:80"
-    depends_on:
-      - database
-      - redis
-    working_dir: /code/src
-    profiles: ["full"]
-  django_3:
-    restart: always
-    env_file:
-      - .env
-    image: dtn_dev
-    command: bash -c "DJANGO_SETTINGS_MODULE=doctocnet.settings3 gunicorn doctocnet.wsgi:application --workers=${GUNICORN_WORKERS} --log-file=${GUNICORN_LOG}/gunicorn.log --log-level=${GUNICORN_LOG_LEVEL} -b '[::]:80' --worker-tmp-dir /dev/shm --timeout ${GUNICORN_TIMEOUT} --reload"
-    volumes:
-      - ./src:/code/src
-      - ${STATIC_ROOT}:${STATIC_ROOT}
-      - ${MEDIA_ROOT}:${MEDIA_ROOT}
-      - ${BOT_IMAGES_PATH}:${BOT_IMAGES_PATH}
-      - ${GUNICORN_LOG}:${GUNICORN_LOG}
-      - ${GNUPGHOME}:${GNUPGHOME}
-    ports:
-      - "8083:80"
-    depends_on:
-      - database
-      - redis
-    working_dir: /code/src
-    profiles: ["full"]
   celery_retweet_worker:
     image: dtn_dev
     profiles: ["celery"]

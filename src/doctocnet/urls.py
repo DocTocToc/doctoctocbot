@@ -27,7 +27,7 @@ app_name = 'doctocnet'
 urlpatterns = [
     re_path(r'^media/(?P<path>.*)', media_access, name='media'),
     path('admin/', admin.site.urls),
-    path('silver/', include('silver.urls')),
+    #path('silver/', include('silver.urls')),
     path('optin/', include('optin.urls')),
     path('moderation/', include('moderation.urls')),
     path('', include('ip.urls')),
@@ -42,7 +42,7 @@ urlpatterns = [
         'accounts/',
         include('django.contrib.auth.urls')
     ),
-    path('financement/', include('crowdfunding.urls')),
+    #path('financement/', include('crowdfunding.urls')),
     path('display/', include('display.urls', namespace='display')),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('community/', include('community.urls')),

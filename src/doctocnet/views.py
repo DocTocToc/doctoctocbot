@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.utils.translation import gettext as _
 
-from silver.models.billing_entities import Customer
+#from silver.models.billing_entities import Customer
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,7 @@ def media_access(request, path):
             access_granted = True
         elif not path.startswith("documents/"):
             access_granted = True
+        """
         else:
             # For simple user, only their documents can be accessed
             try:
@@ -42,6 +43,7 @@ def media_access(request, path):
             logger.debug(f"user:{user}\n user_docs_path_lst:{user_docs_path_lst}")
             if path in user_docs_path_lst:
                 access_granted = True
+        """
 
     if access_granted:
         response = HttpResponse()

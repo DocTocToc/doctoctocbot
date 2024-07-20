@@ -89,6 +89,9 @@ class Customer(models.Model):
         verbose_name=_("Language"),
         default=default_language,
     )
+    
+    class Meta:
+        app_label = 'customer'
 
     def __str__(self):
         return "{}:{}".format(self.id, self.user)

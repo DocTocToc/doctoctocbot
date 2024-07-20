@@ -34,7 +34,7 @@ urlpatterns = [
     path('', include('landing.urls')),
     path('', include('users.urls')),
     path('', include('registration.urls')),
-    path('', include('customer.urls')),
+    #path('', include('customer.urls')),
     path('', include('gpgcontact.urls')),
     path('', include('discourse.urls')),
     path('', include('invite.urls')),

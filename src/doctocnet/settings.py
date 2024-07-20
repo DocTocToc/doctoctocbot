@@ -102,10 +102,10 @@ logging_dict["loggers"] = {
             "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
         },
-        "messenger.tasks": {
-            "handlers": ["console", "console_debug_false"],
-            "level": LOG_LEVEL,
-        },
+        #"messenger.tasks": {
+        #    "handlers": ["console", "console_debug_false"],
+        #    "level": LOG_LEVEL,
+        #},
         "tagging.tasks": {
             "handlers": ["console", "console_debug_false"],
             "level": LOG_LEVEL,
@@ -191,7 +191,7 @@ INSTALLED_APPS = [
     'timeline',
     'crispy_forms',
     'crispy_bootstrap4',
-    #'crowdfunding',
+    'crowdfunding',
     'registration',
     'django_countries',
     #'customer',

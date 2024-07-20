@@ -45,6 +45,9 @@ class Project(models.Model):
     
     objects = ProjectManager()
 
+    class Meta:
+        app_label = 'crowdfunding'
+
     def __str__(self):
         return "{}:{}".format(self.id, self.name)
     
@@ -93,6 +96,9 @@ class ProjectInvestment(models.Model):
     )
     invoice_pdf = models.BooleanField(default=False)
     payment_intent=models.CharField(max_length=27, blank=True)
+    
+    class Meta:
+        app_label = 'crowdfunding'
     
     def __str__(self):
         return "{}:{} user:{} pledged:{} paid:{} payment_intent:{}".format(
@@ -162,6 +168,7 @@ class Tier(models.Model):
 
     class Meta:
         ordering = ['-max']
+        app_label = 'crowdfunding'
     
 
     def __str__(self):
@@ -183,6 +190,7 @@ class Campaign(models.Model):
     
     class Meta:
         ordering = ['start_datetime']
+        app_label = 'crowdfunding'
     
     def __str__(self):
         return "Campaign {}:{} ({} - {})".format(
@@ -201,7 +209,9 @@ class PaymentProcessorWebhook(models.Model):
     secret = models.CharField(
         max_length=255
     )
-    
+    class Meta:
+        app_label = 'crowdfunding'
+
     def __str__(self):
         return "{}:{}:{}".format(
             self.id,

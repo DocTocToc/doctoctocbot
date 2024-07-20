@@ -89,7 +89,7 @@ class Customer(models.Model):
         verbose_name=_("Language"),
         default=default_language,
     )
-    
+
     class Meta:
         app_label = 'customer'
 
@@ -169,8 +169,10 @@ class Provider(models.Model):
         default=DRAFT,
     )
     meta = models.CharField(max_length=255, blank=True) 
-    
-    
+
+    class Meta:
+        app_label = 'customer'
+
     def __str__(self):
         return "{}:{}:{}".format(self.id, self.name, self.company)   
 
@@ -198,6 +200,9 @@ class Product(models.Model):
         default='EUR',
         help_text='The currency used for billing.'
     )
-    
+
+    class Meta:
+        app_label = 'customer'
+
     def __str__(self):
         return "{}:{}:{}".format(self.id, self.product_code, self.description)  

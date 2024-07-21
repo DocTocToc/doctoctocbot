@@ -243,6 +243,8 @@ INSTALLED_APPS = [
     'djangoql',
     'fediverse',
     'django_rename_app',
+    'dal',
+    'dal_select2',
 ]
 
 if DEBUG:

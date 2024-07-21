@@ -62,7 +62,6 @@ django-user-visit
 #django-mama-cas # Central Authentication Service
 git+https://github.com/DocTocToc/django-mama-cas.git@ac6623ac20b3a2655eae38161c83f3535ceaa524
 gevent # django-mama-cas optional
-defusedhml # django-mama-cas optional
 django-dumpdata-one
 django-postgres-fuzzycount
 pyyaml

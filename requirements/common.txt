@@ -44,7 +44,7 @@ django-markdownify
 django-bootstrap-modal-forms==2.2.0
 pycountry
 simplejson
-git+https://github.com/DocTocToc/silver.git@5c6cdca1d82be9d889f4d19e8f83648ca0e23d73 #FKA django-silver
+git+https://github.com/DocTocToc/silver.git@69614836254a0e1bcf8a0a50bf14cb40b00d5409 #FKA django-silver
 celery_once
 python-twitter
 ipaddress
@@ -62,7 +62,7 @@ django-user-visit
 #django-mama-cas # Central Authentication Service
 git+https://github.com/DocTocToc/django-mama-cas.git@ac6623ac20b3a2655eae38161c83f3535ceaa524
 gevent # django-mama-cas optional
-defusedxml # django-mama-cas optional
+defusedhml # django-mama-cas optional
 django-dumpdata-one
 django-postgres-fuzzycount
 pyyaml

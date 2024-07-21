@@ -194,7 +194,7 @@ INSTALLED_APPS = [
     'crowdfunding',
     'registration',
     'django_countries',
-    #'customer',
+    'customer',
     'mptt',
     'dry_rest_permissions',
     'django_celery_beat',

@@ -15,7 +15,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^6.1.1",
     "rollup-plugin-terser": "^5.1.2",
-    "svelte": "^3.46.4"
+    "svelte": "^3.49.0"
   },
   "dependencies": {
     "dotenv": "^8.6.0",

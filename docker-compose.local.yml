@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   django_1:
     restart: always

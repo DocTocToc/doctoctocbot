@@ -1,7 +1,4 @@
-version: '3.7'
-
 services:
-
   nginx:
     restart: on-failure
     env_file:

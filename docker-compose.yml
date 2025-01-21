@@ -2,6 +2,7 @@ services:
   database:
     restart: always                                                                       
     image: postgis/postgis:14-3.3
+    hostname: ${DATABASE_HOST}
     shm_size: ${DATABASE_SHM_SIZE}
     command: >
       postgres
